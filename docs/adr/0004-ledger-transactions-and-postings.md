@@ -1,6 +1,6 @@
 # ADR-0004: Ledger: transactions and postings
 
-- **Status**: Accepted
+- **Status**: Superseded by [ADR-0012](0012-postings-wallet-and-category-accounts.md)
 - **Date**: 2026-09-19
 - **Principles**: P-01, P-04
 - **Supersedes**: —

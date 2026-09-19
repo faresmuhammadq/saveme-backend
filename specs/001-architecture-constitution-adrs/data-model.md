@@ -123,6 +123,8 @@ tombstoned ──retention elapsed──▶ purged
 
 ### B.3 Ledger (ADR-004/005)
 
+> **Superseded in part (2026-09-20).** ADR-0012 replaces ADR-0004: a posting references exactly one of a wallet or a **category** (XOR), and there are no `income`/`expense` nominal accounts. The Posting shape and worked mappings below reflect ADR-0004 as it stood on 2026-09-19; see [ADR-0012](../../docs/adr/0012-postings-wallet-and-category-accounts.md) for the rule in force. Everything else in this section still holds.
+
 - **Transaction** (syncable, wallet scope): type ∈ {income, expense, transfer}, `date`, `amount_minor` > 0, `currency`, `wallet_id`, `counter_wallet_id` (transfer only), `category_id` (income/expense), note.
 - **Posting** (internal, not syncable): `transaction_id`, `account_type` ∈ {wallet, nominal}, `account_ref` (wallet id or nominal code `income`/`expense`), `amount_minor` (signed), `currency`.
 - **Invariants**:

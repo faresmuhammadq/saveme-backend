@@ -23,7 +23,7 @@ New records use [`template.md`](template.md) and take the next free number.
 | 0001 | [Database engine](0001-database-engine.md) | Accepted | 2026-09-19 | P-16 |
 | 0002 | [Identifiers: UUIDv7](0002-identifiers-uuidv7.md) | Accepted | 2026-09-19 | P-06 |
 | 0003 | [Money as integer minor units](0003-money-minor-units.md) | Accepted | 2026-09-19 | P-03 |
-| 0004 | [Ledger: transactions and postings](0004-ledger-transactions-and-postings.md) | Accepted | 2026-09-19 | P-01, P-04 |
+| 0004 | [Ledger: transactions and postings](0004-ledger-transactions-and-postings.md) | Superseded by 0012 | 2026-09-20 | P-01, P-04 |
 | 0005 | [Derived balance with cached column](0005-derived-balance-with-cache.md) | Accepted | 2026-09-19 | P-05 |
 | 0006 | [Wallet-scoped authorization](0006-wallet-scoped-authorization.md) | Accepted | 2026-09-19 | P-08 |
 | 0007 | [Entitlements from provider-agnostic subscriptions](0007-entitlements-from-subscriptions.md) | Accepted | 2026-09-19 | P-09, P-10 |
@@ -31,12 +31,13 @@ New records use [`template.md`](template.md) and take the next free number.
 | 0009 | [Domain events after commit](0009-domain-events-after-commit.md) | Accepted | 2026-09-19 | P-11 |
 | 0010 | [Observability](0010-observability.md) | Accepted | 2026-09-19 | P-15 |
 | 0011 | [Time and timezones](0011-time-and-timezones.md) | Accepted | 2026-09-19 | P-12 |
+| 0012 | [Postings against wallet and category accounts](0012-postings-wallet-and-category-accounts.md) | Accepted | 2026-09-20 | P-01, P-04 |
 
 ## Reading order
 
 Not numerical order. Follow the thread you need:
 
-- **The money model** — [0004](0004-ledger-transactions-and-postings.md) (what a transaction is) → [0003](0003-money-minor-units.md) (how an amount is represented) → [0005](0005-derived-balance-with-cache.md) (where a balance comes from).
+- **The money model** — [0012](0012-postings-wallet-and-category-accounts.md) (what a transaction is; supersedes 0004) → [0003](0003-money-minor-units.md) (how an amount is represented) → [0005](0005-derived-balance-with-cache.md) (where a balance comes from).
 - **Offline and sync** — [0002](0002-identifiers-uuidv7.md) (who generates an id) → [0008](0008-sync-changes-feed.md) (feeds, cursors, conflicts) → [0011](0011-time-and-timezones.md) (dates that do not shift).
 - **Access and money-in** — [0006](0006-wallet-scoped-authorization.md) (who may act on a wallet) → [0007](0007-entitlements-from-subscriptions.md) (what their plan allows).
 - **Runtime** — [0001](0001-database-engine.md) (engine) → [0009](0009-domain-events-after-commit.md) (events) → [0010](0010-observability.md) (logs and tracing).

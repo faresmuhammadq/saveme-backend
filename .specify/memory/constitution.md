@@ -1,7 +1,18 @@
 <!--
-Sync Impact Report
-- Version change: none (unfilled template) → 1.0.0
-- Ratified: 2026-09-19
+Sync Impact Report (latest first)
+
+v1.0.0 → 1.1.0 — 2026-09-20
+- MINOR: P-04 materially expanded — new rule 2, "every posting MUST reference exactly one
+  of a wallet or a category", renumbering the rules that follow.
+- P-01 and P-04 now cite ADR-0012, which supersedes ADR-0004. ADR-0004 keeps its body and
+  its status line points forward.
+- Reason: the prior-art data model (docs/legacy/DATA_MODEL.md) modelled the counter-leg of a
+  posting as a category rather than a nominal income/expense account; that form was adopted,
+  so the backing record changed. No principle was removed or redefined.
+- Templates: no change needed (.specify/templates/plan-template.md already renders one row
+  per Active principle).
+
+v1.0.0 — 2026-09-19 (ratified)
 - Principles added: P-01 … P-17 (all new; 13 non-negotiable)
 - Sections added: Purpose & Precedence, Core Principles, Bounded Contexts & Modules,
   MVP Scope Guard, Quality Gates, Constitution Check, Governance
@@ -21,7 +32,7 @@ Sync Impact Report
 
 <!-- "Save Me" is a working codename used as display text only; see P-13. -->
 
-**Version**: 1.0.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-19
+**Version**: 1.1.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-20
 
 ## Purpose & Precedence
 
@@ -38,7 +49,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-01 Ubiquitous language
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0004](../../docs/adr/0004-ledger-transactions-and-postings.md)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0012](../../docs/adr/0012-postings-wallet-and-category-accounts.md) (supersedes ADR-0004)
 
 1. "Wallet" (محفظة) MUST be the only term for a money container, in code, database, API and translations. "Account", "purse", "fund" and similar MUST NOT be introduced as synonyms.
 2. Wallet type MUST be a fixed enum whose members carry defined behavioural semantics (e.g. liability types hold negative balances).
@@ -71,13 +82,14 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-04 Ledger integrity
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0004](../../docs/adr/0004-ledger-transactions-and-postings.md)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0012](../../docs/adr/0012-postings-wallet-and-category-accounts.md) (supersedes ADR-0004)
 
 1. Every transaction MUST produce postings that sum to zero per currency.
-2. A transfer MUST be one transaction with two wallet postings, never two linked transactions.
-3. Liabilities MUST be stored negative and presented as an amount owed.
-4. In MVP all postings of one transaction MUST share a single currency; cross-currency transactions MUST be rejected.
-5. Postings MUST NOT be exposed through the API or the sync protocol.
+2. Every posting MUST reference exactly one of a wallet or a category, never both and never neither.
+3. A transfer MUST be one transaction with two wallet postings, never two linked transactions.
+4. Liabilities MUST be stored negative and presented as an amount owed.
+5. In MVP all postings of one transaction MUST share a single currency; cross-currency transactions MUST be rejected.
+6. Postings MUST NOT be exposed through the API or the sync protocol.
 
 *Rationale*: a single-entry UX over a double-entry ledger gives transfers, debts and eventual multi-currency for free, and makes every balance a sum that can be recomputed.
 
@@ -277,7 +289,7 @@ Every `plan.md` includes this section, filled in before Phase 0 and again after 
 ```markdown
 ## Constitution Check
 
-*Constitution v1.0.0. GATE: before Phase 0 and again after Phase 1.*
+*Constitution v1.1.0. GATE: before Phase 0 and again after Phase 1.*
 
 | Principle | Result | Evidence / justification |
 |---|---|---|
@@ -315,4 +327,4 @@ Every amendment updates the footer's **Last Amended** date and the Sync Impact R
 
 **Consistency** — run `/speckit-analyze` before implementing each feature. Contradictions between this constitution, the ADRs and a feature's spec are defects to resolve before code.
 
-**Version**: 1.0.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-19
+**Version**: 1.1.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-20

@@ -125,7 +125,7 @@ tests/Arch/          # Pest architecture tests enforcing module boundaries (foll
 | ID | Feature | Why separate |
 |---|---|---|
 | F-1 | Architecture tests (Pest `arch()`) for module boundaries, float ban in Money paths, plan-code comparison ban | Code + test change; enforces SC-007 |
-| F-2 | Switch dev/test/CI to PostgreSQL (`.env.example`, `phpunit.xml`, `tests.yml` service) | Environment change |
+| F-2 | ✅ **Done 2026-09-19.** Dev/test/CI on PostgreSQL 16: `dev project setup` container (`saveme_backend_main` on the shared `postgres-16`), `phpunit.xml` → `saveme_backend_main_test`, `.env.example` pgsql, CI postgres service + `pdo_pgsql`. P-16 rule 2 now satisfied. | Environment change |
 | F-3 | Observability middleware + JSON log channel + error-tracker SDK | Needs dependency approval |
 | F-4 | Shared kernel (`Money`, `Currency`, clock) with unit tests | First code under `app/Modules/Shared` |
 

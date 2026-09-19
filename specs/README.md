@@ -9,8 +9,8 @@ What is written, what is next, and what each remaining spec must decide. One fol
 | ID | Spec | Folder | State |
 |---|---|---|---|
 | A1 | Architecture constitution & ADR set | [`001-architecture-constitution-adrs`](001-architecture-constitution-adrs/) | ✅ Done — constitution v1.1.0, ADRs 0001–0012 |
-| A3 | Domain glossary & model map | → `002-…` | ⏭️ **Next** |
-| A2 | API conventions | → `003-…` | Queued |
+| A3 | Domain glossary & model map | [`002-domain-glossary-model-map`](002-domain-glossary-model-map/) | ✅ Done — [docs/glossary.md](../docs/glossary.md), 22 entities |
+| A2 | API conventions | → `003-…` | ⏭️ **Next** — inherits from A3: the scope key is not always `wallet_id` (4 user-scoped entities), `Category Reference` is a read-only feed resource with no write endpoint, and a Transaction carries exactly one category in MVP |
 | A4 | Security & privacy baseline | → `004-…` | Queued |
 | A5 | Engineering conventions | → `005-…` | Queued |
 
@@ -44,12 +44,14 @@ A2 fixes an envelope in which every syncable resource exposes `wallet_id`. Wheth
 | 8 | O1 postings vs two-column | **Postings** — closed by ADR-0012 |
 | 9 | Prior-art extras to keep | Wallet `type` enum (`cash\|checking\|savings\|credit_card\|loan\|investment`), `on_budget`, `archived`, `cleared`, currency immutable after first posting, `kind = transfer` excluded from spending and income reports |
 
-**Open for A3 to decide:**
+**Resolved during `/speckit-specify` on 2026-09-20** (see [spec.md → Clarifications](002-domain-glossary-model-map/spec.md)):
 
-- Where **categories** and **budgets** live now that `Space` is gone — wallet-scoped or user-scoped. ADR-0008 supports either; it defines both a wallet feed and a user feed.
-- Whether MVP exposes **split transactions** across several categories. ADR-0012 permits them structurally; this is a product call.
-- **Category nesting** (`parent_id`) in MVP or deferred — open in the prior art too.
-- Category **deletion policy**: ADR-0012 requires re-point or block, never cascade. A3 picks which.
+- **Categories and budgets are user-scoped** — one personal set per user, reused across their wallets, on the user sync feed. A budget limits its owner's own spending, not a shared household total.
+- **No split transactions in MVP** — one category per transaction. The ledger still permits several category legs, so splits are a later contract change, not a migration.
+- **Category nesting deferred** — the field is reserved, the behaviour is out of scope.
+- **Categories are archive-only** — active → archived; a category any posting references is never hard-deleted.
+
+Left for the glossary itself: since categories ride the user feed, a member of a shared wallet cannot see their partner's category list, yet their partner's transactions reference it. Recommended fix is a read-only projection of referenced categories on the wallet feed (FR-019).
 
 ---
 
@@ -105,6 +107,28 @@ A2 fixes an envelope in which every syncable resource exposes `wallet_id`. Wheth
 | Migrations append-only after first release | Nothing ratified | Compatible; adopt as written |
 
 ---
+
+## Open questions banked for later feature specs
+
+Found while validating the glossary (spec 002) with a fresh-context reader. None block A2–A5; each belongs to the feature named.
+
+**Budgeting**
+
+- How is a transaction in a **shared** wallet attributed to one member's budget — by the owning user of the category it references, or by the transaction's `created_by`? These diverge as soon as one partner recategorises the other's transaction.
+- What currency is a budget denominated in when its owner holds wallets in more than one? Postings balance per currency and FX is out of scope, so aggregating "spending across their wallets" is undefined.
+- May an `income` category carry a budget? Is there one budget per (user, category, period), or may they overlap?
+- What happens to a live budget when its category is archived — dormant, archived with it, or still accumulating?
+- Which module serves **budget progress** (Budgeting read model or a Reporting report)? That decides which module exposes the endpoint.
+- Are budget-overrun notifications in scope? Nothing mentions them.
+
+**Wallets & Ledger**
+
+- The exact trigger that withdraws a `Category Reference` from a wallet feed when nothing references it any more.
+- The interface and shape of the query services Budgeting and Reporting call (per category, per period, per currency?). Only `WalletService` and `EntitlementService` are named so far.
+
+**Constitution (next amendment, cosmetic)**
+
+- Its context table gives Notifications "devices, push tokens", while the glossary puts **Device Session** (auth) under Identity and leaves Notifications the push registration. Both documents are internally consistent; the word "device" reads differently across them.
 
 ## Conventions for this backlog
 

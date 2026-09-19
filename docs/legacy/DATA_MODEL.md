@@ -1,7 +1,7 @@
-> **Prior art — not in force.**
+> **Prior art — not in force. The authoritative entity index is [docs/glossary.md](../glossary.md);
+> its [Prior-art mapping](../glossary.md#prior-art-mapping) section shows where each entity below went.**
 >
-> This is earlier planning work, recorded here because spec **A3 (domain glossary & model map)**
-> must map its entities 1:1 onto the authoritative index. Where it disagrees with an Accepted
+> This is earlier planning work, kept for that mapping. Where it disagrees with an Accepted
 > ADR, the ADR wins. The paste that produced this file had its line breaks flattened; the
 > structure was restored, the content was not changed.
 >

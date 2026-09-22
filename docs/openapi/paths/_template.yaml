@@ -1,0 +1,191 @@
+# Worked template for a feature's path file. Copy it, rename it after the
+# feature, and replace the resource. It is NOT referenced from openapi.yaml —
+# files whose name starts with an underscore are templates.
+#
+# Everything below that is not specific to this resource is referenced rather
+# than restated. If you find yourself writing out an envelope, a problem body,
+# a cursor or a set of sync members, stop: it already exists in components/.
+
+/examples:
+  get:
+    operationId: listExamples
+    tags: [Wallets & Ledger]
+    summary: List example records in a wallet.
+    # Both keys are required on every collection operation, even when empty.
+    # Anything outside them is refused, never ignored.
+    x-filterable: [date, category_id, amount_minor]
+    x-sortable: [date, amount_minor, created_at]
+    parameters:
+      - $ref: '../components/parameters.yaml#/components/parameters/Cursor'
+      - $ref: '../components/parameters.yaml#/components/parameters/Limit'
+      - $ref: '../components/parameters.yaml#/components/parameters/Filter'
+      - $ref: '../components/parameters.yaml#/components/parameters/Sort'
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'A page of records. Empty is 200 with `data: []`, never 404.'
+        headers:
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Example'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '410':
+        $ref: '../components/responses.yaml#/components/responses/Gone'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/examples/{id}:
+  put:
+    operationId: upsertExample
+    tags: [Wallets & Ledger]
+    summary: Create or update a record, addressed by the client-generated identifier.
+    description: |
+      A create, not a POST: the client generates the id offline and the same
+      write may arrive twice. `version` is omitted or 0 to create, and carries
+      the client's last-seen value to update. A stale value refuses the whole
+      write with 409 and returns the record's present state in `current`.
+    parameters:
+      - $ref: '../components/parameters.yaml#/components/parameters/ResourceId'
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExampleWrite'
+    responses:
+      '200':
+        description: Updated, or an identical replay returning the record unchanged.
+        headers:
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Example'
+      '201':
+        description: Created.
+        headers:
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Example'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+# The only schemas a feature defines are its own resources. Everything else is
+# referenced from components/.
+components:
+  schemas:
+    Example:
+      description: |
+        One example record. It composes the shared syncable envelope with
+        exactly ONE scope mixin, and adds only its own fields.
+      allOf:
+        - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
+        - $ref: '../components/schemas.yaml#/components/schemas/WalletScoped'
+        - type: object
+          required: [amount_minor, currency, date]
+          properties:
+            amount_minor:
+              type: integer
+              description: Signed minor units. Never a decimal string or a float.
+              minimum: -9007199254740991
+              maximum: 9007199254740991
+            currency:
+              type: string
+              pattern: '^[A-Z]{3}$'
+            date:
+              type: string
+              format: date
+              description: Calendar date, YYYY-MM-DD, no time and no offset.
+
+    ExampleWrite:
+      type: object
+      description: |
+        The write body. `id` comes from the path. `change_seq`, `created_at`
+        and `updated_at` are server-owned and rejected with UNKNOWN_FIELD.
+      required: [amount_minor, currency, date]
+      additionalProperties: false
+      properties:
+        amount_minor:
+          type: integer
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+        date:
+          type: string
+          format: date
+        version:
+          type: integer
+          description: The client's last-seen version. Omitted or 0 means create.
+          minimum: 0
+        deleted_at:
+          type: [string, 'null']
+          format: date-time
+          description: Sent only to delete (an instant) or to restore (null).

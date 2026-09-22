@@ -1,0 +1,339 @@
+# The one error catalogue.
+#
+# Every code a client can encounter appears here exactly once, and an operation
+# may only reference a code that exists in this file. A feature adds codes here
+# rather than inventing a local string.
+#
+# Each entry in `x-error-catalog` carries all six of:
+#   status    - the single HTTP status this code is served with
+#   level     - `response` (appears as Problem.code) or `field` (ValidationError.code)
+#   title     - the English label copied into Problem.title; never localised
+#   meaning   - one sentence, from the client's point of view
+#   retryable - one of `automatic`, `after-change`, `never`
+#   since     - the API release the code appeared in
+#
+# A code maps to exactly one status; two situations needing different statuses
+# need two codes. A released code is never deleted or reused for another
+# meaning: deprecate it with `deprecated: true` and `replaced_by`.
+
+components:
+  schemas:
+    ErrorCode:
+      type: string
+      description: Stable machine-readable identifier a client branches on. Response level.
+      enum:
+        - VALIDATION_FAILED
+        - MALFORMED_JSON
+        - INVALID_QUERY_PARAMETER
+        - INVALID_CURSOR
+        - FILTER_FIELD_NOT_SUPPORTED
+        - FILTER_OPERATOR_NOT_SUPPORTED
+        - SORT_FIELD_NOT_SUPPORTED
+        - IDEMPOTENCY_KEY_REQUIRED
+        - IDEMPOTENCY_KEY_INVALID
+        - CLIENT_VERSION_REQUIRED
+        - CLIENT_VERSION_INVALID
+        - UNAUTHENTICATED
+        - FORBIDDEN
+        - FEATURE_NOT_ENTITLED
+        - NOT_FOUND
+        - METHOD_NOT_ALLOWED
+        - NOT_ACCEPTABLE
+        - VERSION_CONFLICT
+        - IDEMPOTENCY_KEY_REUSED
+        - IDEMPOTENCY_REQUEST_IN_PROGRESS
+        - SYNC_CURSOR_EXPIRED
+        - ENDPOINT_REMOVED
+        - UNSUPPORTED_MEDIA_TYPE
+        - INVALID_ID
+        - CLIENT_VERSION_UNSUPPORTED
+        - RATE_LIMITED
+        - INTERNAL_ERROR
+        - SERVICE_UNAVAILABLE
+
+    FieldErrorCode:
+      type: string
+      description: Stable machine-readable identifier for one invalid input. Field level.
+      enum:
+        - REQUIRED
+        - UNKNOWN_FIELD
+        - INVALID_TYPE
+        - INVALID_ENUM_VALUE
+        - OUT_OF_RANGE
+        - AMOUNT_NOT_INTEGER
+        - INVALID_CURRENCY
+        - DATE_NOT_CALENDAR_DATE
+        - INSTANT_NOT_UTC
+        - INVALID_ID
+        - IMMUTABLE_FIELD
+
+x-error-catalog:
+  VALIDATION_FAILED:
+    status: 422
+    level: [response]
+    title: 'Validation failed'
+    meaning: 'One or more inputs are invalid; each one is listed in `errors`.'
+    retryable: after-change
+    since: v1.0
+  MALFORMED_JSON:
+    status: 400
+    level: [response]
+    title: 'Malformed JSON'
+    meaning: 'The request body is not parseable JSON, or not the shape the endpoint requires.'
+    retryable: after-change
+    since: v1.0
+  INVALID_QUERY_PARAMETER:
+    status: 400
+    level: [response]
+    title: 'Invalid query parameter'
+    meaning: 'A query parameter is present but cannot be used as sent.'
+    retryable: after-change
+    since: v1.0
+  INVALID_CURSOR:
+    status: 400
+    level: [response]
+    title: 'Invalid cursor'
+    meaning: 'The cursor is unparseable, or was not issued by this endpoint with these filters.'
+    retryable: after-change
+    since: v1.0
+  FILTER_FIELD_NOT_SUPPORTED:
+    status: 400
+    level: [response]
+    title: 'Filter field not supported'
+    meaning: 'The field is not filterable on this endpoint.'
+    retryable: never
+    since: v1.0
+  FILTER_OPERATOR_NOT_SUPPORTED:
+    status: 400
+    level: [response]
+    title: 'Filter operator not supported'
+    meaning: 'The operator is not allowed for that field on this endpoint.'
+    retryable: never
+    since: v1.0
+  SORT_FIELD_NOT_SUPPORTED:
+    status: 400
+    level: [response]
+    title: 'Sort field not supported'
+    meaning: 'The field is not sortable on this endpoint.'
+    retryable: never
+    since: v1.0
+  IDEMPOTENCY_KEY_REQUIRED:
+    status: 400
+    level: [response]
+    title: 'Idempotency key required'
+    meaning: 'This operation requires an `Idempotency-Key` header and none was sent.'
+    retryable: after-change
+    since: v1.0
+  IDEMPOTENCY_KEY_INVALID:
+    status: 400
+    level: [response]
+    title: 'Idempotency key invalid'
+    meaning: 'The `Idempotency-Key` header is malformed.'
+    retryable: after-change
+    since: v1.0
+  CLIENT_VERSION_REQUIRED:
+    status: 400
+    level: [response]
+    title: 'Client version required'
+    meaning: '`X-Client-Platform` or `X-Client-Version` is missing.'
+    retryable: after-change
+    since: v1.0
+  CLIENT_VERSION_INVALID:
+    status: 400
+    level: [response]
+    title: 'Client version invalid'
+    meaning: 'The client version is not semver, or the platform is unknown.'
+    retryable: after-change
+    since: v1.0
+  UNAUTHENTICATED:
+    status: 401
+    level: [response]
+    title: 'Unauthenticated'
+    meaning: 'No token was sent, or it is expired or revoked.'
+    retryable: never
+    since: v1.0
+  FORBIDDEN:
+    status: 403
+    level: [response]
+    title: 'Forbidden'
+    meaning: 'The caller is a member of the wallet but the role is insufficient for this action.'
+    retryable: never
+    since: v1.0
+  FEATURE_NOT_ENTITLED:
+    status: 403
+    level: [response]
+    title: 'Feature not entitled'
+    meaning: 'The caller''s plan does not include this capability.'
+    retryable: never
+    since: v1.0
+  NOT_FOUND:
+    status: 404
+    level: [response]
+    title: 'Not found'
+    meaning: 'The resource does not exist, or it is outside the caller''s scope. The two are deliberately indistinguishable.'
+    retryable: never
+    since: v1.0
+  METHOD_NOT_ALLOWED:
+    status: 405
+    level: [response]
+    title: 'Method not allowed'
+    meaning: 'The path exists but this method does not; the `Allow` header lists the methods that do.'
+    retryable: never
+    since: v1.0
+  NOT_ACCEPTABLE:
+    status: 406
+    level: [response]
+    title: 'Not acceptable'
+    meaning: 'The `Accept` header excludes `application/json`.'
+    retryable: never
+    since: v1.0
+  VERSION_CONFLICT:
+    status: 409
+    level: [response]
+    title: 'Version conflict'
+    meaning: 'The write carried a stale `version`. Nothing was applied; the record''s current state is in `current`.'
+    retryable: after-change
+    since: v1.0
+  IDEMPOTENCY_KEY_REUSED:
+    status: 409
+    level: [response]
+    title: 'Idempotency key reused'
+    meaning: 'This key was already used with a different payload. It is never treated as a new request.'
+    retryable: never
+    since: v1.0
+  IDEMPOTENCY_REQUEST_IN_PROGRESS:
+    status: 409
+    level: [response]
+    title: 'Idempotent request in progress'
+    meaning: 'The original request carrying this key has not finished yet; retry after `Retry-After`.'
+    retryable: automatic
+    since: v1.0
+  SYNC_CURSOR_EXPIRED:
+    status: 410
+    level: [response]
+    title: 'Sync cursor expired'
+    meaning: 'The cursor predates the scope''s tombstone horizon. Resync the whole scope from the beginning.'
+    retryable: after-change
+    since: v1.0
+  ENDPOINT_REMOVED:
+    status: 410
+    level: [response]
+    title: 'Endpoint removed'
+    meaning: 'The endpoint passed its sunset date and no longer works.'
+    retryable: never
+    since: v1.0
+  UNSUPPORTED_MEDIA_TYPE:
+    status: 415
+    level: [response]
+    title: 'Unsupported media type'
+    meaning: 'The request `Content-Type` is not `application/json`.'
+    retryable: never
+    since: v1.0
+  INVALID_ID:
+    status: 422
+    level: [response, field]
+    title: 'Invalid identifier'
+    meaning: 'An identifier is not a lowercase hyphenated UUIDv7.'
+    retryable: never
+    since: v1.0
+  CLIENT_VERSION_UNSUPPORTED:
+    status: 426
+    level: [response]
+    title: 'Client version unsupported'
+    meaning: 'The client is below the minimum supported version; `minimum_version` names what to update to.'
+    retryable: never
+    since: v1.0
+  RATE_LIMITED:
+    status: 429
+    level: [response]
+    title: 'Rate limited'
+    meaning: 'The allowance for this window is spent; `Retry-After` says when it may resume.'
+    retryable: automatic
+    since: v1.0
+  INTERNAL_ERROR:
+    status: 500
+    level: [response]
+    title: 'Internal error'
+    meaning: 'An unexpected server failure. The request id identifies it in the server''s logs.'
+    retryable: automatic
+    since: v1.0
+  SERVICE_UNAVAILABLE:
+    status: 503
+    level: [response]
+    title: 'Service unavailable'
+    meaning: 'The service is temporarily unable to handle the request.'
+    retryable: automatic
+    since: v1.0
+
+  # Field-level codes. These appear inside `errors[]` on a 422 VALIDATION_FAILED,
+  # never as a response-level `code`, so every one of them carries status 422.
+  REQUIRED:
+    status: 422
+    level: [field]
+    title: 'Required'
+    meaning: 'The member is absent or null and is required.'
+    retryable: after-change
+    since: v1.0
+  UNKNOWN_FIELD:
+    status: 422
+    level: [field]
+    title: 'Unknown field'
+    meaning: 'The member is not part of this request shape. Unknown members are refused, not ignored.'
+    retryable: after-change
+    since: v1.0
+  INVALID_TYPE:
+    status: 422
+    level: [field]
+    title: 'Invalid type'
+    meaning: 'The JSON type is wrong for this member.'
+    retryable: after-change
+    since: v1.0
+  INVALID_ENUM_VALUE:
+    status: 422
+    level: [field]
+    title: 'Invalid enum value'
+    meaning: 'The value is outside the set this member allows.'
+    retryable: after-change
+    since: v1.0
+  OUT_OF_RANGE:
+    status: 422
+    level: [field]
+    title: 'Out of range'
+    meaning: 'A numeric or length bound on this member was violated.'
+    retryable: after-change
+    since: v1.0
+  AMOUNT_NOT_INTEGER:
+    status: 422
+    level: [field]
+    title: 'Amount not an integer'
+    meaning: 'Money was sent as a string, a float or a fractional number. It is refused, never coerced.'
+    retryable: after-change
+    since: v1.0
+  INVALID_CURRENCY:
+    status: 422
+    level: [field]
+    title: 'Invalid currency'
+    meaning: 'Not an uppercase ISO 4217 alpha-3 code.'
+    retryable: after-change
+    since: v1.0
+  DATE_NOT_CALENDAR_DATE:
+    status: 422
+    level: [field]
+    title: 'Date is not a calendar date'
+    meaning: 'A `YYYY-MM-DD` field carried a time or a timezone offset.'
+    retryable: after-change
+    since: v1.0
+  INSTANT_NOT_UTC:
+    status: 422
+    level: [field]
+    title: 'Instant not UTC'
+    meaning: 'An `<name>_at` field was not UTC with a trailing `Z`.'
+    retryable: after-change
+    since: v1.0
+  IMMUTABLE_FIELD:
+    status: 422
+    level: [field]
+    title: 'Immutable field'
+    meaning: 'The member cannot be changed after the record is created.'
+    retryable: after-change
+    since: v1.0

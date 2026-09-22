@@ -1,0 +1,199 @@
+# Reusable problem responses, one per status the catalogue uses.
+#
+# Every one serves `application/problem+json` with the shared Problem schema
+# and carries `X-Request-Id`. An operation references these rather than
+# defining a problem response inline.
+#
+# The `code` a given response can carry is listed in its description; the
+# authoritative status-to-code mapping is error-catalog.yaml.
+
+components:
+  responses:
+
+    BadRequest:
+      description: |
+        The request could not be used as sent. Codes: MALFORMED_JSON,
+        INVALID_QUERY_PARAMETER, INVALID_CURSOR, FILTER_FIELD_NOT_SUPPORTED,
+        FILTER_OPERATOR_NOT_SUPPORTED, SORT_FIELD_NOT_SUPPORTED,
+        IDEMPOTENCY_KEY_REQUIRED, IDEMPOTENCY_KEY_INVALID,
+        CLIENT_VERSION_REQUIRED, CLIENT_VERSION_INVALID.
+      headers:
+        X-Request-Id:
+          $ref: './headers.yaml#/components/headers/XRequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: './schemas.yaml#/components/schemas/Problem'
+
+    Unauthenticated:
+      description: 'No token was sent, or it is expired or revoked. Code: UNAUTHENTICATED.'
+      headers:
+        X-Request-Id:
+          $ref: './headers.yaml#/components/headers/XRequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: './schemas.yaml#/components/schemas/Problem'
+
+    Forbidden:
+      description: |
+        The caller is inside the wallet but may not do this. Codes: FORBIDDEN
+        (role insufficient), FEATURE_NOT_ENTITLED (plan lacks the capability).
+        A caller outside the wallet gets NotFound instead, so a 403 discloses
+        only that the caller is already a member.
+      headers:
+        X-Request-Id:
+          $ref: './headers.yaml#/components/headers/XRequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: './schemas.yaml#/components/schemas/Problem'
+
+    NotFound:
+      description: |
+        The resource does not exist, or it is outside the caller's scope. The
+        two are deliberately indistinguishable, so existence is never
+        disclosed. Code: NOT_FOUND.
+      headers:
+        X-Request-Id:
+          $ref: './headers.yaml#/components/headers/XRequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: './schemas.yaml#/components/schemas/Problem'
+
+    MethodNotAllowed:
+      description: |
+        The path exists but this method does not — the answer for a write to a
+        read-only, server-produced resource. The Allow header lists the
+        methods that do exist. Code: METHOD_NOT_ALLOWED.
+      headers:
+        X-Request-Id:
+          $ref: './headers.yaml#/components/headers/XRequestId'
+        Allow:
+          $ref: './headers.yaml#/components/headers/Allow'
+      content:
+        application/problem+json:
+          schema:
+            $ref: './schemas.yaml#/components/schemas/Problem'
+
+    NotAcceptable:
+      description: |
+        The Accept header excludes application/json. This response is still
+        sent as application/problem+json. Code: NOT_ACCEPTABLE.
+      headers:
+        X-Request-Id:
+          $ref: './headers.yaml#/components/headers/XRequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: './schemas.yaml#/components/schemas/Problem'
+
+    Conflict:
+      description: |
+        Codes: VERSION_CONFLICT (the write carried a stale version; nothing was
+        applied and `current` carries the record's present state, tombstone
+        included), IDEMPOTENCY_KEY_REUSED (same key, different payload),
+        IDEMPOTENCY_REQUEST_IN_PROGRESS (the original has not finished).
+      headers:
+        X-Request-Id:
+          $ref: './headers.yaml#/components/headers/XRequestId'
+        Retry-After:
+          $ref: './headers.yaml#/components/headers/RetryAfter'
+      content:
+        application/problem+json:
+          schema:
+            $ref: './schemas.yaml#/components/schemas/Problem'
+
+    Gone:
+      description: |
+        Codes: SYNC_CURSOR_EXPIRED (the cursor predates the tombstone horizon;
+        resync the whole scope), ENDPOINT_REMOVED (past its sunset date).
+      headers:
+        X-Request-Id:
+          $ref: './headers.yaml#/components/headers/XRequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: './schemas.yaml#/components/schemas/Problem'
+
+    UnsupportedMediaType:
+      description: 'The request Content-Type is not application/json. Code: UNSUPPORTED_MEDIA_TYPE.'
+      headers:
+        X-Request-Id:
+          $ref: './headers.yaml#/components/headers/XRequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: './schemas.yaml#/components/schemas/Problem'
+
+    UnprocessableEntity:
+      description: |
+        Codes: VALIDATION_FAILED (one entry per offending input in `errors`,
+        each with a JSON Pointer and its own field-level code), INVALID_ID
+        (the path identifier is not a UUIDv7).
+      headers:
+        X-Request-Id:
+          $ref: './headers.yaml#/components/headers/XRequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: './schemas.yaml#/components/schemas/Problem'
+
+    UpgradeRequired:
+      description: |
+        The client is below the minimum supported version for its platform.
+        The body carries `minimum_version`, so the app can name the required
+        version in its update prompt rather than showing a generic error. The
+        gate applies to reads as well as writes. Code:
+        CLIENT_VERSION_UNSUPPORTED.
+      headers:
+        X-Request-Id:
+          $ref: './headers.yaml#/components/headers/XRequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: './schemas.yaml#/components/schemas/Problem'
+
+    TooManyRequests:
+      description: 'The allowance for this window is spent. Code: RATE_LIMITED.'
+      headers:
+        X-Request-Id:
+          $ref: './headers.yaml#/components/headers/XRequestId'
+        Retry-After:
+          $ref: './headers.yaml#/components/headers/RetryAfter'
+        RateLimit-Limit:
+          $ref: './headers.yaml#/components/headers/RateLimitLimit'
+        RateLimit-Remaining:
+          $ref: './headers.yaml#/components/headers/RateLimitRemaining'
+        RateLimit-Reset:
+          $ref: './headers.yaml#/components/headers/RateLimitReset'
+      content:
+        application/problem+json:
+          schema:
+            $ref: './schemas.yaml#/components/schemas/Problem'
+
+    InternalError:
+      description: |
+        An unexpected server failure. The request id identifies it in the
+        server's logs, which is why it is in the body as well as the header.
+        Code: INTERNAL_ERROR.
+      headers:
+        X-Request-Id:
+          $ref: './headers.yaml#/components/headers/XRequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: './schemas.yaml#/components/schemas/Problem'
+
+    ServiceUnavailable:
+      description: 'The service is temporarily unable to handle the request. Code: SERVICE_UNAVAILABLE.'
+      headers:
+        X-Request-Id:
+          $ref: './headers.yaml#/components/headers/XRequestId'
+        Retry-After:
+          $ref: './headers.yaml#/components/headers/RetryAfter'
+      content:
+        application/problem+json:
+          schema:
+            $ref: './schemas.yaml#/components/schemas/Problem'

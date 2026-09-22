@@ -1,0 +1,194 @@
+# Shared headers.
+#
+# Request headers every caller sends and response headers every caller can
+# expect. An operation does not invent a header outside this file.
+#
+# Two sections, because OpenAPI models the two directions differently:
+#   components.headers    - response headers, referenced from a response object
+#   components.parameters - request headers, which OpenAPI expresses as
+#                           parameters with `in: header`
+# Both live here so "the headers" is one file to read. The collection query
+# parameters live in parameters.yaml instead.
+
+components:
+  headers:
+    XRequestId:
+      description: |
+        Server-generated UUIDv7 identifying this request. Present on every
+        response, success or failure. Every problem body repeats the same
+        value as `request_id`, so a user can report an error from the screen
+        alone.
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    ContentLanguage:
+      description: |
+        The language actually used for the localised members of this response.
+        Reports `en` when Arabic was requested but a string had no Arabic
+        translation, so a mixed-language screen is visible rather than silent.
+      required: true
+      schema:
+        type: string
+        enum: [ar, en]
+
+    Allow:
+      description: The methods this path does support. Sent on 405.
+      required: true
+      schema:
+        type: string
+        examples: ['GET']
+
+    RetryAfter:
+      description: Seconds to wait before retrying. Sent on 429, 503, and on IDEMPOTENCY_REQUEST_IN_PROGRESS.
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+
+    RateLimitLimit:
+      description: Requests allowed in the current window.
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+
+    RateLimitRemaining:
+      description: Requests still allowed in the current window.
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+
+    RateLimitReset:
+      description: Seconds until the current window resets, as a delta, not a timestamp.
+      required: false
+      schema:
+        type: integer
+        minimum: 0
+
+    IdempotencyReplayed:
+      description: |
+        Sent as `true` when this response was replayed from a stored result
+        rather than computed again, because the same Idempotency-Key arrived
+        with the same payload. Absent otherwise.
+      required: false
+      schema:
+        type: boolean
+
+    Deprecation:
+      description: |
+        RFC 9745 structured-field date, `@<unix-seconds>`, marking when this
+        endpoint became deprecated. Present on every response from a
+        deprecated endpoint, which keeps working until its Sunset instant.
+      required: false
+      schema:
+        type: string
+        examples: ['@1774915200']
+
+    Sunset:
+      description: |
+        RFC 8594 HTTP-date: when this endpoint stops working. After it, the
+        endpoint answers 410 ENDPOINT_REMOVED. Advertised at least one full
+        client release cycle before that date.
+      required: false
+      schema:
+        type: string
+        examples: ['Sat, 31 Oct 2026 00:00:00 GMT']
+
+    Link:
+      description: |
+        `<...>; rel="deprecation"` — where to read what replaces this
+        endpoint.
+      required: false
+      schema:
+        type: string
+
+  parameters:
+    XCorrelationId:
+      name: X-Correlation-Id
+      in: header
+      required: false
+      description: |
+        Optional client-supplied identifier joining the client's logs to the
+        server's. Echoed back unchanged when it matches the pattern, and
+        propagated to logs, queued jobs and listeners. When absent or
+        malformed it is discarded and the server's own request id is used
+        instead; a malformed value is never an error.
+      schema:
+        type: string
+        pattern: '^[A-Za-z0-9._:-]{1,128}$'
+      example: android-sync-2026-09-22T08-30-00
+
+    AcceptLanguage:
+      name: Accept-Language
+      in: header
+      required: false
+      description: |
+        Preferred language for the localised members of the response. `en` when
+        absent or when the requested language is not supported. Drives `detail`
+        and other user-facing strings only; never field names, enum values,
+        `code`, `title`, or numerals, which stay Western in every locale.
+      schema:
+        type: string
+        enum: [ar, en]
+        default: en
+
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: |
+        Client-supplied token identifying one logical operation, so a retry
+        after a timeout cannot charge, credit or claim twice.
+
+        Required on exactly the three non-upsert operations that create a
+        money-affecting record: InstaPay claim submission, redemption-code
+        redemption, and Google Play purchase acknowledgement. Syncable creates
+        do NOT carry it — they are already idempotent by client-generated
+        identifier, so requiring it there would add a header nobody sends.
+
+        Stored for 24 hours against a fingerprint of the method, path and
+        canonical body, scoped to the authenticated user. Same key and same
+        fingerprint replays the stored response verbatim; a different payload
+        is 409 IDEMPOTENCY_KEY_REUSED and is never treated as a new request.
+      schema:
+        type: string
+        minLength: 16
+        maxLength: 255
+        pattern: '^[A-Za-z0-9._:-]+$'
+      examples:
+        claim:
+          value: claim-0192f7a0-1c3d-7abc-9f01-2b3c4d5e6f70
+
+    XClientPlatform:
+      name: X-Client-Platform
+      in: header
+      required: true
+      description: |
+        Which client is calling. Required on every request: an optional header
+        is one nobody sends and nobody can rely on. Absent is 400
+        CLIENT_VERSION_REQUIRED; an unknown value is 400 CLIENT_VERSION_INVALID.
+      schema:
+        type: string
+        enum: [android, web]
+
+    XClientVersion:
+      name: X-Client-Version
+      in: header
+      required: true
+      description: |
+        The calling client's version, semver. Compared against the minimum
+        supported version for its platform; below the floor is 426
+        CLIENT_VERSION_UNSUPPORTED, carrying `minimum_version` so the app can
+        name the required version in its update prompt.
+
+        The gate applies to reads as well as writes, because an outdated
+        client can misread a payload as easily as it can write a bad one.
+      schema:
+        type: string
+        pattern: '^\d+\.\d+\.\d+$'
+      examples:
+        current:
+          value: 1.4.2

@@ -1,5 +1,20 @@
 # Contract: Cross-cutting HTTP Conventions
 
+> **Superseded — 2026-09-22.** This file is kept as history. The live contract is
+> [`docs/api-conventions.md`](../../../docs/api-conventions.md), with the machine-readable
+> skeleton at [`docs/openapi/`](../../../docs/openapi/openapi.yaml), produced by
+> [spec 003](../../003-api-conventions/spec.md).
+>
+> Two shapes below are **dead**, not merely restated elsewhere:
+>
+> - the `{"error": {...}}` envelope, replaced by RFC 9457 problem details;
+> - the integer `next_cursor`, replaced by an opaque cursor string.
+>
+> Everything else here survives in the new contract, sometimes with a wider rule —
+> the syncable envelope no longer assumes `wallet_id`, because four of the eleven
+> syncable entities are user-scoped.
+
+
 These are the API-wide conventions fixed by the ADRs. Feature contracts reference this file instead of redefining them. The shapes are normative; paths are illustrative.
 
 ## Headers

@@ -1,0 +1,259 @@
+# Shared schemas.
+#
+# Holds the shapes every endpoint reuses: the success envelope, the problem
+# body and its validation entries, the money shape, and the syncable-resource
+# envelope with its two scope mixins. A feature references these; it does not
+# restate them and does not add a second envelope shape.
+
+components:
+  schemas:
+
+    # ---------------------------------------------------------------- envelope
+
+    Envelope:
+      type: object
+      description: |
+        The single success shape. Every successful response with a body uses
+        it: `data` carries the payload, `meta` carries everything about the
+        response rather than about the resource. Failures do not use this
+        envelope; they are RFC 9457 problem details at the top level.
+      required: [data, meta]
+      additionalProperties: false
+      properties:
+        data:
+          description: The resource for a single-item response, or the page of resources for a collection.
+          oneOf:
+            - type: object
+            - type: array
+        meta:
+          type: object
+          description: |
+            Always present and never null. `{}` for a single-item response
+            unless the endpoint documents a member. A collection response uses
+            CollectionMeta.
+
+    CollectionMeta:
+      type: object
+      description: |
+        The `meta` member of a collection response. `has_more` is `false`
+        exactly when `next_cursor` is `null`; the redundancy is deliberate so
+        the last-page test is explicit rather than inferred from a null.
+      required: [next_cursor, has_more, limit]
+      additionalProperties: false
+      properties:
+        next_cursor:
+          type: [string, 'null']
+          description: Opaque cursor for the next page, or null on the last page. Never parsed or constructed by a client.
+          examples: ['djE6dHhuOjE3NjQ1NjcyMDA6MDE5MmY3YTA']
+        has_more:
+          type: boolean
+          description: Whether another page exists.
+        limit:
+          type: integer
+          description: The page size actually applied, after clamping to the maximum.
+          minimum: 1
+          maximum: 200
+          examples: [50]
+
+    # ----------------------------------------------------------------- problem
+
+    Problem:
+      type: object
+      description: |
+        The single failure shape, RFC 9457, served as `application/problem+json`.
+        Extension members sit flat beside the standard ones, never nested under
+        a wrapper. Clients branch on `code` and never on `title` or `detail`.
+      required: [type, title, status, detail, code, request_id]
+      properties:
+        type:
+          type: string
+          format: uri
+          description: |
+            Dereferenceable URL of the catalogue entry for this code, of the
+            form `{base}/problems/{code-in-kebab-case}`. The base is
+            configuration.
+          examples: ['https://api.example/problems/version-conflict']
+        title:
+          type: string
+          description: Short English label from the catalogue. Stable across locales and never localised.
+          examples: ['Version conflict']
+        status:
+          type: integer
+          description: Equal to the HTTP status of the response.
+          minimum: 400
+          maximum: 599
+        detail:
+          type: string
+          description: Human sentence, localised per Accept-Language. Never branched on.
+        code:
+          $ref: '../error-catalog.yaml#/components/schemas/ErrorCode'
+        request_id:
+          type: string
+          format: uuid
+          description: The same value as the X-Request-Id response header, repeated so a user can report it from the error screen.
+        instance:
+          type: string
+          format: uri-reference
+          description: The request path, when it adds anything the client does not already know.
+        errors:
+          type: array
+          description: Present on VALIDATION_FAILED only. One entry per offending input.
+          items:
+            $ref: '#/components/schemas/ValidationError'
+        current:
+          type: object
+          description: |
+            Present on VERSION_CONFLICT only. The record's full current state
+            under the same schema a read returns, including when that state is
+            a tombstone, so the client can merge without a second request.
+        minimum_version:
+          type: string
+          description: Present on CLIENT_VERSION_UNSUPPORTED only. The semver the app must update to.
+          examples: ['1.6.0']
+        retry_after_seconds:
+          type: integer
+          description: Present when a Retry-After header is sent. A convenience mirror of that header.
+          minimum: 0
+
+    ValidationError:
+      type: object
+      description: |
+        One invalid input. Two distinct failures on the same input produce two
+        entries. Entry order is not significant and a client must not depend
+        on it.
+      required: [pointer, code, detail]
+      additionalProperties: false
+      properties:
+        pointer:
+          type: string
+          description: |
+            RFC 6901 JSON Pointer into the request body, rooted at the body
+            itself. Array positions are numeric segments. A failure on a query
+            parameter or a header points into a synthetic document:
+            `/$query/<name>` or `/$header/<Name>`.
+          examples: ['/postings/0/amount_minor', '/$query/limit', '/$header/Idempotency-Key']
+        code:
+          $ref: '../error-catalog.yaml#/components/schemas/FieldErrorCode'
+        detail:
+          type: string
+          description: Human sentence naming this field's problem, localised per Accept-Language.
+
+    # ------------------------------------------------------------------- money
+
+    Money:
+      type: object
+      description: |
+        Money is an integer count of minor units plus an ISO 4217 alpha-3
+        currency, per ADR-0003. The `_minor` suffix is what stops `12500`
+        being read as 12,500 EGP.
+
+        A decimal string, a float or a number with a fractional part is
+        REFUSED with field code AMOUNT_NOT_INTEGER. It is never coerced,
+        because coercion is the failure this rule exists to prevent.
+
+        The concrete member is named for its meaning — `amount_minor`,
+        `balance_minor`, `opening_balance_minor`, `limit_minor` — so this
+        schema is the shape, referenced by resources that spell the name.
+      required: [amount_minor, currency]
+      additionalProperties: false
+      properties:
+        amount_minor:
+          type: integer
+          description: |
+            Signed count of minor units. Bounded to ±(2^53 − 1) so a
+            JavaScript client on the website cannot lose precision silently.
+            Liability balances are negative and presented by the client as an
+            amount owed.
+          minimum: -9007199254740991
+          maximum: 9007199254740991
+          examples: [12500, -14000]
+        currency:
+          type: string
+          description: ISO 4217 alpha-3, uppercase. Lowercase is refused with INVALID_CURRENCY.
+          pattern: '^[A-Z]{3}$'
+          examples: ['EGP']
+
+    # -------------------------------------------------------- syncable resources
+
+    SyncableResource:
+      type: object
+      description: |
+        The members every syncable resource exposes, whatever it is. A resource
+        composes this with EXACTLY ONE scope mixin — WalletScoped or
+        UserScoped — and adds its own fields.
+
+        This schema deliberately declares NO scope key. Four of the eleven
+        syncable resources are user-scoped, so an envelope that assumed a
+        wallet identifier would be wrong for Profile, Device Session, Category
+        and Budget.
+
+        A write request body carries `version` and omits `change_seq`,
+        `created_at` and `updated_at`; sending one of those is UNKNOWN_FIELD.
+      required: [id, version, change_seq, created_at, updated_at, deleted_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUIDv7, generated by the client so a record can be created offline.
+          pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+        version:
+          type: integer
+          description: |
+            Server-incremented optimistic-concurrency counter. Every write
+            carries the client's last-seen value; omitted or 0 means create.
+            A stale value refuses the whole write with 409 VERSION_CONFLICT.
+          minimum: 0
+        change_seq:
+          type: integer
+          format: int64
+          description: |
+            Sync ordering within the scope, assigned by the server from the
+            scope's counter in commit order. Never accepted from a client. A
+            client stores it only as part of the opaque cursor it is given.
+          minimum: 0
+        created_at:
+          type: string
+          format: date-time
+          description: UTC instant, microsecond precision.
+        updated_at:
+          type: string
+          format: date-time
+          description: UTC instant, microsecond precision.
+        deleted_at:
+          type: [string, 'null']
+          format: date-time
+          description: |
+            Tombstone marker: null when live, a UTC instant when deleted.
+            Deletion is never a hard delete of a syncable record, and
+            tombstones appear in change feeds so an offline client learns
+            about a deletion the same way it learns about an edit.
+
+    WalletScoped:
+      type: object
+      description: |
+        Mixin for the seven wallet-scoped syncable resources: Wallet, Wallet
+        Member, Category Reference, Transaction, Recurring Rule, Occurrence,
+        Invitation. Carries `wallet_id` and never `user_id`.
+      required: [wallet_id]
+      properties:
+        wallet_id:
+          type: string
+          format: uuid
+          description: The wallet whose feed this record rides, and the scope its authorization is decided in.
+
+    UserScoped:
+      type: object
+      description: |
+        Mixin for the four user-scoped syncable resources: Profile, Device
+        Session, Category, Budget. Carries `user_id` and never `wallet_id`.
+
+        These are the resources the original envelope assumption got wrong.
+        A budget is personal rather than a household limit, and categories
+        ride the user feed, which is why a shared wallet needs the read-only
+        Category Reference projection to render a partner's category.
+      required: [user_id]
+      properties:
+        user_id:
+          type: string
+          format: uuid
+          description: The user whose feed this record rides.

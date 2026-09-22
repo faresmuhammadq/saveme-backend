@@ -483,6 +483,8 @@ The shapes that recur across entities. Features use these names, not variants.
 
 Forbidden variants: `amount_cents`, `total_minor`, `cached_balance`, `space_id`, `updated_time`, `is_deleted`, `rev`, `seq`.
 
+These are the names. Their form on the wire — how money, dates, instants and the scope key appear in a request or a response, and what the API does when one arrives in the wrong shape — is in [docs/api-conventions.md](api-conventions.md).
+
 ---
 
 ## Prior-art mapping

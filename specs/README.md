@@ -10,15 +10,19 @@ What is written, what is next, and what each remaining spec must decide. One fol
 |---|---|---|---|
 | A1 | Architecture constitution & ADR set | [`001-architecture-constitution-adrs`](001-architecture-constitution-adrs/) | ✅ Done — constitution v1.1.0, ADRs 0001–0012 |
 | A3 | Domain glossary & model map | [`002-domain-glossary-model-map`](002-domain-glossary-model-map/) | ✅ Done — [docs/glossary.md](../docs/glossary.md), 22 entities |
-| A2 | API conventions | → `003-…` | ⏭️ **Next** — inherits from A3: the scope key is not always `wallet_id` (4 user-scoped entities), `Category Reference` is a read-only feed resource with no write endpoint, and a Transaction carries exactly one category in MVP |
+| A2 | API conventions | [`003-api-conventions`](003-api-conventions/) | ✅ Done — [docs/api-conventions.md](../docs/api-conventions.md) + [docs/openapi/](../docs/openapi/openapi.yaml), 38 error codes |
 | A4 | Security & privacy baseline | → `004-…` | Queued |
 | A5 | Engineering conventions | → `005-…` | Queued |
 
 **Follow-ups from A1** (small, not full specs): F-1 architecture tests (P-02, P-03, P-09) · ~~F-2 PostgreSQL for dev/test/CI~~ ✅ done 2026-09-19 · F-3 observability middleware + JSON logs + error tracker (needs dependency approval) · F-4 shared kernel (`Money`, `Currency`, clock).
 
+**Follow-up from A2**: F-5 OpenAPI schema linter in CI (Spectral, Redocly or equivalent) — deferred to A5, where the pipeline is chosen anyway, because every candidate is a new dependency needing the owner's approval. Until then the skeleton is checked by the structural checks and the 49-item endpoint review checklist in [003's quickstart](003-api-conventions/quickstart.md).
+
 **Then the MVP feature areas** (from the brief, no specs yet): identity & auth · profile & preferences · plans & entitlements · wallets & membership · categories · transactions ledger · recurring transactions (incl. gam'eya and installments) · budgets · sharing & invitations · billing (Play + InstaPay) · admin back-office · reports · offline sync · export & account deletion · devices & push.
 
 ### Why A3 before A2
+
+*Settled: the dependency was real. A2 shipped a syncable envelope with a generalised scope key, because four of the eleven syncable entities turned out to be user-scoped.*
 
 A2 fixes an envelope in which every syncable resource exposes `wallet_id`. Whether that holds depends on where categories and budgets live once `Space` is dropped — an A3 question. Writing A2 first would freeze a contract around entities whose scope is undecided. A4 and A5 are independent of both and can be pulled forward.
 
@@ -61,14 +65,14 @@ Left for the glossary itself: since categories ride the user feed, a member of a
 
 **Considerations.** The KMP client generates IDs, so create endpoints are PUT /…/{id} (idempotent upsert) rather than POST. Amounts are always { "amount": 12500, "currency": "EGP" }, never a decimal string. Dates that are calendar dates (transaction date) are YYYY-MM-DD, not timestamps. Validation errors must carry field paths the client can map to inputs. Produce the OpenAPI skeleton (info, servers, security schemes, shared schemas, error responses) that every feature spec extends.
 
-**Conflicts to resolve** (these become the clarification questions):
+**Conflicts — all resolved 2026-09-20, and shipped 2026-09-22** (see [spec.md → Clarifications](003-api-conventions/spec.md)):
 
-| Description says | Already ratified | Note |
-|---|---|---|
-| `{"amount": 12500, "currency": "EGP"}` | ADR-0003 fixed `amount_minor` | Recommend keeping `amount_minor`: `amount: 12500` reads like 12,500 EGP to a newcomer, the exact confusion ADR-0003 exists to prevent |
-| RFC 9457 problem+json | [`001/contracts/http-conventions.md`](001-architecture-constitution-adrs/contracts/http-conventions.md) defines a custom `{"error": {...}}` envelope | RFC 9457 is the better standard; adopting it means deciding where the 409's `current` entity sits (a problem extension member) and rewriting that contract |
-| `Idempotency-Key` required on money-affecting POSTs | Creates are `PUT /{id}` upserts, already idempotent (ADR-0002) | Narrow to the few non-syncable POSTs: InstaPay claim, redeem code, Play purchase ack |
-| Syncable fields omit `change_seq`; assume `wallet_id` | ADR-0008 exposes `change_seq` and defines **two** scopes, wallet and user | Add `change_seq`; generalise the scope key (profile, devices and preferences are user-scoped) |
+| Conflict | Resolution |
+|---|---|
+| `{"amount": 12500}` vs ADR-0003's `amount_minor` | **`amount_minor` kept.** No ADR change; the suffix stops `12500` being read as 12,500 EGP |
+| RFC 9457 vs the custom `{"error": {...}}` envelope in [`001/contracts/http-conventions.md`](001-architecture-constitution-adrs/contracts/http-conventions.md) | **RFC 9457 problem details**, with the stable code, request id, validation entries and the 409's current record as extension members. That 001 contract is superseded by this spec's output — no ADR needed, since the error shape was never in an ADR |
+| `Idempotency-Key` on all money-affecting POSTs | **Narrowed** to the three non-upsert operations (InstaPay claim, redeem code, Play purchase ack); syncable creates are already idempotent by id (ADR-0002) |
+| Syncable fields omit `change_seq`, assume `wallet_id` | **`change_seq` added**; the scope key is generalised — 4 of 11 syncable entities are user-scoped |
 
 ---
 

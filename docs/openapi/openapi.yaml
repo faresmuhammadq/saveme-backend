@@ -1,0 +1,94 @@
+# API skeleton.
+#
+# This root file carries only service-level declarations and an index of path
+# files. It MUST NOT define a schema, parameter, header or response inline.
+# Shared definitions live in components/*.yaml; the error catalogue lives in
+# error-catalog.yaml. See docs/api-conventions.md for the prose contract.
+
+openapi: 3.1.0
+
+info:
+  title: Personal finance backend API
+  summary: Offline-first personal finance API for wallets, transactions, budgets and sharing.
+  description: |
+    Every endpoint lives under `/api/v1`. Requests and responses are JSON;
+    failures are RFC 9457 problem details served as `application/problem+json`.
+
+    The conventions every endpoint obeys are documented in `docs/api-conventions.md`.
+    A feature adds one file under `paths/` and references the shared components
+    rather than restating them.
+  version: v1.0
+  contact:
+    name: Backend maintainers
+  license:
+    name: Proprietary
+    identifier: LicenseRef-Proprietary
+
+servers:
+  # The host is configuration, never a literal in this document.
+  - url: https://{host}/api/v1
+    description: Deployed environment
+    variables:
+      host:
+        default: api.example
+        description: API hostname for the target environment.
+  - url: http://{host}/api/v1
+    description: Local development, served by the `dev` CLI
+    variables:
+      host:
+        default: localhost
+        description: Local hostname; the project's dev host is set in the environment.
+
+# Bearer by default. A public operation opts out with `security: []`.
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: |
+        A personal access token, one per device session. How tokens are issued,
+        refreshed and revoked is defined by the security baseline (spec 004),
+        not by this skeleton.
+
+# One tag per bounded context, named exactly as the constitution names it.
+tags:
+  - name: Identity
+    description: Users, credentials, sessions, profile and preferences.
+  - name: Wallets & Ledger
+    description: Wallets, members, categories, transactions and recurring rules.
+  - name: Budgeting
+    description: Budgets per category per period, and budget progress.
+  - name: Sharing
+    description: Invitations, acceptance and revocation.
+  - name: Plans & Billing
+    description: Plans, subscriptions, purchases, claims and redemption codes.
+  - name: Sync
+    description: Change feeds, cursors and conflict handling.
+  - name: Reporting
+    description: Report read models and projections.
+  - name: Notifications
+    description: Devices, push tokens and notification preferences.
+  - name: Admin
+    description: Back-office surfaces, served under a separate guard.
+
+# Paths index.
+#
+# Every entry is a $ref into paths/<feature>.yaml. No operation, schema,
+# parameter or response is ever defined inline in this file, so a feature's
+# diff is its own path file plus, at most, one entry here and one enum value
+# in error-catalog.yaml.
+#
+# The form each entry takes:
+#
+#   /wallets:
+#     $ref: './paths/wallets.yaml#/~1wallets'
+#   /wallets/{id}:
+#     $ref: './paths/wallets.yaml#/~1wallets~1{id}'
+#
+# (`~1` is an escaped `/` inside a JSON Pointer.) A worked example of what
+# a path file contains is in paths/_template.yaml; files whose name starts
+# with an underscore are templates and are never referenced here.
+paths: {}

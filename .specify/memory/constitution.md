@@ -1,6 +1,26 @@
 <!--
 Sync Impact Report (latest first)
 
+v1.2.0 → 1.3.0 — 2026-09-25
+- MINOR: new principle P-18 Delivery surfaces (non-negotiable). The product is
+  API-first; the admin back office is the only server-rendered interface and is
+  built with Livewire. Eight rules fix where components live, how they reach data,
+  what their public state may hold, how they authorize, and that they never show
+  an individual user's amounts, balances or notes.
+- Bounded Contexts table: the Admin row names Livewire and P-18.
+- Reason: owner decision to build the admin dashboard in this repository with
+  Livewire while keeping the project API-first. Livewire 4 is already a direct
+  dependency, so no approval is needed.
+- Consistency: rule 8 restates the security baseline's protected-attributes table,
+  which grants operators no read on amounts, balances or notes; it also keeps open
+  the paused operator-data-boundary decision (user-granted support windows).
+- Templates: none changed. The plan template renders one Constitution Check row per
+  Active principle, so plans gain a P-18 row automatically.
+- Follow-ups: docs/engineering-conventions.md and the architecture gates should
+  cover app/Modules/Admin/Http/Livewire (rule 3) and the no-models rule (rule 5);
+  docs/glossary.md's Admin entry should name the back office. Both belong to the
+  admin dashboard feature.
+
 v1.1.0 → 1.2.0 — 2026-09-25
 - MINOR: P-16 rule 1 materially tightened — static analysis at Larastan level 8,
   was level 7. Quality Gates item 1 updated to match, and now names the
@@ -46,7 +66,7 @@ v1.0.0 — 2026-09-19 (ratified)
 
 <!-- "Save Me" is a working codename used as display text only; see P-13. -->
 
-**Version**: 1.2.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-25
+**Version**: 1.3.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-25
 
 ## Purpose & Precedence
 
@@ -247,6 +267,21 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 *Rationale*: this project's risk is not building the wrong thing, it is building too many things before shipping the first one.
 
+### P-18 Delivery surfaces
+
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0006](../../docs/adr/0006-wallet-scoped-authorization.md)
+
+1. The product MUST be API-first: every capability a user can reach MUST exist as a JSON endpoint under `/api/v1` before any client uses it. The Android app and the website are clients of that API. A user-facing capability MUST NOT exist only in a server-rendered page.
+2. The admin back office is the only server-rendered interface in this repository. It MUST be built with Livewire and Blade, and a second interface stack (a JavaScript SPA framework, Inertia, or similar) MUST NOT be introduced without amending this principle.
+3. Livewire components MUST live in `app/Modules/Admin/Http/Livewire`, and their views MUST be registered from the Admin module rather than placed in the shared `resources/views` tree, so the P-02 gates cover the back office like any other module.
+4. Back-office routes MUST sit under `/admin`, behind the separate admin guard and its second factor (P-08 rule 4). An application credential MUST NOT reach any back-office route, including Livewire's own update endpoint when it serves a back-office component.
+5. A component MUST obtain data only through other modules' `Application` query services, and its public properties MUST hold only scalars and DTOs — never Eloquent models — because Livewire serialises public properties to the browser and trusts them on the way back.
+6. A component action that changes state MUST call an application service. It MUST NOT bind a form to a model or write through one, so back-office changes run the same invariants, authorization and events as app actions.
+7. A component MUST authorize on every request it handles, not only when the page first loads.
+8. A back-office screen MUST NOT display an individual user's amounts, balances or notes. The security baseline grants operators no read on those attributes; a way for a user to grant support access is added by a later amendment, not by a screen.
+
+*Rationale*: the Android app is the product and the API is its contract, so a capability built first as a page is a capability the app does not have. The back office is a different audience with a different threat model, and Livewire keeps it in PHP, inside the module boundaries, without a second build pipeline. Its specific risks — serialised public state, model binding, authorization checked only on page load — are exactly where a back office becomes a softer way into user data, so they are closed here rather than left to each screen.
+
 ## Bounded Contexts & Modules
 
 Nine contexts, one module directory each. Module directories use short PascalCase names because `&` cannot appear in a PHP namespace.
@@ -261,7 +296,7 @@ Nine contexts, one module directory each. Module directories use short PascalCas
 | Sync | `app/Modules/Sync` | change feeds, cursors, conflict handling, tombstone retention | `ChangeFeedService`, `UpsertService` |
 | Reporting | `app/Modules/Reporting` | report read models and projections | `ReportQueryService` |
 | Notifications | `app/Modules/Notifications` | devices, push tokens, notification dispatch and preferences | `DeviceService`, `NotificationService` |
-| Admin | `app/Modules/Admin` | admin accounts and guard, back-office screens, audit of admin actions | `AdminAuditService` |
+| Admin | `app/Modules/Admin` | admin accounts and guard, back-office screens (Livewire, P-18), audit of admin actions | `AdminAuditService` |
 
 **Shared kernel** — `app/Modules/Shared` holds `Money`, `Currency`, identifier helpers, the clock abstraction and the domain-event base class. It has no persistence, no migrations and no dependency on any other module. Every module may depend on it.
 
@@ -303,7 +338,7 @@ Every `plan.md` includes this section, filled in before Phase 0 and again after 
 ```markdown
 ## Constitution Check
 
-*Constitution v1.2.0. GATE: before Phase 0 and again after Phase 1.*
+*Constitution v1.3.0. GATE: before Phase 0 and again after Phase 1.*
 
 | Principle | Result | Evidence / justification |
 |---|---|---|
@@ -341,4 +376,4 @@ Every amendment updates the footer's **Last Amended** date and the Sync Impact R
 
 **Consistency** — run `/speckit-analyze` before implementing each feature. Contradictions between this constitution, the ADRs and a feature's spec are defects to resolve before code.
 
-**Version**: 1.2.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-25
+**Version**: 1.3.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-25

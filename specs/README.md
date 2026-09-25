@@ -18,7 +18,7 @@ What is written, what is next, and what each remaining spec must decide. One fol
 
 **Follow-up from A2**: ~~F-5 OpenAPI schema linter in CI~~ ✅ done 2026-09-25 in A5 — the skeleton checks run as `tests/Contract/OpenApi` and Spectator loads the document on every push. Original note: (Spectral, Redocly or equivalent) — deferred to A5, where the pipeline is chosen anyway, because every candidate is a new dependency needing the owner's approval. Until then the skeleton is checked by the structural checks and the 49-item endpoint review checklist in [003's quickstart](003-api-conventions/quickstart.md).
 
-**Then the MVP feature areas** (from the brief, no specs yet): identity & auth · profile & preferences · plans & entitlements · wallets & membership · categories · transactions ledger · recurring transactions (incl. gam'eya and installments) · budgets · sharing & invitations · billing (Play + InstaPay) · admin back-office · reports · offline sync · export & account deletion · devices & push.
+**Then the MVP feature areas** — briefs recorded in [specs/briefs/](briefs/README.md), one file each, called with `/speckit-specify B1` … `B16` and `D1` for the admin dashboard foundation. Original list: identity & auth · profile & preferences · plans & entitlements · wallets & membership · categories · transactions ledger · recurring transactions (incl. gam'eya and installments) · budgets · sharing & invitations · billing (Play + InstaPay) · admin back-office · reports · offline sync · export & account deletion · devices & push.
 
 ### Why A3 before A2
 

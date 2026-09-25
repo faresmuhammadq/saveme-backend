@@ -13,7 +13,8 @@ Recommended order, with the dependencies that force it. A spec directory takes t
 | 1 | [B1](B01-identity-auth.md) | Identity & authentication | — | Authentication package needs approval |
 | 2 | [B2](B02-profile-preferences.md) | Profile & preferences | B1 | |
 | 3 | [B3](B03-plans-entitlements.md) | Plans & entitlements | B1 | Registration creates the Free subscription |
-| 4 | [D1](D01-admin-dashboard-foundation.md) | Admin dashboard foundation | — | **Design not ready — owner provides it later**; independent of B1, must land before B11 and B12 |
+| 4 | [D1](D01-admin-dashboard-foundation.md) | Admin dashboard foundation | — | Specified as spec 006 against the Calm Clarity design source; UI only, sign-in split to D2 |
+| 4a | [D2](D02-operator-sign-in.md) | Operator sign-in | D1 | Must land before B11 and B12; one-time-code library needs approval, or in-house RFC 6238 |
 | 5 | [B4](B04-wallets-membership.md) | Wallets & membership | B1, B3 | Balance in the same transaction (decided) |
 | 6 | [B5](B05-categories.md) | Categories | B4 | User-scoped plus platform-owned (decided); updates glossary and ADR-0012 |
 | 7 | [B6](B06-transactions-ledger.md) | Transactions ledger | B4, B5 | |
@@ -22,8 +23,8 @@ Recommended order, with the dependencies that force it. A spec directory takes t
 | 10 | [B8](B08-budgets.md) | Budgets | B5, B6 | Answers six banked Budgeting questions |
 | 11 | [B9](B09-sharing-invitations.md) | Sharing & invitations | B3, B4 | |
 | 12 | [B10](B10-billing-google-play.md) | Billing — Google Play | B3 | Google SDK needs approval |
-| 13 | [B11](B11-billing-instapay.md) | Billing — InstaPay claims | B3, D1 | |
-| 14 | [B12](B12-back-office-operations.md) | Back-office operations | D1, B3, B11 | Filament replaced by Livewire (P-18) |
+| 13 | [B11](B11-billing-instapay.md) | Billing — InstaPay claims | B3, D1, D2 | |
+| 14 | [B12](B12-back-office-operations.md) | Back-office operations | D1, D2, B3, B11 | Filament replaced by Livewire (P-18) |
 | 15 | [B13](B13-reports.md) | Reports | B6, B8 | |
 | 16 | [B15](B15-export-data-deletion.md) | Export & data deletion | B6, B9 | Ownership transfer (decided); amends the security baseline |
 | 17 | [B16](B16-devices-push.md) | Devices & push notifications | B1, B7, B9 | Firebase SDK needs approval |

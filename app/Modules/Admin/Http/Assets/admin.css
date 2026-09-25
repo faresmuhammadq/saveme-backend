@@ -1,0 +1,142 @@
+/*
+ * Back office — Calm Clarity tokens (spec 006, contracts/tokens.md).
+ * Design source: "Save Me Admin — Calm Clarity System", version 1790356228-859b.
+ *
+ * Tokens are defined once, here. Primitives use only the utilities these
+ * generate; tests/Arch/AdminBackOfficeTest.php rejects arbitrary values and
+ * physical-direction utilities in Admin views.
+ *
+ * Dark theme: not shipped (FR-005). A later theme redefines the same
+ * variables under [data-theme="dark"]; no primitive changes.
+ */
+
+@import 'tailwindcss' source(none);
+
+@source '../Views';
+@source './admin.js';
+
+@theme {
+    /* The default palette is removed so only design colours exist. */
+    --color-*: initial;
+
+    --color-canvas: #EDF0F5;
+    --color-surface: #FFFFFF;
+    --color-sunken: #F4F6FA;
+    --color-sunken-2: #E9EDF3;
+    --color-line: #E3E7EE;
+    --color-field: #8A93A2;
+
+    --color-ink: #161A22;
+    --color-ink-2: #5B6472;
+    --color-ink-3: #6F7886;
+
+    --color-accent: #4C6FD6;
+    --color-accent-hover: #3F5FC2;
+    --color-accent-pressed: #3553B0;
+    --color-accent-soft: #E9EEFC;
+    --color-on-accent: #FFFFFF;
+
+    --color-positive: #3F9E78;
+    --color-positive-text: #2C7A5B;
+    --color-positive-soft: #E6F3EC;
+    --color-pending: #C98A2B;
+    --color-pending-text: #8F5E12;
+    --color-pending-soft: #FBF1DE;
+    --color-over: #C56A4F;
+    --color-over-text: #A9503A;
+    --color-over-soft: #F7E9E3;
+
+    --color-scrim: rgb(22 26 34 / 0.38);
+    --color-ring: rgb(76 111 214 / 0.35);
+
+    --font-sans: 'Hanken Grotesk', 'IBM Plex Sans Arabic', ui-sans-serif, system-ui, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    --text-overline: 11px;
+    --text-caption: 12px;
+    --text-mono: 12.5px;
+    --text-label: 13px;
+    --text-body: 14px;
+    --text-lead: 15px;
+    --text-h3: 16px;
+    --text-h2: 20px;
+    --text-h1: 28px;
+    --text-numeral-l: 28px;
+    --text-numeral-xl: 40px;
+
+    --radius-badge: 6px;
+    --radius-control: 10px;
+    --radius-tile: 14px;
+    --radius-card: 18px;
+    --radius-hero: 22px;
+
+    --shadow-raised: 0 1px 2px rgb(20 30 55 / 0.05), 0 1px 3px rgb(20 30 55 / 0.06);
+    --shadow-overlay: 0 12px 32px rgb(20 30 55 / 0.14);
+
+    --animate-shimmer: shimmer 1.6s ease-in-out infinite;
+
+    @keyframes shimmer {
+        0%, 100% { opacity: 0.55; }
+        50% { opacity: 1; }
+    }
+}
+
+/* Focus: 1px accent border and a 4px ring on outlined controls… */
+@utility focus-ring {
+    &:focus-visible {
+        outline: none;
+        border-color: var(--color-accent);
+        box-shadow: 0 0 0 4px var(--color-ring);
+    }
+}
+
+/* …a surface gap and a 3px ring on filled controls. */
+@utility focus-ring-filled {
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px var(--color-surface), 0 0 0 5px var(--color-ring);
+    }
+}
+
+@layer base {
+    [x-cloak] {
+        display: none !important;
+    }
+
+    /* Tailwind 4 no longer gives buttons a pointer cursor; the back office keeps it. */
+    button:not(:disabled),
+    [role='button']:not([aria-disabled='true']),
+    label:has(> input:not(:disabled)) {
+        cursor: pointer;
+    }
+
+    dialog::backdrop {
+        background: var(--color-scrim);
+    }
+
+    /* Arabic: no tracking or case changes, which break letter joining (FR-035). */
+    :lang(ar),
+    :lang(ar) * {
+        letter-spacing: normal !important;
+        text-transform: none !important;
+    }
+
+    :lang(ar) body {
+        line-height: 1.6;
+    }
+
+    :lang(ar) h1,
+    :lang(ar) h2 {
+        font-weight: 700;
+        line-height: 1.35;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation: none !important;
+            transition: none !important;
+        }
+    }
+}

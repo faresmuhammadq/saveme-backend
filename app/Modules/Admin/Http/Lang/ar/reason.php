@@ -1,0 +1,34 @@
+<?php
+
+/*
+| Back office: the reason prompt (spec 006, FR-017). Every key here exists in ../en/reason.php.
+*/
+
+return [
+    'question' => 'لماذا تتخذ هذا الإجراء؟',
+    'attribution' => 'يُسجَّل في سجل التدقيق باسم :who',
+    'confirm' => 'تأكيد',
+    'errors' => [
+        'blank' => 'اذكر سببًا قبل التأكيد.',
+        'too_long' => 'اجعل السبب في حدود :max حرف.',
+    ],
+    'presets' => [
+        'reference_verified' => 'تم التحقق من الرقم المرجعي',
+        'amount_matches' => 'المبلغ مطابق',
+        'screenshot_checked' => 'تمت مراجعة لقطة الشاشة',
+    ],
+    'actions' => [
+        'gallery' => [
+            'approve' => [
+                'title' => 'الموافقة على النموذج',
+                'consequence' => 'يشغّل إجراءً نموذجيًا. لا يُحفظ شيء.',
+            ],
+        ],
+        'fixture' => [
+            'approve' => [
+                'title' => 'الموافقة على النموذج',
+                'consequence' => 'يسجّل موافقة نموذجية.',
+            ],
+        ],
+    ],
+];

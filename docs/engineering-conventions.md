@@ -275,6 +275,33 @@ A decision that extends or contradicts an Accepted decision record gets a **new*
 
 ---
 
+## Back office (Admin module)
+
+The back office is the only server-rendered interface (constitution P-18), built from the primitives spec 006 delivers. A feature composes its screens from them and writes no styling of its own.
+
+- **Where things live**: everything is in `app/Modules/Admin/Http`, registered by `AdminServiceProvider`.
+  - Primitives are anonymous Blade components in `Views/components`, used as `<x-admin::button>`, `<x-admin::table>` and so on.
+  - Livewire classes are in `Livewire`, views in `Views/livewire`, strings in `Lang/{en,ar}` under the `admin::` namespace, and tokens and Alpine helpers in `Assets`.
+  - Nothing goes in `resources/views` or `app/Livewire`.
+- **Contracts**: the props, slots and states of every primitive are in [spec 006's contracts](../specs/006-admin-dashboard-foundation/contracts/components.md). The design source and its version are named in the spec.
+- **Right-to-left by construction**: Admin views use only logical utilities (`ms-`, `me-`, `ps-`, `pe-`, `start-`, `end-`, `text-start`, `text-end`, `border-s`, `border-e`, `rounded-s`, `rounded-e`). Colours and sizes come from the token set, never arbitrary values. `tests/Arch/AdminBackOfficeTest.php` fails on either.
+- **Text**: every string is in both `ar` and `en`, which `TranslationCompletenessTest` checks. Numerals are Western in both languages.
+- **Navigation**: a feature adds its sidebar entry from its own service provider, without editing the shell:
+
+  ```php
+  app(NavigationRegistry::class)->add(new NavigationEntry(
+      key: 'claims', group: 'operate', labelKey: 'billing::admin.nav.claims',
+      icon: 'claims', route: 'admin.claims', order: 20,
+      badge: fn (): ?int => $claims->pendingCount(),
+  ));
+  ```
+
+- **Audited actions**: a screen uses the `RequiresReason` trait. The action itself is a **protected** method whose last parameter is `AuditReason $reason`, so it cannot run without a reason and the browser cannot call it directly. The public method only calls `$this->requireReason('claim.approve', 'approveClaim', [$claimId])`, and the view renders `<x-admin::reason-prompt action-key="claim.approve" />`.
+- **Full pages**: a full-page Livewire component renders into the shell with `->layout('admin::page', ['title' => …, 'breadcrumbs' => …])`.
+- **Gallery**: `/admin/_gallery` shows every primitive in every state. It exists in the local environment only.
+
+---
+
 ## Dependencies
 
 No package is added without the repository owner's approval. The approved development tools today are Pint, Larastan, Pest with its architecture plugin, and Spectator.

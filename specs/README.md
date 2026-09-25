@@ -13,6 +13,7 @@ What is written, what is next, and what each remaining spec must decide. One fol
 | A2 | API conventions | [`003-api-conventions`](003-api-conventions/) | ✅ Done — [docs/api-conventions.md](../docs/api-conventions.md) + [docs/openapi/](../docs/openapi/openapi.yaml), 38 error codes |
 | A4 | Security & privacy baseline | [`004-security-privacy-baseline`](004-security-privacy-baseline/) | ✅ Done — [docs/security-baseline.md](../docs/security-baseline.md) + [docs/privacy-commitments.md](../docs/privacy-commitments.md), 10 codes reserved |
 | A5 | Engineering conventions | [`005-engineering-conventions`](005-engineering-conventions/) | ✅ Done — [docs/engineering-conventions.md](../docs/engineering-conventions.md) + [CONTRIBUTING.md](../CONTRIBUTING.md), gates in `tests/Arch` and `tests/Contract/OpenApi` |
+| D1 | Admin dashboard foundation | [`006-admin-dashboard-foundation`](006-admin-dashboard-foundation/) | 🟡 Built, awaiting design review — tokens, ~40 bilingual RTL primitives, shell, navigation registry, reason prompt, local gallery at `/admin/_gallery`; sign-in split to [D2](briefs/D02-operator-sign-in.md) |
 
 **Follow-ups from A1** (small, not full specs): ~~F-1 architecture tests (P-02, P-03, P-09)~~ ✅ done 2026-09-25 in A5 · ~~F-2 PostgreSQL for dev/test/CI~~ ✅ done 2026-09-19 · F-3 observability middleware + JSON logs + error tracker (needs dependency approval) · F-4 shared kernel (`Money`, `Currency`, clock).
 

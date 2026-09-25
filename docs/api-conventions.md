@@ -586,6 +586,8 @@ Deprecation is advertised for at least one full client release cycle before the 
 
 Retiring an endpoint this way does not bump `v1`. The version number moves only for a breaking change to the surface as a whole — see [Base path and versioning](#base-path-and-versioning).
 
+> **Where credentials come from.** This document fixes the bearer scheme and the refusals around it. How a credential is issued, how long it lives, how it is revoked, and what a caller must have verified before it works are in [docs/security-baseline.md](security-baseline.md).
+
 ## Extending the skeleton
 
 A feature spec describes only what is unique to its endpoints. The envelope, the error catalogue, paging, auth, the headers and the shared schemas already exist, and the feature references them.

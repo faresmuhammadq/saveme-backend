@@ -50,6 +50,16 @@ components:
         - RATE_LIMITED
         - INTERNAL_ERROR
         - SERVICE_UNAVAILABLE
+        - INVALID_CREDENTIALS
+        - ACCOUNT_LOCKED
+        - EMAIL_NOT_VERIFIED
+        - VERIFICATION_TOKEN_INVALID
+        - RESET_TOKEN_INVALID
+        - TWO_FACTOR_REQUIRED
+        - TWO_FACTOR_INVALID
+        - INSECURE_TRANSPORT
+        - PROVIDER_SIGNATURE_INVALID
+        - EXPORT_IN_PROGRESS
 
     FieldErrorCode:
       type: string
@@ -337,3 +347,77 @@ x-error-catalog:
     meaning: 'The member cannot be changed after the record is created.'
     retryable: after-change
     since: v1.0
+
+  # Reserved by the security and privacy baseline (spec 004). These are the
+  # refusals the baseline requires; the endpoints that return them are built by
+  # Identity, Billing and Admin.
+  INVALID_CREDENTIALS:
+    status: 401
+    level: [response]
+    title: 'Invalid credentials'
+    meaning: 'The address or the password is wrong. The same answer is given whether or not the address is registered, so an address cannot be probed.'
+    retryable: never
+    since: v1.1
+  ACCOUNT_LOCKED:
+    status: 423
+    level: [response]
+    title: 'Account locked'
+    meaning: 'Too many consecutive failures against this account; see Retry-After. The lock is temporary, caps at 60 minutes, and a completed password reset clears it at once.'
+    retryable: automatic
+    since: v1.1
+  EMAIL_NOT_VERIFIED:
+    status: 403
+    level: [response]
+    title: 'Address not verified'
+    meaning: 'The address has not been verified, and an unverified account may read but may not write to any wallet. Offer to send the verification again.'
+    retryable: never
+    since: v1.1
+  VERIFICATION_TOKEN_INVALID:
+    status: 400
+    level: [response]
+    title: 'Verification link invalid'
+    meaning: 'The verification link is expired, already used, or superseded by a later request. Request a new one.'
+    retryable: after-change
+    since: v1.1
+  RESET_TOKEN_INVALID:
+    status: 400
+    level: [response]
+    title: 'Reset link invalid'
+    meaning: 'The password reset link is expired, already used, or superseded by a later request or a password change. Request a new one.'
+    retryable: after-change
+    since: v1.1
+  TWO_FACTOR_REQUIRED:
+    status: 401
+    level: [response]
+    title: 'Second factor required'
+    meaning: 'The password was correct but no second factor was supplied. Back-office access needs both.'
+    retryable: after-change
+    since: v1.1
+  TWO_FACTOR_INVALID:
+    status: 401
+    level: [response]
+    title: 'Second factor invalid'
+    meaning: 'The second factor supplied does not match. Try the current code, or use a recovery code.'
+    retryable: after-change
+    since: v1.1
+  INSECURE_TRANSPORT:
+    status: 400
+    level: [response]
+    title: 'Insecure transport'
+    meaning: 'The request did not arrive over an encrypted channel. It is refused rather than redirected, because by the time a redirect arrives the credential has already been sent in the clear.'
+    retryable: never
+    since: v1.1
+  PROVIDER_SIGNATURE_INVALID:
+    status: 401
+    level: [response]
+    title: 'Provider message not verified'
+    meaning: 'A message claiming to come from the payment provider failed verification of its signature, issuer, audience or time window. Nothing was granted.'
+    retryable: never
+    since: v1.1
+  EXPORT_IN_PROGRESS:
+    status: 409
+    level: [response]
+    title: 'Export already in progress'
+    meaning: 'An export for this account is already being produced. Wait for it rather than starting a second one.'
+    retryable: automatic
+    since: v1.1

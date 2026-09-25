@@ -11,7 +11,7 @@ What is written, what is next, and what each remaining spec must decide. One fol
 | A1 | Architecture constitution & ADR set | [`001-architecture-constitution-adrs`](001-architecture-constitution-adrs/) | ✅ Done — constitution v1.1.0, ADRs 0001–0012 |
 | A3 | Domain glossary & model map | [`002-domain-glossary-model-map`](002-domain-glossary-model-map/) | ✅ Done — [docs/glossary.md](../docs/glossary.md), 22 entities |
 | A2 | API conventions | [`003-api-conventions`](003-api-conventions/) | ✅ Done — [docs/api-conventions.md](../docs/api-conventions.md) + [docs/openapi/](../docs/openapi/openapi.yaml), 38 error codes |
-| A4 | Security & privacy baseline | → `004-…` | Queued |
+| A4 | Security & privacy baseline | [`004-security-privacy-baseline`](004-security-privacy-baseline/) | ✅ Done — [docs/security-baseline.md](../docs/security-baseline.md) + [docs/privacy-commitments.md](../docs/privacy-commitments.md), 10 codes reserved |
 | A5 | Engineering conventions | → `005-…` | Queued |
 
 **Follow-ups from A1** (small, not full specs): F-1 architecture tests (P-02, P-03, P-09) · ~~F-2 PostgreSQL for dev/test/CI~~ ✅ done 2026-09-19 · F-3 observability middleware + JSON logs + error tracker (needs dependency approval) · F-4 shared kernel (`Money`, `Currency`, clock).
@@ -82,7 +82,7 @@ Left for the glossary itself: since categories ride the user feed, a member of a
 
 **Considerations.** The app is a personal-finance product in a market where the local competitors are criticised for "data not encrypted" — this baseline is a marketing asset, so write the user-facing privacy commitments alongside the technical ones. Do not log request bodies containing amounts or notes.
 
-**Conflicts / prerequisites:**
+**Conflicts / prerequisites — all resolved 2026-09-22, and shipped the same day:**
 
 | Point | Repo reality | Note |
 |---|---|---|
@@ -90,7 +90,17 @@ Left for the glossary itself: since categories ride the user feed, a member of a
 | Admin 2FA | ADR-0006 already fixes a separate `admin` guard with its own accounts | Consistent; 2FA is the addition |
 | Soft-deletes purged after 30 days | ADR-0008 retains tombstones **≥ 90 days** for sync | **Direct conflict.** A client offline 60 days would lose data silently. Reconcile: 90-day sync tombstones vs 30-day purge of other soft-deletes |
 | "Do not log amounts or notes" | ADR-0010 already bans full financial payloads and names the never-log list | Consistent; A4 extends it |
-| PII encrypted at rest | — | Encrypted casts make `email` non-searchable by equality unless a blind index is added; decide at spec time |
+| PII encrypted at rest | — | **Resolved.** Address and display name encrypted, with a keyed lookup value beside the address for sign-in, uniqueness and invitations. Its limit is stated rather than hidden |
+
+**How each conflict landed:**
+
+| Conflict | Resolution |
+|---|---|
+| Sanctum not installed | **Deferred to Identity.** The baseline describes required behaviour, not the library that provides it, so no dependency was added here |
+| Admin 2FA | **Adopted.** Time-based codes, mandatory enrolment, ten single-use recovery codes, and two-operator approval when those run out |
+| 30-day purge vs the 90-day sync horizon | **Two horizons, stated separately.** Syncable records keep content and marker 90 days; other soft deletes purge at 30. The published page says 90 days, the longer and keepable number |
+| "Do not log amounts or notes" | **Narrowed to match ADR-0010.** Amounts stay debug-only rather than banned outright, because the decision record deliberately keeps them for diagnosis. Found during planning; see the spec's Clarifications |
+| PII encrypted at rest vs searchability | **Keyed lookup value.** `HMAC-SHA256` over the normalised address, unique-indexed, with the encryption key and the lookup key kept separate |
 
 ---
 

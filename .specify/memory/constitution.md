@@ -1,6 +1,20 @@
 <!--
 Sync Impact Report (latest first)
 
+v1.1.0 → 1.2.0 — 2026-09-25
+- MINOR: P-16 rule 1 materially tightened — static analysis at Larastan level 8,
+  was level 7. Quality Gates item 1 updated to match, and now names the
+  architecture gates alongside formatting, analysis and the suite.
+- Reason: owner decision in spec 005 (engineering conventions), taken before any
+  application code exists so nothing needs retrofitting. The configuration
+  change (phpstan.neon) lands in the same commit, so the two never disagree.
+- Scope note: application code is analysed at level 8. tests/ is not analysed,
+  because PHPStan cannot see Pest's closure binding without an extension that
+  has not been approved; see specs/005-engineering-conventions/research.md R-5.
+- Templates: no change needed; the plan template's Constitution Check shape is
+  unchanged.
+- Follow-up F-1 (architecture tests for P-02, P-03, P-09) is closed by spec 005.
+
 v1.0.0 → 1.1.0 — 2026-09-20
 - MINOR: P-04 materially expanded — new rule 2, "every posting MUST reference exactly one
   of a wallet or a category", renumbering the rules that follow.
@@ -32,7 +46,7 @@ v1.0.0 — 2026-09-19 (ratified)
 
 <!-- "Save Me" is a working codename used as display text only; see P-13. -->
 
-**Version**: 1.1.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-20
+**Version**: 1.2.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-25
 
 ## Purpose & Precedence
 
@@ -218,7 +232,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 **Status**: Active | **Non-negotiable**: no | **ADRs**: [ADR-0001](../../docs/adr/0001-database-engine.md)
 
-1. `composer test` (Pint, Larastan level 7, Pest) MUST pass before merge.
+1. `composer test` (Pint, Larastan level 8, Pest) MUST pass before merge.
 2. The test suite MUST run on the production database engine (PostgreSQL), not a substitute.
 3. Every invariant a feature introduces MUST have a test that fails when the invariant is broken.
 4. The plan's Constitution Check MUST be complete.
@@ -275,7 +289,7 @@ The following are out of scope for MVP. Introducing any of them requires a const
 
 A change is mergeable when all of the following hold:
 
-1. `composer test` passes: `vendor/bin/pint --test` (formatting), `phpstan analyse` at level 7 (Larastan), and the Pest suite.
+1. `composer test` passes: `vendor/bin/pint --test` (formatting), `phpstan analyse` at level 8 (Larastan), the architecture gates, and the Pest suite.
 2. The Pest suite runs against PostgreSQL (from follow-up F-2 onward; until then, record the gap in the plan).
 3. Each invariant the feature introduces has a test that fails when the invariant is broken — at minimum: zero-sum postings, version conflict, authorization denial, and entitlement denial where the feature touches them.
 4. Feature tests cover the HTTP contract of every new endpoint, including its error codes.
@@ -289,7 +303,7 @@ Every `plan.md` includes this section, filled in before Phase 0 and again after 
 ```markdown
 ## Constitution Check
 
-*Constitution v1.1.0. GATE: before Phase 0 and again after Phase 1.*
+*Constitution v1.2.0. GATE: before Phase 0 and again after Phase 1.*
 
 | Principle | Result | Evidence / justification |
 |---|---|---|
@@ -327,4 +341,4 @@ Every amendment updates the footer's **Last Amended** date and the Sync Impact R
 
 **Consistency** — run `/speckit-analyze` before implementing each feature. Contradictions between this constitution, the ADRs and a feature's spec are defects to resolve before code.
 
-**Version**: 1.1.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-20
+**Version**: 1.2.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-25

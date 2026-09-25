@@ -2,21 +2,21 @@
 
 What is written, what is next, and what each remaining spec must decide. One folder per spec under `specs/`, created by `/speckit-specify`.
 
-**Governing documents**: [constitution v1.1.0](../.specify/memory/constitution.md) · [ADR index](../docs/adr/README.md) · prior art: [docs/legacy/DATA_MODEL.md](../docs/legacy/DATA_MODEL.md)
+**Governing documents**: [constitution v1.2.0](../.specify/memory/constitution.md) · [ADR index](../docs/adr/README.md) · prior art: [docs/legacy/DATA_MODEL.md](../docs/legacy/DATA_MODEL.md)
 
 ## Status
 
 | ID | Spec | Folder | State |
 |---|---|---|---|
-| A1 | Architecture constitution & ADR set | [`001-architecture-constitution-adrs`](001-architecture-constitution-adrs/) | ✅ Done — constitution v1.1.0, ADRs 0001–0012 |
+| A1 | Architecture constitution & ADR set | [`001-architecture-constitution-adrs`](001-architecture-constitution-adrs/) | ✅ Done — constitution v1.2.0, ADRs 0001–0012 |
 | A3 | Domain glossary & model map | [`002-domain-glossary-model-map`](002-domain-glossary-model-map/) | ✅ Done — [docs/glossary.md](../docs/glossary.md), 22 entities |
 | A2 | API conventions | [`003-api-conventions`](003-api-conventions/) | ✅ Done — [docs/api-conventions.md](../docs/api-conventions.md) + [docs/openapi/](../docs/openapi/openapi.yaml), 38 error codes |
 | A4 | Security & privacy baseline | [`004-security-privacy-baseline`](004-security-privacy-baseline/) | ✅ Done — [docs/security-baseline.md](../docs/security-baseline.md) + [docs/privacy-commitments.md](../docs/privacy-commitments.md), 10 codes reserved |
-| A5 | Engineering conventions | → `005-…` | Queued |
+| A5 | Engineering conventions | [`005-engineering-conventions`](005-engineering-conventions/) | ✅ Done — [docs/engineering-conventions.md](../docs/engineering-conventions.md) + [CONTRIBUTING.md](../CONTRIBUTING.md), gates in `tests/Arch` and `tests/Contract/OpenApi` |
 
-**Follow-ups from A1** (small, not full specs): F-1 architecture tests (P-02, P-03, P-09) · ~~F-2 PostgreSQL for dev/test/CI~~ ✅ done 2026-09-19 · F-3 observability middleware + JSON logs + error tracker (needs dependency approval) · F-4 shared kernel (`Money`, `Currency`, clock).
+**Follow-ups from A1** (small, not full specs): ~~F-1 architecture tests (P-02, P-03, P-09)~~ ✅ done 2026-09-25 in A5 · ~~F-2 PostgreSQL for dev/test/CI~~ ✅ done 2026-09-19 · F-3 observability middleware + JSON logs + error tracker (needs dependency approval) · F-4 shared kernel (`Money`, `Currency`, clock).
 
-**Follow-up from A2**: F-5 OpenAPI schema linter in CI (Spectral, Redocly or equivalent) — deferred to A5, where the pipeline is chosen anyway, because every candidate is a new dependency needing the owner's approval. Until then the skeleton is checked by the structural checks and the 49-item endpoint review checklist in [003's quickstart](003-api-conventions/quickstart.md).
+**Follow-up from A2**: ~~F-5 OpenAPI schema linter in CI~~ ✅ done 2026-09-25 in A5 — the skeleton checks run as `tests/Contract/OpenApi` and Spectator loads the document on every push. Original note: (Spectral, Redocly or equivalent) — deferred to A5, where the pipeline is chosen anyway, because every candidate is a new dependency needing the owner's approval. Until then the skeleton is checked by the structural checks and the 49-item endpoint review checklist in [003's quickstart](003-api-conventions/quickstart.md).
 
 **Then the MVP feature areas** (from the brief, no specs yet): identity & auth · profile & preferences · plans & entitlements · wallets & membership · categories · transactions ledger · recurring transactions (incl. gam'eya and installments) · budgets · sharing & invitations · billing (Play + InstaPay) · admin back-office · reports · offline sync · export & account deletion · devices & push.
 
@@ -110,7 +110,7 @@ Left for the glossary itself: since categories ride the user feed, a member of a
 
 **Considerations.** Tell the coding agent explicitly that every feature PR must ship: migration, OpenAPI fragment, policy, tests at all three layers, and a seeder entry if the feature has reference data.
 
-**Conflicts to resolve:**
+**Conflicts — all resolved 2026-09-25:** GitLab → GitHub Actions and Docker Compose → the `dev` CLI (owner's note); PHPStan level 8 adopted with constitution v1.2.0; module layout restated from P-02; migrations append-only from `v1.0.0`.
 
 | Description says | Repo reality | Note |
 |---|---|---|

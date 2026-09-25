@@ -9,7 +9,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.3",
+        "php": "^8.5",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
         "livewire/blaze": "^1.0",
@@ -17,6 +17,7 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.24",
+        "hotmeteor/spectator": "^3.0",
         "larastan/larastan": "^3.9",
         "laravel/boost": "^2.2",
         "laravel/pail": "^1.2.5",
@@ -57,20 +58,20 @@
             "pint --parallel"
         ],
         "lint:check": [
-            "pint --parallel --test"
+            "@test:lint"
         ],
         "ci:check": [
             "Composer\\Config::disableProcessTimeout",
             "@test"
         ],
         "types:check": [
-            "phpstan analyse"
+            "@test:types"
         ],
         "test": [
-            "@php artisan config:clear --ansi",
-            "@lint:check",
-            "@types:check",
-            "@php artisan test"
+            "@test:lint",
+            "@test:types",
+            "@test:arch",
+            "@test:suite"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
@@ -90,6 +91,24 @@
         ],
         "pre-package-uninstall": [
             "Illuminate\\Foundation\\ComposerScripts::prePackageUninstall"
+        ],
+        "test:lint": [
+            "pint --parallel --test"
+        ],
+        "test:types": [
+            "phpstan analyse --memory-limit=1G"
+        ],
+        "test:arch": [
+            "@php artisan config:clear --ansi",
+            "@php vendor/bin/pest --testsuite=Arch"
+        ],
+        "test:suite": [
+            "@php artisan config:clear --ansi",
+            "@php vendor/bin/pest --testsuite=Unit,Feature,Contract"
+        ],
+        "test:api": [
+            "@php artisan config:clear --ansi",
+            "@php vendor/bin/pest tests/Contract/OpenApi"
         ]
     },
     "extra": {

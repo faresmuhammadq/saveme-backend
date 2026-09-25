@@ -103,6 +103,59 @@
 - **[Entity 1]**: [What it represents, key attributes without implementation]
 - **[Entity 2]**: [What it represents, relationships to other entities]
 
+## Project Sections *(mandatory for feature specs)*
+
+<!--
+  Project-specific, added by spec 005 (engineering conventions). Every feature
+  spec in this repository carries these nine sections, in this order, so two
+  specs written months apart have the same bones. The workflow's own mandatory
+  sections above and below stay as they are.
+
+  Foundation specs (constitution, glossary, conventions) may mark a section
+  "Not applicable — <one-line reason>". Never delete a heading: an empty
+  section is a visible decision, a missing one is an oversight.
+-->
+
+### 1. Purpose
+
+[One paragraph: what this feature makes possible, and for whom. No mechanism.]
+
+### 2. Glossary terms
+
+[Every domain term this spec uses, each linked to its entry in docs/glossary.md. A term that is not in the glossary is added there IN THIS CHANGE, before this spec uses it — the glossary's own rule.]
+
+### 3. Data model
+
+[The entities this feature owns or changes: fields, types, scope key (user_id or wallet_id), lifecycle states. Follow the glossary's field conventions; name the owning module for each entity.]
+
+### 4. Invariants
+
+[Every rule that must always hold, as a table. Each invariant names the test that fails when it is broken — an invariant without a test is a wish.]
+
+| Invariant | Principle or decision | Test that fails when broken |
+|---|---|---|
+| [e.g. postings of one transaction sum to zero per currency] | [P-04, ADR-0012] | [tests/Feature/Wallets/…] |
+
+### 5. API
+
+[The endpoints: method, path, the path file under docs/openapi/paths/, and the error codes each returns from the catalogue. Shapes are defined in the path file, not repeated here.]
+
+### 6. Authorization and entitlements
+
+[Who may do what, by wallet role, referencing the Wallets spec's matrix rather than copying it. Which Feature each capability is gated on, checked through EntitlementService. What a non-member sees: a not-found.]
+
+### 7. Events
+
+[Domain events this feature publishes and consumes: name, payload of identifiers and scalars, and which modules listen. Dispatched after commit; listeners idempotent.]
+
+### 8. Acceptance scenarios
+
+[An index from each user story's scenarios above to the test layer that proves it — Unit, Feature or Contract — and the test file.]
+
+### 9. Open questions
+
+[What is not yet decided, who decides it, and whether it blocks. "None." is an answer; a deleted heading is not.]
+
 ## Success Criteria *(mandatory)*
 
 <!--

@@ -10,10 +10,13 @@ permissions:
   contents: read
 
 jobs:
+  # The quality gate, in the order docs/engineering-conventions.md fixes.
+  # Each stage is its own step, so a failure stops the later stages and the
+  # red step names the stage that failed.
   ci:
     runs-on: ubuntu-latest
 
-    # The suite runs on PostgreSQL, the production engine (ADR-0001, constitution P-16).
+    # The suite runs on PostgreSQL 16, the production engine (ADR-0001, constitution P-16).
     services:
       postgres:
         image: postgres:16
@@ -43,11 +46,13 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          # Full history and tags, for the frozen-migrations check.
+          fetch-depth: 0
 
       - name: Setup PHP
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
         with:
-          php-version: '8.4'
+          php-version: '8.5'
           extensions: pdo_pgsql, pgsql
           tools: composer:v2
           coverage: none
@@ -60,5 +65,75 @@ jobs:
       - name: Setup Application
         run: composer setup
 
-      - name: Run CI Checks
-        run: composer ci:check
+      - name: "Stage 1 — Formatting"
+        run: composer test:lint
+
+      - name: "Stage 2 — Static analysis (Larastan level 8)"
+        run: composer test:types
+
+      - name: "Stage 3 — Architecture (P-02, P-03, P-09)"
+        run: composer test:arch
+
+      - name: "Stage 4 — Database engine"
+        env:
+          PGPASSWORD: postgres
+        run: |
+          version="$(psql -h 127.0.0.1 -U postgres -d "$DB_DATABASE" -tAc 'SELECT version()')"
+          {
+            echo "### Database engine"
+            echo
+            echo "\`$version\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+          case "$version" in
+            "PostgreSQL 16."*) echo "Tested against: $version" ;;
+            *) echo "::error title=Database engine::P-16 rule 2 and ADR-0001 require PostgreSQL 16, got: $version"; exit 1 ;;
+          esac
+
+      - name: "Stage 5 — Frozen migrations (append-only from v1.0.0)"
+        run: |
+          if ! git rev-parse -q --verify "refs/tags/v1.0.0" >/dev/null; then
+            echo "No v1.0.0 tag yet: migrations may still be edited or squashed."
+            exit 0
+          fi
+          changed="$(git diff --name-status v1.0.0..HEAD -- database/migrations 'app/Modules/*/Infrastructure/Database/Migrations' | grep -E '^(M|D|R)' || true)"
+          if [ -n "$changed" ]; then
+            echo "::error title=Frozen migrations::A migration released in v1.0.0 was edited, renamed or deleted. Correct the schema with a new migration instead."
+            echo "$changed"
+            exit 1
+          fi
+          echo "No released migration was changed."
+
+      - name: "Stage 6 — Test suite (Unit, Feature, Contract)"
+        run: composer test:suite
+
+  # A separate job, so a badly worded commit never hides what the code stages found.
+  commit-messages:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Commit messages follow the conventional shape
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          pattern='^(feat|fix|docs|chore|refactor|test|build|ci)(\([a-z0-9._/-]+\))?!?: .+$'
+          bad=0
+          while IFS= read -r line; do
+            sha="${line%% *}"
+            subject="${line#* }"
+            if ! printf '%s' "$subject" | grep -Eq "$pattern"; then
+              echo "::error title=Commit message shape::$sha \"$subject\" — expected <type>(<scope>)!: <subject>, type one of feat fix docs chore refactor test build ci"
+              bad=1
+            elif [ "${#subject}" -gt 72 ]; then
+              echo "::error title=Commit message length::$sha subject is ${#subject} characters; the limit is 72"
+              bad=1
+            fi
+          done < <(git log --no-merges --format='%h %s' "$BASE_SHA..$HEAD_SHA")
+          exit "$bad"

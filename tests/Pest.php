@@ -5,46 +5,54 @@ use Tests\TestCase;
 
 /*
 |--------------------------------------------------------------------------
-| Test Case
+| Test suites
 |--------------------------------------------------------------------------
 |
-| The closure you provide to your test functions is always bound to a specific PHPUnit test
-| case class. By default, that class is "PHPUnit\Framework\TestCase". Of course, you may
-| need to change it using the "pest()" function to bind different classes or traits.
+| Four suites, one per layer plus the architecture gates (spec 005):
+|
+|   Arch      no application, no database — boundaries, migrations, skeleton
+|   Unit      domain rules, no framework, no database
+|   Feature   application services against PostgreSQL, refreshed per test
+|   Contract  HTTP endpoints against PostgreSQL, validated against the
+|             OpenAPI definition in docs/openapi through Spectator
+|
+| Unit and Arch deliberately do not extend the application TestCase: a domain
+| rule that needs the framework to be tested is in the wrong layer.
 |
 */
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
-    ->in('Feature');
+    ->in('Feature', 'Contract');
 
 /*
 |--------------------------------------------------------------------------
-| Expectations
+| Contract tests
 |--------------------------------------------------------------------------
 |
-| When you're writing tests, you often need to check that values meet certain conditions. The
-| "expect()" function gives you access to a set of "expectations" methods that you can use
-| to assert different things. Of course, you may extend the Expectation API at any time.
+| Every Contract test validates against the published definition by default.
+| An endpoint test then asserts conformance in one line:
+|
+|     $this->withHeaders(clientHeaders())
+|         ->getJson('/api/v1/wallets/'.$id)
+|         ->assertValidRequest()
+|         ->assertValidResponse(200);
+|
+| Remember that an empty PHP array serialises to JSON [] — an empty envelope
+| meta must be emitted as (object) [] to satisfy the contract.
 |
 */
 
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
-});
+pest()->beforeEach(function () {
+    Spectator\Spectator::using('openapi.yaml');
+})->in('Contract');
 
-/*
-|--------------------------------------------------------------------------
-| Functions
-|--------------------------------------------------------------------------
-|
-| While Pest is very powerful out-of-the-box, you may have some testing code specific to your
-| project that you don't want to repeat in every file. Here you can also expose helpers as
-| global functions to help you to reduce the number of lines of code in your test files.
-|
-*/
-
-function something()
+/**
+ * The headers every request to the API must carry (docs/api-conventions.md).
+ *
+ * @return array<string, string>
+ */
+function clientHeaders(string $platform = 'android', string $version = '1.0.0'): array
 {
-    // ..
+    return ['X-Client-Platform' => $platform, 'X-Client-Version' => $version];
 }

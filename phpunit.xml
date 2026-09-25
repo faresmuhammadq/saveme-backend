@@ -5,11 +5,21 @@
          colors="true"
 >
     <testsuites>
+        <!-- Architecture gates: no app, no database, run first (spec 005). -->
+        <testsuite name="Arch">
+            <directory>tests/Arch</directory>
+        </testsuite>
+        <!-- Domain rules: no framework, no database. -->
         <testsuite name="Unit">
             <directory>tests/Unit</directory>
         </testsuite>
+        <!-- Application services against PostgreSQL. -->
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
+        </testsuite>
+        <!-- HTTP endpoints, validated against docs/openapi. -->
+        <testsuite name="Contract">
+            <directory>tests/Contract</directory>
         </testsuite>
     </testsuites>
     <source>

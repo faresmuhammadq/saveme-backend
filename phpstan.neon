@@ -9,5 +9,9 @@ parameters:
         - config/
         - database/
         - routes/
+        # tests/ is not analysed: PHPStan cannot see that Pest binds $this to the
+        # test case inside closures, so every HTTP test reads as an error. Adding
+        # it needs a Pest-aware extension, which is a dependency not yet approved.
 
-    level: 7
+    # Level 8 per constitution P-16 rule 1 (amended to v1.2.0 by spec 005).
+    level: 8

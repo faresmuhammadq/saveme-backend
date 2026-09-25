@@ -126,14 +126,23 @@ components:
       in: header
       required: false
       description: |
-        Preferred language for the localised members of the response. `en` when
-        absent or when the requested language is not supported. Drives `detail`
-        and other user-facing strings only; never field names, enum values,
-        `code`, `title`, or numerals, which stay Western in every locale.
+        Preferred language for the localised members of the response, as an
+        ordinary HTTP language range list — `ar`, `en`, or what a client
+        actually sends, such as `ar-EG,ar;q=0.9,en;q=0.8`. The server picks
+        `ar` or `en` from it, falling back to `en` when it names neither, and
+        reports its choice in Content-Language. Any well-formed value is
+        accepted; an unsupported language is a fallback, never a refusal.
+        Drives `detail` and other user-facing strings only; never field names,
+        enum values, `code`, `title`, or numerals, which stay Western in every
+        locale.
       schema:
         type: string
-        enum: [ar, en]
-        default: en
+        maxLength: 255
+      examples:
+        arabic:
+          value: ar
+        browser:
+          value: 'ar-EG,ar;q=0.9,en;q=0.8'
 
     IdempotencyKey:
       name: Idempotency-Key

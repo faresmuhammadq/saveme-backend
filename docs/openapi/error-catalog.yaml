@@ -60,6 +60,7 @@ components:
         - INSECURE_TRANSPORT
         - PROVIDER_SIGNATURE_INVALID
         - EXPORT_IN_PROGRESS
+        - EMAIL_ALREADY_REGISTERED
 
     FieldErrorCode:
       type: string
@@ -421,3 +422,10 @@ x-error-catalog:
     meaning: 'An export for this account is already being produced. Wait for it rather than starting a second one.'
     retryable: automatic
     since: v1.1
+  EMAIL_ALREADY_REGISTERED:
+    status: 409
+    level: [response]
+    title: 'Email already registered'
+    meaning: 'An account already exists for this address. Sign in instead, or reset the password. Registration is the one surface that discloses an existing account (owner decision, spec 007); sign-in and password reset still answer uniformly.'
+    retryable: never
+    since: v1.2

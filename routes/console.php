@@ -2,7 +2,11 @@
 
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Schedule;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
+
+// Records device sessions idle past 90 days as expired (spec 007, R-3).
+Schedule::command('identity:expire-sessions')->daily();

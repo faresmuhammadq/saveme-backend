@@ -31,6 +31,15 @@
         <env name="APP_ENV" value="testing"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>
+        <!-- argon2id at the lowest cost: the baseline floor applies to deployments, not tests (spec 007, R-5). -->
+        <env name="HASH_ARGON_MEMORY" value="1024"/>
+        <env name="HASH_ARGON_TIME" value="1"/>
+        <env name="HASH_ARGON_THREADS" value="1"/>
+        <!-- Test-only Identity keys. Never used outside the test suite. -->
+        <env name="IDENTITY_KEYS" value="{&quot;k1&quot;:&quot;aMwpk6RevtyluUTCOCwNrDZHmJNSN+BReF/sq8i+k7s=&quot;}"/>
+        <env name="IDENTITY_ACTIVE_KEY" value="k1"/>
+        <env name="IDENTITY_LOOKUP_KEY" value="u1sMe5sEXD7vfBN9AnDfCC1RlB/NpuNcIQIBlFzUidA="/>
+        <env name="ADMIN_NOTIFICATION_RECIPIENTS" value=""/>
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>
         <!-- Tests run on PostgreSQL, the production engine (ADR-0001, constitution P-16). -->

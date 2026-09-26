@@ -1,0 +1,62 @@
+<?php
+
+/*
+ * Problem `detail` sentences in Arabic. Keys match lang/en/problems.php.
+ */
+return [
+
+    'VALIDATION_FAILED' => 'بعض البيانات المرسلة غير صحيحة، وكل مشكلة مذكورة بالتفصيل.',
+    'MALFORMED_JSON' => 'تعذّرت قراءة الطلب. أرسل كائن JSON.',
+    'INVALID_QUERY_PARAMETER' => 'أحد معاملات الاستعلام لا يمكن استخدامه كما أُرسل.',
+    'INVALID_CURSOR' => 'مؤشر الصفحة غير صالح. ابدأ من الصفحة الأولى.',
+    'FILTER_FIELD_NOT_SUPPORTED' => 'لا يمكن تصفية هذه القائمة بهذا الحقل.',
+    'FILTER_OPERATOR_NOT_SUPPORTED' => 'عامل التصفية هذا غير مسموح لهذا الحقل.',
+    'SORT_FIELD_NOT_SUPPORTED' => 'لا يمكن ترتيب هذه القائمة بهذا الحقل.',
+    'IDEMPOTENCY_KEY_REQUIRED' => 'هذا الطلب يحتاج إلى ترويسة Idempotency-Key.',
+    'IDEMPOTENCY_KEY_INVALID' => 'ترويسة Idempotency-Key غير صالحة.',
+    'CLIENT_VERSION_REQUIRED' => 'لم يذكر التطبيق رقم إصداره.',
+    'CLIENT_VERSION_INVALID' => 'إصدار التطبيق أو المنصة غير معروف.',
+    'UNAUTHENTICATED' => 'يُرجى تسجيل الدخول مرة أخرى.',
+    'FORBIDDEN' => 'دورك في هذه المحفظة لا يسمح بذلك.',
+    'FEATURE_NOT_ENTITLED' => 'باقتك لا تتضمن هذه الميزة.',
+    'NOT_FOUND' => 'لم نعثر على ما طلبته.',
+    'METHOD_NOT_ALLOWED' => 'هذا الإجراء غير متاح هنا.',
+    'NOT_ACCEPTABLE' => 'هذه الخدمة تجيب بصيغة JSON فقط.',
+    'VERSION_CONFLICT' => 'غيّر شخص آخر هذا في الأثناء. راجع أحدث نسخة وحاول مرة أخرى.',
+    'IDEMPOTENCY_KEY_REUSED' => 'سبق إرسال هذا الطلب ببيانات مختلفة.',
+    'IDEMPOTENCY_REQUEST_IN_PROGRESS' => 'الطلب الأصلي ما زال قيد التنفيذ. حاول بعد قليل.',
+    'SYNC_CURSOR_EXPIRED' => 'ظل هذا الجهاز غير متصل مدة طويلة. تجري مزامنة كل شيء من جديد.',
+    'ENDPOINT_REMOVED' => 'هذا الإصدار من التطبيق لم يعد مدعوماً. يُرجى التحديث.',
+    'UNSUPPORTED_MEDIA_TYPE' => 'أرسل محتوى الطلب بصيغة JSON.',
+    'INVALID_ID' => 'المعرّف غير صالح.',
+    'CLIENT_VERSION_UNSUPPORTED' => 'يُرجى تحديث التطبيق للمتابعة.',
+    'RATE_LIMITED' => 'محاولات كثيرة جداً. انتظر قليلاً ثم حاول مرة أخرى.',
+    'INTERNAL_ERROR' => 'حدث خطأ من جهتنا. حاول مرة أخرى.',
+    'SERVICE_UNAVAILABLE' => 'الخدمة غير متاحة مؤقتاً. حاول بعد قليل.',
+    'INVALID_CREDENTIALS' => 'البريد الإلكتروني أو كلمة السر غير صحيحة.',
+    'ACCOUNT_LOCKED' => 'محاولات فاشلة كثيرة. انتظر قليلاً، أو أعد تعيين كلمة السر لتدخل الآن.',
+    'EMAIL_NOT_VERIFIED' => 'أكّد بريدك الإلكتروني أولاً. يمكننا إرسال الرابط مرة أخرى.',
+    'VERIFICATION_TOKEN_INVALID' => 'انتهت صلاحية رابط التأكيد أو استُخدم من قبل. اطلب رابطاً جديداً.',
+    'RESET_TOKEN_INVALID' => 'انتهت صلاحية رابط إعادة التعيين أو استُخدم من قبل. اطلب رابطاً جديداً.',
+    'TWO_FACTOR_REQUIRED' => 'أدخل الرمز من تطبيق المصادقة.',
+    'TWO_FACTOR_INVALID' => 'الرمز غير صحيح. جرّب الرمز الحالي أو رمز استرداد.',
+    'INSECURE_TRANSPORT' => 'هذا الاتصال غير آمن. استخدم HTTPS.',
+    'PROVIDER_SIGNATURE_INVALID' => 'تعذّر التحقق من رسالة الدفع.',
+    'EXPORT_IN_PROGRESS' => 'يجري تجهيز تصدير بالفعل. انتظر حتى يكتمل.',
+    'EMAIL_ALREADY_REGISTERED' => 'لديك حساب بالفعل بهذا البريد الإلكتروني. سجّل الدخول، أو أعد تعيين كلمة السر إن نسيتها.',
+
+    'fields' => [
+        'REQUIRED' => 'هذا الحقل مطلوب.',
+        'UNKNOWN_FIELD' => 'هذا الحقل غير مقبول هنا.',
+        'INVALID_TYPE' => 'هذه القيمة ليست بالصيغة المتوقعة.',
+        'INVALID_ENUM_VALUE' => 'هذه القيمة ليست من الخيارات المسموح بها.',
+        'OUT_OF_RANGE' => 'هذه القيمة أقصر أو أطول من اللازم، أو خارج النطاق المسموح.',
+        'AMOUNT_NOT_INTEGER' => 'يجب أن تكون المبالغ أعداداً صحيحة بأصغر وحدة للعملة.',
+        'INVALID_CURRENCY' => 'استخدم رمز عملة من ثلاثة أحرف كبيرة.',
+        'DATE_NOT_CALENDAR_DATE' => 'استخدم تاريخاً بالصيغة YYYY-MM-DD دون وقت.',
+        'INSTANT_NOT_UTC' => 'استخدم وقتاً بتوقيت UTC ينتهي بالحرف Z.',
+        'INVALID_ID' => 'المعرّف غير صالح.',
+        'IMMUTABLE_FIELD' => 'لا يمكن تغيير هذا الحقل.',
+    ],
+
+];

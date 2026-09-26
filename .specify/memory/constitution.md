@@ -1,6 +1,15 @@
 <!--
 Sync Impact Report (latest first)
 
+v1.3.0 → 1.3.1 — 2026-09-26
+- PATCH: the Identity row lists three events introduced by spec 007;
+  no rule changes. Publishes gains `UserSignedIn`, `DeviceSessionEnded` and
+  `UserDeletionCancelled`.
+- Reason: spec 007 (Identity & Authentication) publishes these events for the
+  sign-in, session-end and cancel-by-sign-in flows; the table must name them.
+- Templates: none changed. In-flight plans keep the version they were checked
+  against, so spec 007's plan still cites v1.3.0.
+
 v1.2.0 → 1.3.0 — 2026-09-25
 - MINOR: new principle P-18 Delivery surfaces (non-negotiable). The product is
   API-first; the admin back office is the only server-rendered interface and is
@@ -66,7 +75,7 @@ v1.0.0 — 2026-09-19 (ratified)
 
 <!-- "Save Me" is a working codename used as display text only; see P-13. -->
 
-**Version**: 1.3.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-25
+**Version**: 1.3.1 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-26
 
 ## Purpose & Precedence
 
@@ -288,7 +297,7 @@ Nine contexts, one module directory each. Module directories use short PascalCas
 
 | Context | Module dir | Owns | Publishes |
 |---|---|---|---|
-| Identity | `app/Modules/Identity` | users, credentials, sessions/tokens, profile, preferences (locale, timezone), account deletion and export orchestration | `AuthService`, `ProfileService`, `UserQueryService`; `UserRegistered`, `UserDeletionRequested` |
+| Identity | `app/Modules/Identity` | users, credentials, sessions/tokens, profile, preferences (locale, timezone), account deletion and export orchestration | `AuthService`, `ProfileService`, `UserQueryService`; `UserRegistered`, `UserDeletionRequested`, `UserSignedIn`, `DeviceSessionEnded`, `UserDeletionCancelled` |
 | Wallets & Ledger | `app/Modules/Wallets` | wallets, wallet members, categories, transactions, postings, recurring rules | `WalletService`, `TransactionService`, `MembershipQueryService`, `BalanceQueryService`; `TransactionPosted`, `TransactionVoided`, `WalletCreated` |
 | Budgeting | `app/Modules/Budgeting` | budgets per category per period, budget progress read models | `BudgetService`, `BudgetQueryService`; `BudgetExceeded` |
 | Sharing | `app/Modules/Sharing` | invitations, invitation acceptance and revocation flows | `InvitationService`; `InvitationAccepted`, `MemberRevoked` |
@@ -338,7 +347,7 @@ Every `plan.md` includes this section, filled in before Phase 0 and again after 
 ```markdown
 ## Constitution Check
 
-*Constitution v1.3.0. GATE: before Phase 0 and again after Phase 1.*
+*Constitution v1.3.1. GATE: before Phase 0 and again after Phase 1.*
 
 | Principle | Result | Evidence / justification |
 |---|---|---|
@@ -376,4 +385,4 @@ Every amendment updates the footer's **Last Amended** date and the Sync Impact R
 
 **Consistency** — run `/speckit-analyze` before implementing each feature. Contradictions between this constitution, the ADRs and a feature's spec are defects to resolve before code.
 
-**Version**: 1.3.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-25
+**Version**: 1.3.1 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-26

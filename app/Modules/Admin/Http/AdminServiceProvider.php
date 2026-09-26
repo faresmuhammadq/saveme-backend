@@ -2,13 +2,16 @@
 
 namespace App\Modules\Admin\Http;
 
+use App\Modules\Admin\Application\Listeners\NotifyOperatorsOfDeletionCancelledBySignIn;
 use App\Modules\Admin\Http\Icons\IconRegistry;
 use App\Modules\Admin\Http\Middleware\ResolveAdminLocale;
 use App\Modules\Admin\Http\Navigation\NavigationRegistry;
 use App\Modules\Admin\Http\Presenters\IdentifierPresenter;
 use App\Modules\Admin\Http\Presenters\MoneyPresenter;
 use App\Modules\Admin\Http\Presenters\TemporalPresenter;
+use App\Modules\Identity\Domain\Events\UserDeletionCancelled;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
@@ -42,6 +45,10 @@ class AdminServiceProvider extends ServiceProvider
         );
 
         Livewire::addPersistentMiddleware([ResolveAdminLocale::class]);
+
+        // Operators hear when a sign-in cancels a deletion (spec 007, R-14).
+        // An Identity domain event is the cross-module mechanism P-02 allows.
+        Event::listen(UserDeletionCancelled::class, NotifyOperatorsOfDeletionCancelledBySignIn::class);
 
         $this->loadRoutesFrom(__DIR__.'/routes.php');
     }

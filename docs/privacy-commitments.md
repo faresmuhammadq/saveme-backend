@@ -84,14 +84,14 @@ One honest limit: if someone was a member and you removed them, whatever their p
 
 - **While your account is open, we keep what you entered** — that is what makes it your record.
 - **When you delete something, it is removed within 90 days.** Not immediately, because your other devices may be offline and need to learn that you deleted it. Once they have, it goes.
-- **When you delete your account, you have 30 days to change your mind.** During that time nothing is lost and you can simply cancel. After it, your email address, your name and the records only you own are removed, and we destroy the key that would have made your information readable — so even an old backup cannot bring it back.
+- **When you delete your account, you have 30 days to change your mind.** During that time nothing is lost and you can simply cancel; signing in again also cancels it, and we email you when that happens. After it, your email address, your name and the records only you own are removed, and we destroy the key that would have made your information readable — so even an old backup cannot bring it back.
 - **Our operational records are kept 30 days.** Security events, such as sign-ins and changes to who can see a wallet, are kept 400 days so that we can answer a question about something that happened last year.
 
 ### العربية
 
 - **ما دام حسابك مفتوحاً نحتفظ بما أدخلته** — فهذا هو سجلك.
 - **عندما تحذف شيئاً يُزال خلال 90 يوماً.** ليس فوراً، لأن أجهزتك الأخرى قد تكون غير متصلة وتحتاج أن تعرف أنك حذفته. وبعد أن تعرف، يختفي.
-- **عندما تحذف حسابك أمامك 30 يوماً لتغيّر رأيك.** خلالها لا يضيع شيء ويمكنك الإلغاء ببساطة. وبعدها يُزال بريدك الإلكتروني واسمك والسجلات التي تخصك وحدك، ونتلف المفتاح الذي كان سيجعل بياناتك قابلة للقراءة — حتى النسخة الاحتياطية القديمة لا تستطيع إعادتها.
+- **عندما تحذف حسابك أمامك 30 يوماً لتغيّر رأيك.** خلالها لا يضيع شيء ويمكنك الإلغاء ببساطة؛ وتسجيل الدخول مرة أخرى يلغيه أيضاً، ونرسل لك رسالة عندما يحدث ذلك. وبعدها يُزال بريدك الإلكتروني واسمك والسجلات التي تخصك وحدك، ونتلف المفتاح الذي كان سيجعل بياناتك قابلة للقراءة — حتى النسخة الاحتياطية القديمة لا تستطيع إعادتها.
 - **سجلاتنا التشغيلية تُحفظ 30 يوماً.** أما أحداث الأمان، مثل تسجيل الدخول وتغيّر من يستطيع رؤية محفظة، فتُحفظ 400 يوم لنتمكن من الإجابة عن سؤال يخص شيئاً حدث العام الماضي.
 
 ---
@@ -104,6 +104,7 @@ Leaving is a feature, not a support request. You do all of it from the app.
 
 - **Take a copy first.** Ask for an export and you receive everything you entered, including a spreadsheet file of your transactions that opens without this app.
 - **Then delete the account.** You have 30 days to cancel, and cancelling costs you nothing.
+- **Signing in again within the 30 days cancels the deletion.** We email you when that happens, so you'll know if it wasn't you.
 - **After 30 days it is done.** Your email address, your name and the records only you own are gone.
 - **A shared wallet keeps its history.** If you entered transactions in a wallet somebody else owns, those entries stay, because the other members' balances depend on them. Your name comes off them.
 - **You can ask for the export even while the deletion is pending**, and asking does not restart the 30 days.
@@ -114,6 +115,7 @@ Leaving is a feature, not a support request. You do all of it from the app.
 
 - **خذ نسخة أولاً.** اطلب تصديراً فتصلك كل بياناتك، ومعها ملف جدولي بمعاملاتك يُفتح دون هذا التطبيق.
 - **ثم احذف الحساب.** أمامك 30 يوماً للإلغاء، والإلغاء لا يكلّفك شيئاً.
+- **تسجيل الدخول مرة أخرى خلال الثلاثين يوماً يلغي الحذف.** نرسل لك رسالة عندما يحدث ذلك، لتعرف إن لم يكن أنت.
 - **بعد 30 يوماً ينتهي الأمر.** يختفي بريدك الإلكتروني واسمك والسجلات التي تخصك وحدك.
 - **المحفظة المشتركة تحتفظ بتاريخها.** إذا أدخلت معاملات في محفظة يملكها شخص آخر، تبقى تلك القيود لأن أرصدة بقية الأعضاء تعتمد عليها. ويُزال اسمك عنها.
 - **يمكنك طلب التصدير حتى أثناء انتظار الحذف**، والطلب لا يعيد احتساب الثلاثين يوماً من جديد.
@@ -140,6 +142,7 @@ Every promise on this page is backed by a rule in [the security baseline](securi
 | A removed member's phone keeps what it already downloaded | FR-028, stated limit |
 | Deleted records are removed within 90 days | FR-028, FR-028a |
 | Account deletion has a 30-day grace period, and cancelling loses nothing | FR-025 |
+| Signing in during the grace period cancels deletion, and we tell you | B1 FR-054, FR-057 |
 | After the grace period your identity and your own records are gone | FR-026 |
 | An old backup cannot bring your information back | FR-026 |
 | Operational records are kept 30 days; security events 400 days | FR-023, FR-029 |

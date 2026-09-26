@@ -3,6 +3,7 @@
 namespace App\Modules\Admin\Http\Livewire;
 
 use App\Modules\Admin\Domain\AuditReason;
+use App\Modules\Admin\Domain\Notifications\OperatorNotificationView;
 use App\Modules\Admin\Http\Icons\IconRegistry;
 use App\Modules\Admin\Http\Livewire\Concerns\RequiresReason;
 use App\Modules\Admin\Http\Navigation\NavigationEntry;
@@ -35,6 +36,17 @@ class Gallery extends Component
     {
         return view('admin::livewire.gallery', [
             'icons' => app(IconRegistry::class)->names(),
+            // Sample notifications for the bell's markup (spec 007): never the query service.
+            'sampleNotifications' => [
+                (new OperatorNotificationView(
+                    id: '0192f7a0-0000-7000-8000-000000000001',
+                    kind: 'deletion_cancelled_by_sign_in',
+                    subjectUserId: '0192f7a0-1c3d-7abc-9f01-2b3c4d5e6f70',
+                    occurredAt: '2026-09-26T08:30:00.000000Z',
+                    titleKey: 'admin::notifications.kinds.deletion_cancelled_by_sign_in.title',
+                    bodyKey: 'admin::notifications.kinds.deletion_cancelled_by_sign_in.body',
+                ))->toArray(),
+            ],
             'planOptions' => [
                 ['value' => 'free', 'label' => __('admin::gallery.plans.free'), 'meta' => 'EGP 0'],
                 ['value' => 'plus_monthly', 'label' => __('admin::gallery.plans.plus_monthly'), 'meta' => 'EGP 149'],

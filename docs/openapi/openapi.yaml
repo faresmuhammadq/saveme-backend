@@ -17,7 +17,7 @@ info:
     The conventions every endpoint obeys are documented in `docs/api-conventions.md`.
     A feature adds one file under `paths/` and references the shared components
     rather than restating them.
-  version: v1.1
+  version: v1.2
   contact:
     name: Backend maintainers
   license:
@@ -91,4 +91,28 @@ tags:
 # (`~1` is an escaped `/` inside a JSON Pointer.) A worked example of what
 # a path file contains is in paths/_template.yaml; files whose name starts
 # with an underscore are templates and are never referenced here.
-paths: {}
+paths:
+  /auth/register:
+    $ref: './paths/identity.yaml#/~1auth~1register'
+  /auth/verify-email:
+    $ref: './paths/identity.yaml#/~1auth~1verify-email'
+  /auth/resend-verification:
+    $ref: './paths/identity.yaml#/~1auth~1resend-verification'
+  /auth/login:
+    $ref: './paths/identity.yaml#/~1auth~1login'
+  /auth/sessions:
+    $ref: './paths/identity.yaml#/~1auth~1sessions'
+  /auth/sessions/{id}:
+    $ref: './paths/identity.yaml#/~1auth~1sessions~1{id}'
+  /auth/logout:
+    $ref: './paths/identity.yaml#/~1auth~1logout'
+  /auth/forgot-password:
+    $ref: './paths/identity.yaml#/~1auth~1forgot-password'
+  /auth/reset-password:
+    $ref: './paths/identity.yaml#/~1auth~1reset-password'
+  /auth/change-password:
+    $ref: './paths/identity.yaml#/~1auth~1change-password'
+  /account/deletion-request:
+    $ref: './paths/identity.yaml#/~1account~1deletion-request'
+  /auth/google:
+    $ref: './paths/identity.yaml#/~1auth~1google'

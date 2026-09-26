@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Modules\Identity\Application\Deletion;
+
+use App\Modules\Identity\Application\Accounts;
+use App\Modules\Identity\Application\Audit\AuditLog;
+use App\Modules\Identity\Application\Audit\AuditRecord;
+use App\Modules\Identity\Application\Events;
+use App\Modules\Identity\Application\Mail\DeletionScheduledMail;
+use App\Modules\Identity\Application\SignIn\CredentialCheck;
+use App\Modules\Identity\Domain\Account\AccountState;
+use App\Modules\Identity\Domain\Audit\AuditEvent;
+use App\Modules\Identity\Domain\Audit\SubjectType;
+use App\Modules\Identity\Domain\Events\UserDeletionRequested;
+use App\Modules\Identity\Domain\Ports\ProfileRepository;
+use App\Modules\Identity\Domain\Ports\UserRepository;
+use DateTimeImmutable;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use RuntimeException;
+
+/**
+ * Starts the 30-day deletion grace period (FR-050 to FR-052), confirmed with
+ * the password. Asking again returns the date already set; the clock never
+ * resets. The purge itself is B15's.
+ */
+final class RequestDeletion
+{
+    public function __construct(
+        private readonly CredentialCheck $credentials,
+        private readonly UserRepository $users,
+        private readonly ProfileRepository $profiles,
+        private readonly Accounts $accounts,
+        private readonly AuditLog $audit,
+    ) {}
+
+    public function handle(string $userId, string $password): DateTimeImmutable
+    {
+        $this->credentials->verifyForUser($userId, $password);
+
+        [$scheduledFor, $isNew] = DB::transaction(function () use ($userId): array {
+            $user = $this->users->find($userId) ?? throw new RuntimeException('No such account.');
+
+            if ($user->state === AccountState::PendingDeletion && $user->deletionScheduledFor !== null) {
+                return [$user->deletionScheduledFor, false];
+            }
+
+            $requestedAt = now()->toImmutable();
+            $scheduledFor = $requestedAt->addDays((int) config('identity.deletion_grace_days'));
+            $this->users->scheduleDeletion($userId, $requestedAt, $scheduledFor);
+
+            $this->audit->record(AuditRecord::byUser(AuditEvent::DeletionRequested, $userId, SubjectType::User, $userId));
+            event(new UserDeletionRequested(...Events::stamp(), userId: $userId, scheduledFor: $scheduledFor->utc()->format('Y-m-d\TH:i:s.u\Z')));
+
+            return [$scheduledFor->toDateTimeImmutable(), true];
+        });
+
+        if ($isNew) {
+            Mail::to($this->accounts->address($userId))
+                ->locale($this->profiles->localeOf($userId))
+                ->queue((new DeletionScheduledMail($scheduledFor, $this->profiles->timezoneOf($userId)))->afterCommit());
+        }
+
+        return $scheduledFor;
+    }
+}

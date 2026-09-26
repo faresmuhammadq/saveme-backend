@@ -10,7 +10,7 @@ Recommended order, with the dependencies that force it. A spec directory takes t
 
 | # | ID | Brief | Needs first | Notes |
 |---|---|---|---|---|
-| 1 | [B1](B01-identity-auth.md) | Identity & authentication | — | Authentication package needs approval |
+| 1 | [B1](B01-identity-auth.md) | Identity & authentication | — | Specified as spec 007; Sanctum approved |
 | 2 | [B2](B02-profile-preferences.md) | Profile & preferences | B1 | |
 | 3 | [B3](B03-plans-entitlements.md) | Plans & entitlements | B1 | Registration creates the Free subscription |
 | 4 | [D1](D01-admin-dashboard-foundation.md) | Admin dashboard foundation | — | Specified as spec 006 against the Calm Clarity design source; UI only, sign-in split to D2 |
@@ -37,7 +37,7 @@ The briefs were written against an earlier stack. What is actually in force:
 |---|---|---|
 | Laravel 12, PHP 8.3+ | Laravel 13, **PHP 8.5** | `composer.json`, spec 005 |
 | MySQL 8 or PostgreSQL 16 | **PostgreSQL 16** only | ADR-0001, P-16 |
-| Laravel Sanctum | Not installed; behaviour fixed, package chosen in B1 | security baseline |
+| Laravel Sanctum | **Installed** — `laravel/sanctum` decided in B1, spec 007 (approved 2026-09-26) | security baseline, spec 007 |
 | Filament for admin | **Livewire and Blade** | P-18 |
 | `{ "amount": 12500 }` | `amount_minor` + `currency` | ADR-0003, spec 003 |
 | `Idempotency-Key` on all money POSTs | Only the three non-upsert operations | spec 003 |

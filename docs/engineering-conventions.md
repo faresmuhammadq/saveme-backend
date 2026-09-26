@@ -54,7 +54,8 @@ Code lives in one of nine bounded contexts, fixed by the constitution: Identity,
 
 ```text
 app/Modules/<Context>/
-├── Domain/                 value objects, entities, domain events, repository interfaces
+├── Domain/                 value objects, entities, domain events
+│   └── Ports/              repository interfaces (ports)
 ├── Application/            application services, query services, DTOs, jobs, listeners
 ├── Infrastructure/
 │   ├── Models/             Eloquent models — private to the module
@@ -74,7 +75,8 @@ Every kind of class has exactly one home:
 
 | Class | Directory |
 |---|---|
-| Value object, entity, domain event, repository interface | `Domain/` |
+| Value object, entity, domain event | `Domain/` |
+| Repository interface (port) | `Domain/Ports/` |
 | Application service, query service, DTO | `Application/` |
 | Queued job, event listener | `Application/` |
 | Eloquent model | `Infrastructure/Models/` |
@@ -82,6 +84,7 @@ Every kind of class has exactly one home:
 | Migration, factory, seeder | `Infrastructure/Database/…` |
 | Controller, form request, API resource | `Http/…` |
 | Policy | `Http/Policies/` |
+| Shared API runtime: envelope, problem renderer, api-group middleware, base `ApiRequest`, collection query, log redaction | `app/Http/Api/`, outside the modules |
 
 ### Layer rules
 
@@ -94,6 +97,12 @@ Every kind of class has exactly one home:
 | Shared | PHP and framework value helpers | any module, `Illuminate\Database` |
 
 Cross-module interaction uses exactly one of two mechanisms: calling another module's Application service, or handling its domain event.
+
+A module's ports — the repository interfaces its Application layer calls — live in `Domain/Ports`, and their implementations in `Infrastructure/Repositories`. Infrastructure therefore depends only on Domain, never on Application.
+
+### The shared API runtime
+
+The plumbing every endpoint shares lives in `app/Http/Api`: the response `Envelope`, the problem renderer and its refusals, the middleware of the `api` group (request id, JSON negotiation, content language, client version, transport, rate-limit headers), the base `ApiRequest`, the collection query, and log redaction. It is cross-cutting plumbing outside the modules, in the same way `app/Providers/ModuleServiceProvider.php` is, and belongs to no bounded context. A module's form requests extend `ApiRequest`, and its controllers return an `Envelope`; a module never builds its own envelope or problem body.
 
 ### How a module is wired
 
@@ -203,6 +212,14 @@ Four profiles, stated by what differs. Staging and production are rows only unti
 | `MAIL_MAILER` | `smtp` to Mailpit | `array` | a provider | a provider |
 | `LOG_LEVEL` | `debug` | `debug` | `info` | `info` |
 | `BCRYPT_ROUNDS` | `12` | `4` | `12` | `12` |
+| `HASH_ARGON_MEMORY`, `HASH_ARGON_TIME`, `HASH_ARGON_THREADS` | `65536`, `4`, `1` | `1024`, `1`, `1` | `65536`, `4`, `1`, re-measured to 250–500 ms | `65536`, `4`, `1`, re-measured to 250–500 ms |
+| `IDENTITY_KEYS`, `IDENTITY_ACTIVE_KEY`, `IDENTITY_LOOKUP_KEY` | the untracked `.env` | the job's environment | the deployment's secret store | the deployment's secret store |
+| `ADMIN_NOTIFICATION_RECIPIENTS` | any local address, caught by Mailpit | empty | the operators' addresses | the operators' addresses |
+| `API_MIN_ANDROID_VERSION`, `API_MIN_WEB_VERSION` | `1.0.0` | `1.0.0` | the oldest supported client | the oldest supported client |
+| `API_REQUIRE_TLS` | off | off | on | on |
+| `API_PROBLEM_BASE_URL` | `APP_URL` | `APP_URL` | the public API origin | the public API origin |
+| `IDENTITY_VERIFY_URL`, `IDENTITY_RESET_URL` | pages under `APP_URL` | unused | the website or app deep-link pages | the website or app deep-link pages |
+| `IDENTITY_GOOGLE_ENABLED` | `false` | `false` | `false` | `false` until Google Sign-In is built |
 | Secrets live in | the untracked `.env` | the job's environment | the deployment's secret store | the deployment's secret store |
 
 ### May never differ
@@ -304,4 +321,4 @@ The back office is the only server-rendered interface (constitution P-18), built
 
 ## Dependencies
 
-No package is added without the repository owner's approval. The approved development tools today are Pint, Larastan, Pest with its architecture plugin, and Spectator.
+No package is added without the repository owner's approval. The approved development tools today are Pint, Larastan, Pest with its architecture plugin, and Spectator. The approved runtime packages beyond the framework and Livewire are `laravel/sanctum` (approved 2026-09-26, spec 007), for device-session bearer credentials.

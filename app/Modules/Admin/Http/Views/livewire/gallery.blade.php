@@ -283,6 +283,7 @@
                 <div data-gallery-item="badge.count.default"><x-admin::badge tone="count">38</x-admin::badge></div>
                 <div data-gallery-item="badge.danger-count.default"><x-admin::badge tone="danger-count">3</x-admin::badge></div>
                 <div data-gallery-item="badge.dot.default"><x-admin::badge tone="dot" :label="__('admin::gallery.samples.new_notifications')" /></div>
+                <div data-gallery-item="notification-list.default"><x-admin::notification-list :items="$sampleNotifications" :unread="1" name="gallery-notifications" /></div>
             </div>
         </div>
         <div class="grid grid-cols-2 gap-5">

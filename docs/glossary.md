@@ -38,13 +38,14 @@ Rules:
 
 ## The entity index
 
-22 entities: the 21 named in the spec, plus **Category Reference**, which exists because categories are user-scoped and shared wallets need to render a partner's category (see [ADR-0012](adr/0012-postings-wallet-and-category-accounts.md) and the Category entry).
+24 entities: the 21 named in the spec, plus **Category Reference**, which exists because categories are user-scoped and shared wallets need to render a partner's category (see [ADR-0012](adr/0012-postings-wallet-and-category-accounts.md) and the Category entry), plus **Audit Entry** and **Operator Notification**, added by spec 007 (Identity & Authentication).
 
 | Entity | Arabic | Context | Role | Persistence | Sync |
 |---|---|---|---|---|---|
 | [User](#user) | — | Identity | root | persisted | no |
 | [Profile](#profile) | — | Identity | child of User | persisted | yes — user |
 | [Device Session](#device-session) | — | Identity | child of User | persisted | yes — user |
+| [Audit Entry](#audit-entry) | — | Identity | root | persisted | no |
 | [Wallet](#wallet-محفظة) | محفظة | Wallets & Ledger | root, and a sync scope | persisted | yes — wallet |
 | [Wallet Member](#wallet-member) | — | Wallets & Ledger | child of Wallet | persisted | yes — wallet |
 | [Category](#category) | — | Wallets & Ledger | root | persisted | yes — user |
@@ -64,6 +65,7 @@ Rules:
 | [Redeem Code](#redeem-code) | — | Plans & Billing | root | persisted | no |
 | [Sync Cursor](#sync-cursor) | — | Sync | protocol value | client-held | n/a |
 | [Report](#report) | — | Reporting | derived value | derived | no |
+| [Operator Notification](#operator-notification) | — | Admin | root | persisted | no |
 
 #### What syncs, and how the client gets the rest
 
@@ -72,7 +74,7 @@ Rules:
 - **User scope (4)** — Profile, Device Session, Category, Budget.
 - **Wallet scope (7)** — Wallet, Wallet Member, Category Reference, Transaction, Recurring Rule, Occurrence, Invitation.
 
-**7 persisted but not synced**, and how the client obtains each:
+**9 persisted but not synced**, and how the client obtains each:
 
 | Entity | How the client gets it |
 |---|---|
@@ -82,6 +84,8 @@ Rules:
 | Payment Claim | website only (P-10); the app sees only the resulting Subscription |
 | Redeem Code | never read by the client; it submits a code and sees the result |
 | Posting | never — internal to the server (P-04) |
+| Audit Entry | never — operator-only |
+| Operator Notification | never — operator-only |
 
 **4 never persisted** — Entitlement, Budget Period, Report (all derived), and Sync Cursor (held by the client).
 
@@ -97,7 +101,7 @@ The authenticated person who owns an account.
 - **Role**: aggregate root
 - **Persistence**: persisted
 - **Sync**: no — credentials and account state are auth data, not client records
-- **States**: `active` → `pending_deletion` → `purged` (after the 30-day grace period)
+- **States**: `active` ⇄ `pending_deletion` → `purged` (after the 30-day grace period). A new sign-in or an explicit cancel during the grace period returns the account to `active`
 - **Referenced by**: Profile, Device Session, Wallet Member, Category, Budget, Subscription, Payment Claim, Transaction (`created_by`), and every user-scoped entity
 - **Notes**: holds credentials and account lifecycle only. Display name, locale and timezone live on Profile. Deleting an account never destroys another member's data in a shared wallet.
 
@@ -124,6 +128,18 @@ One device's signed-in session — what the user sees in a "devices signed in" l
 - **States**: `active` → `revoked`; `active` → `expired`
 - **Referenced by**: Notifications, which binds a push registration to a session
 - **Notes**: the access token itself is **not** an entity and never leaves the auth layer; "token" and "PAT" are banned as product vocabulary. Notifications owns the push-token registration, which is a separate record and is not one of the 21 named entities — it will be indexed here when that feature is specced.
+
+### Audit Entry
+
+One recorded security or privacy event — who did what, to which subject, and when.
+
+- **Context**: Identity
+- **Role**: aggregate root
+- **Persistence**: persisted
+- **Sync**: no — operators read it through Admin
+- **States**: `single-state`
+- **Referenced by**: —
+- **Notes**: append-only; never edited, and never deleted before its 400-day retention expires. Its shape, event vocabulary and exclusion list are fixed by the [security baseline](security-baseline.md#the-audit-entry), not here. Identity owns the one log; every other module, Admin's `AdminAuditService` included, writes through Identity's application service. Reading it is itself recorded.
 
 ---
 
@@ -393,10 +409,22 @@ A computed view over the ledger — spending by category, net worth, a period co
 
 ## Notifications and Admin
 
-Neither context owns any of the 21 named entities.
+Neither context owns any of the 21 named entities. Admin owns one entity added since, [Operator Notification](#operator-notification).
 
 - **Notifications** owns the push registration that binds a device to a [Device Session](#device-session), and notification preferences. Those records will be indexed here when that feature is specced.
-- **Admin** owns admin accounts — a **separate guard**, with no role or admin flag on application users (P-08, ADR-0006) — and the audit record of admin actions. Admin **writes only through other modules' application services**, so back-office actions run the same invariants, authorization and events as app actions.
+- **Admin** owns admin accounts — a **separate guard**, with no role or admin flag on application users (P-08, ADR-0006) — and records admin actions through its `AdminAuditService` façade, which writes to Identity's one [audit log](#audit-entry). Admin **writes only through other modules' application services**, so back-office actions run the same invariants, authorization and events as app actions.
+
+### Operator Notification
+
+A back-office alert telling operators that something needing their attention happened to an account — the first kind is a deletion cancelled by a sign-in.
+
+- **Context**: Admin
+- **Role**: aggregate root
+- **Persistence**: persisted
+- **Sync**: no — operators see it in the back office
+- **States**: `single-state`
+- **Referenced by**: —
+- **Notes**: carries identifiers only, **never an address**. Unique per source event, so a redelivered event produces no second notification. Per-operator read state arrives with operator accounts.
 
 ---
 

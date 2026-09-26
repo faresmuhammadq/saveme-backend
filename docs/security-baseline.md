@@ -122,24 +122,35 @@ Two independent limits, and a way out the attacker does not control.
 
 The per-origin limit is what actually stops credential stuffing, which spreads thinly across thousands of accounts and would never trip a per-account counter.
 
+### Route budgets
+
+The routes that send mail or create accounts carry their own budgets, independent of the sign-in counters above.
+
+| Route | Budget |
+|---|---|
+| Registration | 10 per hour per origin |
+| Resend verification | 3 per hour per address |
+| Password reset request | 3 per hour per address, counted per lookup value whether the address is registered or not |
+
 **Owned by**: Identity.
 
 ## Uniform answers
 
-Four surfaces can be used to ask "does this address have an account here". All four answer the same way whether it does or not.
+Four surfaces can be used to ask "does this address have an account here". Three answer the same way whether it does or not. Registration, by owner decision (2026-09-27, spec 007), says so.
 
 | Surface | Answer, either way |
 |---|---|
 | Sign-in | `401 INVALID_CREDENTIALS` |
 | Password reset request | `202` — "if that address is registered, a link is on its way" |
-| Registration | `202`, followed by a mail that differs by case: welcome, or "you already have an account" |
+| Registration | **not uniform**: `202` for a new address, `409 EMAIL_ALREADY_REGISTERED` for one that has an account, with no mail |
 | Invitation | `202`, with no indication of whether the invitee is registered |
 
 **Rules**
 
 - Response timing is equalised, so a wrong password and an unknown address take comparable time. A timing difference is a slower version of the same leak.
 - The difference lives in the **mail body**, which reaches the person who owns the address and nobody else.
-- All four, or none. Three surfaces answering uniformly and a fourth answering honestly makes the other three pointless, and costs the effort of building them.
+- **The accepted risk.** Registration tells anyone whether an address has an account. That was chosen so the app can say "you already have an account" on screen rather than in a mail. It is bounded only by the registration budget, 10 attempts per hour per origin (Route budgets), which slows a list check without stopping one.
+- The other three stay uniform. They still protect what registration does not reveal: whether a password is right, whether a reset link was sent, and whether an invitee is registered. Their cost is small, and making registration uniform again later would need no change to them.
 
 **Owned by**: Identity, with the invitation surface shared with Sharing.
 
@@ -183,6 +194,10 @@ There is no blanket claim here, because a blanket claim collapses under one ques
 | Note | **none at rest** | yes | members of the wallet |
 | Wallet and category names | none at rest | yes | members of the wallet, and the category's owner |
 | Audit entries | none at rest, and they carry nothing protected | yes | operators only, and the read is recorded |
+| Device name, platform, app version | none | no | the account owner |
+| Device installation identifier | none | by owner's sessions only | nobody through any endpoint |
+| Sign-in failure counter | none (keyed by lookup value) | by lookup value | nobody through any endpoint |
+| Operator notification | none, carrying identifiers only | yes | operators |
 
 **Rules**
 
@@ -340,7 +355,7 @@ Both are true at once, stated separately rather than averaged into a number that
 ## Deletion
 
 ```text
-requested ──cancel, before the 30 days elapse──▶ cancelled
+requested ──cancel, or sign in, before the 30 days elapse──▶ cancelled
     │
     └──purge runs, at or after 30 days──▶ completed
 ```
@@ -351,6 +366,7 @@ requested ──cancel, before the 30 days elapse──▶ cancelled
 2. The person may keep using the account during the grace period, writes included. Using it neither extends nor resets the clock.
 3. On completion, the rows the person alone owns are deleted **and** the per-account key material is destroyed.
 4. What is claimed is the removal of their identity attributes and their own records — not every byte they ever caused to exist, because a shared wallet's history is not theirs alone to delete.
+5. A new successful sign-in during the grace period cancels the request; the person is told by mail and operators are notified.
 
 ### Why the key material matters
 
@@ -418,7 +434,7 @@ Identity already owns users, credentials and sessions, which is where most recor
 | `actor_type` | enum | `user` \| `operator` \| `system` |
 | `actor_id` | uuid, nullable | null only for `system` |
 | `subject_type` | enum | `user` \| `wallet` \| `session` \| `subscription` |
-| `subject_id` | uuid | |
+| `subject_id` | uuid, nullable | null only for `sign_in_failed` and `lockout_applied` on an unregistered address |
 | `request_id` | uuid | correlates the entry with the server's logs |
 | `origin` | string, nullable | coarse origin of the request |
 | `detail` | object | structured, constrained by [the exclusion list](#what-an-entry-must-never-contain) |
@@ -557,7 +573,7 @@ FR-038a requires every rule in this baseline to be expressible as a check a revi
 - [ ] B2 — An account lock expires on its own within 60 minutes and is never permanent.
 - [ ] B3 — A successful password reset clears a lock immediately.
 - [ ] B4 — A lockout refusal is distinguishable by the client from a wrong password.
-- [ ] B5 — Sign-in, reset, registration and invitation answer identically for a registered and an unregistered address.
+- [ ] B5 — Sign-in, reset and invitation answer identically for a registered and an unregistered address. Registration is the recorded exception (Uniform answers).
 - [ ] B6 — Response timing does not distinguish a wrong password from an unknown address.
 
 ### C. The verification gate
@@ -601,6 +617,7 @@ FR-038a requires every rule in this baseline to be expressible as a check a revi
 - [ ] G4 — A completed deletion leaves no readable identity attribute, including in a restored backup.
 - [ ] G5 — A shared wallet keeps its history and balances when one member departs.
 - [ ] G6 — An export served during the grace period does not reset the clock.
+- [ ] G7 — A sign-in during the grace period cancels the deletion and notifies the person and operators.
 
 ### H. Privileged and machine access
 

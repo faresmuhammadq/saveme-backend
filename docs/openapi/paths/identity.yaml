@@ -1,0 +1,747 @@
+# Identity: accounts, device sessions, verification, passwords and deletion
+# (spec 007). Every operation sits under /api/v1 and runs through the shared
+# runtime, so each also documents the shared refusals it can produce.
+#
+# Public operations declare `security: []`; the rest inherit the root's
+# bearer scheme, whose credential is `{session_id}|{secret}` from sign-in.
+
+/auth/register:
+  post:
+    operationId: registerAccount
+    tags: [Identity]
+    summary: Create an account. An address that already has one is refused with 409.
+    description: |
+      A new address gets an account, its profile and its default plan, created
+      together, and a welcome mail with a verification link.
+
+      An address that already has an account is refused with 409
+      EMAIL_ALREADY_REGISTERED and nothing is sent: the app offers sign-in or a
+      password reset. Registration is the one surface that discloses an
+      existing account (owner decision, spec 007); sign-in and password reset
+      still answer uniformly. The 10-per-hour-per-origin budget limits how fast
+      it can be used to test addresses.
+    security: []
+    parameters: &clientParams
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RegisterRequest'
+    responses:
+      '202':
+        $ref: '#/components/responses/Accepted'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/auth/verify-email:
+  post:
+    operationId: verifyEmail
+    tags: [Identity]
+    summary: Confirm the address with the secret from the verification mail.
+    description: |
+      Works without a session, so the link can be opened on any device. A link
+      is single-use, lives 24 hours, and stops working when a newer one is sent.
+    security: []
+    parameters: *clientParams
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TokenRequest'
+    responses:
+      '200':
+        description: The address is verified.
+        headers: &successHeaders
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: object
+                      required: [email_verified]
+                      additionalProperties: false
+                      properties:
+                        email_verified:
+                          type: boolean
+                          const: true
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/auth/resend-verification:
+  post:
+    operationId: resendVerification
+    tags: [Identity]
+    summary: Send the verification mail again. At most three per hour.
+    description: |
+      Every earlier link stops working. An address that is already verified
+      gets the same answer and no mail.
+    parameters: *clientParams
+    responses:
+      '202':
+        $ref: '#/components/responses/Accepted'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/auth/login:
+  post:
+    operationId: signIn
+    tags: [Identity]
+    summary: Sign in from a device and receive that device's session credential.
+    description: |
+      Idempotent per `device.session_id`: signing in again with the same id
+      rotates the credential of the same session. A new id from a device that
+      already has an active session ends that earlier session.
+
+      A wrong password and an unregistered address both answer 401
+      INVALID_CREDENTIALS, in comparable time. After five straight failures
+      the address is locked (423), whether or not it is registered.
+
+      Signing in to an account whose deletion is pending cancels the deletion;
+      `deletion_cancelled` says so, and the person is told by mail.
+    security: []
+    parameters: *clientParams
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SignInRequest'
+    responses:
+      '200':
+        description: Signed in. The credential is shown in this response only.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SignInResult'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '423':
+        $ref: '../components/responses.yaml#/components/responses/Locked'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/auth/sessions:
+  get:
+    operationId: listDeviceSessions
+    tags: [Identity]
+    summary: The caller's device sessions, in every state, newest sign-in first.
+    x-filterable: [state]
+    x-sortable: [signed_in_at, last_used_at]
+    parameters:
+      - $ref: '../components/parameters.yaml#/components/parameters/Cursor'
+      - $ref: '../components/parameters.yaml#/components/parameters/Limit'
+      - $ref: '../components/parameters.yaml#/components/parameters/Filter'
+      - $ref: '../components/parameters.yaml#/components/parameters/Sort'
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'A page of sessions. Empty is 200 with `data: []`.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/DeviceSession'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+  delete:
+    operationId: endOtherDeviceSessions
+    tags: [Identity]
+    summary: End every session of the caller except the current one.
+    parameters: *clientParams
+    responses:
+      '204':
+        $ref: '#/components/responses/NoContent'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/auth/sessions/{id}:
+  delete:
+    operationId: endDeviceSession
+    tags: [Identity]
+    summary: End one of the caller's sessions. Ending one already ended changes nothing.
+    description: |
+      The ended credential is refused on its very next request; every other
+      session keeps working. A session that is not the caller's is 404.
+    parameters:
+      - $ref: '../components/parameters.yaml#/components/parameters/ResourceId'
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '204':
+        $ref: '#/components/responses/NoContent'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/auth/logout:
+  post:
+    operationId: signOut
+    tags: [Identity]
+    summary: End the current session. Every other session is untouched.
+    parameters: *clientParams
+    responses:
+      '204':
+        $ref: '#/components/responses/NoContent'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/auth/forgot-password:
+  post:
+    operationId: requestPasswordReset
+    tags: [Identity]
+    summary: Ask for a password reset link. Answers the same whether or not the address is registered.
+    description: |
+      A mail is sent only when the address is registered. At most three
+      requests per address per hour, counted whether or not it is registered.
+    security: []
+    parameters: *clientParams
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/EmailRequest'
+    responses:
+      '202':
+        $ref: '#/components/responses/Accepted'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/auth/reset-password:
+  post:
+    operationId: resetPassword
+    tags: [Identity]
+    summary: Set a new password with the secret from the reset mail.
+    description: |
+      Ends every session of the account, clears any sign-in lock, and stops
+      every other reset link working. It does not sign the person in.
+    security: []
+    parameters: *clientParams
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ResetPasswordRequest'
+    responses:
+      '204':
+        $ref: '#/components/responses/NoContent'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/auth/change-password:
+  post:
+    operationId: changePassword
+    tags: [Identity]
+    summary: Change the password while signed in. Every other session ends.
+    description: |
+      Needs the current password. A wrong one is 401 INVALID_CREDENTIALS and
+      counts toward the sign-in lock. The session making the change stays
+      signed in.
+    parameters: *clientParams
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ChangePasswordRequest'
+    responses:
+      '204':
+        $ref: '#/components/responses/NoContent'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '423':
+        $ref: '../components/responses.yaml#/components/responses/Locked'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/account/deletion-request:
+  post:
+    operationId: requestAccountDeletion
+    tags: [Identity]
+    summary: Ask for the account to be deleted after a 30-day grace period.
+    description: |
+      Confirmed with the current password. Asking again during the grace period
+      returns the date already set; it never moves. Existing sessions keep
+      working throughout; signing in anew, or cancelling, returns the account
+      to active with nothing lost.
+    parameters: *clientParams
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PasswordConfirmation'
+    responses:
+      '200':
+        description: The account is pending deletion.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/DeletionSchedule'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '423':
+        $ref: '../components/responses.yaml#/components/responses/Locked'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+  delete:
+    operationId: cancelAccountDeletion
+    tags: [Identity]
+    summary: Cancel a pending deletion. Nothing is lost; with nothing pending, nothing changes.
+    parameters: *clientParams
+    responses:
+      '204':
+        $ref: '#/components/responses/NoContent'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/auth/google:
+  post:
+    operationId: signInWithGoogle
+    tags: [Identity]
+    summary: Reserved. Google Sign-In, switched off in MVP.
+    description: |
+      Reserved extension point (spec 007, FR-080). While switched off the route
+      does not exist and every call is 404. When built, it takes Google's ID
+      assertion plus the same device description as signIn, answers with the
+      same shape, and never links to an existing account unless Google asserts
+      the address is verified.
+    x-status: reserved
+    security: []
+    parameters: *clientParams
+    responses:
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+
+components:
+  responses:
+    Accepted:
+      description: 'Accepted. The body is the same whatever the outcome behind it.'
+      headers:
+        X-Request-Id:
+          $ref: '../components/headers.yaml#/components/headers/XRequestId'
+        Content-Language:
+          $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+              - type: object
+                properties:
+                  data:
+                    type: object
+                    required: [status]
+                    additionalProperties: false
+                    properties:
+                      status:
+                        type: string
+                        const: accepted
+
+    NoContent:
+      description: Done. No body.
+      headers:
+        X-Request-Id:
+          $ref: '../components/headers.yaml#/components/headers/XRequestId'
+
+  schemas:
+    Email:
+      type: string
+      format: email
+      maxLength: 254
+
+    Password:
+      type: string
+      minLength: 8
+      maxLength: 128
+      description: 8 to 128 characters, any composition, not equal to the address.
+
+    Secret:
+      type: string
+      minLength: 1
+      maxLength: 128
+      description: The secret from a mailed link.
+
+    RegisterRequest:
+      type: object
+      required: [email, password]
+      additionalProperties: false
+      properties:
+        email:
+          $ref: '#/components/schemas/Email'
+        password:
+          $ref: '#/components/schemas/Password'
+        display_name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        timezone:
+          type: string
+          description: IANA timezone. Defaults to Africa/Cairo.
+          examples: ['Africa/Cairo']
+
+    EmailRequest:
+      type: object
+      required: [email]
+      additionalProperties: false
+      properties:
+        email:
+          $ref: '#/components/schemas/Email'
+
+    TokenRequest:
+      type: object
+      required: [token]
+      additionalProperties: false
+      properties:
+        token:
+          $ref: '#/components/schemas/Secret'
+
+    ResetPasswordRequest:
+      type: object
+      required: [token, password]
+      additionalProperties: false
+      properties:
+        token:
+          $ref: '#/components/schemas/Secret'
+        password:
+          $ref: '#/components/schemas/Password'
+
+    ChangePasswordRequest:
+      type: object
+      required: [current_password, new_password]
+      additionalProperties: false
+      properties:
+        current_password:
+          type: string
+          maxLength: 128
+        new_password:
+          $ref: '#/components/schemas/Password'
+
+    PasswordConfirmation:
+      type: object
+      required: [password]
+      additionalProperties: false
+      properties:
+        password:
+          type: string
+          maxLength: 128
+
+    DeviceDescription:
+      type: object
+      description: |
+        What the phone says about itself. `session_id` is generated by the
+        client (a UUIDv7), which makes signing in idempotent per session.
+      required: [session_id, device_id, name, platform, app_version]
+      additionalProperties: false
+      properties:
+        session_id:
+          type: string
+          format: uuid
+          pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+        device_id:
+          type: string
+          description: Stable per app installation. Never shown back.
+          pattern: '^[A-Za-z0-9._:-]{1,64}$'
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          examples: ['Pixel 8']
+        platform:
+          type: string
+          enum: [android]
+        app_version:
+          type: string
+          pattern: '^\d+\.\d+\.\d+$'
+
+    SignInRequest:
+      type: object
+      required: [email, password, device]
+      additionalProperties: false
+      properties:
+        email:
+          $ref: '#/components/schemas/Email'
+        password:
+          type: string
+          maxLength: 128
+        device:
+          $ref: '#/components/schemas/DeviceDescription'
+
+    Account:
+      type: object
+      description: The signed-in person's account. Not syncable.
+      required: [id, email, email_verified, state, deletion_scheduled_for]
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          $ref: '#/components/schemas/Email'
+        email_verified:
+          type: boolean
+        state:
+          type: string
+          enum: [active, pending_deletion]
+        deletion_scheduled_for:
+          type: [string, 'null']
+          format: date-time
+
+    EntitlementSummary:
+      type: object
+      description: |
+        What the effective plan allows. `plan` is a label for display; gate on
+        `features`, never on the label.
+      required: [plan, features]
+      additionalProperties: false
+      properties:
+        plan:
+          type: string
+          examples: ['billing.plans.free']
+        features:
+          type: object
+          additionalProperties:
+            type: [boolean, integer]
+
+    DeviceSession:
+      description: One device's session, as its owner sees it. User-scoped and syncable.
+      allOf:
+        - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
+        - $ref: '../components/schemas.yaml#/components/schemas/UserScoped'
+        - type: object
+          required: [device_name, platform, app_version, state, end_reason, signed_in_at, last_used_at, ended_at, current]
+          properties:
+            device_name:
+              type: string
+              maxLength: 100
+            platform:
+              type: string
+              enum: [android]
+            app_version:
+              type: string
+            state:
+              type: string
+              enum: [active, revoked, expired]
+            end_reason:
+              type: [string, 'null']
+              enum: [signed_out, ended_by_owner, replaced, password_changed, password_reset, expired, null]
+            signed_in_at:
+              type: string
+              format: date-time
+            last_used_at:
+              type: [string, 'null']
+              format: date-time
+            ended_at:
+              type: [string, 'null']
+              format: date-time
+            current:
+              type: boolean
+              description: Whether this is the session making the request.
+
+    SignInResult:
+      type: object
+      required: [credential, session, account, entitlements, deletion_cancelled]
+      additionalProperties: false
+      properties:
+        credential:
+          type: string
+          description: '`{session_id}|{secret}`. Shown once; send it as a bearer credential.'
+          pattern: '^[0-9a-f-]{36}\|[A-Za-z0-9]{64}$'
+        session:
+          $ref: '#/components/schemas/DeviceSession'
+        account:
+          $ref: '#/components/schemas/Account'
+        entitlements:
+          $ref: '#/components/schemas/EntitlementSummary'
+        deletion_cancelled:
+          type: boolean
+          description: True when this sign-in cancelled a pending account deletion.
+
+    DeletionSchedule:
+      type: object
+      required: [state, deletion_scheduled_for]
+      additionalProperties: false
+      properties:
+        state:
+          type: string
+          const: pending_deletion
+        deletion_scheduled_for:
+          type: string
+          format: date-time

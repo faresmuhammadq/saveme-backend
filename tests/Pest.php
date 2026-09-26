@@ -1,8 +1,16 @@
 <?php
 
+use App\Http\Api\Envelope;
+use App\Modules\Identity\Domain\Account\LinkKind;
+use App\Modules\Identity\Domain\Ports\LinkRepository;
+use App\Modules\Identity\Infrastructure\Models\Profile;
+use App\Modules\Identity\Infrastructure\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\RouteCollection;
+use Illuminate\Support\Str;
+use Illuminate\Testing\TestResponse;
+use Tests\Contract\Api\Support\ProbeRequest;
 use Tests\TestCase;
 
 /*
@@ -136,4 +144,144 @@ function adminRouteUris(): array
         ->filter(fn (string $uri): bool => $uri === 'admin' || str_starts_with($uri, 'admin/'))
         ->values()
         ->all();
+}
+
+/*
+|--------------------------------------------------------------------------
+| API runtime (spec 007)
+|--------------------------------------------------------------------------
+|
+| Fixture routes that run through the real `api` middleware group but are not
+| part of the published contract, so runtime tests assert on raw JSON and
+| headers rather than through Spectator.
+|
+*/
+
+function registerApiProbes(): void
+{
+    Illuminate\Support\Facades\Route::middleware('api')->prefix('api/v1')->group(function (): void {
+        Illuminate\Support\Facades\Route::get('_probe', fn () => Envelope::ok(['ok' => true]));
+        Illuminate\Support\Facades\Route::post('_probe', fn (ProbeRequest $request) => Envelope::ok($request->validated()));
+        Illuminate\Support\Facades\Route::get('_boom', fn () => throw new RuntimeException('secret stack detail'));
+        Illuminate\Support\Facades\Route::get('_throttled', fn () => Envelope::ok(['ok' => true]))->middleware('throttle:2,1');
+    });
+}
+
+/**
+ * The headers a JSON client sends, plus the client headers.
+ *
+ * @return array<string, string>
+ */
+function jsonHeaders(array $extra = []): array
+{
+    // Each call is judged afresh, as in production: no user cached on the guard.
+    if (function_exists('app') && app()->bound('auth')) {
+        app('auth')->forgetGuards();
+    }
+
+    return [...clientHeaders(), 'Accept' => 'application/json', ...$extra];
+}
+
+expect()->extend('toBeUuidV7', function () {
+    expect($this->value)->toMatch('/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/');
+
+    return $this;
+});
+
+/*
+|--------------------------------------------------------------------------
+| Identity (spec 007)
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * A sign-in device description with a fresh session id.
+ *
+ * @param  array<string, string>  $overrides
+ * @return array<string, string>
+ */
+function deviceBody(array $overrides = []): array
+{
+    return [
+        'session_id' => (string) Str::uuid7(),
+        'device_id' => 'install-'.Str::lower(Str::random(10)),
+        'name' => 'Pixel 8',
+        'platform' => 'android',
+        'app_version' => '1.0.0',
+        ...$overrides,
+    ];
+}
+
+/**
+ * A registered, verified person with a known address and password.
+ */
+function person(string $email = 'ada@example.test', string $password = 'correct horse', bool $verified = true): User
+{
+    $factory = User::factory()->withEmail($email)->withPassword($password);
+    $user = ($verified ? $factory->verified() : $factory->unverified())->create();
+    Profile::factory()->create(['user_id' => $user->id]);
+
+    return $user;
+}
+
+/**
+ * Signs in through the API and returns the response.
+ *
+ * @param  array<string, string>|null  $device
+ */
+function signInAs(string $email = 'ada@example.test', string $password = 'correct horse', ?array $device = null): TestResponse
+{
+    $response = test()->withHeaders(jsonHeaders())->postJson('/api/v1/auth/login', [
+        'email' => $email, 'password' => $password, 'device' => $device ?? deviceBody(),
+    ]);
+    test()->flushHeaders();
+    app('auth')->forgetGuards();
+
+    return $response;
+}
+
+/**
+ * Headers for an authenticated call with a credential; forgets the guard so
+ * each call is judged afresh, as in production.
+ *
+ * @return array<string, string>
+ */
+function asCredential(string $credential): array
+{
+    app('auth')->forgetGuards();
+
+    return jsonHeaders(['Authorization' => 'Bearer '.$credential]);
+}
+
+/**
+ * Issues a live link of the given kind for a user, returning its secret.
+ */
+function linkFor(string $userId, LinkKind $kind): string
+{
+    return app(LinkRepository::class)->issue($userId, $kind);
+}
+
+/**
+ * Spectator 3 cannot validate a request carrying the shared deepObject
+ * `filter[...]` parameter: its caster reads `properties` on a schema that has
+ * only `additionalProperties`, and the warning becomes an exception. Tests of
+ * filtered requests switch it off and assert on status and code directly.
+ * Remove when Spectator handles additionalProperties-only objects.
+ */
+function withoutSpectatorRequestValidation(): void
+{
+    Spectator\Spectator::reset();
+}
+
+/**
+ * Calls POST /auth/change-password with a credential.
+ *
+ * @param  array<string, string>  $body
+ */
+function changePassword(string $credential, array $body): TestResponse
+{
+    $response = test()->withHeaders(asCredential($credential))->postJson('/api/v1/auth/change-password', $body);
+    test()->flushHeaders();
+
+    return $response;
 }

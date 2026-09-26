@@ -16,7 +16,8 @@ components:
         INVALID_QUERY_PARAMETER, INVALID_CURSOR, FILTER_FIELD_NOT_SUPPORTED,
         FILTER_OPERATOR_NOT_SUPPORTED, SORT_FIELD_NOT_SUPPORTED,
         IDEMPOTENCY_KEY_REQUIRED, IDEMPOTENCY_KEY_INVALID,
-        CLIENT_VERSION_REQUIRED, CLIENT_VERSION_INVALID.
+        CLIENT_VERSION_REQUIRED, CLIENT_VERSION_INVALID, INSECURE_TRANSPORT,
+        VERIFICATION_TOKEN_INVALID, RESET_TOKEN_INVALID.
       headers:
         X-Request-Id:
           $ref: './headers.yaml#/components/headers/XRequestId'
@@ -26,7 +27,10 @@ components:
             $ref: './schemas.yaml#/components/schemas/Problem'
 
     Unauthenticated:
-      description: 'No token was sent, or it is expired or revoked. Code: UNAUTHENTICATED.'
+      description: |
+        Codes: UNAUTHENTICATED (no credential was sent, or it is expired or
+        revoked), INVALID_CREDENTIALS (the address or password is wrong,
+        answered identically whether or not the address is registered).
       headers:
         X-Request-Id:
           $ref: './headers.yaml#/components/headers/XRequestId'
@@ -38,7 +42,8 @@ components:
     Forbidden:
       description: |
         The caller is inside the wallet but may not do this. Codes: FORBIDDEN
-        (role insufficient), FEATURE_NOT_ENTITLED (plan lacks the capability).
+        (role insufficient), FEATURE_NOT_ENTITLED (plan lacks the capability),
+        EMAIL_NOT_VERIFIED (an unverified address may not write to a wallet).
         A caller outside the wallet gets NotFound instead, so a 403 discloses
         only that the caller is already a member.
       headers:
@@ -94,7 +99,9 @@ components:
         Codes: VERSION_CONFLICT (the write carried a stale version; nothing was
         applied and `current` carries the record's present state, tombstone
         included), IDEMPOTENCY_KEY_REUSED (same key, different payload),
-        IDEMPOTENCY_REQUEST_IN_PROGRESS (the original has not finished).
+        IDEMPOTENCY_REQUEST_IN_PROGRESS (the original has not finished),
+        EMAIL_ALREADY_REGISTERED (registration for an address that already
+        has an account).
       headers:
         X-Request-Id:
           $ref: './headers.yaml#/components/headers/XRequestId'
@@ -135,6 +142,21 @@ components:
       headers:
         X-Request-Id:
           $ref: './headers.yaml#/components/headers/XRequestId'
+      content:
+        application/problem+json:
+          schema:
+            $ref: './schemas.yaml#/components/schemas/Problem'
+
+    Locked:
+      description: |
+        Too many consecutive sign-in failures against this address. Retry-After
+        says when the lock ends; it caps at 60 minutes, and a completed password
+        reset clears it at once. Code: ACCOUNT_LOCKED.
+      headers:
+        X-Request-Id:
+          $ref: './headers.yaml#/components/headers/XRequestId'
+        Retry-After:
+          $ref: './headers.yaml#/components/headers/RetryAfter'
       content:
         application/problem+json:
           schema:

@@ -39,3 +39,16 @@ test('the application check refuses an unverified person', function () {
 
     expect(fn () => app(VerificationGate::class)->assertVerified($user->id))->toThrow(EmailNotVerified::class);
 });
+
+test('reading and saving one\'s own profile is not behind the gate', function () {
+    person(verified: false);
+    $credential = signInAs()->json('data.credential');
+
+    $profile = $this->withHeaders(asCredential($credential))->get('/api/v1/me')->assertOk()->json('data.profile');
+    $this->flushHeaders();
+
+    $this->withHeaders(asCredential($credential))->putJson('/api/v1/me/profile', [
+        'display_name' => 'Ada', 'locale' => 'en', 'timezone' => 'Africa/Cairo',
+        'default_currency' => 'EGP', 'budget_period_start_day' => 1, 'version' => $profile['version'],
+    ])->assertOk();
+});

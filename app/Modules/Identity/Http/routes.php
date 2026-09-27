@@ -3,6 +3,7 @@
 use App\Modules\Identity\Http\Controllers\DeletionRequestController;
 use App\Modules\Identity\Http\Controllers\LoginController;
 use App\Modules\Identity\Http\Controllers\PasswordController;
+use App\Modules\Identity\Http\Controllers\ProfileController;
 use App\Modules\Identity\Http\Controllers\RegisterController;
 use App\Modules\Identity\Http\Controllers\SessionsController;
 use App\Modules\Identity\Http\Controllers\VerificationController;
@@ -33,6 +34,8 @@ Route::name('identity.')->group(function (): void {
         Route::post('auth/change-password', [PasswordController::class, 'change'])->name('change-password');
         Route::post('account/deletion-request', [DeletionRequestController::class, 'store'])->name('deletion-request.store');
         Route::delete('account/deletion-request', [DeletionRequestController::class, 'destroy'])->name('deletion-request.destroy');
+        Route::get('me', [ProfileController::class, 'show'])->name('me');
+        Route::put('me/profile', [ProfileController::class, 'update'])->name('me.profile');
     });
 
     // Google Sign-In is reserved and switched off (FR-080): while off, the

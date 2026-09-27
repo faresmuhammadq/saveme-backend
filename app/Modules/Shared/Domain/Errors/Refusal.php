@@ -16,7 +16,7 @@ abstract class Refusal extends RuntimeException
 {
     /**
      * @param  list<FieldError>  $fieldErrors
-     * @param  array<string, scalar>  $extensions  flat problem members, e.g. minimum_version
+     * @param  array<string, scalar|array<mixed>>  $extensions  flat problem members, e.g. minimum_version, or current on a version conflict
      */
     public function __construct(
         public readonly ErrorCode $errorCode,

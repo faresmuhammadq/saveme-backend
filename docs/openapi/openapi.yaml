@@ -116,3 +116,7 @@ paths:
     $ref: './paths/identity.yaml#/~1account~1deletion-request'
   /auth/google:
     $ref: './paths/identity.yaml#/~1auth~1google'
+  /me:
+    $ref: './paths/identity.yaml#/~1me'
+  /me/profile:
+    $ref: './paths/identity.yaml#/~1me~1profile'

@@ -490,6 +490,95 @@
       '404':
         $ref: '../components/responses.yaml#/components/responses/NotFound'
 
+/me:
+  get:
+    operationId: getMe
+    tags: [Identity]
+    summary: The signed-in person's account and profile.
+    description: |
+      Not behind the verification gate: an unverified address may read and
+      manage its own profile (spec 008). `profile.default_currency_locked` says
+      whether the default currency may still change.
+    parameters: *clientParams
+    responses:
+      '200':
+        description: The account and the profile.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Me'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/me/profile:
+  put:
+    operationId: saveProfile
+    tags: [Identity]
+    summary: Save the whole profile, carrying the last-seen version.
+    description: |
+      Every writable member is sent, with the client's last-seen `version`.
+      An identical save is answered 200 with nothing changed. A stale version
+      refuses the whole save with 409 VERSION_CONFLICT, and `current` carries
+      the stored profile; nothing is merged.
+
+      Once the person has recorded a live transaction, the default currency is
+      locked: changing it is 422 with IMMUTABLE_FIELD at `/default_currency`,
+      while sending the same currency passes.
+
+      Changing timezone, currency or budget start day rewrites no other
+      record. A new start day applies from its next occurrence, reported in
+      `budget_period_start_day_from`.
+    parameters: *clientParams
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ProfileWrite'
+    responses:
+      '200':
+        description: Saved, or an identical replay with nothing changed.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Profile'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
 components:
   responses:
     Accepted:
@@ -745,3 +834,73 @@ components:
         deletion_scheduled_for:
           type: string
           format: date-time
+
+    Profile:
+      description: The person's own preferences. User-scoped and syncable (spec 008).
+      allOf:
+        - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
+        - $ref: '../components/schemas.yaml#/components/schemas/UserScoped'
+        - type: object
+          required: [display_name, locale, timezone, default_currency, default_currency_locked, budget_period_start_day, budget_period_start_day_from]
+          properties:
+            display_name:
+              type: [string, 'null']
+              maxLength: 100
+            locale:
+              type: string
+              enum: [ar, en]
+            timezone:
+              type: string
+              description: IANA timezone. Applied only when presenting.
+            default_currency:
+              type: string
+              pattern: '^[A-Z]{3}$'
+              description: The default for new wallets. Each wallet keeps its own currency.
+            default_currency_locked:
+              type: boolean
+              description: Read-only. True once the person has recorded a live transaction.
+            budget_period_start_day:
+              type: integer
+              minimum: 1
+              maximum: 28
+            budget_period_start_day_from:
+              type: [string, 'null']
+              format: date
+              description: Read-only. The calendar date the current start day applies from.
+
+    ProfileWrite:
+      type: object
+      description: The whole writable profile plus the last-seen version.
+      required: [display_name, locale, timezone, default_currency, budget_period_start_day, version]
+      additionalProperties: false
+      properties:
+        display_name:
+          type: [string, 'null']
+          maxLength: 100
+          description: Empty or null clears it.
+        locale:
+          type: string
+          enum: [ar, en]
+        timezone:
+          type: string
+          examples: ['Africa/Cairo']
+        default_currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+        budget_period_start_day:
+          type: integer
+          minimum: 1
+          maximum: 28
+        version:
+          type: integer
+          minimum: 1
+
+    Me:
+      type: object
+      required: [account, profile]
+      additionalProperties: false
+      properties:
+        account:
+          $ref: '#/components/schemas/Account'
+        profile:
+          $ref: '#/components/schemas/Profile'

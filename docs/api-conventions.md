@@ -306,7 +306,7 @@ Numerals in all output are Western `0-9`, in every locale, including inside an A
 
 ## Localisation
 
-`Accept-Language` selects the language of the human-readable strings. `ar` and `en` are supported, and `en` is the default when the header is absent or asks for anything else.
+`Accept-Language` selects the language of the human-readable strings. `ar` and `en` are supported. When the header is absent, a signed-in request is answered in the person's profile language (spec 008); otherwise, and whenever the header asks for anything else, `en` is the default.
 
 Every response carries `Content-Language` with the language **actually used**. That is what lets a client tell "Arabic" apart from "Arabic was asked for and English came back", which is otherwise invisible and surfaces as a bug report about mixed-language screens.
 

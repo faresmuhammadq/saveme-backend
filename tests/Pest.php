@@ -285,3 +285,35 @@ function changePassword(string $credential, array $body): TestResponse
 
     return $response;
 }
+
+/**
+ * A full profile save body with the given changes.
+ *
+ * @param  array<string, mixed>  $changes
+ * @return array<string, mixed>
+ */
+function profileBody(array $changes = [], int $version = 1): array
+{
+    return [
+        'display_name' => null,
+        'locale' => 'en',
+        'timezone' => 'Africa/Cairo',
+        'default_currency' => 'EGP',
+        'budget_period_start_day' => 1,
+        'version' => $version,
+        ...$changes,
+    ];
+}
+
+/**
+ * Calls PUT /me/profile with a credential.
+ *
+ * @param  array<string, mixed>  $body
+ */
+function saveProfile(string $credential, array $body): TestResponse
+{
+    $response = test()->withHeaders(asCredential($credential))->putJson('/api/v1/me/profile', $body);
+    test()->flushHeaders();
+
+    return $response;
+}

@@ -115,7 +115,10 @@ The user's own preferences and display identity.
 - **Sync**: yes — user scope
 - **States**: `single-state`
 - **Referenced by**: — (read by every module that renders a person or formats a date)
-- **Notes**: carries `locale` (`ar` | `en`) and `timezone`, an IANA name. The timezone is applied only in read models and reports, never at write time (P-12, ADR-0011). Numerals are Western (0–9) regardless of locale (P-14).
+- **Notes**: carries `locale` (`ar` | `en`) and `timezone`, an IANA name. The timezone is applied only in read models and reports, never at write time (P-12, ADR-0011). Numerals are Western (0–9) regardless of locale (P-14). The locale is also the default language of the person's mails, and of API messages when a signed-in request names none. Since spec 008 it also carries:
+  - `default_currency`: an ISO 4217 code, EGP by default. It is only the default offered for new wallets; each wallet keeps its own currency. It is **locked** while the person has recorded a live transaction, and the profile reports this as `default_currency_locked` (derived, never stored).
+  - `budget_period_start_day` (1–28) and `budget_period_start_day_from`: the day [Budget Periods](#budget-period) begin, and the calendar date that day applies from. Periods already begun are never re-cut.
+  - Written as a whole with `PUT /me/profile` carrying `version`, under the syncable write rules.
 
 ### Device Session
 

@@ -76,7 +76,7 @@ final class ProblemRenderer
     }
 
     /**
-     * @return array{ErrorCode, list<FieldError>, array<string, scalar>, ?int, ?string, array<string, string>}
+     * @return array{ErrorCode, list<FieldError>, array<string, scalar|array<mixed>>, ?int, ?string, array<string, string>}
      */
     private function classify(Throwable $e): array
     {
@@ -95,7 +95,7 @@ final class ProblemRenderer
     /**
      * Laravel's throttle speaks X-RateLimit-*; the contract promises RateLimit-*.
      *
-     * @return array{ErrorCode, list<FieldError>, array<string, scalar>, ?int, ?string, array<string, string>}
+     * @return array{ErrorCode, list<FieldError>, array<string, scalar|array<mixed>>, ?int, ?string, array<string, string>}
      */
     private function throttled(ThrottleRequestsException $e): array
     {

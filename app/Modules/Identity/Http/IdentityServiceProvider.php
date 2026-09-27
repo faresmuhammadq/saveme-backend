@@ -5,14 +5,17 @@ namespace App\Modules\Identity\Http;
 use App\Modules\Identity\Domain\Ports\AddressLookup;
 use App\Modules\Identity\Http\Console\ExpireSessions;
 use App\Modules\Identity\Http\Console\TimingProbe;
+use App\Modules\Identity\Http\Listeners\ApplyProfileLanguage;
 use App\Modules\Identity\Http\Middleware\EnsureAddressVerified;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Sanctum\Events\TokenAuthenticated;
 
 /**
  * Identity's HTTP surface: routes under /api/v1, mail views and strings, the
@@ -33,6 +36,8 @@ class IdentityServiceProvider extends ServiceProvider
         $router->aliasMiddleware('address.verified', EnsureAddressVerified::class);
 
         $this->defineRouteBudgets();
+
+        Event::listen(TokenAuthenticated::class, ApplyProfileLanguage::class);
 
         Route::middleware('api')->prefix('api/v1')->group(__DIR__.'/routes.php');
 

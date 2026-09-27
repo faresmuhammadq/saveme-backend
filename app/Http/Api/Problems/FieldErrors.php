@@ -39,6 +39,7 @@ final class FieldErrors
         'different' => ErrorCode::OutOfRange,
         'uuid' => ErrorCode::InvalidId,
         'prohibited' => ErrorCode::UnknownField,
+        'isocurrency' => ErrorCode::InvalidCurrency,
     ];
 
     /**

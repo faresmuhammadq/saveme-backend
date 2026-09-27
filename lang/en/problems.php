@@ -47,6 +47,8 @@ return [
     'EXPORT_IN_PROGRESS' => 'An export is already being prepared. Wait for it to finish.',
     'EMAIL_ALREADY_REGISTERED' => 'You already have an account with this email address. Sign in, or reset your password if you forgot it.',
 
+    'default_currency_locked' => 'The default currency can\'t change once you have recorded transactions.',
+
     'fields' => [
         'REQUIRED' => 'This field is required.',
         'UNKNOWN_FIELD' => 'This field is not accepted here.',

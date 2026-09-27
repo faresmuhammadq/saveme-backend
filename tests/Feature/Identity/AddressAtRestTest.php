@@ -41,3 +41,12 @@ test('the address is recoverable only while the data key exists', function () {
 
     expect(fn () => app(AttributeCipher::class)->open($user->id, $user->email_ciphertext))->toThrow(RuntimeException::class);
 });
+
+test('a saved display name is never stored readable', function () {
+    person();
+    $credential = signInAs()->json('data.credential');
+
+    saveProfile($credential, profileBody(['display_name' => 'Ada Lovelace']))->assertOk();
+
+    expect(identityTablesAsText())->not->toContain('Ada Lovelace');
+});

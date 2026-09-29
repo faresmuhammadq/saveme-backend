@@ -24,10 +24,7 @@ final class LoginController
             'credential' => $result->credential,
             'session' => DeviceSessionResource::toArray($result->session),
             'account' => AccountResource::toArray($result->account),
-            'entitlements' => [
-                'plan' => $result->entitlements->planLabelKey,
-                'features' => (object) $result->entitlements->features,
-            ],
+            'entitlements' => $result->entitlements->toWire(app()->getLocale()),
             'deletion_cancelled' => $result->deletionCancelled,
         ]);
     }

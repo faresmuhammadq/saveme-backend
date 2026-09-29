@@ -1,0 +1,11 @@
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: *
+Cache-Control: no-cache, private
+Content-Language: en
+Content-Type: application/json
+Date: Mon, 28 Sep 2026 22:07:02 GMT
+Host: saveme-backend.test
+X-Powered-By: PHP/8.5.10
+X-Request-Id: 01a0ea0e-a2b3-737a-a669-1edaf8102376
+Transfer-Encoding: chunked
+

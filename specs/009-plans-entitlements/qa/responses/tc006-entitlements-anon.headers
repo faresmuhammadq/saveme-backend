@@ -1,0 +1,11 @@
+HTTP/1.1 401 Unauthorized
+Access-Control-Allow-Origin: *
+Cache-Control: no-cache, private
+Content-Language: en
+Content-Type: application/problem+json
+Date: Mon, 28 Sep 2026 22:06:54 GMT
+Host: saveme-backend.test
+X-Powered-By: PHP/8.5.10
+X-Request-Id: 01a0ea0e-82a2-708a-bc6a-66c8a9c414a4
+Transfer-Encoding: chunked
+

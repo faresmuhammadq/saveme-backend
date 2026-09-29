@@ -1,15 +1,16 @@
 <?php
 
-use App\Modules\Billing\Application\SubscriptionService;
 use App\Modules\Identity\Application\Jobs\SendRegistrationMail;
 use App\Modules\Identity\Application\Registration\RegisterAccount;
 use App\Modules\Identity\Domain\Events\UserRegistered;
+use App\Modules\Identity\Domain\Ports\ProfileRepository;
 use App\Modules\Identity\Domain\Ports\UserRepository;
 use App\Modules\Identity\Domain\Refusals\EmailAlreadyRegistered;
 use App\Modules\Identity\Infrastructure\Models\Profile;
 use App\Modules\Identity\Infrastructure\Models\User;
 use App\Modules\Identity\Infrastructure\Models\UserKey;
 use App\Modules\Identity\Infrastructure\Repositories\EloquentUserRepository;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 
@@ -44,15 +45,21 @@ test('the profile language falls back to English', function () {
     expect(Profile::query()->sole()->locale)->toBe('en');
 });
 
-test('the default subscription is part of the same unit of work', function () {
-    $spy = Mockery::mock(SubscriptionService::class);
-    $spy->shouldReceive('enrolInDefaultPlan')->once()->andThrow(new RuntimeException('billing down'));
-    app()->instance(SubscriptionService::class, $spy);
+test('the profile is part of the same unit of work', function () {
+    $profiles = Mockery::mock(ProfileRepository::class);
+    $profiles->shouldReceive('create')->once()->andThrow(new RuntimeException('profile insert failed'));
+    app()->instance(ProfileRepository::class, $profiles);
 
     expect(fn () => app(RegisterAccount::class)->handle('ada@example.test', 'correct horse', null, null, 'en'))->toThrow(RuntimeException::class);
     expect(User::query()->count())->toBe(0)
         ->and(Profile::query()->count())->toBe(0)
         ->and(UserKey::query()->count())->toBe(0);
+});
+
+test('registration creates no subscription: the free plan is the absence of one', function () {
+    registerOverApi('ada@example.test');
+
+    expect(DB::table('subscriptions')->count())->toBe(0);
 });
 
 test('an existing address is refused and left untouched', function () {

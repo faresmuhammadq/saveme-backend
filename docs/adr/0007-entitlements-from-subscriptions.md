@@ -1,6 +1,6 @@
 # ADR-0007: Entitlements from provider-agnostic subscriptions
 
-- **Status**: Accepted
+- **Status**: Superseded by [ADR-0013](0013-entitlements-with-manual-channel.md)
 - **Date**: 2026-09-19
 - **Principles**: P-09, P-10
 - **Supersedes**: —

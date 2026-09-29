@@ -120,3 +120,9 @@ paths:
     $ref: './paths/identity.yaml#/~1me'
   /me/profile:
     $ref: './paths/identity.yaml#/~1me~1profile'
+  /plans:
+    $ref: './paths/billing.yaml#/~1plans'
+  /me/entitlements:
+    $ref: './paths/billing.yaml#/~1me~1entitlements'
+  /me/subscription:
+    $ref: './paths/billing.yaml#/~1me~1subscription'

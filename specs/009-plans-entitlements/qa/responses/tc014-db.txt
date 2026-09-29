@@ -1,0 +1,1 @@
+extend after revoke: SubscriptionRevoked; entitlement_changed for sub1: 4 (grant, expire, extend, revoke)

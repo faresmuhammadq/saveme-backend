@@ -2,7 +2,6 @@
 
 namespace App\Modules\Identity\Application\Registration;
 
-use App\Modules\Billing\Application\SubscriptionService;
 use App\Modules\Identity\Application\Events;
 use App\Modules\Identity\Application\Jobs\SendRegistrationMail;
 use App\Modules\Identity\Domain\Events\UserRegistered;
@@ -17,9 +16,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
- * Registration (spec 007, FR-002–FR-004). A new account's user, profile and
- * default subscription are created in one unit of work, and a welcome mail
- * with a verification link is queued.
+ * Registration (spec 007, FR-002–FR-004). A new account's user, data key and
+ * profile are created in one unit of work, and a welcome mail with a
+ * verification link is queued. No subscription is created: the free plan is
+ * the absence of one (ADR-0013 rule 13, spec 009).
  *
  * An address that already has an account is refused with 409
  * EMAIL_ALREADY_REGISTERED and nothing is sent (owner decision 2026-09-27):
@@ -32,7 +32,6 @@ final class RegisterAccount
         private readonly ProfileRepository $profiles,
         private readonly AttributeCipher $cipher,
         private readonly AddressLookup $lookup,
-        private readonly SubscriptionService $subscriptions,
     ) {}
 
     /**
@@ -60,7 +59,6 @@ final class RegisterAccount
                     $timezone ?? (string) config('identity.default_timezone'),
                     $displayName === null ? null : $this->cipher->seal($userId, trim($displayName)),
                 );
-                $this->subscriptions->enrolInDefaultPlan($userId);
 
                 event(new UserRegistered(...Events::stamp(), userId: $userId, locale: $locale));
 

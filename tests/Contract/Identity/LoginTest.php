@@ -21,6 +21,7 @@ test('a correct password returns a credential, the session, the account and the 
         ->and($response->json('data.session.user_id'))->toBe($user->id)
         ->and($response->json('data.account.email'))->toBe('ada@example.test')
         ->and($response->json('data.account.email_verified'))->toBeFalse()
+        ->and($response->json('data.entitlements.plan.name'))->toBe('Free')
         ->and($response->json('data.entitlements.features')['sharing.enabled'])->toBeFalse()
         ->and($response->json('data.deletion_cancelled'))->toBeFalse()
         ->and($response->json('data.session'))->not->toHaveKey('device_id');

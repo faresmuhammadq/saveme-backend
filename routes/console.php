@@ -10,3 +10,6 @@ Artisan::command('inspire', function () {
 
 // Records device sessions idle past 90 days as expired (spec 007, R-3).
 Schedule::command('identity:expire-sessions')->daily();
+
+// Moves subscriptions into grace and expiry on their dates (spec 009, US5).
+Schedule::command('billing:lapse-subscriptions')->hourly();

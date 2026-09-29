@@ -3,19 +3,16 @@
 namespace App\Modules\Billing\Application;
 
 use App\Modules\Billing\Application\Entitlements\EntitlementService;
-use App\Modules\Billing\Application\Provisional\ProvisionalFreePlan;
 use Illuminate\Support\ServiceProvider;
 
 /**
- * Binds Billing's application services. Until B3, both resolve to the
- * provisional Free plan.
+ * Binds Billing's application services. The entitlement service is scoped:
+ * fresh for every request or job, so an answer never outlives it (ADR-0013 rule 8).
  */
 class BillingServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->singleton(ProvisionalFreePlan::class);
-        $this->app->bind(SubscriptionService::class, ProvisionalFreePlan::class);
-        $this->app->bind(EntitlementService::class, ProvisionalFreePlan::class);
+        $this->app->scoped(EntitlementService::class);
     }
 }

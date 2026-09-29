@@ -12,7 +12,7 @@ Recommended order, with the dependencies that force it. A spec directory takes t
 |---|---|---|---|---|
 | 1 | [B1](B01-identity-auth.md) | Identity & authentication | — | Specified as spec 007; Sanctum approved |
 | 2 | [B2](B02-profile-preferences.md) | Profile & preferences | B1 | |
-| 3 | [B3](B03-plans-entitlements.md) | Plans & entitlements | B1 | Registration creates the Free subscription |
+| 3 | [B3](B03-plans-entitlements.md) | Plans & entitlements | B1 | Built as spec 009; QA passed 2026-09-28. Free is the absence of a subscription (ADR-0013) |
 | 4 | [D1](D01-admin-dashboard-foundation.md) | Admin dashboard foundation | — | Specified as spec 006 against the Calm Clarity design source; UI only, sign-in split to D2 |
 | 4a | [D2](D02-operator-sign-in.md) | Operator sign-in | D1 | Must land before B11 and B12; one-time-code library needs approval, or in-house RFC 6238 |
 | 5 | [B4](B04-wallets-membership.md) | Wallets & membership | B1, B3 | Balance in the same transaction (decided) |

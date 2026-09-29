@@ -1,6 +1,13 @@
 <!--
 Sync Impact Report (latest first)
 
+v1.3.1 → 1.3.2 — 2026-09-28
+- PATCH: ADR-0013 supersedes ADR-0007, adding the `manual` subscription channel
+  (operator grants, redeem codes; never a payment) and recording that the free
+  tier is the absence of a governing subscription. P-09's and P-10's ADR lines
+  point to ADR-0013. No rule text changes.
+- Reason: spec 009 (B3), owner decision Q1 = A.
+
 v1.3.0 → 1.3.1 — 2026-09-26
 - PATCH: the Identity row lists three events introduced by spec 007;
   no rule changes. Publishes gains `UserSignedIn`, `DeviceSessionEnded` and
@@ -75,7 +82,7 @@ v1.0.0 — 2026-09-19 (ratified)
 
 <!-- "Save Me" is a working codename used as display text only; see P-13. -->
 
-**Version**: 1.3.1 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-26
+**Version**: 1.3.2 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-28
 
 ## Purpose & Precedence
 
@@ -184,7 +191,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-09 Entitlements
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0007](../../docs/adr/0007-entitlements-from-subscriptions.md)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0013](../../docs/adr/0013-entitlements-with-manual-channel.md) (supersedes ADR-0007)
 
 1. Plans MUST be data: a period plus feature flags and quotas.
 2. Every capability check MUST go through `EntitlementService` against a `Feature` enum value.
@@ -197,7 +204,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-10 Billing channels
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0007](../../docs/adr/0007-entitlements-from-subscriptions.md)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0013](../../docs/adr/0013-entitlements-with-manual-channel.md) (supersedes ADR-0007)
 
 1. In-app purchases MUST use Google Play Billing.
 2. The in-app API surface MUST expose only "restore purchases" and "enter code".
@@ -347,7 +354,7 @@ Every `plan.md` includes this section, filled in before Phase 0 and again after 
 ```markdown
 ## Constitution Check
 
-*Constitution v1.3.1. GATE: before Phase 0 and again after Phase 1.*
+*Constitution v1.3.2. GATE: before Phase 0 and again after Phase 1.*
 
 | Principle | Result | Evidence / justification |
 |---|---|---|
@@ -385,4 +392,4 @@ Every amendment updates the footer's **Last Amended** date and the Sync Impact R
 
 **Consistency** — run `/speckit-analyze` before implementing each feature. Contradictions between this constitution, the ADRs and a feature's spec are defects to resolve before code.
 
-**Version**: 1.3.1 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-26
+**Version**: 1.3.2 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-28

@@ -1,0 +1,218 @@
+# Plans & Billing: the plan catalogue, a person's entitlements and their
+# governing subscription (spec 009). Reads only: the in-app surface never
+# starts or records a payment (P-10). Plans are named by id and name; the
+# plan code is never exposed, and clients gate on `features` (ADR-0013).
+
+/plans:
+  get:
+    operationId: listPlans
+    tags: [Plans & Billing]
+    summary: The active plans, in catalogue order.
+    description: |
+      Public. Names come in the requested language. Prices are integer minor
+      units plus a currency, formatted by the client; Google Play purchases
+      show Play's own localised price.
+    security: []
+    x-filterable: []
+    x-sortable: []
+    parameters: &clientParams
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'Every active plan. The catalogue is small: one page, `next_cursor` null.'
+        headers: &successHeaders
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Plan'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/me/entitlements:
+  get:
+    operationId: getMyEntitlements
+    tags: [Plans & Billing]
+    summary: What the signed-in person may do, from their governing plan.
+    description: |
+      The same object the sign-in response carries. With no governing
+      subscription, the free plan answers.
+    parameters: *clientParams
+    responses:
+      '200':
+        description: The entitlement summary.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/EntitlementSummary'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/me/subscription:
+  get:
+    operationId: getMySubscription
+    tags: [Plans & Billing]
+    summary: The signed-in person's governing subscription, or the free plan.
+    parameters: *clientParams
+    responses:
+      '200':
+        description: The governing subscription; on the free plan every subscription member is null.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/MySubscription'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+components:
+  schemas:
+    PlanRef:
+      type: object
+      description: How responses name a plan. The plan code is never exposed.
+      required: [id, name]
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: In the response's Content-Language.
+
+    Features:
+      type: object
+      description: |
+        Capability → value. Flags are booleans; quotas are integers, or null
+        for unlimited. Keys: sharing.enabled, sharing.max_members_per_wallet,
+        export.enabled, reports.advanced, wallets.max.
+      additionalProperties:
+        type: [boolean, integer, 'null']
+
+    Price:
+      type: object
+      required: [channel, product_id, amount_minor, currency]
+      additionalProperties: false
+      properties:
+        channel:
+          type: string
+          enum: [google_play, instapay]
+        product_id:
+          type: [string, 'null']
+          description: The store's product identifier (Google Play); null otherwise.
+        amount_minor:
+          type: integer
+          minimum: 0
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+
+    Plan:
+      type: object
+      required: [id, name, period_type, period_days, is_default, features, prices]
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        period_type:
+          type: string
+          enum: [monthly, yearly, lifetime, custom]
+        period_days:
+          type: [integer, 'null']
+          minimum: 1
+        is_default:
+          type: boolean
+        features:
+          $ref: '#/components/schemas/Features'
+        prices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Price'
+
+    EntitlementSummary:
+      type: object
+      description: What the governing plan allows. Gate on `features`, never on the plan.
+      required: [plan, features]
+      additionalProperties: false
+      properties:
+        plan:
+          $ref: '#/components/schemas/PlanRef'
+        features:
+          $ref: '#/components/schemas/Features'
+
+    MySubscription:
+      type: object
+      required: [plan, provider, status, current_period_start, current_period_end, grace_until, auto_renew]
+      additionalProperties: false
+      properties:
+        plan:
+          $ref: '#/components/schemas/PlanRef'
+        provider:
+          type: [string, 'null']
+          enum: [google_play, instapay, manual, null]
+        status:
+          type: [string, 'null']
+          enum: [active, grace, null]
+        current_period_start:
+          type: [string, 'null']
+          format: date-time
+        current_period_end:
+          type: [string, 'null']
+          format: date-time
+          description: Null on the free plan, and for a lifetime subscription.
+        grace_until:
+          type: [string, 'null']
+          format: date-time
+        auto_renew:
+          type: [boolean, 'null']

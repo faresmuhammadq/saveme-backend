@@ -1,0 +1,12 @@
+HTTP/1.1 405 Method Not Allowed
+Access-Control-Allow-Origin: *
+Allow: GET, HEAD
+Cache-Control: no-cache, private
+Content-Language: en
+Content-Type: application/problem+json
+Date: Mon, 28 Sep 2026 22:07:14 GMT
+Host: saveme-backend.test
+X-Powered-By: PHP/8.5.10
+X-Request-Id: 01a0ea0e-d03a-7300-8218-331419075e99
+Transfer-Encoding: chunked
+

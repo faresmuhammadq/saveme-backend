@@ -314,7 +314,7 @@ A named set of capabilities and quotas a user can be subscribed to.
 - **Sync**: no — the client reads it from an endpoint and caches it
 - **States**: `active` → `retired` (a retired plan keeps serving existing subscriptions)
 - **Referenced by**: Subscription, Redeem Code, Entitlement (derivation input)
-- **Notes**: **plans are data, not code.** A plan carries a period and its feature map. **No code anywhere compares a plan code** (P-09) — capability questions go to `EntitlementService`.
+- **Notes**: **plans are data, not code.** A plan carries a period and its feature map. **No code anywhere compares a plan code** (P-09) — capability questions go to `EntitlementService`. The **default plan** (Free) is applied when no subscription governs; nobody subscribes to it (ADR-0013).
 
 ### Plan Feature
 
@@ -336,9 +336,9 @@ One user's provider-agnostic record of paid access.
 - **Role**: aggregate root
 - **Persistence**: persisted
 - **Sync**: no — read endpoint, refreshed after purchase or restore
-- **States**: `active` → `grace` → `expired` → `active` (on renewal or an approved claim); `active` | `grace` → `revoked`
+- **States**: `active` → `grace` → `expired`; `grace` | `expired` → `active` (on renewal, recovered payment, extension or an approved claim); `active` | `grace` → `revoked`, which is final (ADR-0013)
 - **Referenced by**: Entitlement, Payment Claim, Redeem Code
-- **Notes**: both channels normalise into this one record — `provider` is `google_play` or `instapay` (ADR-0007). It carries the **billing period** (`current_period_start`, `current_period_end`, `grace_until`); those fields are never called just "period". Losing a subscription **never deletes user data**; it blocks plan-gated sharing actions.
+- **Notes**: every channel normalises into this one record — `provider` is `google_play`, `instapay` or `manual` (operator grants and redeem codes; never a payment) (ADR-0013, superseding ADR-0007). The **governing subscription** is, among a person's `active` and `grace` subscriptions whose grace has not passed, the one whose billing period ends latest (no end beats any end); with none, the default plan applies. The free tier has no subscription row. It carries the **billing period** (`current_period_start`, `current_period_end`, `grace_until`); those fields are never called just "period". Losing a subscription **never deletes user data**; it blocks plan-gated sharing actions.
 
 ### Entitlement
 

@@ -753,21 +753,6 @@ components:
           type: [string, 'null']
           format: date-time
 
-    EntitlementSummary:
-      type: object
-      description: |
-        What the effective plan allows. `plan` is a label for display; gate on
-        `features`, never on the label.
-      required: [plan, features]
-      additionalProperties: false
-      properties:
-        plan:
-          type: string
-          examples: ['billing.plans.free']
-        features:
-          type: object
-          additionalProperties:
-            type: [boolean, integer]
 
     DeviceSession:
       description: One device's session, as its owner sees it. User-scoped and syncable.
@@ -818,7 +803,7 @@ components:
         account:
           $ref: '#/components/schemas/Account'
         entitlements:
-          $ref: '#/components/schemas/EntitlementSummary'
+          $ref: './billing.yaml#/components/schemas/EntitlementSummary'
         deletion_cancelled:
           type: boolean
           description: True when this sign-in cancelled a pending account deletion.

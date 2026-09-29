@@ -1,0 +1,42 @@
+# Test Validation Extension Configuration
+# Copy to .specify/extensions/test/config-template.yml in the target project.
+
+# ---------------------------------------------------------------------------
+# screenshot — controls when and where screenshots are captured
+#
+# screenshot_on_failure: true  → capture a PNG whenever a step or assertion fails
+# screenshot_dir: path relative to the feature directory where PNGs are saved
+screenshot_on_failure: true
+screenshot_dir: test-reports/screenshots
+
+# ---------------------------------------------------------------------------
+# report — controls report output location and naming
+#
+# report_dir: path relative to the feature directory where report .md files land
+# report_filename_prefix: prefix for the timestamped report file
+report_dir: test-reports
+report_filename_prefix: validation
+
+# ---------------------------------------------------------------------------
+# execution — browser interaction timeouts and retry behaviour
+#
+# timeout_ms: milliseconds to wait for an element/assertion before marking TIMEOUT
+# retry_count: how many times to retry a failed step before recording FAIL
+timeout_ms: 10000
+retry_count: 1
+
+# ---------------------------------------------------------------------------
+# base_url — optional default URL for scenarios that don't specify one in their
+# Given clause.  Set to null to require every scenario to supply its own URL.
+#
+# Example: base_url: "https://staging.example.com"
+base_url: null
+
+# ---------------------------------------------------------------------------
+# browser — Playwright browser settings passed to the MCP server
+#
+# headless: true runs without a visible window (default for CI)
+# viewport_width / viewport_height: browser window size in pixels
+headless: true
+viewport_width: 1280
+viewport_height: 720

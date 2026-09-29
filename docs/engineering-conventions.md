@@ -319,6 +319,34 @@ The back office is the only server-rendered interface (constitution P-18), built
 
 ---
 
+## End-to-end testing
+
+The Pest suites prove each layer. End-to-end checks run a feature's spec against the **live app** at `http://saveme-backend.test`, through two Spec Kit extensions:
+
+| Command | What it does | Where evidence lands |
+|---|---|---|
+| `/speckit-qa-run` | Builds a test plan from the active feature's spec and tasks, then runs it: API scenarios with real HTTP calls (status, body, headers, database state), and UI scenarios in the browser | `specs/<feature>/qa/` |
+| `/speckit-test-by-validate` | Runs the spec's Given/When/Then acceptance scenarios in the browser | `specs/<feature>/test-reports/` |
+| `/speckit-test-by-e2e <csv>` | Runs a CSV of browser steps (`navigate`, `fill`, `click`, `assert_text`…); by default `specs/<feature>/test-cases/e2e.csv` | `specs/<feature>/test-reports/` |
+
+- **Which UI.** The only web UI is the back office. Until operator sign-in (D2) lands, the reachable page is the local gallery at `/admin/_gallery`.
+- **What to commit.** Markdown reports are committed as the feature's evidence; screenshots are gitignored.
+- **When it runs.** `/speckit-qa-run` is also offered, optionally, after `/speckit-implement`.
+- **The browser.** Tests use the Playwright MCP server, pinned and headless, registered per machine (not in the gitignored `.mcp.json`, which Laravel Boost rewrites):
+
+  ```bash
+  claude mcp add --scope local playwright -- npx -y @playwright/mcp@0.0.82 --headless
+  npx -y playwright@1.64.0-alpha-1789764292000 install chromium   # the version @playwright/mcp 0.0.82 bundles
+  ```
+
+  Restart the Claude Code session afterwards so the browser tools load.
+- **Configuration.** `test-by` reads `.specify/extensions/test/config-template.yml` (base URL, headless, 1280×720).
+- **Known quirks, left unpatched in the vendored files:**
+  - `qa` names its report template `templates/qa-template.md`, but ships it as `commands/qa-template.md`, and it suggests a `/speckit.ship` command this project does not have.
+  - `qa` calls `.specify/extensions/qa/scripts/bash/check-prerequisites.sh`, which it does not ship; use `.specify/scripts/bash/check-prerequisites.sh` instead.
+  - QA evidence must not carry live credentials: redact `credential` in saved sign-in responses before committing.
+  - `test-by` prefixes `https://` to a URL written without a protocol, so CSVs spell out `http://saveme-backend.test/…`.
+
 ## Dependencies
 
-No package is added without the repository owner's approval. The approved development tools today are Pint, Larastan, Pest with its architecture plugin, and Spectator. The approved runtime packages beyond the framework and Livewire are `laravel/sanctum` (approved 2026-09-26, spec 007), for device-session bearer credentials.
+No package is added without the repository owner's approval. The approved development tools today are Pint, Larastan, Pest with its architecture plugin, and Spectator. The approved end-to-end tools (2026-09-28) are the Playwright MCP server `@playwright/mcp` 0.0.82 (pinned, run through `npx`, registered per machine), and the Spec Kit extensions `qa` v1.0.0 and `test-by` v1.2.0. Both extensions were installed from their tagged release archives after review: they are prompt files only, with no scripts. The approved runtime packages beyond the framework and Livewire are `laravel/sanctum` (approved 2026-09-26, spec 007), for device-session bearer credentials.

@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0",
+  "extensions": {
+    "qa": {
+      "version": "1.0.0",
+      "source": "local",
+      "manifest_hash": "sha256:ae004b14dc6b480ed50acf7608d14223dbd83ceba6b05582cdd742cb9301c334",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "claude": [
+          "speckit.qa.run"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-09-28T19:35:15.385330+00:00"
+    },
+    "test-by": {
+      "version": "1.2.0",
+      "source": "local",
+      "manifest_hash": "sha256:bde241980c78aac11ab9cf6941235c7fc04231d8f90d9fed0f13d0299cf6159a",
+      "enabled": true,
+      "priority": 10,
+      "registered_commands": {
+        "claude": [
+          "speckit.test-by.validate",
+          "speckit.test-by.e2e"
+        ]
+      },
+      "registered_skills": [],
+      "installed_at": "2026-09-28T19:35:16.916076+00:00"
+    }
+  }
+}

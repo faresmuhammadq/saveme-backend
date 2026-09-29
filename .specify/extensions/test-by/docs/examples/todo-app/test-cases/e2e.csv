@@ -1,0 +1,72 @@
+test_case_id,test_case_name,step,action,target,value,notes
+TC-001,Add single todo item,1,navigate,https://demo.playwright.dev/todomvc,,Open the TodoMVC app
+TC-001,Add single todo item,2,evaluate,localStorage.clear(),,Clear stored todos for a clean slate
+TC-001,Add single todo item,3,navigate,https://demo.playwright.dev/todomvc,,Reload with empty storage
+TC-001,Add single todo item,4,assert_text,,What needs to be done?,Verify the input placeholder is visible
+TC-001,Add single todo item,5,fill,What needs to be done?,Buy groceries,Type in the new todo input
+TC-001,Add single todo item,6,press,,Enter,Submit the todo
+TC-001,Add single todo item,7,assert_text,,Buy groceries,Todo should appear in the list
+TC-001,Add single todo item,8,assert_text,,1 item left,Footer counter should reflect one item
+TC-002,Add multiple todo items,1,navigate,https://demo.playwright.dev/todomvc,,
+TC-002,Add multiple todo items,2,evaluate,localStorage.clear(),,
+TC-002,Add multiple todo items,3,navigate,https://demo.playwright.dev/todomvc,,
+TC-002,Add multiple todo items,4,fill,What needs to be done?,Read a book,
+TC-002,Add multiple todo items,5,press,,Enter,
+TC-002,Add multiple todo items,6,fill,What needs to be done?,Write unit tests,
+TC-002,Add multiple todo items,7,press,,Enter,
+TC-002,Add multiple todo items,8,fill,What needs to be done?,Review pull request,
+TC-002,Add multiple todo items,9,press,,Enter,
+TC-002,Add multiple todo items,10,assert_text,,Read a book,First todo present
+TC-002,Add multiple todo items,11,assert_text,,Write unit tests,Second todo present
+TC-002,Add multiple todo items,12,assert_text,,Review pull request,Third todo present
+TC-002,Add multiple todo items,13,assert_text,,3 items left,Footer shows correct count
+TC-003,Complete a todo item,1,navigate,https://demo.playwright.dev/todomvc,,
+TC-003,Complete a todo item,2,evaluate,localStorage.clear(),,
+TC-003,Complete a todo item,3,navigate,https://demo.playwright.dev/todomvc,,
+TC-003,Complete a todo item,4,fill,What needs to be done?,Deploy to production,
+TC-003,Complete a todo item,5,press,,Enter,
+TC-003,Complete a todo item,6,fill,What needs to be done?,Update documentation,
+TC-003,Complete a todo item,7,press,,Enter,
+TC-003,Complete a todo item,8,assert_text,,2 items left,Both items active before completing
+TC-003,Complete a todo item,9,click,.todo-list li:first-child .toggle,,Click the checkbox of the first todo
+TC-003,Complete a todo item,10,assert_text,,1 item left,Counter decreases after completing one
+TC-004,Filter active todos,1,navigate,https://demo.playwright.dev/todomvc,,
+TC-004,Filter active todos,2,evaluate,localStorage.clear(),,
+TC-004,Filter active todos,3,navigate,https://demo.playwright.dev/todomvc,,
+TC-004,Filter active todos,4,fill,What needs to be done?,Active todo,
+TC-004,Filter active todos,5,press,,Enter,
+TC-004,Filter active todos,6,fill,What needs to be done?,Completed todo,
+TC-004,Filter active todos,7,press,,Enter,
+TC-004,Filter active todos,8,click,.todo-list li:last-child .toggle,,Mark second todo as complete
+TC-004,Filter active todos,9,click,Active,,Click the Active filter link
+TC-004,Filter active todos,10,assert_text,,Active todo,Active item should be visible
+TC-004,Filter active todos,11,assert_url,,https://demo.playwright.dev/todomvc/#/active,URL should contain the active filter hash
+TC-005,Filter completed todos,1,navigate,https://demo.playwright.dev/todomvc,,
+TC-005,Filter completed todos,2,evaluate,localStorage.clear(),,
+TC-005,Filter completed todos,3,navigate,https://demo.playwright.dev/todomvc,,
+TC-005,Filter completed todos,4,fill,What needs to be done?,Pending work,
+TC-005,Filter completed todos,5,press,,Enter,
+TC-005,Filter completed todos,6,fill,What needs to be done?,Finished work,
+TC-005,Filter completed todos,7,press,,Enter,
+TC-005,Filter completed todos,8,click,.todo-list li:last-child .toggle,,Mark second todo as done
+TC-005,Filter completed todos,9,click,Completed,,Click the Completed filter link
+TC-005,Filter completed todos,10,assert_text,,Finished work,Completed item visible in filter
+TC-005,Filter completed todos,11,assert_url,,https://demo.playwright.dev/todomvc/#/completed,URL should contain completed filter hash
+TC-006,Clear completed todos,1,navigate,https://demo.playwright.dev/todomvc,,
+TC-006,Clear completed todos,2,evaluate,localStorage.clear(),,
+TC-006,Clear completed todos,3,navigate,https://demo.playwright.dev/todomvc,,
+TC-006,Clear completed todos,4,fill,What needs to be done?,Keep this task,
+TC-006,Clear completed todos,5,press,,Enter,
+TC-006,Clear completed todos,6,fill,What needs to be done?,Remove this task,
+TC-006,Clear completed todos,7,press,,Enter,
+TC-006,Clear completed todos,8,click,.todo-list li:last-child .toggle,,Complete the second task
+TC-006,Clear completed todos,9,click,Clear completed,,Click Clear completed button
+TC-006,Clear completed todos,10,assert_text,,Keep this task,Active task should remain
+TC-006,Clear completed todos,11,assert_text,,1 item left,Only one item should remain
+TC-007,Edit todo item (double-click),1,navigate,https://demo.playwright.dev/todomvc,,
+TC-007,Edit todo item (double-click),2,evaluate,localStorage.clear(),,
+TC-007,Edit todo item (double-click),3,navigate,https://demo.playwright.dev/todomvc,,
+TC-007,Edit todo item (double-click),4,fill,What needs to be done?,Original title,
+TC-007,Edit todo item (double-click),5,press,,Enter,
+TC-007,Edit todo item (double-click),6,screenshot,,,Capture initial state before editing
+TC-007,Edit todo item (double-click),7,assert_text,,Original title,Todo should be in the list

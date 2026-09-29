@@ -1,0 +1,16 @@
+installed:
+- qa
+- test-by
+settings:
+  auto_execute_hooks: true
+hooks:
+  after_implement:
+  - extension: qa
+    command: speckit.qa.run
+    enabled: true
+    optional: true
+    priority: 10
+    prompt: Run QA testing?
+    description: Validates acceptance criteria through browser-driven or CLI-based
+      testing
+    condition: null

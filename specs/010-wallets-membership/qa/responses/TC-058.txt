@@ -1,0 +1,18 @@
+PUT /wallets/01a0f9d5-679b-72a4-9b6a-18e09180416f
+> {"type":"cash","name":"X","currency":"EGP","opening_balance_minor":0,"icon":null,"color":null,"version":0,"change_seq":5}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0f9d5-68b1-7013-8fab-ca1327007654",
+  "errors": [
+    {
+      "pointer": "/change_seq",
+      "code": "UNKNOWN_FIELD",
+      "detail": "This field is not accepted here."
+    }
+  ]
+}

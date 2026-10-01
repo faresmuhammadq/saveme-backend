@@ -1,0 +1,18 @@
+POST /wallets/01a0f9d7-292e-7e97-b84e-25ea10bcd3b8/transfer-ownership
+> {"user_id":"nobody","version":5}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0f9d7-b1bd-72d2-95f7-3de078be0454",
+  "errors": [
+    {
+      "pointer": "/user_id",
+      "code": "INVALID_ID",
+      "detail": "The identifier is not valid."
+    }
+  ]
+}

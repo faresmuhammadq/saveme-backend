@@ -5,6 +5,12 @@ use App\Modules\Identity\Domain\Account\LinkKind;
 use App\Modules\Identity\Domain\Ports\LinkRepository;
 use App\Modules\Identity\Infrastructure\Models\Profile;
 use App\Modules\Identity\Infrastructure\Models\User;
+use App\Modules\Wallets\Application\Dto\WalletView;
+use App\Modules\Wallets\Domain\Ports\PostingTotals;
+use App\Modules\Wallets\Domain\Ports\ScopeSequence;
+use App\Modules\Wallets\Http\Resources\WalletResource;
+use App\Modules\Wallets\Infrastructure\Models\Wallet;
+use App\Modules\Wallets\Infrastructure\Models\WalletMember;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\RouteCollection;
@@ -316,4 +322,124 @@ function saveProfile(string $credential, array $body): TestResponse
     test()->flushHeaders();
 
     return $response;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Wallets (spec 010)
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * A full wallet write body with the given changes.
+ *
+ * @param  array<string, mixed>  $changes
+ * @return array<string, mixed>
+ */
+function walletBody(array $changes = [], int $version = 0): array
+{
+    return [
+        'type' => 'cash',
+        'name' => 'Cash',
+        'currency' => 'EGP',
+        'opening_balance_minor' => 50000,
+        'icon' => 'wallet',
+        'color' => '#2E7D32',
+        'version' => $version,
+        ...$changes,
+    ];
+}
+
+/**
+ * The values a wallet save takes, as the service receives them.
+ *
+ * @param  array<string, mixed>  $changes
+ * @return array{type: string, name: string, currency: string, opening_balance_minor: int, icon: ?string, color: ?string}
+ */
+function walletValues(array $changes = []): array
+{
+    $values = [...walletBody($changes)];
+    unset($values['version']);
+
+    return $values;
+}
+
+/**
+ * A wallet call with a credential, forgetting the guard afterwards so the
+ * next call is judged afresh.
+ *
+ * @param  array<string, mixed>  $body
+ */
+function walletCall(string $method, string $credential, string $uri, array $body = []): TestResponse
+{
+    $response = test()->withHeaders(asCredential($credential))->json($method, '/api/v1'.$uri, $body);
+    test()->flushHeaders();
+
+    return $response;
+}
+
+/**
+ * A verified person with a credential, ready to call the wallet API.
+ *
+ * @return array{0: User, 1: string}
+ */
+function walletCaller(string $email = 'ada@example.test', bool $verified = true): array
+{
+    $user = person($email, 'correct horse', $verified);
+
+    return [$user, signInAs($email)->json('data.credential')];
+}
+
+/**
+ * A wallet owned by the person, through the factory (membership included).
+ *
+ * @param  array<string, mixed>  $attributes
+ */
+function ownedWallet(string $userId, array $attributes = []): Wallet
+{
+    return Wallet::factory()->ownedBy($userId)->create($attributes);
+}
+
+/**
+ * Adds a member to a wallet, giving the membership the next change_seq and
+ * the wallet the last, as a real write leaves them.
+ */
+function addMember(string $walletId, string $userId, string $role): WalletMember
+{
+    $seq = app(ScopeSequence::class)->nextFor($walletId);
+    $member = WalletMember::factory()->create(['wallet_id' => $walletId, 'user_id' => $userId, 'role' => $role, 'change_seq' => $seq]);
+    app(ScopeSequence::class)->nextFor($walletId);
+
+    return $member;
+}
+
+/**
+ * How a read renders the wallet, as the service's `present` closure.
+ *
+ * @return Closure(WalletView): array<string, mixed>
+ */
+function presentWallet(): Closure
+{
+    return WalletResource::toArray(...);
+}
+
+/**
+ * Binds a posting stand-in answering the given sum and `hasAny`.
+ */
+function fakePostings(int $sum = 0, bool $hasAny = false): void
+{
+    app()->bind(PostingTotals::class, fn () => new class($sum, $hasAny) implements PostingTotals
+    {
+        public function __construct(private int $sum, private bool $hasAny) {}
+
+        public function sumFor(string $walletId): int
+        {
+            return $this->sum;
+        }
+
+        public function hasAny(string $walletId): bool
+        {
+            return $this->hasAny;
+        }
+    });
 }

@@ -17,6 +17,15 @@ interface LinkRepository
     public function issue(string $userId, LinkKind $kind): string;
 
     /**
+     * Issues the user's first link of this kind, or nothing when one was ever
+     * issued: a later link (a resend) must never be superseded by an earlier
+     * request that reaches the queue worker after it.
+     *
+     * @return string|null the secret, readable only now, or null if a link exists
+     */
+    public function issueFirst(string $userId, LinkKind $kind): ?string;
+
+    /**
      * Uses a live link exactly once.
      *
      * @return string|null the user id, or null if the link is not live

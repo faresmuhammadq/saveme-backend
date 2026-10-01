@@ -1,0 +1,3 @@
+before verify: 1
+Checked wallet balances; 1 drifted and repaired.
+2

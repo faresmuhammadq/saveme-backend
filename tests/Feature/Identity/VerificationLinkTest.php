@@ -33,6 +33,38 @@ test('the welcome mail carries a 256-bit secret; only its hash is stored', funct
     });
 });
 
+test('a welcome mail reaching the worker after a resend leaves the newer link valid', function () {
+    $user = person(verified: false);
+    $newer = linkFor($user->id, LinkKind::VerifyAddress);
+
+    (new SendRegistrationMail($user->id, 'en'))->handle(app(Accounts::class), app(LinkRepository::class));
+
+    app(VerifyAddress::class)->handle($newer);
+
+    Mail::assertNothingSent();
+    expect(User::query()->find($user->id)->email_verified_at)->not->toBeNull();
+});
+
+test('a redelivered welcome mail job issues no second link and sends nothing twice', function () {
+    $user = person(verified: false);
+    $job = new SendRegistrationMail($user->id, 'en');
+
+    $job->handle(app(Accounts::class), app(LinkRepository::class));
+    $job->handle(app(Accounts::class), app(LinkRepository::class));
+
+    Mail::assertSentCount(1);
+    expect(IdentityLink::query()->where('user_id', $user->id)->whereNull('superseded_at')->count())->toBe(1);
+});
+
+test('a welcome mail whose send fails leaves no link, so the retry starts clean', function () {
+    $user = person(verified: false);
+    Mail::shouldReceive('to')->once()->andThrow(new RuntimeException('smtp down'));
+
+    expect(fn () => (new SendRegistrationMail($user->id, 'en'))->handle(app(Accounts::class), app(LinkRepository::class)))
+        ->toThrow(RuntimeException::class)
+        ->and(IdentityLink::query()->where('user_id', $user->id)->exists())->toBeFalse();
+});
+
 test('asking again supersedes the earlier link', function () {
     $user = person(verified: false);
     $first = linkFor($user->id, LinkKind::VerifyAddress);

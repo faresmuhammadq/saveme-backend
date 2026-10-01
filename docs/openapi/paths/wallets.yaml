@@ -1,0 +1,644 @@
+# Wallets & membership (spec 010, brief B4). Every operation sits under
+# /api/v1, inherits the root's bearer scheme and runs through the shared
+# runtime, so each also documents the shared refusals it can produce.
+#
+# Authorization follows the permission matrix in
+# specs/010-wallets-membership/spec.md §6 — the only copy of it (P-08 rule 5).
+# A caller who is not an active member of the wallet gets 404 NOT_FOUND on
+# every operation here, never 403. Every write sits behind the verification
+# gate (403 EMAIL_NOT_VERIFIED).
+
+/wallets:
+  get:
+    operationId: listWallets
+    tags: [Wallets & Ledger]
+    summary: List the live wallets the caller is a member of, archived included.
+    description: |
+      Returns every live wallet the caller is an active member of, archived
+      ones included, each with the caller's role in `my_role`. Tombstoned
+      wallets are not listed. `balance_minor` is the stored balance, kept
+      current in the same unit of work as every change to it, so it is never
+      stale.
+
+      Sorted by `created_at` unless `sort` says otherwise; `name` sorts in
+      byte order, not locale-aware. Every sort is stabilised by `id`. No
+      filters.
+    x-filterable: []
+    x-sortable: [created_at, name]
+    parameters:
+      - $ref: '../components/parameters.yaml#/components/parameters/Cursor'
+      - $ref: '../components/parameters.yaml#/components/parameters/Limit'
+      - $ref: '../components/parameters.yaml#/components/parameters/Filter'
+      - $ref: '../components/parameters.yaml#/components/parameters/Sort'
+      - &acceptLanguage
+        $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - &correlationId
+        $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - &clientPlatform
+        $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - &clientVersion
+        $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'A page of wallets. None is 200 with `data: []`, never 404.'
+        headers: &successHeaders
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Wallet'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/wallets/{id}:
+  get:
+    operationId: getWallet
+    tags: [Wallets & Ledger]
+    summary: Read one wallet the caller is a member of.
+    description: |
+      A live wallet is returned to its active members. A tombstoned wallet is
+      returned, with `deleted_at` set, only to the people who were members
+      when it was deleted; to everyone else, and to any non-member, it is
+      404 NOT_FOUND.
+    parameters:
+      - &walletId
+        $ref: '../components/parameters.yaml#/components/parameters/ResourceId'
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: The wallet.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: &walletEnvelope
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Wallet'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  put:
+    operationId: upsertWallet
+    tags: [Wallets & Ledger]
+    summary: Create or save the whole wallet, addressed by the client-generated identifier.
+    description: |
+      A create, not a POST: the client generates the id offline and the same
+      write may arrive twice. `version` is omitted or 0 to create, and carries
+      the client's last-seen value to save. The creator becomes the wallet's
+      only member, as `owner`, and the balance starts at the opening balance.
+
+      Outcomes, in this order of precedence:
+
+      - not verified → 403 EMAIL_NOT_VERIFIED;
+      - malformed id → 422 INVALID_ID; malformed body → 422 VALIDATION_FAILED;
+      - id held by another person's record, or by any other kind of record,
+        or a tombstoned wallet the caller was not a member of → 404 NOT_FOUND,
+        nothing disclosed or overwritten;
+      - existing wallet, caller is an editor or viewer → 403 FORBIDDEN;
+      - new wallet beyond the creator's `wallets.max` → 403 FEATURE_NOT_ENTITLED
+        (every launch plan grants unlimited wallets);
+      - the wallet is tombstoned (caller was a member at deletion) → 409
+        VERSION_CONFLICT with the tombstone in `current`, even for an
+        identical body;
+      - body identical to the stored wallet → 200, nothing changed (a replay);
+      - stale version → 409 VERSION_CONFLICT with the stored wallet in
+        `current`; nothing merged;
+      - a different `type` → 422 with IMMUTABLE_FIELD at `/type`;
+      - a different `currency` once any posting references the wallet
+        (`currency_locked: true`) → 422 with IMMUTABLE_FIELD at `/currency`;
+      - a version above 0 for an id that matches no record → 404 NOT_FOUND
+        (nothing to update; nothing is created);
+      - otherwise 201 (created) or 200 (saved), version + 1.
+
+      A blank or over-long name is OUT_OF_RANGE at `/name`.
+
+      A negative opening balance is never refused. Liability types
+      (`credit_card`, `loan`) carry the ledger sign: negative when owed.
+    parameters:
+      - *walletId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WalletWrite'
+    responses:
+      '200':
+        description: Saved, or an identical replay returning the wallet unchanged.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *walletEnvelope
+      '201':
+        description: Created. The caller is the wallet's owner.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *walletEnvelope
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  patch:
+    operationId: patchWallet
+    tags: [Wallets & Ledger]
+    summary: Save some of the wallet's editable fields, carrying the last-seen version.
+    description: |
+      Members absent from the body are unchanged. `version` is required. The
+      same outcomes as a whole save apply — 403 for an editor or viewer,
+      200 with nothing changed when every sent member already holds the sent
+      value, 409 VERSION_CONFLICT on a stale version or a tombstone,
+      IMMUTABLE_FIELD at `/currency` when the currency is locked — except that
+      a PATCH never creates: an unknown id is 404 NOT_FOUND. `type` is not
+      patchable and is refused as UNKNOWN_FIELD. A body carrying only
+      `version` is 422 with REQUIRED at the body root (pointer "").
+    parameters:
+      - *walletId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/WalletPatch'
+    responses:
+      '200':
+        description: Saved, or nothing to change.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *walletEnvelope
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  delete:
+    operationId: deleteWallet
+    tags: [Wallets & Ledger]
+    summary: Delete the wallet (owner only). A tombstone, never a removal.
+    description: |
+      Tombstones the wallet and, in the same unit of work, every live record
+      in it — its memberships now; its transactions, recurring rules,
+      occurrences and invitations as later features add them. Returns the
+      tombstone. Deleting an already deleted wallet returns its tombstone
+      with nothing changed, whatever version is sent, to the people who were
+      members when it was deleted. A stale version on a live wallet is 409
+      VERSION_CONFLICT. Deletion is final: there is no restore.
+    parameters:
+      - *walletId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/VersionOnly'
+    responses:
+      '200':
+        description: The tombstone.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *walletEnvelope
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/wallets/{id}/archive:
+  post:
+    operationId: archiveWallet
+    tags: [Wallets & Ledger]
+    summary: Archive the wallet (owner only). Keeps its balance, members and history.
+    description: |
+      Sets `archived_at` and moves the version on. Archiving an archived
+      wallet returns it with nothing changed. Not reversible in this release.
+      A stale version, or a tombstoned wallet, is 409 VERSION_CONFLICT.
+      Not an idempotency-keyed operation: it is idempotent by outcome.
+    parameters:
+      - *walletId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/VersionOnly'
+    responses:
+      '200':
+        description: The archived wallet.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *walletEnvelope
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/wallets/{id}/members:
+  get:
+    operationId: listWalletMembers
+    tags: [Wallets & Ledger]
+    summary: List the wallet's active members with display name and role.
+    description: |
+      Any active member may read it. Exactly one member is `owner`. Ordered by
+      when each membership was created; no filters, no sorts. Never exposes an
+      address or any other attribute of another person.
+    x-filterable: []
+    x-sortable: []
+    parameters:
+      - *walletId
+      - $ref: '../components/parameters.yaml#/components/parameters/Cursor'
+      - $ref: '../components/parameters.yaml#/components/parameters/Limit'
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: A page of members.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/WalletMember'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/wallets/{id}/transfer-ownership:
+  post:
+    operationId: transferWalletOwnership
+    tags: [Wallets & Ledger]
+    summary: Hand the wallet to another active member (owner only); the caller becomes an editor.
+    description: |
+      `user_id` names the new owner, as `member_user_id` in the member list.
+      It must be another active member of this wallet: naming oneself, a
+      non-member or a removed member is 422 VALIDATION_FAILED with
+      INVALID_ENUM_VALUE at `/user_id` (the allowed set is the wallet's other
+      active members). Naming the person who is already the owner returns the
+      wallet with nothing changed, to any active member. A stale version, or a
+      tombstoned wallet, is 409 VERSION_CONFLICT. On success both roles change
+      in one unit of work, the wallet's version moves on, and the response is
+      the wallet as the caller now sees it (`my_role: editor`).
+
+      Until invitations exist (B9) every wallet has only its owner, so through
+      the API this operation can only be refused.
+    parameters:
+      - *walletId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OwnershipTransfer'
+    responses:
+      '200':
+        description: Transferred, or already owned by the named person.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *walletEnvelope
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+components:
+  schemas:
+    WalletType:
+      type: string
+      description: |
+        Fixed (glossary). `savings` is shown as حصالة. `credit_card` and `loan`
+        are liability types: their balances are negative when owed and the
+        client presents them as an amount owed. Never changes after creation.
+      enum: [cash, checking, savings, credit_card, loan, investment]
+
+    WalletRole:
+      type: string
+      description: The member's role. What each may do is the permission matrix in spec 010 §6.
+      enum: [owner, editor, viewer]
+
+    WalletName:
+      type: string
+      minLength: 1
+      maxLength: 100
+      description: Trimmed; blank is refused. Duplicates are allowed.
+
+    MinorUnits:
+      type: integer
+      description: Signed count of minor units in the wallet's currency. Never a decimal string or a float.
+      minimum: -9007199254740991
+      maximum: 9007199254740991
+
+    Currency:
+      type: string
+      pattern: '^[A-Z]{3}$'
+      description: ISO 4217 alpha-3, uppercase.
+
+    Icon:
+      type: [string, 'null']
+      pattern: '^[a-z0-9_]{1,40}$'
+      description: A key from the client's icon set; stored, never interpreted.
+
+    Color:
+      type: [string, 'null']
+      pattern: '^#[0-9A-F]{6}$'
+      description: Uppercase hex `#RRGGBB`; stored, never interpreted.
+
+    Wallet:
+      description: |
+        A money container. Wallet-scoped and syncable; it is itself the wallet
+        sync scope, so `wallet_id` equals `id`. `change_seq` is the scope's
+        counter: every write inside the wallet gives each record it touches a
+        unique value and then gives the wallet the last one, so the wallet's
+        `change_seq` moves on any write in it while `version` moves only when
+        the wallet's own state changes.
+      allOf:
+        - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
+        - $ref: '../components/schemas.yaml#/components/schemas/WalletScoped'
+        - type: object
+          required: [type, name, currency, opening_balance_minor, balance_minor, icon, color, archived_at, currency_locked, my_role]
+          properties:
+            type:
+              $ref: '#/components/schemas/WalletType'
+            name:
+              $ref: '#/components/schemas/WalletName'
+            currency:
+              $ref: '#/components/schemas/Currency'
+            opening_balance_minor:
+              $ref: '#/components/schemas/MinorUnits'
+            balance_minor:
+              allOf:
+                - $ref: '#/components/schemas/MinorUnits'
+              description: |
+                Read-only. Opening balance plus the wallet's recorded history,
+                kept current in the same unit of work as every change. Never
+                stale; never writable.
+            icon:
+              $ref: '#/components/schemas/Icon'
+            color:
+              $ref: '#/components/schemas/Color'
+            archived_at:
+              type: [string, 'null']
+              format: date-time
+              description: Read-only. When the wallet was archived; null while active.
+            currency_locked:
+              type: boolean
+              description: Read-only. True once any recorded transaction posts to the wallet; the currency can then no longer change.
+            my_role:
+              allOf:
+                - $ref: '#/components/schemas/WalletRole'
+              description: Read-only. The caller's role in this wallet; gates every edit control.
+
+    WalletWrite:
+      type: object
+      description: |
+        The whole writable wallet plus the last-seen version. `id` comes from
+        the path. `balance_minor`, `archived_at`, `deleted_at`, `change_seq`,
+        `created_at`, `updated_at`, `currency_locked` and `my_role` are
+        server-owned and refused with UNKNOWN_FIELD.
+      required: [type, name, currency, opening_balance_minor, icon, color]
+      additionalProperties: false
+      properties:
+        type:
+          $ref: '#/components/schemas/WalletType'
+        name:
+          $ref: '#/components/schemas/WalletName'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        opening_balance_minor:
+          $ref: '#/components/schemas/MinorUnits'
+        icon:
+          $ref: '#/components/schemas/Icon'
+        color:
+          $ref: '#/components/schemas/Color'
+        version:
+          type: integer
+          minimum: 0
+          description: The client's last-seen version. Omitted or 0 means create.
+
+    WalletPatch:
+      type: object
+      description: Some editable members plus the last-seen version. At least one editable member is required.
+      required: [version]
+      minProperties: 2
+      additionalProperties: false
+      properties:
+        name:
+          $ref: '#/components/schemas/WalletName'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        opening_balance_minor:
+          $ref: '#/components/schemas/MinorUnits'
+        icon:
+          $ref: '#/components/schemas/Icon'
+        color:
+          $ref: '#/components/schemas/Color'
+        version:
+          type: integer
+          minimum: 1
+
+    VersionOnly:
+      type: object
+      required: [version]
+      additionalProperties: false
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          description: The client's last-seen version of the wallet.
+
+    OwnershipTransfer:
+      type: object
+      required: [user_id, version]
+      additionalProperties: false
+      properties:
+        user_id:
+          type: string
+          format: uuid
+          description: The new owner, as `member_user_id` in the member list.
+        version:
+          type: integer
+          minimum: 1
+          description: The client's last-seen version of the wallet.
+
+    WalletMember:
+      description: |
+        One person's membership of one wallet. Wallet-scoped and syncable;
+        written only by the server (wallet creation, ownership transfer, and
+        later invitations), so it has no write operation of its own.
+      allOf:
+        - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
+        - $ref: '../components/schemas.yaml#/components/schemas/WalletScoped'
+        - type: object
+          required: [member_user_id, display_name, role]
+          properties:
+            member_user_id:
+              type: string
+              format: uuid
+              description: The member. Named `member_user_id`, not `user_id`, because `user_id` is the user-scope key.
+            display_name:
+              type: [string, 'null']
+              maxLength: 100
+              description: The member's display name from their profile, or null.
+            role:
+              $ref: '#/components/schemas/WalletRole'

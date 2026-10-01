@@ -158,7 +158,7 @@ A container of money with a balance — the core primitive.
 - **Sync**: yes — wallet scope (it *is* the scope: its `change_seq` counter orders the whole feed)
 - **States**: `active` → `archived`; either → `tombstoned`
 - **Referenced by**: Wallet Member, Transaction, Posting, Recurring Rule, Category Reference, Invitation
-- **Notes**: "Wallet" is the **only** term for a money container (P-01). `type` is a fixed enum — `cash`, `checking`, `savings` (حصالة), `credit_card`, `loan`, `investment` — with behavioural semantics per type. Liability types (`credit_card`, `loan`) are stored **negative** and displayed as the amount owed. `currency` is immutable once any posting references the wallet. `balance_minor` is a **cache**: truth is `opening_balance_minor + Σ postings` and no invariant, authorization decision or report total may read the cache (P-05, ADR-0005). A negative balance is never blocked at write time.
+- **Notes**: "Wallet" is the **only** term for a money container (P-01). `type` is a fixed enum — `cash`, `checking`, `savings` (حصالة), `credit_card`, `loan`, `investment` — with behavioural semantics per type. Liability types (`credit_card`, `loan`) are stored **negative** and displayed as the amount owed. `currency` is immutable once any posting references the wallet (**currency locked**: derived, never stored, true once any posting references the wallet; reported as `currency_locked`). `archived_at` is the instant the `archived` state was entered. The wallet's `change_seq` is the scope counter and moves on any write inside the scope, including membership writes; its `version` moves only when the wallet's own fields change. `balance_minor` is a **cache**: truth is `opening_balance_minor + Σ postings` and no invariant, authorization decision or report total may read the cache (P-05, ADR-0005). A negative balance is never blocked at write time.
 
 ### Wallet Member
 
@@ -170,7 +170,7 @@ One person's membership of one wallet, carrying their role.
 - **Sync**: yes — wallet scope
 - **States**: `active` → `revoked` (a role change stays `active`)
 - **Referenced by**: every authorization check
-- **Notes**: roles are `owner`, `editor`, `viewer`. **The permission matrix — which role may do what — lives only in the Wallets spec** and is deliberately not repeated here (P-08, FR-017). Authorization is evaluated against every wallet a write touches, and a non-member receives 404 rather than 403 (ADR-0006). A shared wallet is governed by its **owner's** entitlements (ADR-0007). Ownership sits here and not on a separate grouping entity: `Space` was dropped, see [Prior-art mapping](#prior-art-mapping).
+- **Notes**: roles are `owner`, `editor`, `viewer`. **The permission matrix — which role may do what — lives only in the Wallets spec** and is deliberately not repeated here (P-08, FR-017). Authorization is evaluated against every wallet a write touches, and a non-member receives 404 rather than 403 (ADR-0006). A shared wallet is governed by its **owner's** entitlements (ADR-0007). **Ownership transfer**: the owner hands `owner` to another active member and becomes `editor`; it never adds or removes a person. The member is exposed on the wire as `member_user_id`. Ownership sits here and not on a separate grouping entity: `Space` was dropped, see [Prior-art mapping](#prior-art-mapping).
 
 ### Category
 

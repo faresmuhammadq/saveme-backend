@@ -1,6 +1,11 @@
 <!--
 Sync Impact Report (latest first)
 
+v1.3.2 → 1.3.3 — 2026-10-02
+- PATCH: the Wallets row lists two events introduced by spec 010; no rule changes.
+  Publishes gains `WalletDeleted` and `WalletOwnershipTransferred`.
+- Reason: spec 010 (B4, Wallets & Membership).
+
 v1.3.1 → 1.3.2 — 2026-09-28
 - PATCH: ADR-0013 supersedes ADR-0007, adding the `manual` subscription channel
   (operator grants, redeem codes; never a payment) and recording that the free
@@ -82,7 +87,7 @@ v1.0.0 — 2026-09-19 (ratified)
 
 <!-- "Save Me" is a working codename used as display text only; see P-13. -->
 
-**Version**: 1.3.2 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-28
+**Version**: 1.3.3 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-02
 
 ## Purpose & Precedence
 
@@ -305,7 +310,7 @@ Nine contexts, one module directory each. Module directories use short PascalCas
 | Context | Module dir | Owns | Publishes |
 |---|---|---|---|
 | Identity | `app/Modules/Identity` | users, credentials, sessions/tokens, profile, preferences (locale, timezone), account deletion and export orchestration | `AuthService`, `ProfileService`, `UserQueryService`; `UserRegistered`, `UserDeletionRequested`, `UserSignedIn`, `DeviceSessionEnded`, `UserDeletionCancelled` |
-| Wallets & Ledger | `app/Modules/Wallets` | wallets, wallet members, categories, transactions, postings, recurring rules | `WalletService`, `TransactionService`, `MembershipQueryService`, `BalanceQueryService`; `TransactionPosted`, `TransactionVoided`, `WalletCreated` |
+| Wallets & Ledger | `app/Modules/Wallets` | wallets, wallet members, categories, transactions, postings, recurring rules | `WalletService`, `TransactionService`, `MembershipQueryService`, `BalanceQueryService`; `TransactionPosted`, `TransactionVoided`, `WalletCreated`, `WalletDeleted`, `WalletOwnershipTransferred` |
 | Budgeting | `app/Modules/Budgeting` | budgets per category per period, budget progress read models | `BudgetService`, `BudgetQueryService`; `BudgetExceeded` |
 | Sharing | `app/Modules/Sharing` | invitations, invitation acceptance and revocation flows | `InvitationService`; `InvitationAccepted`, `MemberRevoked` |
 | Plans & Billing | `app/Modules/Billing` | plans, subscriptions, Google Play purchases, InstaPay claims, redemption codes | `EntitlementService`, `SubscriptionService`, `ClaimService`; `SubscriptionActivated`, `SubscriptionLapsed` |
@@ -354,7 +359,7 @@ Every `plan.md` includes this section, filled in before Phase 0 and again after 
 ```markdown
 ## Constitution Check
 
-*Constitution v1.3.2. GATE: before Phase 0 and again after Phase 1.*
+*Constitution v1.3.3. GATE: before Phase 0 and again after Phase 1.*
 
 | Principle | Result | Evidence / justification |
 |---|---|---|
@@ -392,4 +397,4 @@ Every amendment updates the footer's **Last Amended** date and the Sync Impact R
 
 **Consistency** — run `/speckit-analyze` before implementing each feature. Contradictions between this constitution, the ADRs and a feature's spec are defects to resolve before code.
 
-**Version**: 1.3.2 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-09-28
+**Version**: 1.3.3 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-02

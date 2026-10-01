@@ -1,0 +1,10 @@
+GET /wallets/01a0f9d7-292e-7e97-b84e-25ea10bcd3b8
+< 404
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0f9d7-a6e8-70ca-bf90-666cb9ef8d59"
+}

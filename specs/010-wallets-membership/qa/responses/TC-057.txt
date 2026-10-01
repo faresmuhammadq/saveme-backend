@@ -1,0 +1,30 @@
+GET /wallets?limit=1
+< 200
+{
+  "data": [
+    {
+      "id": "01a0f9d4-bfd6-74d3-9bd5-9d3a4435ba33",
+      "wallet_id": "01a0f9d4-bfd6-74d3-9bd5-9d3a4435ba33",
+      "version": 1,
+      "change_seq": 3,
+      "created_at": "2026-10-01T23:37:45.173190Z",
+      "updated_at": "2026-10-01T23:37:45.173190Z",
+      "deleted_at": null,
+      "type": "credit_card",
+      "name": "Visa",
+      "currency": "EGP",
+      "opening_balance_minor": -200000,
+      "balance_minor": -200000,
+      "icon": null,
+      "color": null,
+      "archived_at": null,
+      "currency_locked": false,
+      "my_role": "owner"
+    }
+  ],
+  "meta": {
+    "next_cursor": "eyJrIjoiYzEzMGNhZDFlYmVkNmRhMCIsInAiOnsidmFsdWUiOiIyMDI2LTEwLTAxIDIzOjM3OjQ1LjE3MzE5MCswMDowMCIsImlkIjoiMDFhMGY5ZDQtYmZkNi03NGQzLTliZDUtOWQzYTQ0MzViYTMzIn19",
+    "has_more": true,
+    "limit": 1
+  }
+}

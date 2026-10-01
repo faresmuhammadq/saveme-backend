@@ -1,0 +1,18 @@
+PUT /wallets/01a0f9d5-6a18-72be-b511-4e17f1e619da
+> {"type":"gameya","name":"X","currency":"EGP","opening_balance_minor":0,"icon":null,"color":null}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0f9d5-6b4b-7039-8971-32b4debacaaf",
+  "errors": [
+    {
+      "pointer": "/type",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}

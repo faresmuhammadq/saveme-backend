@@ -450,10 +450,12 @@ The vocabulary is **fixed**. "Log security events" is not a rule anybody can che
 | Access | `sign_in_succeeded`, `sign_in_failed`, `lockout_applied` | Identity |
 | Sessions | `session_issued`, `session_revoked` | Identity |
 | Credentials | `password_changed`, `address_change_requested`, `address_verified` | Identity |
-| Sharing | `membership_granted`, `membership_revoked`, `role_changed` | Sharing |
+| Sharing | `membership_granted`, `membership_revoked`, `role_changed` | Wallets |
 | Billing | `entitlement_changed` | Billing |
 | Departure | `export_requested`, `export_delivered`, `deletion_requested`, `deletion_cancelled`, `deletion_completed` | Identity |
 | Privileged | `admin_action`, `audit_read` | Admin |
+
+The Sharing events are written by Wallets, not Sharing: every membership change goes through `WalletService`, so the module that performs the act records it (spec 010, Clarifications), and each event still has exactly one writer.
 
 **Rules**
 

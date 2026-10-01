@@ -1,0 +1,30 @@
+PATCH /wallets/01a0f9d5-b3bd-7452-af1e-36f4258638cc
+> {"name":"Race 4","version":1}
+< 409
+{
+  "type": "http://saveme-backend.test/problems/version-conflict",
+  "title": "Version conflict",
+  "status": 409,
+  "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+  "code": "VERSION_CONFLICT",
+  "request_id": "01a0f9d5-b973-73ef-a190-faa956ce0764",
+  "current": {
+    "id": "01a0f9d5-b3bd-7452-af1e-36f4258638cc",
+    "wallet_id": "01a0f9d5-b3bd-7452-af1e-36f4258638cc",
+    "version": 2,
+    "change_seq": 4,
+    "created_at": "2026-10-01T23:38:47.605984Z",
+    "updated_at": "2026-10-01T23:38:48.253231Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "Race 1",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": null,
+    "color": null,
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  }
+}

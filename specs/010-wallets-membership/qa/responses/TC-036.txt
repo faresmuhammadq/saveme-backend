@@ -1,0 +1,25 @@
+POST /wallets/01a0f9d4-ad42-7802-8226-d8fa057f008f/archive
+> {"version":4}
+< 200
+{
+  "data": {
+    "id": "01a0f9d4-ad42-7802-8226-d8fa057f008f",
+    "wallet_id": "01a0f9d4-ad42-7802-8226-d8fa057f008f",
+    "version": 5,
+    "change_seq": 13,
+    "created_at": "2026-10-01T23:37:40.350763Z",
+    "updated_at": "2026-10-01T23:38:11.554983Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "Cash",
+    "currency": "USD",
+    "opening_balance_minor": 60000,
+    "balance_minor": 60000,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": "2026-10-01T23:38:11.553648Z",
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}

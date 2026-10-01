@@ -1,0 +1,11 @@
+POST /wallets/01a0f9d7-292e-7e97-b84e-25ea10bcd3b8/transfer-ownership
+> {"user_id":"01a0f9d7-0076-72d0-a55d-9cb9a9446011","version":5}
+< 403
+{
+  "type": "http://saveme-backend.test/problems/forbidden",
+  "title": "Forbidden",
+  "status": 403,
+  "detail": "Your role in this wallet does not allow this.",
+  "code": "FORBIDDEN",
+  "request_id": "01a0f9d7-b3e1-7140-91f1-4de14e612519"
+}

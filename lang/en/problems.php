@@ -48,6 +48,9 @@ return [
     'EMAIL_ALREADY_REGISTERED' => 'You already have an account with this email address. Sign in, or reset your password if you forgot it.',
 
     'default_currency_locked' => 'The default currency can\'t change once you have recorded transactions.',
+    'wallet_type_immutable' => 'The type of a wallet can\'t be changed.',
+    'wallet_currency_locked' => 'The currency can\'t change once the wallet has transactions.',
+    'wallet_ownership_target' => 'Choose another member of this wallet to hand it to.',
 
     'fields' => [
         'REQUIRED' => 'This field is required.',

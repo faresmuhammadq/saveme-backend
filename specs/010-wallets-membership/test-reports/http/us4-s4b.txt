@@ -1,0 +1,18 @@
+POST /wallets/01a0f9d7-292e-7e97-b84e-25ea10bcd3b8/transfer-ownership
+> {"user_id":"01a0f9d7-085e-7370-8424-5fe900eb90fb","version":5}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Choose another member of this wallet to hand it to.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0f9d7-af24-7391-a570-690ccff9e12c",
+  "errors": [
+    {
+      "pointer": "/user_id",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}

@@ -40,6 +40,8 @@ final class FieldErrors
         'uuid' => ErrorCode::InvalidId,
         'prohibited' => ErrorCode::UnknownField,
         'isocurrency' => ErrorCode::InvalidCurrency,
+        'minorunits' => ErrorCode::AmountNotInteger,
+        'notblank' => ErrorCode::OutOfRange,
     ];
 
     /**

@@ -1,0 +1,25 @@
+POST /wallets/01a0f9d7-5a53-700c-bf26-b438dfef0575/archive
+> {"version":1}
+< 200
+{
+  "data": {
+    "id": "01a0f9d7-5a53-700c-bf26-b438dfef0575",
+    "wallet_id": "01a0f9d7-5a53-700c-bf26-b438dfef0575",
+    "version": 2,
+    "change_seq": 4,
+    "created_at": "2026-10-01T23:40:35.841254Z",
+    "updated_at": "2026-10-01T23:40:36.315197Z",
+    "deleted_at": null,
+    "type": "savings",
+    "name": "Jar",
+    "currency": "EGP",
+    "opening_balance_minor": 50000,
+    "balance_minor": 50000,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": "2026-10-01T23:40:36.313868Z",
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}

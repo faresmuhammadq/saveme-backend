@@ -8,6 +8,9 @@ use App\Modules\Identity\Domain\Ports\AttributeCipher;
 use App\Modules\Identity\Infrastructure\Models\User;
 use App\Modules\Identity\Infrastructure\Models\UserKey;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -34,6 +37,21 @@ class UserFactory extends Factory
             'state' => AccountState::Active->value,
             'email_verified_at' => null,
         ];
+    }
+
+    /**
+     * The data key is inserted while the address is sealed, before the user
+     * row exists, and its foreign key is deferred to the end of the
+     * transaction. One transaction around the create keeps that true outside
+     * a test's wrapping transaction too (QA seeding, tinker, seeders;
+     * spec 010, R-13).
+     *
+     * @param  (callable(array<string, mixed>): array<string, mixed>)|array<string, mixed>  $attributes
+     * @return Collection<int, User>|User
+     */
+    public function create($attributes = [], ?Model $parent = null)
+    {
+        return DB::transaction(fn () => parent::create($attributes, $parent));
     }
 
     public function withEmail(string $email): static

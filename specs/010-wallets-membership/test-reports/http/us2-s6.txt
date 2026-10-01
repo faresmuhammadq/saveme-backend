@@ -1,0 +1,18 @@
+PUT /wallets/01a0f9d7-292e-7e97-b84e-25ea10bcd3b8
+> {"type":"loan","name":"Pocket","currency":"USD","opening_balance_minor":-12345,"icon":"wallet","color":"#FFFFFF","version":5}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "The type of a wallet can't be changed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0f9d7-8d58-7135-b718-d657123426ef",
+  "errors": [
+    {
+      "pointer": "/type",
+      "code": "IMMUTABLE_FIELD",
+      "detail": "This field cannot be changed."
+    }
+  ]
+}

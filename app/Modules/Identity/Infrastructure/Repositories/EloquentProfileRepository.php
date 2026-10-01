@@ -56,6 +56,17 @@ final class EloquentProfileRepository implements ProfileRepository
             ]) === 1;
     }
 
+    public function sealedDisplayNames(array $userIds): array
+    {
+        $names = [];
+
+        foreach (Profile::query()->whereIn('user_id', $userIds)->whereNotNull('display_name_ciphertext')->get(['user_id', 'display_name_ciphertext']) as $profile) {
+            $names[$profile->user_id] = (string) $profile->display_name_ciphertext;
+        }
+
+        return $names;
+    }
+
     public function localeOf(string $userId): string
     {
         return (string) (Profile::query()->where('user_id', $userId)->value('locale') ?? config('api.supported_locales')[0]);

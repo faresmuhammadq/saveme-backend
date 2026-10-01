@@ -1,0 +1,25 @@
+PUT /wallets/01a0f9d7-292e-7e97-b84e-25ea10bcd3b8
+> {"type":"cash","name":"Cash","currency":"EGP","opening_balance_minor":50000,"icon":"wallet","color":"#1A2B3C","version":0}
+< 200
+{
+  "data": {
+    "id": "01a0f9d7-292e-7e97-b84e-25ea10bcd3b8",
+    "wallet_id": "01a0f9d7-292e-7e97-b84e-25ea10bcd3b8",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-01T23:40:23.387221Z",
+    "updated_at": "2026-10-01T23:40:23.387221Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "Cash",
+    "currency": "EGP",
+    "opening_balance_minor": 50000,
+    "balance_minor": 50000,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}

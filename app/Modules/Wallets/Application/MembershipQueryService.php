@@ -1,0 +1,62 @@
+<?php
+
+namespace App\Modules\Wallets\Application;
+
+use App\Modules\Identity\Application\Profiles\DisplayNames;
+use App\Modules\Wallets\Application\Dto\MemberView;
+use App\Modules\Wallets\Domain\Membership\Role;
+use App\Modules\Wallets\Domain\Ports\MembershipRepository;
+use DateTimeZone;
+
+/**
+ * What other modules and the HTTP layer may ask about who is in a wallet
+ * (constitution, Wallets & Ledger).
+ */
+final class MembershipQueryService
+{
+    public function __construct(
+        private readonly MembershipRepository $members,
+        private readonly DisplayNames $displayNames,
+    ) {}
+
+    /**
+     * The wallet's current owner, or null when it has none (deleted or unknown).
+     */
+    public function ownerOf(string $walletId): ?string
+    {
+        return $this->members->ownerOf($walletId);
+    }
+
+    /**
+     * The person's role in the wallet while their membership is active.
+     */
+    public function roleOf(string $userId, string $walletId): ?Role
+    {
+        return $this->members->activeFor($walletId, $userId)?->role;
+    }
+
+    /**
+     * Active members in creation order, with the display names members may see.
+     *
+     * @param  array{value: string, id: string}|null  $after
+     * @return array{items: list<MemberView>, next: array{value: string, id: string}|null}
+     */
+    public function activeMembersOf(string $walletId, ?array $after, int $limit): array
+    {
+        $records = $this->members->activeMembersOf($walletId, $after, $limit);
+        $hasMore = count($records) > $limit;
+        $page = array_slice($records, 0, $limit);
+        $names = $this->displayNames->of(array_map(fn ($member): string => $member->userId, $page));
+
+        $next = null;
+        if ($hasMore && $page !== []) {
+            $last = $page[array_key_last($page)];
+            $next = ['value' => $last->createdAt->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s.uP'), 'id' => $last->id];
+        }
+
+        return [
+            'items' => array_map(fn ($member): MemberView => new MemberView($member, $names[$member->userId] ?? null), $page),
+            'next' => $next,
+        ];
+    }
+}

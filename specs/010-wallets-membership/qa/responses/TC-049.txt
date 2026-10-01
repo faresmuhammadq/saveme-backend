@@ -1,0 +1,30 @@
+POST /wallets/01a0f9d4-ad42-7802-8226-d8fa057f008f/archive
+> {"version":7}
+< 409
+{
+  "type": "http://saveme-backend.test/problems/version-conflict",
+  "title": "Version conflict",
+  "status": 409,
+  "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+  "code": "VERSION_CONFLICT",
+  "request_id": "01a0f9d5-4fd1-7197-b22f-ab64121e7835",
+  "current": {
+    "id": "01a0f9d4-ad42-7802-8226-d8fa057f008f",
+    "wallet_id": "01a0f9d4-ad42-7802-8226-d8fa057f008f",
+    "version": 7,
+    "change_seq": 18,
+    "created_at": "2026-10-01T23:37:40.350763Z",
+    "updated_at": "2026-10-01T23:38:14.652435Z",
+    "deleted_at": "2026-10-01T23:38:14.624581Z",
+    "type": "cash",
+    "name": "Old cash",
+    "currency": "USD",
+    "opening_balance_minor": 60000,
+    "balance_minor": 60000,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": "2026-10-01T23:38:11.553648Z",
+    "currency_locked": false,
+    "my_role": "owner"
+  }
+}

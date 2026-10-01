@@ -1,0 +1,18 @@
+PATCH /wallets/01a0f9d4-ad42-7802-8226-d8fa057f008f
+> {"name":"   ","version":3}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0f9d4-d7ee-73de-9bb0-ada564f647d7",
+  "errors": [
+    {
+      "pointer": "/name",
+      "code": "OUT_OF_RANGE",
+      "detail": "This value is too short, too long, or outside the allowed range."
+    }
+  ]
+}

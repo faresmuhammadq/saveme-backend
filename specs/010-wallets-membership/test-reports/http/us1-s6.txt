@@ -1,0 +1,11 @@
+PUT /wallets/01a0f9d7-7580-712e-a8b2-35f320981888
+> {"type":"cash","name":"Cash","currency":"EGP","opening_balance_minor":50000,"icon":"wallet","color":"#1A2B3C","version":0}
+< 403
+{
+  "type": "http://saveme-backend.test/problems/email-not-verified",
+  "title": "Address not verified",
+  "status": 403,
+  "detail": "Verify your email address first. We can send the link again.",
+  "code": "EMAIL_NOT_VERIFIED",
+  "request_id": "01a0f9d7-76dc-7382-ad1d-75ef52f4189b"
+}

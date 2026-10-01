@@ -1,0 +1,18 @@
+PUT /wallets/01a0f9d4-ad42-7802-8226-d8fa057f008f
+> {"type":"savings","name":"Cash","currency":"EGP","opening_balance_minor":60000,"icon":"wallet","color":"#1A2B3C","version":2}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "The type of a wallet can't be changed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0f9d4-d38a-7266-8199-fc0f2c4a9ea8",
+  "errors": [
+    {
+      "pointer": "/type",
+      "code": "IMMUTABLE_FIELD",
+      "detail": "This field cannot be changed."
+    }
+  ]
+}

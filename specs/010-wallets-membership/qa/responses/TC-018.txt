@@ -1,0 +1,23 @@
+PATCH /wallets/01a0f9d4-ad42-7802-8226-d8fa057f008f
+> {"currency":"egp","opening_balance_minor":1.5,"version":3}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0f9d4-de58-723a-9543-5a2ce5c13750",
+  "errors": [
+    {
+      "pointer": "/currency",
+      "code": "INVALID_CURRENCY",
+      "detail": "Use an uppercase three-letter currency code."
+    },
+    {
+      "pointer": "/opening_balance_minor",
+      "code": "AMOUNT_NOT_INTEGER",
+      "detail": "Amounts must be whole numbers of minor units."
+    }
+  ]
+}

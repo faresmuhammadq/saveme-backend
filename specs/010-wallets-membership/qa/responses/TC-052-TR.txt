@@ -1,0 +1,11 @@
+POST /wallets/01a0f9d4-bfd6-74d3-9bd5-9d3a4435ba33/transfer-ownership
+> {"user_id":"01a0f9d4-7e61-706f-86b5-305156081181","version":1}
+< 403
+{
+  "type": "http://saveme-backend.test/problems/email-not-verified",
+  "title": "Address not verified",
+  "status": 403,
+  "detail": "Verify your email address first. We can send the link again.",
+  "code": "EMAIL_NOT_VERIFIED",
+  "request_id": "01a0f9d5-5a92-7026-9f09-8a30325fe1d0"
+}

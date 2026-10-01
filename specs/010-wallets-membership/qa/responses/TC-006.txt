@@ -1,0 +1,11 @@
+PUT /wallets/01a0f9d4-c293-7e26-ada1-495743877d9b
+> {"type":"cash","name":"Cash","currency":"EGP","opening_balance_minor":50000,"icon":"wallet","color":"#1A2B3C","version":0}
+< 404
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0f9d4-c781-72d3-be36-080791be21fa"
+}

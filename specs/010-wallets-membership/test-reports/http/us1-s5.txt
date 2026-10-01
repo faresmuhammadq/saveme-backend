@@ -1,0 +1,11 @@
+PUT /wallets/01a0f9d7-50bf-7759-9173-13fba74a3ef4
+> {"type":"cash","name":"Hijack","currency":"EGP","opening_balance_minor":50000,"icon":"wallet","color":"#1A2B3C","version":0}
+< 404
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0f9d7-6569-727c-8545-851a0b5e743a"
+}

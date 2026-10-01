@@ -1,0 +1,18 @@
+PATCH /wallets/01a0f9d4-ad42-7802-8226-d8fa057f008f
+> {"balance_minor":1,"version":3}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0f9d4-dc71-72df-a57a-5f5b9dd09866",
+  "errors": [
+    {
+      "pointer": "/balance_minor",
+      "code": "UNKNOWN_FIELD",
+      "detail": "This field is not accepted here."
+    }
+  ]
+}

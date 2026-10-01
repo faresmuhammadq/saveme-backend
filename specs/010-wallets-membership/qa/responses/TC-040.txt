@@ -1,0 +1,17 @@
+DELETE /wallets/01a0f9d4-ad42-7802-8226-d8fa057f008f
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0f9d5-302e-700e-bd96-5e086fc0cb08",
+  "errors": [
+    {
+      "pointer": "/version",
+      "code": "REQUIRED",
+      "detail": "This field is required."
+    }
+  ]
+}

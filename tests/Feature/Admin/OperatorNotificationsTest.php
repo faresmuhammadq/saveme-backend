@@ -84,12 +84,12 @@ test('neither the row nor the mail carries an address or a device name', functio
 });
 
 test('the query service returns views and counts only the recent ones as unread', function () {
+    $this->travelTo('2026-09-27 00:00:00');
     notifyOperators(cancelledEvent());
     DB::table('operator_notifications')->insert([
         'id' => (string) Str::uuid7(), 'kind' => 'deletion_cancelled_by_sign_in', 'subject_user_id' => (string) Str::uuid7(),
         'occurred_at' => now()->subDays(10), 'payload' => '{}', 'source_event_id' => (string) Str::uuid7(), 'created_at' => now(),
     ]);
-    $this->travelTo('2026-09-27 00:00:00');
 
     $service = app(OperatorNotificationQueryService::class);
     expect($service->latest())->toHaveCount(2)

@@ -1,0 +1,11 @@
+DELETE /wallets/01a0f9d7-292e-7e97-b84e-25ea10bcd3b8
+> {"version":7}
+< 403
+{
+  "type": "http://saveme-backend.test/problems/forbidden",
+  "title": "Forbidden",
+  "status": 403,
+  "detail": "Your role in this wallet does not allow this.",
+  "code": "FORBIDDEN",
+  "request_id": "01a0f9d7-f1ce-7041-b402-2f9d6729697a"
+}

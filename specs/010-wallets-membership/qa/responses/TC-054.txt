@@ -1,0 +1,10 @@
+GET /wallets?sort=balance_minor
+< 400
+{
+  "type": "http://saveme-backend.test/problems/sort-field-not-supported",
+  "title": "Sort field not supported",
+  "status": 400,
+  "detail": "This list cannot be sorted by that field.",
+  "code": "SORT_FIELD_NOT_SUPPORTED",
+  "request_id": "01a0f9d5-5ddd-70ac-8724-76157f51dbee"
+}

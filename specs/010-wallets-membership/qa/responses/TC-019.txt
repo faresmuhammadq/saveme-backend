@@ -1,0 +1,11 @@
+PUT /wallets/not-a-uuid
+> {"type":"cash","name":"Cash","currency":"EGP","opening_balance_minor":50000,"icon":"wallet","color":"#1A2B3C","version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/invalid-id",
+  "title": "Invalid identifier",
+  "status": 422,
+  "detail": "The identifier is not valid.",
+  "code": "INVALID_ID",
+  "request_id": "01a0f9d4-e04b-725b-a995-cd52549af6b7"
+}

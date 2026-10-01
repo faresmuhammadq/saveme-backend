@@ -1,0 +1,11 @@
+PUT /wallets/01a0f9d4-e176-75c3-a88b-b3769f702625
+> {"type":"cash","name":"Ghost","currency":"EGP","opening_balance_minor":0,"icon":null,"color":null,"version":4}
+< 404
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0f9d4-e275-7273-a835-731c4ce6dda8"
+}

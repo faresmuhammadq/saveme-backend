@@ -8,6 +8,8 @@ use App\Modules\Billing\Infrastructure\BillingPersistenceServiceProvider;
 use App\Modules\Identity\Http\IdentityServiceProvider;
 use App\Modules\Identity\Infrastructure\IdentityPersistenceServiceProvider;
 use App\Modules\Wallets\Application\WalletsServiceProvider;
+use App\Modules\Wallets\Http\WalletsHttpServiceProvider;
+use App\Modules\Wallets\Infrastructure\WalletsPersistenceServiceProvider;
 use App\Providers\AppServiceProvider;
 use App\Providers\ModuleServiceProvider;
 
@@ -19,7 +21,9 @@ return [
     BillingPersistenceServiceProvider::class,
     BillingServiceProvider::class,
     BillingHttpServiceProvider::class,
+    WalletsPersistenceServiceProvider::class,
     WalletsServiceProvider::class,
+    WalletsHttpServiceProvider::class,
     AdminPersistenceServiceProvider::class,
     AdminServiceProvider::class,
 ];

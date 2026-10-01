@@ -1,0 +1,10 @@
+GET /wallets?filter%5Btype%5D=cash
+< 400
+{
+  "type": "http://saveme-backend.test/problems/filter-field-not-supported",
+  "title": "Filter field not supported",
+  "status": 400,
+  "detail": "This list cannot be filtered by that field.",
+  "code": "FILTER_FIELD_NOT_SUPPORTED",
+  "request_id": "01a0f9d5-5fc6-72ab-b13b-52786f99aed6"
+}

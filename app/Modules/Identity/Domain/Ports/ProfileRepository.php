@@ -24,6 +24,15 @@ interface ProfileRepository
      */
     public function saveIfVersion(string $userId, int $expectedVersion, array $columns): bool;
 
+    /**
+     * Sealed display names for several people, keyed by user id; a person
+     * with no profile or no name is absent.
+     *
+     * @param  list<string>  $userIds
+     * @return array<string, string>
+     */
+    public function sealedDisplayNames(array $userIds): array;
+
     public function localeOf(string $userId): string;
 
     public function timezoneOf(string $userId): string;

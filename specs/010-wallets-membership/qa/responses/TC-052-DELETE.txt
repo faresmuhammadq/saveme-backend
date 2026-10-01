@@ -1,0 +1,11 @@
+DELETE /wallets/01a0f9d4-bfd6-74d3-9bd5-9d3a4435ba33
+> {"version":1}
+< 403
+{
+  "type": "http://saveme-backend.test/problems/email-not-verified",
+  "title": "Address not verified",
+  "status": 403,
+  "detail": "Verify your email address first. We can send the link again.",
+  "code": "EMAIL_NOT_VERIFIED",
+  "request_id": "01a0f9d5-56cf-7243-9414-dfc7c78d918c"
+}

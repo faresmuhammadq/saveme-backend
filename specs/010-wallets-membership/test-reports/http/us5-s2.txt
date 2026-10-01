@@ -1,0 +1,11 @@
+POST /wallets/01a0f9d7-608b-7945-b01f-507688634c03/archive
+> {"version":1}
+< 403
+{
+  "type": "http://saveme-backend.test/problems/email-not-verified",
+  "title": "Address not verified",
+  "status": 403,
+  "detail": "Verify your email address first. We can send the link again.",
+  "code": "EMAIL_NOT_VERIFIED",
+  "request_id": "01a0f9d8-1258-7183-9365-b26cf7cc2102"
+}

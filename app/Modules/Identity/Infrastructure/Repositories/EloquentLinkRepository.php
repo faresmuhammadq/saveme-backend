@@ -11,20 +11,31 @@ final class EloquentLinkRepository implements LinkRepository
 {
     public function issue(string $userId, LinkKind $kind): string
     {
-        $secret = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
+        $secret = $this->newSecret();
 
         DB::transaction(function () use ($userId, $kind, $secret): void {
+            $this->lockLinksOf($userId, $kind);
             $this->supersedeAll($userId, $kind);
-
-            IdentityLink::query()->create([
-                'user_id' => $userId,
-                'kind' => $kind->value,
-                'secret_hash' => hash('sha256', $secret),
-                'expires_at' => now()->addMinutes($kind->lifetimeMinutes())->format('Y-m-d H:i:s.uP'),
-            ]);
+            $this->store($userId, $kind, $secret);
         });
 
         return $secret;
+    }
+
+    public function issueFirst(string $userId, LinkKind $kind): ?string
+    {
+        return DB::transaction(function () use ($userId, $kind): ?string {
+            $this->lockLinksOf($userId, $kind);
+
+            if (IdentityLink::query()->where('user_id', $userId)->where('kind', $kind->value)->exists()) {
+                return null;
+            }
+
+            $secret = $this->newSecret();
+            $this->store($userId, $kind, $secret);
+
+            return $secret;
+        });
     }
 
     public function redeem(string $secret, LinkKind $kind): ?string
@@ -40,6 +51,30 @@ final class EloquentLinkRepository implements LinkRepository
         );
 
         return $row === null ? null : (string) $row->user_id;
+    }
+
+    private function newSecret(): string
+    {
+        return rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
+    }
+
+    private function store(string $userId, LinkKind $kind, string $secret): void
+    {
+        IdentityLink::query()->create([
+            'user_id' => $userId,
+            'kind' => $kind->value,
+            'secret_hash' => hash('sha256', $secret),
+            'expires_at' => now()->addMinutes($kind->lifetimeMinutes())->format('Y-m-d H:i:s.uP'),
+        ]);
+    }
+
+    /**
+     * Serialises every issue for one person and kind until the surrounding
+     * transaction ends, so the newest request always ends up the live link.
+     */
+    private function lockLinksOf(string $userId, LinkKind $kind): void
+    {
+        DB::select('select pg_advisory_xact_lock(hashtext(?))', ['identity_links:'.$kind->value.':'.$userId]);
     }
 
     public function supersedeAll(string $userId, LinkKind $kind): void

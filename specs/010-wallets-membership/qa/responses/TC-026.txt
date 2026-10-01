@@ -1,0 +1,11 @@
+POST /wallets/01a0f9d4-ad42-7802-8226-d8fa057f008f/archive
+> {"version":3}
+< 403
+{
+  "type": "http://saveme-backend.test/problems/forbidden",
+  "title": "Forbidden",
+  "status": 403,
+  "detail": "Your role in this wallet does not allow this.",
+  "code": "FORBIDDEN",
+  "request_id": "01a0f9d4-ffdc-7016-932a-134019e49897"
+}

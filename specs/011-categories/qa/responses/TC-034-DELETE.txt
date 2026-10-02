@@ -1,0 +1,12 @@
+DELETE /wallets/01a0fa2f-058e-7209-a8e5-a310e68a8129/category-references
+> {}
+< 405
+Allow: GET, HEAD
+{
+  "type": "http://saveme-backend.test/problems/method-not-allowed",
+  "title": "Method not allowed",
+  "status": 405,
+  "detail": "This action is not available here.",
+  "code": "METHOD_NOT_ALLOWED",
+  "request_id": "01a0fa2f-69cf-70d8-84bb-eaf9d0d0d8e1"
+}

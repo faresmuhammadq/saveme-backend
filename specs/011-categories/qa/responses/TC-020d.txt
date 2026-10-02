@@ -1,0 +1,11 @@
+DELETE /categories/01a0fa05-c298-7250-b5b2-2c85cc436f70
+> {"version":1}
+< 404
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0fa2e-eb3a-71fa-a513-f2128cfb5441"
+}

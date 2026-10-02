@@ -1,0 +1,11 @@
+PUT /categories/01a0fa31-5484-72aa-875e-76902af5a50d
+> {"kind":"expense","name":"x","icon":null,"color":null}
+< 403
+{
+  "type": "http://saveme-backend.test/problems/email-not-verified",
+  "title": "Address not verified",
+  "status": 403,
+  "detail": "Verify your email address first. We can send the link again.",
+  "code": "EMAIL_NOT_VERIFIED",
+  "request_id": "01a0fa31-555c-731d-8c27-cf200df0cdf6"
+}

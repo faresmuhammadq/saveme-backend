@@ -1,0 +1,18 @@
+PATCH /categories/01a0fa2e-c5a9-7654-a121-8013367a134b
+> {"name":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","version":3}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fa2f-1993-7154-905a-5cbf617b5621",
+  "errors": [
+    {
+      "pointer": "/name",
+      "code": "OUT_OF_RANGE",
+      "detail": "This value is too short, too long, or outside the allowed range."
+    }
+  ]
+}

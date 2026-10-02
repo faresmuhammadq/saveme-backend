@@ -101,7 +101,8 @@ components:
         included), IDEMPOTENCY_KEY_REUSED (same key, different payload),
         IDEMPOTENCY_REQUEST_IN_PROGRESS (the original has not finished),
         EMAIL_ALREADY_REGISTERED (registration for an address that already
-        has an account).
+        has an account), CATEGORY_IN_USE (a category referenced by recorded
+        history cannot be deleted; archive it).
       headers:
         X-Request-Id:
           $ref: './headers.yaml#/components/headers/XRequestId'

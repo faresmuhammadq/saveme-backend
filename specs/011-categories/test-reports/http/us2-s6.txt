@@ -1,0 +1,18 @@
+PUT /categories/01a0fa31-30dc-7699-a009-9e6d8d1c691b
+> {"kind":"income","name":"Pharmacy+","icon":"pill","color":"#000000","version":3}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "The kind of a category can't be changed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fa31-49b5-7176-9d07-cefcad745af1",
+  "errors": [
+    {
+      "pointer": "/kind",
+      "code": "IMMUTABLE_FIELD",
+      "detail": "This field cannot be changed."
+    }
+  ]
+}

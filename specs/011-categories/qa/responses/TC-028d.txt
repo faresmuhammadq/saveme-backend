@@ -1,0 +1,10 @@
+GET /categories?sort=kind
+< 400
+{
+  "type": "http://saveme-backend.test/problems/sort-field-not-supported",
+  "title": "Sort field not supported",
+  "status": 400,
+  "detail": "This list cannot be sorted by that field.",
+  "code": "SORT_FIELD_NOT_SUPPORTED",
+  "request_id": "01a0fa2f-41d4-714e-b953-799a495a35f8"
+}

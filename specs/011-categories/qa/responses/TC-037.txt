@@ -1,0 +1,26 @@
+DELETE /categories/01a0fa2e-c5a9-7654-a121-8013367a134b
+> {"version":4}
+< 409
+{
+  "type": "http://saveme-backend.test/problems/version-conflict",
+  "title": "Version conflict",
+  "status": 409,
+  "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+  "code": "VERSION_CONFLICT",
+  "request_id": "01a0fa2f-73e9-7077-886a-470b4f12cb21",
+  "current": {
+    "id": "01a0fa2e-c5a9-7654-a121-8013367a134b",
+    "user_id": "01a0fa2c-c888-7253-a070-b9498ee4a7d6",
+    "version": 5,
+    "change_seq": 1701,
+    "created_at": "2026-10-02T01:16:04.832830Z",
+    "updated_at": "2026-10-02T01:16:43.949842Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "Coffee",
+    "icon": "cup",
+    "color": "#000000",
+    "archived_at": "2026-10-02T01:16:43.944797Z",
+    "in_use": false
+  }
+}

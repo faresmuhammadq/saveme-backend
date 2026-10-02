@@ -1,6 +1,10 @@
 <!--
 Sync Impact Report (latest first)
 
+v1.3.3 → 1.3.4 — 2026-10-02
+- PATCH: P-01 and P-04 list ADR-0014, introduced by spec 011; no rule changes.
+- Reason: spec 011 (B5, Categories); ADR-0014 extends ADR-0012.
+
 v1.3.2 → 1.3.3 — 2026-10-02
 - PATCH: the Wallets row lists two events introduced by spec 010; no rule changes.
   Publishes gains `WalletDeleted` and `WalletOwnershipTransferred`.
@@ -87,7 +91,7 @@ v1.0.0 — 2026-09-19 (ratified)
 
 <!-- "Save Me" is a working codename used as display text only; see P-13. -->
 
-**Version**: 1.3.3 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-02
+**Version**: 1.3.4 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-02
 
 ## Purpose & Precedence
 
@@ -104,7 +108,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-01 Ubiquitous language
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0012](../../docs/adr/0012-postings-wallet-and-category-accounts.md) (supersedes ADR-0004)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0012](../../docs/adr/0012-postings-wallet-and-category-accounts.md) (supersedes ADR-0004), [ADR-0014](../../docs/adr/0014-platform-owned-categories.md) (extends ADR-0012)
 
 1. "Wallet" (محفظة) MUST be the only term for a money container, in code, database, API and translations. "Account", "purse", "fund" and similar MUST NOT be introduced as synonyms.
 2. Wallet type MUST be a fixed enum whose members carry defined behavioural semantics (e.g. liability types hold negative balances).
@@ -137,7 +141,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-04 Ledger integrity
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0012](../../docs/adr/0012-postings-wallet-and-category-accounts.md) (supersedes ADR-0004)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0012](../../docs/adr/0012-postings-wallet-and-category-accounts.md) (supersedes ADR-0004), [ADR-0014](../../docs/adr/0014-platform-owned-categories.md) (extends ADR-0012)
 
 1. Every transaction MUST produce postings that sum to zero per currency.
 2. Every posting MUST reference exactly one of a wallet or a category, never both and never neither.
@@ -359,7 +363,7 @@ Every `plan.md` includes this section, filled in before Phase 0 and again after 
 ```markdown
 ## Constitution Check
 
-*Constitution v1.3.3. GATE: before Phase 0 and again after Phase 1.*
+*Constitution v1.3.4. GATE: before Phase 0 and again after Phase 1.*
 
 | Principle | Result | Evidence / justification |
 |---|---|---|
@@ -397,4 +401,4 @@ Every amendment updates the footer's **Last Amended** date and the Sync Impact R
 
 **Consistency** — run `/speckit-analyze` before implementing each feature. Contradictions between this constitution, the ADRs and a feature's spec are defects to resolve before code.
 
-**Version**: 1.3.3 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-02
+**Version**: 1.3.4 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-02

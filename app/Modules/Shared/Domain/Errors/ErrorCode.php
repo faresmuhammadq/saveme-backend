@@ -62,6 +62,7 @@ enum ErrorCode: string
     case ProviderSignatureInvalid = 'PROVIDER_SIGNATURE_INVALID';
     case ExportInProgress = 'EXPORT_IN_PROGRESS';
     case EmailAlreadyRegistered = 'EMAIL_ALREADY_REGISTERED';
+    case CategoryInUse = 'CATEGORY_IN_USE';
 
     /**
      * The single HTTP status this code is served with.
@@ -109,7 +110,8 @@ enum ErrorCode: string
             self::IdempotencyKeyReused,
             self::IdempotencyRequestInProgress,
             self::ExportInProgress,
-            self::EmailAlreadyRegistered => 409,
+            self::EmailAlreadyRegistered,
+            self::CategoryInUse => 409,
             self::SyncCursorExpired,
             self::EndpointRemoved => 410,
             self::UnsupportedMediaType => 415,
@@ -176,6 +178,7 @@ enum ErrorCode: string
             self::ProviderSignatureInvalid => 'Provider message not verified',
             self::ExportInProgress => 'Export already in progress',
             self::EmailAlreadyRegistered => 'Email already registered',
+            self::CategoryInUse => 'Category in use',
         };
     }
 
@@ -227,7 +230,8 @@ enum ErrorCode: string
             self::EmailNotVerified,
             self::InsecureTransport,
             self::ProviderSignatureInvalid,
-            self::EmailAlreadyRegistered => 'never',
+            self::EmailAlreadyRegistered,
+            self::CategoryInUse => 'never',
             self::IdempotencyRequestInProgress,
             self::RateLimited,
             self::InternalError,

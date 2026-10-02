@@ -1,0 +1,18 @@
+PUT /categories/01a0fa2f-1ebb-7e81-b690-843412820ed9
+> {"kind":"transfer","name":"x","icon":null,"color":null}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fa2f-1f8d-7309-aca6-8c0704c7512e",
+  "errors": [
+    {
+      "pointer": "/kind",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}

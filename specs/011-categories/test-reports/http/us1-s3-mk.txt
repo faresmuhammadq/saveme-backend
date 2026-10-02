@@ -1,0 +1,21 @@
+PUT /categories/01a0fa31-1688-7198-b453-e4239c533166
+> {"kind":"expense","name":"Coffee","icon":"cup","color":"#6D4C41","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0fa31-1688-7198-b453-e4239c533166",
+    "user_id": "01a0fa30-7214-7162-bc6f-be1821bfa774",
+    "version": 1,
+    "change_seq": 1714,
+    "created_at": "2026-10-02T01:18:36.623885Z",
+    "updated_at": "2026-10-02T01:18:36.623885Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "Coffee",
+    "icon": "cup",
+    "color": "#6D4C41",
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}

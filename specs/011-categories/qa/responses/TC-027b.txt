@@ -1,0 +1,18 @@
+PATCH /categories/01a0fa2e-c5a9-7654-a121-8013367a134b
+> {"name":"x"}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fa2f-34c0-71a0-8ebc-b112d7aeb753",
+  "errors": [
+    {
+      "pointer": "/version",
+      "code": "REQUIRED",
+      "detail": "This field is required."
+    }
+  ]
+}

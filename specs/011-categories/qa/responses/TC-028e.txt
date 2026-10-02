@@ -1,0 +1,10 @@
+GET /categories?filter%5Bkind%5D=income
+< 400
+{
+  "type": "http://saveme-backend.test/problems/filter-field-not-supported",
+  "title": "Filter field not supported",
+  "status": 400,
+  "detail": "This list cannot be filtered by that field.",
+  "code": "FILTER_FIELD_NOT_SUPPORTED",
+  "request_id": "01a0fa2f-434c-730e-84cc-197bdf245851"
+}

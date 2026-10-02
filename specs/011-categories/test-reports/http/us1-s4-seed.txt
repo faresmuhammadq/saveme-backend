@@ -1,0 +1,6 @@
+
+   INFO  Seeding database.  
+
+  App\Modules\Wallets\Infrastructure\Database\Seeders\PlatformCategorySeeder  RUNNING  
+  App\Modules\Wallets\Infrastructure\Database\Seeders\PlatformCategorySeeder  165 ms DONE  
+

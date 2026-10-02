@@ -1,0 +1,10 @@
+GET /categories?cursor=garbage
+< 400
+{
+  "type": "http://saveme-backend.test/problems/invalid-cursor",
+  "title": "Invalid cursor",
+  "status": 400,
+  "detail": "The page cursor is not valid. Start again from the first page.",
+  "code": "INVALID_CURSOR",
+  "request_id": "01a0fa2f-44d8-70aa-bf97-3227542c5298"
+}

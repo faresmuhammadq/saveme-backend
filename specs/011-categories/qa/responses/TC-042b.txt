@@ -1,0 +1,26 @@
+GET /wallets/01a0fa2f-058e-7209-a8e5-a310e68a8129/category-references
+< 200
+{
+  "data": [
+    {
+      "id": "01a0fa2f-a00e-7126-857b-af178016d5d5",
+      "wallet_id": "01a0fa2f-058e-7209-a8e5-a310e68a8129",
+      "version": 1,
+      "change_seq": 12,
+      "created_at": "2026-10-02T01:17:00.305721Z",
+      "updated_at": "2026-10-02T01:17:00.305721Z",
+      "deleted_at": null,
+      "category_id": "01a0fa2f-919b-7ac1-b76e-8fcb8d4b0d4d",
+      "owner_user_id": "01a0fa2c-c888-7253-a070-b9498ee4a7d6",
+      "kind": "expense",
+      "name": "Pharmacy",
+      "icon": "pill",
+      "color": "#C62828"
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50
+  }
+}

@@ -1,0 +1,10 @@
+GET /wallets/01a0fa2f-058e-7209-a8e5-a310e68a8129/category-references?cursor=zz
+< 400
+{
+  "type": "http://saveme-backend.test/problems/invalid-cursor",
+  "title": "Invalid cursor",
+  "status": 400,
+  "detail": "The page cursor is not valid. Start again from the first page.",
+  "code": "INVALID_CURSOR",
+  "request_id": "01a0fa2f-7092-725f-832a-e6205e88aad0"
+}

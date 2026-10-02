@@ -2,6 +2,9 @@
 
 namespace App\Modules\Wallets\Application;
 
+use App\Modules\Wallets\Application\Categories\CategoryUsage;
+use App\Modules\Wallets\Application\Categories\CategoryUsageQuery;
+use App\Modules\Wallets\Application\Categories\ReferencesGoWithWallet;
 use App\Modules\Wallets\Application\Deletion\WalletDeletionParticipant;
 use App\Modules\Wallets\Application\Provisional\NoPostingsYet;
 use App\Modules\Wallets\Application\Provisional\NoTransactionsYet;
@@ -24,5 +27,11 @@ class WalletsServiceProvider extends ServiceProvider
         $this->app->when(WalletService::class)
             ->needs('$participants')
             ->giveTagged(WalletDeletionParticipant::class);
+
+        $this->app->when(CategoryUsageQuery::class)
+            ->needs('$participants')
+            ->giveTagged(CategoryUsage::class);
+
+        $this->app->tag([ReferencesGoWithWallet::class], WalletDeletionParticipant::class);
     }
 }

@@ -1,0 +1,20 @@
+PATCH /categories/01a0fa30-0af0-7b66-bdf3-9411d5c0a334 name 'Kids 3' version 1
+< 200
+{
+  "data": {
+    "id": "01a0fa30-0af0-7b66-bdf3-9411d5c0a334",
+    "user_id": "01a0fa2c-c888-7253-a070-b9498ee4a7d6",
+    "version": 2,
+    "change_seq": 1709,
+    "created_at": "2026-10-02T01:17:28.711722Z",
+    "updated_at": "2026-10-02T01:17:32.734557Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "Kids 3",
+    "icon": "child",
+    "color": "#F06292",
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}

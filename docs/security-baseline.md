@@ -162,10 +162,13 @@ Four surfaces can be used to ask "does this address have an account here". Three
 | Manage their own profile | allowed |
 | Manage their own sessions | allowed |
 | **Any write to any wallet** | **refused** |
+| **Any write to their own categories** | **refused** |
 
 The refusal is `403 EMAIL_NOT_VERIFIED` — its own code, so the app offers to send the verification again rather than showing a denial the person cannot act on.
 
 **Why the line is here.** Letting an unverified invitee read is what makes an invitation worth sending: they can see what they were invited to before committing to anything. Barring writes is what stops a mistyped or hostile address from putting entries into somebody's shared wallet, which is the case where an unverified account does real damage.
+
+A category write is barred for the same reason: a category's name reaches wallet partners through its references.
 
 **Owned by**: Identity, enforced on every write path by the feature that owns it.
 
@@ -193,6 +196,7 @@ There is no blanket claim here, because a blanket claim collapses under one ques
 | Amount, balance | **none at rest** | yes | members of the wallet |
 | Note | **none at rest** | yes | members of the wallet |
 | Wallet and category names | none at rest | yes | members of the wallet, and the category's owner |
+| Platform category names | none at rest | yes | every signed-in person |
 | Audit entries | none at rest, and they carry nothing protected | yes | operators only, and the read is recorded |
 | Device name, platform, app version | none | no | the account owner |
 | Device installation identifier | none | by owner's sessions only | nobody through any endpoint |
@@ -580,7 +584,7 @@ FR-038a requires every rule in this baseline to be expressible as a check a revi
 
 ### C. The verification gate
 
-- [ ] C1 — Every write to a wallet is behind the gate.
+- [ ] C1 — Every write to a wallet and every write to a category is behind the gate.
 - [ ] C2 — Reads, profile management and session management are **not** behind the gate.
 - [ ] C3 — The refusal is its own code, so the app can offer a resend.
 - [ ] C4 — Verification links are single-use, time-limited, and resends are throttled.

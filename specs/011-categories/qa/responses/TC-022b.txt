@@ -1,0 +1,11 @@
+PUT /categories/01a0fa2f-058e-7209-a8e5-a310e68a8129
+> {"kind":"expense","name":"x","icon":null,"color":null,"version":0}
+< 404
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0fa2f-083e-72a3-bb27-4c069346e890"
+}

@@ -1,0 +1,21 @@
+PUT /categories/01a0fa31-30dc-7699-a009-9e6d8d1c691b
+> {"kind":"expense","name":"Pharmacy","icon":"pill","color":"#C62828","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0fa31-30dc-7699-a009-9e6d8d1c691b",
+    "user_id": "01a0fa30-7214-7162-bc6f-be1821bfa774",
+    "version": 1,
+    "change_seq": 1720,
+    "created_at": "2026-10-02T01:18:43.390686Z",
+    "updated_at": "2026-10-02T01:18:43.390686Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "Pharmacy",
+    "icon": "pill",
+    "color": "#C62828",
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}

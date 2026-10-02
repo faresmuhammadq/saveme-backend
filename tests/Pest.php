@@ -5,10 +5,15 @@ use App\Modules\Identity\Domain\Account\LinkKind;
 use App\Modules\Identity\Domain\Ports\LinkRepository;
 use App\Modules\Identity\Infrastructure\Models\Profile;
 use App\Modules\Identity\Infrastructure\Models\User;
+use App\Modules\Wallets\Application\Categories\CategoryUsage;
+use App\Modules\Wallets\Application\Categories\CategoryUsageQuery;
+use App\Modules\Wallets\Application\Categories\Dto\CategoryView;
 use App\Modules\Wallets\Application\Dto\WalletView;
 use App\Modules\Wallets\Domain\Ports\PostingTotals;
 use App\Modules\Wallets\Domain\Ports\ScopeSequence;
+use App\Modules\Wallets\Http\Resources\CategoryResource;
 use App\Modules\Wallets\Http\Resources\WalletResource;
+use App\Modules\Wallets\Infrastructure\Models\Category;
 use App\Modules\Wallets\Infrastructure\Models\Wallet;
 use App\Modules\Wallets\Infrastructure\Models\WalletMember;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -442,4 +447,88 @@ function fakePostings(int $sum = 0, bool $hasAny = false): void
             return $this->hasAny;
         }
     });
+}
+
+/*
+|--------------------------------------------------------------------------
+| Categories (spec 011)
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * A full category write body with the given changes.
+ *
+ * @param  array<string, mixed>  $changes
+ * @return array<string, mixed>
+ */
+function categoryBody(array $changes = [], int $version = 0): array
+{
+    return [
+        'kind' => 'expense',
+        'name' => 'Coffee',
+        'icon' => 'cup',
+        'color' => '#6D4C41',
+        'version' => $version,
+        ...$changes,
+    ];
+}
+
+/**
+ * The values a category save takes, as the service receives them.
+ *
+ * @param  array<string, mixed>  $changes
+ * @return array{kind: string, name: string, icon: ?string, color: ?string}
+ */
+function categoryValues(array $changes = []): array
+{
+    $values = [...categoryBody($changes)];
+    unset($values['version']);
+
+    return $values;
+}
+
+/**
+ * A person's category through the factory.
+ *
+ * @param  array<string, mixed>  $attributes
+ */
+function ownedCategory(string $userId, array $attributes = []): Category
+{
+    return Category::factory()->create(['user_id' => $userId, ...$attributes]);
+}
+
+/**
+ * How a read renders the category, as the service's `present` closure.
+ *
+ * @return Closure(CategoryView): array<string, mixed>
+ */
+function presentCategory(): Closure
+{
+    return CategoryResource::toArray(...);
+}
+
+/**
+ * Registers a usage participant (as B6 will) that calls the given categories used.
+ *
+ * @param  list<string>  $usedIds
+ */
+function fakeCategoryUsage(array $usedIds): void
+{
+    $participant = new class($usedIds) implements CategoryUsage
+    {
+        /** @param list<string> $used */
+        public function __construct(private array $used) {}
+
+        public function isUsed(string $categoryId): bool
+        {
+            return in_array($categoryId, $this->used, true);
+        }
+
+        public function usedAmong(array $categoryIds): array
+        {
+            return array_values(array_intersect($categoryIds, $this->used));
+        }
+    };
+
+    app()->bind(CategoryUsageQuery::class, fn () => new CategoryUsageQuery([$participant]));
 }

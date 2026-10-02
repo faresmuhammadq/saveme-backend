@@ -1,0 +1,21 @@
+DELETE /categories/01a0fa31-1cb1-7be2-acd2-1466765b48ae
+> {"version":1}
+< 200
+{
+  "data": {
+    "id": "01a0fa31-1cb1-7be2-acd2-1466765b48ae",
+    "user_id": "01a0fa30-7214-7162-bc6f-be1821bfa774",
+    "version": 2,
+    "change_seq": 1718,
+    "created_at": "2026-10-02T01:18:38.202980Z",
+    "updated_at": "2026-10-02T01:18:38.736224Z",
+    "deleted_at": "2026-10-02T01:18:38.732889Z",
+    "kind": "income",
+    "name": "Gone",
+    "icon": null,
+    "color": null,
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}

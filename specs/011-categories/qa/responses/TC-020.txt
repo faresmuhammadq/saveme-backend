@@ -1,0 +1,11 @@
+PUT /categories/01a0fa05-c298-7250-b5b2-2c85cc436f70
+> {"kind":"expense","name":"Mine now","icon":"cart","color":"#2E7D32","version":0}
+< 404
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0fa2e-e61a-72f2-9356-bc94172429cd"
+}

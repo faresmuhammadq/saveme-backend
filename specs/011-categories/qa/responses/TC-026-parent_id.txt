@@ -1,0 +1,18 @@
+PUT /categories/01a0fa2f-2929-7968-ad8c-a6a20245e2cc
+> {"kind":"expense","name":"x","icon":null,"color":null,"parent_id":null}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fa2f-29f7-7245-9dd6-f5111cf4735f",
+  "errors": [
+    {
+      "pointer": "/parent_id",
+      "code": "UNKNOWN_FIELD",
+      "detail": "This field is not accepted here."
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+PATCH /categories/01a0fa2f-0b72-7f5d-b56e-b6372ff6e157
+> {"name":"x","version":1}
+< 404
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0fa2f-0c39-7289-9af1-8acb22e25d93"
+}

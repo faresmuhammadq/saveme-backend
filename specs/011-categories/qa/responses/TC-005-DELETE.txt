@@ -1,0 +1,12 @@
+DELETE /platform-categories
+> {}
+< 405
+Allow: GET, HEAD
+{
+  "type": "http://saveme-backend.test/problems/method-not-allowed",
+  "title": "Method not allowed",
+  "status": 405,
+  "detail": "This action is not available here.",
+  "code": "METHOD_NOT_ALLOWED",
+  "request_id": "01a0fa2e-c1f3-7154-b0e6-bda9afd13e3b"
+}

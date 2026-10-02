@@ -29,9 +29,6 @@ class DatabaseSeeder extends Seeder
         foreach (self::MODULE_ORDER as $module) {
             $seeder = "App\\Modules\\{$module}\\Infrastructure\\Database\\Seeders\\{$module}Seeder";
 
-            // No module ships a seeder yet, so PHPStan knows this is false today;
-            // it becomes true the day one does, which is the point of the check.
-            // @phpstan-ignore function.impossibleType
             if (class_exists($seeder)) {
                 $this->call($seeder);
             }

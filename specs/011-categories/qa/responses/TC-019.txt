@@ -1,0 +1,18 @@
+PATCH /categories/01a0fa2e-c5a9-7654-a121-8013367a134b
+> {"kind":"income","version":3}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fa2e-e45d-7205-9607-c657d68521c4",
+  "errors": [
+    {
+      "pointer": "/kind",
+      "code": "UNKNOWN_FIELD",
+      "detail": "This field is not accepted here."
+    }
+  ]
+}

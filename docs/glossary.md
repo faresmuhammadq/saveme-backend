@@ -80,6 +80,7 @@ Rules:
 |---|---|
 | User | never as a record; identity is implied by the session |
 | Plan, Plan Feature | read endpoint, cached by the client |
+| Platform categories (a Category with a `system_key`) | read endpoint (`GET /platform-categories`), cached by the client |
 | Subscription | read endpoint, refreshed after purchase or restore |
 | Payment Claim | website only (P-10); the app sees only the resulting Subscription |
 | Redeem Code | never read by the client; it submits a code and sees the result |
@@ -174,31 +175,32 @@ One person's membership of one wallet, carrying their role.
 
 ### Category
 
-A user's own income or expense bucket — the budgetable and reportable dimension.
+An income or expense bucket, owned by one person or by the platform — the budgetable and reportable dimension.
 
 - **Context**: Wallets & Ledger
 - **Role**: aggregate root
 - **Persistence**: persisted
-- **Sync**: yes — **user scope**. One personal set per person, reused across all of that person's wallets
-- **States**: `active` → `archived`; an **unused** category may additionally be deleted (tombstoned)
+- **Sync**: yes — user scope, for a person's category; a platform category is reference data, read through `GET /platform-categories` and cached
+- **States**: a person's: `active` → `archived`; an unused one may be tombstoned. The platform's: `active` ⇄ `retired`, never deleted
 - **Referenced by**: Posting, Budget, Category Reference
 - **Notes**:
-  - `kind` is `income` or `expense`. In the ledger a category is the counter-leg of a wallet posting (ADR-0012), so category totals are summed from postings exactly as wallet balances are.
-  - **A category that any posting references is never hard-deleted.** Archiving hides it from pickers and leaves history intact; a cascade would destroy ledger rows and a silent re-point would rewrite records the user did not authorise.
-  - `parent_id` is **reserved** for sub-categories; nesting behaviour is out of scope for MVP.
-  - **In a shared wallet, members do not see each other's category lists** — categories ride the user feed. When a member categorises a transaction, the server publishes a [Category Reference](#category-reference) onto that wallet's feed so every member can render it. Nobody can edit anyone else's category.
+  - `kind` is `income` or `expense` and never changes. In the ledger a category is the counter-leg of a wallet posting (ADR-0012), so category totals are summed from postings exactly as wallet balances are.
+  - A **platform category** is owned by the platform, carries a `system_key`, is used by reference and never copied, and is editable by nobody through the API ([ADR-0014](adr/0014-platform-owned-categories.md)). Its `system_key` is stable and language-independent, unique, never renamed or reused; reports group by it. **Retired** means `archived_at` is set on a platform category: it stays valid on existing records and leaves pickers.
+  - **In use** is derived and never stored: any live or tombstoned record (transaction, recurring rule, budget) references the category. A category in use is never deleted; archiving hides it from pickers and leaves history intact, because a cascade would destroy ledger rows and a silent re-point would rewrite records the user did not authorise.
+  - `parent_id` stays **reserved**: categories are flat in MVP (open question O2 resolved by spec 011).
+  - **In a shared wallet, members do not see each other's category lists** — a person's categories ride their user feed. When a member categorises a transaction, the server publishes a [Category Reference](#category-reference) onto that wallet's feed so every member can render it. Nobody can edit anyone else's category.
 
 ### Category Reference
 
-A read-only copy of a category's display fields, published to a wallet so its members can render transactions categorised by someone else.
+A read-only copy of a person's category's display fields, published to a wallet so its members can render transactions categorised by someone else.
 
 - **Context**: Wallets & Ledger
 - **Role**: projection of Category
-- **Persistence**: derived — produced by the server, never authored
+- **Persistence**: persisted projection — produced by the server, never authored
 - **Sync**: yes — **wallet scope, read-only**
-- **States**: `single-state` (it is republished when its source Category changes, and withdrawn when nothing in the wallet references it)
+- **States**: live → tombstoned (withdrawn, category deleted, or wallet deleted); a re-publish revives the same record
 - **Referenced by**: client rendering only; no server entity points at it
-- **Notes**: carries id, name, icon, colour, `kind` and the owning user's id. The server **must never accept** one from a client (ADR-0008 forbids client-supplied `change_seq` and this resource has no write endpoint). It grants no rights: only the owner edits the underlying Category, through their own user feed.
+- **Notes**: carries `category_id`, `owner_user_id`, `kind`, `name`, `icon` and `color`; published only for a person's category, never for a platform one. The server **must never accept** one from a client (ADR-0008 forbids client-supplied `change_seq` and this resource has no write endpoint). It grants no rights: only the owner edits the underlying Category, through their own user feed.
 
 ### Transaction
 

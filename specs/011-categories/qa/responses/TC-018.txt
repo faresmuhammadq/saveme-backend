@@ -1,0 +1,18 @@
+PUT /categories/01a0fa2e-c5a9-7654-a121-8013367a134b
+> {"kind":"income","name":"Café","icon":"cup","color":"#6D4C41","version":3}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "The kind of a category can't be changed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fa2e-e2b2-726c-8687-bbba415c0516",
+  "errors": [
+    {
+      "pointer": "/kind",
+      "code": "IMMUTABLE_FIELD",
+      "detail": "This field cannot be changed."
+    }
+  ]
+}

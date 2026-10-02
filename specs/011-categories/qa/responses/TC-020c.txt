@@ -1,0 +1,10 @@
+GET /categories/01a0fa05-c298-7250-b5b2-2c85cc436f70
+< 404
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0fa2e-e97f-7166-a983-65d5a86c4dec"
+}

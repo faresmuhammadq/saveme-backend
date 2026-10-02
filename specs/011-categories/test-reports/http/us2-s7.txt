@@ -1,0 +1,20 @@
+GET /categories/01a0fa31-30dc-7699-a009-9e6d8d1c691b
+< 200
+{
+  "data": {
+    "id": "01a0fa31-30dc-7699-a009-9e6d8d1c691b",
+    "user_id": "01a0fa30-7214-7162-bc6f-be1821bfa774",
+    "version": 3,
+    "change_seq": 1722,
+    "created_at": "2026-10-02T01:18:43.390686Z",
+    "updated_at": "2026-10-02T01:18:47.871331Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "Pharmacy+",
+    "icon": "pill",
+    "color": "#000000",
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}

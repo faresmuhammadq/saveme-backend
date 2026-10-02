@@ -1,0 +1,11 @@
+PUT /categories/not-a-uuid
+> {"kind":"expense","name":"x","icon":null,"color":null}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/invalid-id",
+  "title": "Invalid identifier",
+  "status": 422,
+  "detail": "The identifier is not valid.",
+  "code": "INVALID_ID",
+  "request_id": "01a0fa2f-39e7-7393-9416-86c031361311"
+}

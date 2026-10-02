@@ -45,11 +45,13 @@ return [
     'INSECURE_TRANSPORT' => 'This connection is not secure. Use HTTPS.',
     'PROVIDER_SIGNATURE_INVALID' => 'The payment message could not be verified.',
     'EXPORT_IN_PROGRESS' => 'An export is already being prepared. Wait for it to finish.',
+    'CATEGORY_IN_USE' => 'This category is used by your records, so it can\'t be deleted. Archive it instead.',
     'EMAIL_ALREADY_REGISTERED' => 'You already have an account with this email address. Sign in, or reset your password if you forgot it.',
 
     'default_currency_locked' => 'The default currency can\'t change once you have recorded transactions.',
     'wallet_type_immutable' => 'The type of a wallet can\'t be changed.',
     'wallet_currency_locked' => 'The currency can\'t change once the wallet has transactions.',
+    'category_kind_immutable' => 'The kind of a category can\'t be changed.',
     'wallet_ownership_target' => 'Choose another member of this wallet to hand it to.',
 
     'fields' => [

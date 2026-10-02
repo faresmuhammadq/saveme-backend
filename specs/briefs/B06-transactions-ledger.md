@@ -26,3 +26,15 @@ The brief predates decisions ratified since. These collide with it; the ratified
 | Changes-feed row shape fixed here | Spec 003 and ADR-0008 already fix it: feed rows are the resources themselves with the syncable envelope | Nothing left to fix; reference it |
 | Balance recompute as an event consumer | P-05 rule 2: same database transaction, not a listener | As in B4 |
 | Search over notes | Notes are unencrypted and searchable (baseline table) | Compatible; state it |
+
+## Inherited from B5 (spec 011)
+
+Obligations Categories places on this feature. Each is built and tested in B5 except where it needs your tables.
+
+- **Lock order** (spec 011 FR-023, ADR-0014 rule 10): lock category rows first (`CategoryRepository::findForShare`, or update), then wallet rows, several wallets in ascending id. Never lock a wallet and then a category: a rename of a category republishes to its wallets and would deadlock with you.
+- **Publish and withdraw**: inside your transaction, after the category share lock and before your wallet lock, call `CategoryReferences::publish($walletId, $categoryId)` for each person's category a transaction uses (a no-op for a platform category and for an existing live reference). Call `withdrawIfUnused($walletId, $categoryId)` when the last record in the wallet that uses the category stops doing so.
+- **Usage**: register a `CategoryUsage` participant (tag `Wallets\Application\Categories\CategoryUsage`) counting **live and tombstoned** transactions and postings that reference the category. `usedAmong(list<string>)` must answer set-wise (one query per page), because `GET /categories` calls it for a whole page. A used category is never deleted (`409 CATEGORY_IN_USE`).
+- **Refuse a reference to a tombstoned category** (`CategoryRepository::findForShare` shows `deletedAt`). This closes the delete-versus-first-use race of spec 011 Edge Cases: the delete lands first, then your write refuses.
+- **T-02, "own or platform category only"**: a member may choose only their own category or a platform one. A platform category's id is used directly; no copy is made (ADR-0014 rule 3).
+- **Archived categories**: whether a new transaction may use one is yours to decide; recommended allowed (archiving hides from pickers only; an offline device may not have seen it).
+- **Platform totals are always scoped and grouped by `system_key`** (ADR-0014 rules 5-6, spec 011 FR-027 and FR-028): never sum a platform category's postings across wallets or users.

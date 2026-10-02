@@ -1,0 +1,10 @@
+GET /categories/not-a-uuid
+< 422
+{
+  "type": "http://saveme-backend.test/problems/invalid-id",
+  "title": "Invalid identifier",
+  "status": 422,
+  "detail": "The identifier is not valid.",
+  "code": "INVALID_ID",
+  "request_id": "01a0fa2f-3b84-72cf-b1d5-bbc1ac217b1d"
+}

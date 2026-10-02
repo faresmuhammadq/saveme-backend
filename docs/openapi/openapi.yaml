@@ -17,7 +17,7 @@ info:
     The conventions every endpoint obeys are documented in `docs/api-conventions.md`.
     A feature adds one file under `paths/` and references the shared components
     rather than restating them.
-  version: v1.3
+  version: v1.4
   contact:
     name: Backend maintainers
   license:
@@ -136,3 +136,13 @@ paths:
     $ref: './paths/wallets.yaml#/~1wallets~1{id}~1members'
   /wallets/{id}/transfer-ownership:
     $ref: './paths/wallets.yaml#/~1wallets~1{id}~1transfer-ownership'
+  /categories:
+    $ref: './paths/categories.yaml#/~1categories'
+  /categories/{id}:
+    $ref: './paths/categories.yaml#/~1categories~1{id}'
+  /categories/{id}/archive:
+    $ref: './paths/categories.yaml#/~1categories~1{id}~1archive'
+  /platform-categories:
+    $ref: './paths/categories.yaml#/~1platform-categories'
+  /wallets/{id}/category-references:
+    $ref: './paths/categories.yaml#/~1wallets~1{id}~1category-references'

@@ -1,0 +1,25 @@
+DELETE /wallets/01a0fa2f-058e-7209-a8e5-a310e68a8129
+> {"version":1}
+< 200
+{
+  "data": {
+    "id": "01a0fa2f-058e-7209-a8e5-a310e68a8129",
+    "wallet_id": "01a0fa2f-058e-7209-a8e5-a310e68a8129",
+    "version": 2,
+    "change_seq": 17,
+    "created_at": "2026-10-02T01:16:21.136955Z",
+    "updated_at": "2026-10-02T01:17:02.908415Z",
+    "deleted_at": "2026-10-02T01:17:02.824333Z",
+    "type": "cash",
+    "name": "Shared",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": null,
+    "color": null,
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}

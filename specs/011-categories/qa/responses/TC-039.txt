@@ -1,0 +1,10 @@
+GET /wallets/01a0fa2f-058e-7209-a8e5-a310e68a8129/category-references
+< 200
+{
+  "data": [],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50
+  }
+}

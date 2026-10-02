@@ -1,0 +1,10 @@
+GET /categories?limit=0
+< 400
+{
+  "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+  "title": "Invalid query parameter",
+  "status": 400,
+  "detail": "A query parameter cannot be used as sent.",
+  "code": "INVALID_QUERY_PARAMETER",
+  "request_id": "01a0fa2f-4650-713c-954b-e119efaf9eac"
+}

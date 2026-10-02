@@ -1,0 +1,11 @@
+PATCH /categories/01a0fa2e-c5a9-7654-a121-8013367a134b
+> {"name":"Hijack","version":3}
+< 404
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0fa2e-fbb1-70d7-9c0b-d356e38a2df9"
+}

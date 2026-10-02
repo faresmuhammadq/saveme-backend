@@ -20,3 +20,12 @@ The brief predates decisions ratified since. These collide with it; the ratified
 | `planned` transactions excluded from balances | P-05: balance = opening + Σ postings. A planned transaction that has postings is in the balance | Planned occurrences must not have postings until due |
 | "Time zone of the user decides today" in a shared wallet | P-12 rule 4: period membership by calendar date; members in different timezones see identical totals | Decide whose timezone a shared wallet's rule runs in |
 | Split amounts for gam'eya/installments | P-03 rule 4: splitting uses `Money::allocate()` | Required |
+
+## Inherited from B5 (spec 011)
+
+- **Lock order** (spec 011 FR-023, ADR-0014 rule 10): lock category rows first (`CategoryRepository::findForShare`, or update), then wallet rows, several wallets in ascending id. Never lock a wallet and then a category: a rename of a category republishes to its wallets and would deadlock with you.
+- **Publish and withdraw**: a recurring rule that uses a person's category calls `CategoryReferences::publish` (and `withdrawIfUnused` when its last use in the wallet goes), exactly as B6 does.
+- **Usage**: register a `CategoryUsage` participant counting live and tombstoned recurring rules (and the occurrences' transactions, through B6's). Answer `usedAmong` set-wise.
+- **Refuse a reference to a tombstoned category**, and enforce R-02's "own category or platform category only". A platform category is referenced directly, never copied.
+- **Archived categories**: same decision as B6 (recommended allowed).
+- Reports built on rules group platform categories by `system_key`, always scoped (ADR-0014 rules 5-6).

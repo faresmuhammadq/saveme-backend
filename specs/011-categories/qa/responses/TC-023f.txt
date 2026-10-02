@@ -1,0 +1,11 @@
+PUT /categories/not-a-uuid
+> {}
+< 403
+{
+  "type": "http://saveme-backend.test/problems/email-not-verified",
+  "title": "Address not verified",
+  "status": 403,
+  "detail": "Verify your email address first. We can send the link again.",
+  "code": "EMAIL_NOT_VERIFIED",
+  "request_id": "01a0fa2f-1611-7183-9652-0061fddf1b5a"
+}

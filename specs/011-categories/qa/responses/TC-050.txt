@@ -1,0 +1,25 @@
+PUT /wallets/01a0fa30-0aa2-7ef7-af10-a0c021e07824
+> {"type":"cash","name":"W2","currency":"EGP","opening_balance_minor":0,"icon":null,"color":null,"version":0}
+< 201
+{
+  "data": {
+    "id": "01a0fa30-0aa2-7ef7-af10-a0c021e07824",
+    "wallet_id": "01a0fa30-0aa2-7ef7-af10-a0c021e07824",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T01:17:28.154548Z",
+    "updated_at": "2026-10-02T01:17:28.154548Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "W2",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": null,
+    "color": null,
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}

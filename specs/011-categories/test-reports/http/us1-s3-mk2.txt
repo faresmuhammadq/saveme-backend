@@ -1,0 +1,21 @@
+PUT /categories/01a0fa31-18d8-71cf-98f8-d15ff7207447
+> {"kind":"expense","name":"Temp","icon":null,"color":null}
+< 201
+{
+  "data": {
+    "id": "01a0fa31-18d8-71cf-98f8-d15ff7207447",
+    "user_id": "01a0fa30-7214-7162-bc6f-be1821bfa774",
+    "version": 1,
+    "change_seq": 1715,
+    "created_at": "2026-10-02T01:18:37.182681Z",
+    "updated_at": "2026-10-02T01:18:37.182681Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "Temp",
+    "icon": null,
+    "color": null,
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}

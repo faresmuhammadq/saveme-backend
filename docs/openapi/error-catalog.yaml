@@ -61,6 +61,7 @@ components:
         - PROVIDER_SIGNATURE_INVALID
         - EXPORT_IN_PROGRESS
         - EMAIL_ALREADY_REGISTERED
+        - CATEGORY_IN_USE
 
     FieldErrorCode:
       type: string
@@ -429,3 +430,10 @@ x-error-catalog:
     meaning: 'An account already exists for this address. Sign in instead, or reset the password. Registration is the one surface that discloses an existing account (owner decision, spec 007); sign-in and password reset still answer uniformly.'
     retryable: never
     since: v1.2
+  CATEGORY_IN_USE:
+    status: 409
+    level: [response]
+    title: 'Category in use'
+    meaning: 'The category is referenced by recorded history and cannot be deleted. Archive it instead.'
+    retryable: never
+    since: v1.4

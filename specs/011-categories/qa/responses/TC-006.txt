@@ -1,0 +1,10 @@
+GET /platform-categories
+< 401
+{
+  "type": "http://saveme-backend.test/problems/unauthenticated",
+  "title": "Unauthenticated",
+  "status": 401,
+  "detail": "Please sign in again.",
+  "code": "UNAUTHENTICATED",
+  "request_id": "01a0fa2e-c31d-735a-8aaf-2daf848c0c06"
+}

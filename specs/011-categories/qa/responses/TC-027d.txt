@@ -1,0 +1,17 @@
+DELETE /categories/01a0fa2e-c5a9-7654-a121-8013367a134b
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fa2f-37f0-72c6-8b57-5a7c0e502f5c",
+  "errors": [
+    {
+      "pointer": "/version",
+      "code": "REQUIRED",
+      "detail": "This field is required."
+    }
+  ]
+}

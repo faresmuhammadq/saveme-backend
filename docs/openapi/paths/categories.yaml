@@ -1,0 +1,635 @@
+# Categories (spec 011, brief B5). Every operation sits under /api/v1,
+# inherits the root's bearer scheme and runs through the shared runtime, so
+# each also documents the shared refusals it can produce.
+#
+# Categories are user-scoped: only a category's owner reads or writes it, and
+# anyone else gets 404 NOT_FOUND — membership of a shared wallet grants no
+# right over a partner's category. The platform-owned default set is read by
+# everyone and written by nobody through the API. A shared wallet's members
+# render a partner's category through the read-only Category Reference,
+# readable under row T-01 of the permission matrix in
+# specs/010-wallets-membership/spec.md §6. Every write sits behind the
+# verification gate (403 EMAIL_NOT_VERIFIED).
+
+/categories:
+  get:
+    operationId: listCategories
+    tags: [Wallets & Ledger]
+    summary: List the caller's own live categories, archived included.
+    description: |
+      Returns every live category the caller owns, archived ones included.
+      Tombstoned categories are not listed, and platform categories are never
+      in this list (read them from `/platform-categories`).
+
+      Sorted by `created_at` unless `sort` says otherwise; `name` sorts in
+      byte order, not locale-aware. Every sort is stabilised by `id`. No
+      filters.
+    x-filterable: []
+    x-sortable: [created_at, name]
+    parameters:
+      - $ref: '../components/parameters.yaml#/components/parameters/Cursor'
+      - $ref: '../components/parameters.yaml#/components/parameters/Limit'
+      - $ref: '../components/parameters.yaml#/components/parameters/Filter'
+      - $ref: '../components/parameters.yaml#/components/parameters/Sort'
+      - &acceptLanguage
+        $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - &correlationId
+        $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - &clientPlatform
+        $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - &clientVersion
+        $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'A page of categories. None is 200 with `data: []`, never 404.'
+        headers: &successHeaders
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Category'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/categories/{id}:
+  get:
+    operationId: getCategory
+    tags: [Wallets & Ledger]
+    summary: Read one of the caller's own categories.
+    description: |
+      Returned to its owner only, tombstone included (with `deleted_at` set).
+      Another person's category, a platform category, or any other kind of
+      record is 404 NOT_FOUND.
+    parameters:
+      - &categoryId
+        $ref: '../components/parameters.yaml#/components/parameters/ResourceId'
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: The category.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: &categoryEnvelope
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Category'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  put:
+    operationId: upsertCategory
+    tags: [Wallets & Ledger]
+    summary: Create or save the whole category, addressed by the client-generated identifier.
+    description: |
+      A create, not a POST: the client generates the id offline and the same
+      write may arrive twice. `version` is omitted or 0 to create, and carries
+      the client's last-seen value to save. The caller becomes the owner.
+
+      Outcomes, in this order of precedence:
+
+      - not verified → 403 EMAIL_NOT_VERIFIED;
+      - malformed id → 422 INVALID_ID; malformed body → 422 VALIDATION_FAILED;
+      - id held by another person's category, by a platform category, or by
+        any other kind of record → 404 NOT_FOUND, nothing disclosed or
+        overwritten;
+      - a version above 0 for an id that matches no record → 404 NOT_FOUND
+        (nothing to update; nothing is created);
+      - the category is tombstoned → 409 VERSION_CONFLICT with the tombstone
+        in `current`, even for an identical body;
+      - body identical to the stored category → 200, nothing changed (a
+        replay);
+      - stale version → 409 VERSION_CONFLICT with the stored category in
+        `current`; nothing merged;
+      - a different `kind` → 422 with IMMUTABLE_FIELD at `/kind`;
+      - otherwise 201 (created) or 200 (saved), version + 1. Every wallet
+        reference to the category is republished in the same unit of work.
+
+      A blank name, or one over 50 characters after trimming, is OUT_OF_RANGE
+      at `/name`. Duplicate names are allowed.
+    parameters:
+      - *categoryId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CategoryWrite'
+    responses:
+      '200':
+        description: Saved, or an identical replay returning the category unchanged.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *categoryEnvelope
+      '201':
+        description: Created. The caller is the category's owner.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *categoryEnvelope
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  patch:
+    operationId: patchCategory
+    tags: [Wallets & Ledger]
+    summary: Save some of the category's editable fields, carrying the last-seen version.
+    description: |
+      Members absent from the body are unchanged. `version` is required. The
+      same outcomes as a whole save apply — 200 with nothing changed when
+      every sent member already holds the sent value, 409 VERSION_CONFLICT on
+      a stale version or a tombstone — except that a PATCH never creates: an
+      unknown id is 404 NOT_FOUND. `kind` is not patchable and is refused as
+      UNKNOWN_FIELD. A body carrying only `version` is 422 with REQUIRED at
+      the body root (pointer "").
+    parameters:
+      - *categoryId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CategoryPatch'
+    responses:
+      '200':
+        description: Saved, or nothing to change.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *categoryEnvelope
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  delete:
+    operationId: deleteCategory
+    tags: [Wallets & Ledger]
+    summary: Delete one of the caller's own categories while it is unused. A tombstone, never a removal.
+    description: |
+      Tombstones the category and returns the tombstone. Only an unused
+      category (`in_use: false`) can be deleted: a category any transaction,
+      recurring rule or budget references is refused with 409
+      CATEGORY_IN_USE, and nothing changes —
+      archive it instead. Deleting an already deleted category returns its
+      tombstone with nothing changed, whatever version is sent. A stale
+      version on a live category is 409 VERSION_CONFLICT. Deletion is final:
+      there is no restore.
+    parameters:
+      - *categoryId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CategoryVersionOnly'
+    responses:
+      '200':
+        description: The tombstone.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *categoryEnvelope
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/categories/{id}/archive:
+  post:
+    operationId: archiveCategory
+    tags: [Wallets & Ledger]
+    summary: Archive one of the caller's own categories. It leaves pickers; history keeps it.
+    description: |
+      Sets `archived_at` and moves the version on. Every existing reference to
+      the category stays valid. Archiving an archived category returns it
+      with nothing changed. Not reversible in this release. A stale version,
+      or a tombstoned category, is 409 VERSION_CONFLICT. Idempotent by
+      outcome; not an idempotency-keyed operation.
+    parameters:
+      - *categoryId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CategoryVersionOnly'
+    responses:
+      '200':
+        description: The archived category.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *categoryEnvelope
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/platform-categories:
+  get:
+    operationId: listPlatformCategories
+    tags: [Wallets & Ledger]
+    summary: The platform-owned default categories, in their fixed order.
+    description: |
+      Every platform category, retired ones included (`archived_at` set) so
+      existing transactions keep rendering; hide those from pickers. Both the
+      Arabic and the English name are always present, whatever
+      `Accept-Language` asks for, so the app can switch language offline.
+      Group reports by `system_key`. The set is small: one page,
+      `next_cursor` null. Read-only: no person can write a platform
+      category, and any other method on this path is 405 with `Allow: GET`.
+    x-filterable: []
+    x-sortable: []
+    parameters:
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: The whole platform set.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/PlatformCategory'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/wallets/{id}/category-references:
+  get:
+    operationId: listCategoryReferences
+    tags: [Wallets & Ledger]
+    summary: The read-only labels of members' own categories used in this wallet.
+    description: |
+      One live reference per member's category that a record in this wallet
+      uses, so every member can render a transaction a partner filed under
+      the partner's own category. Platform categories never appear (every
+      member already holds the platform set). Any active member may read it
+      (permission matrix row T-01); a non-member, or anyone once the wallet
+      is deleted, gets 404 NOT_FOUND. Ordered by when each reference was
+      first published; no filters, no sorts.
+
+      Read-only: nobody can write a reference, including the category's
+      owner, and any other method on this path is 405 with `Allow: GET`.
+      Until transactions exist (B6) the list is empty.
+    x-filterable: []
+    x-sortable: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/components/parameters/ResourceId'
+      - $ref: '../components/parameters.yaml#/components/parameters/Cursor'
+      - $ref: '../components/parameters.yaml#/components/parameters/Limit'
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: A page of references.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/CategoryReference'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+components:
+  schemas:
+    CategoryKind:
+      type: string
+      description: |
+        Which side of the ledger the category stands on (ADR-0012): an
+        `expense` category is where money goes, an `income` category where it
+        comes from. Never changes after creation.
+      enum: [income, expense]
+
+    CategoryName:
+      type: string
+      minLength: 1
+      maxLength: 50
+      description: Trimmed; blank is refused. Duplicates are allowed. The person's own words, never translated.
+
+    Category:
+      description: |
+        One of the caller's own categories. User-scoped and syncable: it rides
+        the owner's user feed and nobody else ever reads it. Shared wallets
+        show it to partners only through a CategoryReference.
+      allOf:
+        - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
+        - $ref: '../components/schemas.yaml#/components/schemas/UserScoped'
+        - type: object
+          required: [kind, name, icon, color, archived_at, in_use]
+          properties:
+            kind:
+              $ref: '#/components/schemas/CategoryKind'
+            name:
+              $ref: '#/components/schemas/CategoryName'
+            icon:
+              $ref: './wallets.yaml#/components/schemas/Icon'
+            color:
+              $ref: './wallets.yaml#/components/schemas/Color'
+            archived_at:
+              type: [string, 'null']
+              format: date-time
+              description: Read-only. When the category was archived; null while active. Archived categories stay valid on existing records and are hidden from pickers.
+            in_use:
+              type: boolean
+              description: Read-only. True once any transaction, recurring rule or budget references the category; it can then be archived but not deleted.
+
+    CategoryWrite:
+      type: object
+      description: |
+        The whole writable category plus the last-seen version. `id` comes
+        from the path; the owner is the caller. `user_id`, `system_key`,
+        `archived_at`, `in_use`, `parent_id`, `deleted_at`, `change_seq`,
+        `created_at` and `updated_at` are server-owned or not part of this
+        release and are refused with UNKNOWN_FIELD.
+      required: [kind, name, icon, color]
+      additionalProperties: false
+      properties:
+        kind:
+          $ref: '#/components/schemas/CategoryKind'
+        name:
+          $ref: '#/components/schemas/CategoryName'
+        icon:
+          $ref: './wallets.yaml#/components/schemas/Icon'
+        color:
+          $ref: './wallets.yaml#/components/schemas/Color'
+        version:
+          type: integer
+          minimum: 0
+          description: The client's last-seen version. Omitted or 0 means create.
+
+    CategoryPatch:
+      type: object
+      description: Some editable members plus the last-seen version. At least one editable member is required.
+      required: [version]
+      minProperties: 2
+      additionalProperties: false
+      properties:
+        name:
+          $ref: '#/components/schemas/CategoryName'
+        icon:
+          $ref: './wallets.yaml#/components/schemas/Icon'
+        color:
+          $ref: './wallets.yaml#/components/schemas/Color'
+        version:
+          type: integer
+          minimum: 1
+
+    CategoryVersionOnly:
+      type: object
+      required: [version]
+      additionalProperties: false
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          description: The client's last-seen version of the category.
+
+    PlatformCategory:
+      type: object
+      description: |
+        One entry of the platform-owned default set. Reference data, not a
+        syncable resource: read it here and cache it. A transaction, recurring
+        rule or budget references it by `id` directly; nobody gets a copy.
+        `id` and `system_key` never change for an entry.
+      required: [id, system_key, kind, names, icon, color, position, archived_at, updated_at]
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Stable identifier, used wherever a category id is expected.
+        system_key:
+          type: string
+          pattern: '^[a-z][a-z0-9_]{1,39}$'
+          description: Stable, language-independent key; never renamed or reused. Reports group by it.
+          examples: ['groceries']
+        kind:
+          $ref: '#/components/schemas/CategoryKind'
+        names:
+          type: object
+          description: The name in each supported language; both are always present.
+          required: [ar, en]
+          additionalProperties: false
+          properties:
+            ar:
+              type: string
+              minLength: 1
+              maxLength: 50
+              examples: ['بقالة']
+            en:
+              type: string
+              minLength: 1
+              maxLength: 50
+              examples: ['Groceries']
+        icon:
+          type: string
+          pattern: '^[a-z0-9_]{1,40}$'
+          description: A key from the client's icon set.
+        color:
+          type: string
+          pattern: '^#[0-9A-F]{6}$'
+        position:
+          type: integer
+          minimum: 1
+          description: The platform's fixed order; the response is already sorted by it.
+        archived_at:
+          type: [string, 'null']
+          format: date-time
+          description: Set when the platform retired the entry. Still valid on existing records; hide it from pickers.
+        updated_at:
+          type: string
+          format: date-time
+          description: When the platform last changed the entry; a cache can compare it.
+
+    CategoryReference:
+      description: |
+        A read-only copy of a member's own category's display fields, published
+        into a wallet so every member can render records filed under it.
+        Wallet-scoped and syncable; produced only by the server and never
+        accepted from a client. It grants no right over the category.
+      allOf:
+        - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
+        - $ref: '../components/schemas.yaml#/components/schemas/WalletScoped'
+        - type: object
+          required: [category_id, owner_user_id, kind, name, icon, color]
+          properties:
+            category_id:
+              type: string
+              format: uuid
+              description: The category this reference renders; the id a transaction carries.
+            owner_user_id:
+              type: string
+              format: uuid
+              description: The member who owns the category, as `member_user_id` in the member list.
+            kind:
+              $ref: '#/components/schemas/CategoryKind'
+            name:
+              $ref: '#/components/schemas/CategoryName'
+            icon:
+              $ref: './wallets.yaml#/components/schemas/Icon'
+            color:
+              $ref: './wallets.yaml#/components/schemas/Color'

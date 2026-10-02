@@ -127,15 +127,41 @@ components:
         name:
           type: string
           description: In the response's Content-Language.
+      example:
+        id: 01928f3e-7b2a-7c1d-9e4f-5a6b7c8d9e0f
+        name: Free
 
     Features:
       type: object
       description: |
         Capability → value. Flags are booleans; quotas are integers, or null
-        for unlimited. Keys: sharing.enabled, sharing.max_members_per_wallet,
-        export.enabled, reports.advanced, wallets.max.
+        for unlimited. A key that is absent, or carries the wrong type, means
+        the capability is not granted (false, or a quota of 0); only an
+        explicit null means unlimited. New capabilities may be added as new
+        keys, so clients must ignore keys they do not know.
+      properties:
+        sharing.enabled:
+          type: boolean
+        sharing.max_members_per_wallet:
+          type: [integer, 'null']
+          minimum: 0
+          description: Members per wallet, the owner included. null = unlimited.
+        export.enabled:
+          type: boolean
+        reports.advanced:
+          type: boolean
+        wallets.max:
+          type: [integer, 'null']
+          minimum: 0
+          description: Live owned wallets, archived included. null = unlimited.
       additionalProperties:
         type: [boolean, integer, 'null']
+      example:
+        sharing.enabled: false
+        sharing.max_members_per_wallet: 1
+        export.enabled: true
+        reports.advanced: true
+        wallets.max: null
 
     Price:
       type: object

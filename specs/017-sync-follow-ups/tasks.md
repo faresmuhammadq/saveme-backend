@@ -99,7 +99,7 @@ No shared prerequisite: the three stories touch disjoint code (Sync feed meta an
 - [X] T024 Quickstart walk-through: run the manual curl steps of `specs/017-sync-follow-ups/quickstart.md` against `http://saveme-backend.test` with two accounts and a queue worker; note results for the summary.
 - [X] T025 Apidog sync: bundle with `npx @redocly/cli bundle docs/openapi/openapi.yaml -o <scratchpad>/bundle.json`; import with `apidog import --project 1332822 --format openapi --file <scratchpad>/bundle.json --module-map "Personal finance backend API=1363204"`; update the project's sync doc (or create "Sync follow-ups (v1.10)") with the client comparison table and behaviour notes from `contracts/sync-follow-ups-api.md`. Record the import counts and doc id for the summary.
 - [X] T025a Bug fix (found by mobile QA; FR-022): `SyncCursor` carries an optional signed `h` (purge horizon when the read began; absent = 0); `ChangeFeedService::positionOf` returns `[position, horizon]` (the scope's horizon for a read with no cursor, the cursor's `h` otherwise), expires a cursor only when `purged > max(position, h)` and mints every page's cursor with the same `h`. Tests: `tests/Unit/Sync/SyncCursorTest.php` (round-trip with and without `h`, a malformed `h` refused), `tests/Feature/Sync/CursorExpiryTest.php` (a from-start read of a wallet feed and of the user feed pages through a purge horizon with a small limit; a cursor minted before a later purge still expires; a cursor with no `h` keeps the old rule).
-- [ ] T026 Write `specs/017-sync-follow-ups/summary.md` (parent writes it).
+- [X] T026 Write `specs/017-sync-follow-ups/summary.md` (parent writes it).
 
 ---
 

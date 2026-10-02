@@ -1,0 +1,682 @@
+===== TC-015 US6-1/2/3: leave; repeat 404; owner 403; records stay; auto-confirm of leaver rule refused not_permitted; leaver name off activity 2026-10-02T18:16:11.850321Z
+
+DELETE /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd4-6b3e-77f6-a2d5-acd1029e40bf
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fdd4-6b3e-77f6-a2d5-acd1029e40bf",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 2,
+  "change_seq": 56,
+  "created_at": "2026-10-02T18:15:52.446414Z",
+  "updated_at": "2026-10-02T18:16:12.249947Z",
+  "deleted_at": "2026-10-02T18:16:12.249947Z",
+  "role": "viewer",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "status": "revoked",
+  "expires_at": "2026-10-09T18:15:52.424710Z"
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd4-bb1c-7545-8526-93ce00e9cc0d
+> {"role": "editor", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a0fdd4-bb1c-7545-8526-93ce00e9cc0d",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 58,
+  "created_at": "2026-10-02T18:16:12.931539Z",
+  "updated_at": "2026-10-02T18:16:12.931539Z",
+  "deleted_at": null,
+  "role": "editor",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:16:12.913410Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=[redacted]"
+ }
+}
+
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "id": "01a0fdd4-bfe0-73e0-aef0-7c0f3dce89a2",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 60,
+  "created_at": "2026-10-02T18:16:13.536941Z",
+  "updated_at": "2026-10-02T18:16:13.536941Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fdd1-f097-70ca-967f-2c56c80364c5",
+  "display_name": "Leaver QA",
+  "role": "editor"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] l joins as editor 200 None
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/transactions/01a0fdd4-c036-77bb-8d0f-642d7cf87131
+> {"kind": "expense", "date": "2026-10-01", "amount_minor": 1234, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA leaver", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fdd4-c036-77bb-8d0f-642d7cf87131",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 63,
+  "created_at": "2026-10-02T18:16:14.099519Z",
+  "updated_at": "2026-10-02T18:16:14.099519Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-10-01",
+  "amount_minor": 1234,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA leaver",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fdd1-f097-70ca-967f-2c56c80364c5",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] l records a transaction 201 None []
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/recurring-rules/01a0fdd4-c27e-7548-8bf7-922d7b911a3f
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 450, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "Rent", "memo": null, "counterparty": null, "auto_confirm": true, "frequency": "monthly", "interval": 1, "anchor_day": 5, "start_date": "2026-10-05", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fdd4-c27e-7548-8bf7-922d7b911a3f",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 65,
+  "created_at": "2026-10-02T18:16:14.860163Z",
+  "updated_at": "2026-10-02T18:16:14.860163Z",
+  "deleted_at": null,
+  "preset": "custom",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 450,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "Rent",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": true,
+  "frequency": "monthly",
+  "interval": 1,
+  "anchor_day": 5,
+  "start_date": "2026-10-05",
+  "end_date": null,
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fdd1-f097-70ca-967f-2c56c80364c5"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] l creates an auto-confirm rule 201 None []
+POST /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/leave
+> {"version": 1}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/forbidden",
+ "title": "Forbidden",
+ "status": 403,
+ "detail": "Your role in this wallet does not allow this.",
+ "code": "FORBIDDEN",
+ "request_id": "01a0fdd4-c612-7005-a1bb-fde93a9bdab3"
+}
+
+CHECK [PASS] owner leave -> 403 FORBIDDEN 403 FORBIDDEN
+POST /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/leave
+> {"version": 6}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fdd4-c784-72dc-a4c3-a049191f86f2",
+ "current": {
+  "id": "01a0fdd4-bfe0-73e0-aef0-7c0f3dce89a2",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 60,
+  "created_at": "2026-10-02T18:16:13.536941Z",
+  "updated_at": "2026-10-02T18:16:13.536941Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fdd1-f097-70ca-967f-2c56c80364c5",
+  "display_name": "Leaver QA",
+  "role": "editor"
+ }
+}
+
+CHECK [PASS] stale leave -> 409 409 VERSION_CONFLICT
+POST /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/leave
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fdd4-bfe0-73e0-aef0-7c0f3dce89a2",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 2,
+  "change_seq": 69,
+  "created_at": "2026-10-02T18:16:13.536941Z",
+  "updated_at": "2026-10-02T18:16:16.231160Z",
+  "deleted_at": "2026-10-02T18:16:16.231160Z",
+  "member_user_id": "01a0fdd1-f097-70ca-967f-2c56c80364c5",
+  "display_name": "Leaver QA",
+  "role": "editor"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] leave 200 tombstone, meta {} 200 None
+POST /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/leave
+> {"version": 1}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd4-cb64-73e2-b653-0bbad595eee9"
+}
+
+CHECK [PASS] repeat leave -> 404 404
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd4-ccc9-70af-a1e6-803021e0112d"
+}
+
+CHECK [PASS] leaver wallet read -> 404 
+GET /sync/user/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fdd2-575e-74b3-acb3-b2be3c48f93e",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T18:13:37.185556Z",
+    "updated_at": "2026-10-02T18:16:17.386412Z",
+    "deleted_at": null,
+    "user_id": "01a0fdd1-f097-70ca-967f-2c56c80364c5",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T18:13:37.174466Z",
+    "last_used_at": "2026-10-02T18:16:17.384441Z",
+    "ended_at": null,
+    "current": true
+   }
+  },
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fdd1-f489-71c0-9210-51fd9e3055e2",
+    "version": 2,
+    "change_seq": 3,
+    "created_at": "2026-10-02T18:13:10.410169Z",
+    "updated_at": "2026-10-02T18:13:41.097878Z",
+    "deleted_at": null,
+    "user_id": "01a0fdd1-f097-70ca-967f-2c56c80364c5",
+    "display_name": "Leaver QA",
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": true,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fdd4-bfe0-73e0-aef0-7c0f3dce89a2",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 69,
+    "created_at": "2026-10-02T18:16:13.536941Z",
+    "updated_at": "2026-10-02T18:16:16.231160Z",
+    "deleted_at": "2026-10-02T18:16:16.231160Z",
+    "member_user_id": "01a0fdd1-f097-70ca-967f-2c56c80364c5",
+    "display_name": "Leaver QA",
+    "role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmRkMS1mMDk3LTcwY2EtOTY3Zi0yYzU2YzgwMzY0YzUiLCJyIjoiMDFhMGZkZDEtZjA5Ny03MGNhLTk2N2YtMmM1NmM4MDM2NGM1IiwicCI6NX0qmUq3F5hXGhfsSic9mN9b"
+ }
+}
+
+CHECK [PASS] leaver user feed: tombstoned wallet_member 
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/transactions/01a0fdd4-c036-77bb-8d0f-642d7cf87131
+< 200
+{
+ "data": {
+  "id": "01a0fdd4-c036-77bb-8d0f-642d7cf87131",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 63,
+  "created_at": "2026-10-02T18:16:14.099519Z",
+  "updated_at": "2026-10-02T18:16:14.099519Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-10-01",
+  "amount_minor": 1234,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA leaver",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fdd1-f097-70ca-967f-2c56c80364c5",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] leaver transaction stays with created_by 200 {"id": "01a0fdd4-c036-77bb-8d0f-642d7cf87131", "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404", "version": 1, "change_seq": 63, "created_at": "2026-10-02T18:16:14.099519Z", "updated_at": "2026-10-02T18:16:14.099519Z", "deleted_at": null, "kind": "expense", "date": "2026-10-01", "amount_minor": 1
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/recurring-rules/01a0fdd4-c27e-7548-8bf7-922d7b911a3f
+< 200
+{
+ "data": {
+  "id": "01a0fdd4-c27e-7548-8bf7-922d7b911a3f",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 65,
+  "created_at": "2026-10-02T18:16:14.860163Z",
+  "updated_at": "2026-10-02T18:16:14.860163Z",
+  "deleted_at": null,
+  "preset": "custom",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 450,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "Rent",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": true,
+  "frequency": "monthly",
+  "interval": 1,
+  "anchor_day": 5,
+  "start_date": "2026-10-05",
+  "end_date": null,
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fdd1-f097-70ca-967f-2c56c80364c5"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] leaver rule stays 200
+occurrence shifted: "01a0fdd4-c52f-7356-a101-3cc41d2ac4d2"
+materialise: Processed 2 rules: 1 occurrences materialised, 0 confirmed, 1 refused, 0 failed.
+CHECK [PASS] auto-confirm of leaver rule refused not_permitted, still scheduled {"status": "scheduled", "auto_confirm_refusal": "not_permitted", "transaction_id": null}
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/activity params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fdd4-ca85-716b-899c-ce166c1e78d5",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:16:16.261907Z",
+   "actor_user_id": "01a0fdd1-f097-70ca-967f-2c56c80364c5",
+   "actor_display_name": null,
+   "action": "left",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-f097-70ca-967f-2c56c80364c5",
+   "role": null
+  },
+  {
+   "id": "01a0fdd4-c53f-7001-9e5b-18df4c9412b2",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:16:14.911824Z",
+   "actor_user_id": "01a0fdd1-f097-70ca-967f-2c56c80364c5",
+   "actor_display_name": null,
+   "action": "created",
+   "subject_type": "recurring_rule",
+   "subject_id": "01a0fdd4-c27e-7548-8bf7-922d7b911a3f",
+   "role": null
+  },
+  {
+   "id": "01a0fdd4-c25d-71ba-aec0-5ba163c57bc3",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:16:14.174249Z",
+   "actor_user_id": "01a0fdd1-f097-70ca-967f-2c56c80364c5",
+   "actor_display_name": null,
+   "action": "created",
+   "subject_type": "transaction",
+   "subject_id": "01a0fdd4-c036-77bb-8d0f-642d7cf87131",
+   "role": null
+  },
+  {
+   "id": "01a0fdd4-bffe-7261-bb29-12770202a960",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:16:13.566726Z",
+   "actor_user_id": "01a0fdd1-f097-70ca-967f-2c56c80364c5",
+   "actor_display_name": null,
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-f097-70ca-967f-2c56c80364c5",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd4-bd98-724c-8638-062f669e1286",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:16:12.952386Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd4-bb1c-7545-8526-93ce00e9cc0d",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd4-baea-735f-b828-ea99cef785ac",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:16:12.267364Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd4-6b3e-77f6-a2d5-acd1029e40bf",
+   "role": null
+  },
+  {
+   "id": "01a0fdd4-a274-73ad-840c-df3284ce0aaf",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:16:06.004403Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "removed",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+   "role": null
+  },
+  {
+   "id": "01a0fdd4-70ef-7024-8b68-363111d66595",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:53.328064Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "role_changed",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd4-6d98-73c0-a96d-b85d4c6dea34",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:52.472612Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd4-6b3e-77f6-a2d5-acd1029e40bf",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd4-6b1b-702a-af19-e294feb47a80",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:51.836003Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd4-6254-7768-b034-8383ce3454cc",
+   "role": null
+  },
+  {
+   "id": "01a0fdd4-64c8-71a5-8f74-c48e93aced11",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:50.216402Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd4-6254-7768-b034-8383ce3454cc",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd4-5af7-7318-bed8-631003c4b118",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:47.703372Z",
+   "actor_user_id": "01a0fdd1-c20e-722d-ad76-8b8800047731",
+   "actor_display_name": null,
+   "action": "left",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-c20e-722d-ad76-8b8800047731",
+   "role": null
+  },
+  {
+   "id": "01a0fdd4-4f52-71fc-9cf8-a5e25ca17458",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:44.722758Z",
+   "actor_user_id": "01a0fdd1-c20e-722d-ad76-8b8800047731",
+   "actor_display_name": null,
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-c20e-722d-ad76-8b8800047731",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd4-40b6-7094-941e-4e9e8411eb22",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:40.983227Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd4-3e5b-75cf-bcf1-e8721c7a2a60",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd4-25a8-72af-bbde-25ddc0785018",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:34.057342Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd4-2313-764c-acdb-606b9230e36d",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-df44-7048-bff5-6647cf521560",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:16.036749Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-dcd8-7240-9a7c-9e68816a9952",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-dcb2-73ef-82ae-af67aed3e9d1",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:15.378743Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-d595-7003-a680-4ab1825c244f",
+   "role": null
+  },
+  {
+   "id": "01a0fdd3-d7e2-71b7-98f9-44189cbfa751",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:14.146762Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-d595-7003-a680-4ab1825c244f",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd3-d54d-739c-aa8d-0c6ac82f0dde",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:13.485717Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-d32d-7222-a4e0-670f3974ef31",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-c02a-7380-af49-ee25973c4e69",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:08.074441Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-a056-75e5-8223-60e6b324e617",
+   "role": null
+  },
+  {
+   "id": "01a0fdd3-a3ed-7391-bbee-cb182a6f2f48",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:00.845592Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-a056-75e5-8223-60e6b324e617",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-a034-73b7-a5cf-3d2584b6a186",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:59.892876Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-5d08-7712-b17a-d48b3939dc03",
+   "role": null
+  },
+  {
+   "id": "01a0fdd3-8c0b-72cb-9113-773f8c9a2ddc",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:54.731315Z",
+   "actor_user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+   "actor_display_name": null,
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-7bfb-7359-b3ef-4342b6bb1270",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:50.619290Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-79d4-763c-815f-ab9195420e76",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-5f34-7070-baea-76b7b914001a",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:43.253205Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-5d08-7712-b17a-d48b3939dc03",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-309d-7391-b6c4-22d10dec83d4",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:31.325328Z",
+   "actor_user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+   "actor_display_name": "Karim QA",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd2-d826-7267-8d67-dac5a04cbbce",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:08.678590Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd2-d57c-74c3-b6eb-96887c04c140",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd2-ce67-73f6-af26-1b78824d75a2",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:06.183788Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd2-cb70-7282-ac30-110efda7281e",
+   "role": "editor"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] activity left (no role), actor l 
+CHECK [PASS] leaver display name absent from every entry 
+CHECK [PASS] active member display name present 

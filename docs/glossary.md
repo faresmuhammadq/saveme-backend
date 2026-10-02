@@ -38,7 +38,7 @@ Rules:
 
 ## The entity index
 
-24 entities: the 21 named in the spec, plus **Category Reference**, which exists because categories are user-scoped and shared wallets need to render a partner's category (see [ADR-0012](adr/0012-postings-wallet-and-category-accounts.md) and the Category entry), plus **Audit Entry** and **Operator Notification**, added by spec 007 (Identity & Authentication).
+25 entities: the 21 named in the spec, plus **Category Reference**, which exists because categories are user-scoped and shared wallets need to render a partner's category (see [ADR-0012](adr/0012-postings-wallet-and-category-accounts.md) and the Category entry), plus **Audit Entry** and **Operator Notification**, added by spec 007 (Identity & Authentication), plus **Activity Entry**, added by spec 016 (Sharing & Invitations; see [ADR-0020](adr/0020-wallet-activity-beside-the-audit-log.md)).
 
 | Entity | Arabic | Context | Role | Persistence | Sync |
 |---|---|---|---|---|---|
@@ -48,6 +48,7 @@ Rules:
 | [Audit Entry](#audit-entry) | — | Identity | root | persisted | no |
 | [Wallet](#wallet-محفظة) | محفظة | Wallets & Ledger | root, and a sync scope | persisted | yes — wallet |
 | [Wallet Member](#wallet-member) | — | Wallets & Ledger | child of Wallet | persisted | yes — wallet |
+| [Activity Entry](#activity-entry) | — | Wallets & Ledger | root | persisted | no — read endpoint |
 | [Category](#category) | — | Wallets & Ledger | root | persisted | yes — user |
 | [Category Reference](#category-reference) | — | Wallets & Ledger | projection of Category | derived | yes — wallet, read-only |
 | [Transaction](#transaction) | — | Wallets & Ledger | root | persisted | yes — wallet |
@@ -77,7 +78,7 @@ Rules:
 - **User scope (4)** — Profile, Device Session, Category, Budget.
 - **Wallet scope (7)** — Wallet, Wallet Member, Category Reference, Transaction, Recurring Rule, Occurrence, Invitation.
 
-**9 persisted but not synced**, and how the client obtains each:
+**10 persisted but not synced**, and how the client obtains each:
 
 | Entity | How the client gets it |
 |---|---|
@@ -89,6 +90,7 @@ Rules:
 | Redeem Code | never read by the client; it submits a code and sees the result |
 | Posting | never — internal to the server (P-04) |
 | Audit Entry | never — operator-only |
+| Activity Entry | read endpoint (`GET /wallets/{id}/activity`), paged, 90 days |
 | Operator Notification | never — operator-only |
 
 **6 never persisted** — Entitlement, Budget Period, Report (all derived), Sync Cursor (held by the client), Change Row (a read of a feed) and Sync Batch (a request that is gone once answered). The Purge Horizon is a counter on the scope row, not an entity.
@@ -176,7 +178,19 @@ One person's membership of one wallet, carrying their role.
 - **Sync**: yes — wallet scope
 - **States**: `active` → `revoked` (a role change stays `active`)
 - **Referenced by**: every authorization check
-- **Notes**: a person's **own** memberships also ride their user feed, so a phone learns of a wallet shared with it and of losing one (ADR-0017). Roles are `owner`, `editor`, `viewer`. **The permission matrix — which role may do what — lives only in the Wallets spec** and is deliberately not repeated here (P-08, FR-017). Authorization is evaluated against every wallet a write touches, and a non-member receives 404 rather than 403 (ADR-0006). A shared wallet is governed by its **owner's** entitlements (ADR-0007). **Ownership transfer**: the owner hands `owner` to another active member and becomes `editor`; it never adds or removes a person. The member is exposed on the wire as `member_user_id`. Ownership sits here and not on a separate grouping entity: `Space` was dropped, see [Prior-art mapping](#prior-art-mapping).
+- **Notes**: **removal and leaving** tombstone the membership (the state `revoked`): the wallet's feed and the person's own user feed carry the tombstone, and every later request of theirs on the wallet is 404. **Plan demotion**: when the owner's plan lapses, or ownership moves to an owner whose plan allows fewer members, the editors beyond the owner's `sharing.max_members_per_wallet` quota (owner first, then joining order) become viewers, with a recorded reason; nobody is removed and nobody is promoted again. A person's **own** memberships also ride their user feed, so a phone learns of a wallet shared with it and of losing one (ADR-0017). Roles are `owner`, `editor`, `viewer`. **The permission matrix — which role may do what — lives only in the Wallets spec** and is deliberately not repeated here (P-08, FR-017). Authorization is evaluated against every wallet a write touches, and a non-member receives 404 rather than 403 (ADR-0006). A shared wallet is governed by its **owner's** entitlements (ADR-0007). **Ownership transfer**: the owner hands `owner` to another active member and becomes `editor`; it never adds or removes a person. The member is exposed on the wire as `member_user_id`. Ownership sits here and not on a separate grouping entity: `Space` was dropped, see [Prior-art mapping](#prior-art-mapping).
+
+### Activity Entry
+
+One recorded act in a wallet — who did what, to which record, and when — readable by the wallet's members.
+
+- **Context**: Wallets & Ledger
+- **Role**: aggregate root
+- **Persistence**: persisted
+- **Sync**: no — read endpoint `GET /wallets/{id}/activity`, paged newest first
+- **States**: `single-state` (append-only; removed after 90 days)
+- **Referenced by**: —
+- **Notes**: a member-visible record, **not** the Audit Entry, which is operator-only security evidence with a fixed vocabulary. Identifiers only: the actor (null when the server acted), the action, the kind and id of the record acted on and, for membership and invitation acts, the role; no amount, note, record name or address. The actor's display name is shown only while the actor is an active member. One entry per applied write; replays write none. See [ADR-0020](adr/0020-wallet-activity-beside-the-audit-log.md).
 
 ### Category
 
@@ -330,7 +344,7 @@ An offer to join a wallet, sent to one person.
 - **Sync**: yes — wallet scope (existing members see pending invitations)
 - **States**: `pending` → `accepted` (producing a Wallet Member) | `declined` | `revoked` | `expired`
 - **Referenced by**: Wallet Member (the membership it produced)
-- **Notes**: acceptance calls into Wallets & Ledger through `WalletService` to create the membership — Sharing never writes another module's models (P-02). Sharing is the **only** capability the free tier limits (P-09); the inviting wallet's **owner's** entitlements decide whether an invitation may be sent.
+- **Notes**: an invitation has a **channel**: `email` (sent to one address, accepted only by the account holding it) or `link` (a one-time link, accepted by anyone signed in who holds it). Its **token** is single-use, lives 7 days and is stored as a hash only. **Every close is a tombstone** (accepted, declined, revoked, expired, or the wallet's deletion) and erases the invited address. **Pending invitations count** toward the owner's `sharing.max_members_per_wallet`. Acceptance calls into Wallets & Ledger through its `MembershipService` to create the membership — Sharing never writes another module's models (P-02). Sharing is the **only** capability the free tier limits (P-09); the inviting wallet's **owner's** entitlements decide whether an invitation may be sent.
 
 ---
 
@@ -506,7 +520,7 @@ Every entity has exactly one owner. Other modules reach it only through that mod
 | Reader | Reads | Through |
 |---|---|---|
 | Budgeting | Category, transaction totals | Wallets & Ledger query services |
-| Sharing | Wallet, Wallet Member | `WalletService` (writes membership on acceptance) |
+| Sharing | Wallet, Wallet Member, Activity Entry | Wallets' `MembershipService` and `WalletActivity` (writes membership and activity on acceptance, role change, removal, leaving and plan demotion) |
 | Reporting | Transaction, Posting sums, Category, Budget | owning modules' query services; event-fed projections allowed later |
 | Notifications | Device Session | Identity application service |
 | Admin | everything it displays or changes | each owning module's application service |

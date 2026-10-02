@@ -73,16 +73,16 @@ test('a member of a deleted wallet is judged by the role they held; others get n
 test('S-02 needs sharing on the owner\'s plan, not the caller\'s', function () {
     $free = person('free@example.test');
     $freeWallet = ownedWallet($free->id);
-    expect(fn () => app(WalletAuthorizer::class)->authorize($free->id, $freeWallet->id, Permission::S02SendOrRevokeInvitation))
+    expect(fn () => app(WalletAuthorizer::class)->authorize($free->id, $freeWallet->id, Permission::S02SendInvitation))
         ->toThrow(FeatureNotEntitled::class);
 
-    expect(app(WalletAuthorizer::class)->authorize($this->owner->id, $this->wallet->id, Permission::S02SendOrRevokeInvitation))->toBe(Role::Owner);
+    expect(app(WalletAuthorizer::class)->authorize($this->owner->id, $this->wallet->id, Permission::S02SendInvitation))->toBe(Role::Owner);
 
     // A member holding Plus does not lend it to a wallet whose owner has none.
     Subscription::factory()->create(['user_id' => $free->id]);
     $other = person('other@example.test');
     $otherWallet = ownedWallet($other->id);
     addMember($otherWallet->id, $free->id, 'editor');
-    expect(fn () => app(WalletAuthorizer::class)->authorize($other->id, $otherWallet->id, Permission::S02SendOrRevokeInvitation))
+    expect(fn () => app(WalletAuthorizer::class)->authorize($other->id, $otherWallet->id, Permission::S02SendInvitation))
         ->toThrow(FeatureNotEntitled::class);
 });

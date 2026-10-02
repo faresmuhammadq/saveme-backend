@@ -1,0 +1,480 @@
+===== TC-014 US5-5/6: remove a member: tombstone on their user feed, later 404; repeat returns tombstone; owner self 403 2026-10-02T18:16:03.465367Z
+
+DELETE /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/members/01a0fdd1-b9d8-73a5-842b-187961d1f257
+> {"version": 2}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/forbidden",
+ "title": "Forbidden",
+ "status": 403,
+ "detail": "Your role in this wallet does not allow this.",
+ "code": "FORBIDDEN",
+ "request_id": "01a0fdd4-99d5-7287-8f88-f0d10ad095cb"
+}
+
+CHECK [PASS] editor removes -> 403 FORBIDDEN 
+DELETE /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/members/01a0fdd1-b9d8-73a5-842b-187961d1f257
+> {"version": 1}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fdd4-9bf8-7077-a53b-f92e8943c5e2",
+ "current": {
+  "id": "01a0fdd3-8bec-73b2-bf6c-ee58aac4b68a",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 2,
+  "change_seq": 52,
+  "created_at": "2026-10-02T18:14:54.701369Z",
+  "updated_at": "2026-10-02T18:15:53.305803Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+  "display_name": "Sara QA",
+  "role": "editor"
+ }
+}
+
+CHECK [PASS] stale -> 409 with current 409 VERSION_CONFLICT
+DELETE /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/members/01a0fdd1-a85d-7074-b60e-c754324c783e
+> {"version": 1}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/forbidden",
+ "title": "Forbidden",
+ "status": 403,
+ "detail": "Your role in this wallet does not allow this.",
+ "code": "FORBIDDEN",
+ "request_id": "01a0fdd4-9db9-7220-930b-7919d073ac23"
+}
+
+CHECK [PASS] owner removing self -> 403 FORBIDDEN 403 FORBIDDEN
+DELETE /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/members/01a0fdd1-bddb-70d6-b5fc-49bcceb302e7
+> {"version": 1}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd4-9fd0-73bb-81d3-6a5a40906f5e"
+}
+
+CHECK [PASS] never a member -> 404 
+DELETE /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/members/01a0fdd1-b9d8-73a5-842b-187961d1f257
+> {"version": 2}
+< 200
+{
+ "data": {
+  "id": "01a0fdd3-8bec-73b2-bf6c-ee58aac4b68a",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 3,
+  "change_seq": 54,
+  "created_at": "2026-10-02T18:14:54.701369Z",
+  "updated_at": "2026-10-02T18:16:05.960483Z",
+  "deleted_at": "2026-10-02T18:16:05.960483Z",
+  "member_user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+  "display_name": "Sara QA",
+  "role": "editor"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] remove 200 tombstone 200 None
+DELETE /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/members/01a0fdd1-b9d8-73a5-842b-187961d1f257
+> {"version": 2}
+< 200
+{
+ "data": {
+  "id": "01a0fdd3-8bec-73b2-bf6c-ee58aac4b68a",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 3,
+  "change_seq": 54,
+  "created_at": "2026-10-02T18:14:54.701369Z",
+  "updated_at": "2026-10-02T18:16:05.960483Z",
+  "deleted_at": "2026-10-02T18:16:05.960483Z",
+  "member_user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+  "display_name": "Sara QA",
+  "role": "editor"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] repeat removal -> 200 same tombstone 200
+GET /sync/user/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fdd2-0b9f-74c8-b1c8-6de782a577b9",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T18:13:17.757979Z",
+    "updated_at": "2026-10-02T18:16:06.852893Z",
+    "deleted_at": null,
+    "user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T18:13:17.750707Z",
+    "last_used_at": "2026-10-02T18:16:06.851281Z",
+    "ended_at": null,
+    "current": true
+   }
+  },
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fdd1-bdcf-7236-bf75-240143332dbf",
+    "version": 2,
+    "change_seq": 3,
+    "created_at": "2026-10-02T18:12:56.400382Z",
+    "updated_at": "2026-10-02T18:13:40.463469Z",
+    "deleted_at": null,
+    "user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+    "display_name": "Sara QA",
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": false,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fdd3-8bec-73b2-bf6c-ee58aac4b68a",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 3,
+    "change_seq": 54,
+    "created_at": "2026-10-02T18:14:54.701369Z",
+    "updated_at": "2026-10-02T18:16:05.960483Z",
+    "deleted_at": "2026-10-02T18:16:05.960483Z",
+    "member_user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+    "display_name": "Sara QA",
+    "role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmRkMS1iOWQ4LTczYTUtODQyYi0xODc5NjFkMWYyNTciLCJyIjoiMDFhMGZkZDEtYjlkOC03M2E1LTg0MmItMTg3OTYxZDFmMjU3IiwicCI6Nn0RnFsxJPtlMDkk5jGb5cCA"
+ }
+}
+
+CHECK [PASS] s user feed: tombstoned wallet_member {"type": "wallet_member", "record": {"id": "01a0fdd3-8bec-73b2-bf6c-ee58aac4b68a", "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404", "version": 3, "change_seq": 54, "created_at": "2026-10-02T18:14:54.701369Z", "updated_at": "2026-10-02T18:16:05.960483Z", "deleted_at": "2026-10-02T18:16:05.960483Z
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd4-a726-72ce-aeae-e61601d7b99c"
+}
+
+CHECK [PASS] removed person GET wallet -> 404 404
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/activity
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd4-a8c1-707a-a079-9cad26f0c917"
+}
+
+CHECK [PASS] removed person GET /activity -> 404 404
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd4-aa5c-70fd-b8ca-cd5078833b19"
+}
+
+CHECK [PASS] removed person GET /invitations -> 404 404
+GET /sync/wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/changes
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd4-abbe-702f-923f-7d10509e65dc"
+}
+
+CHECK [PASS] removed person GET /changes -> 404 404
+CHECK [PASS] audit membership_revoked 
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/activity params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fdd4-a274-73ad-840c-df3284ce0aaf",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:16:06.004403Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "removed",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+   "role": null
+  },
+  {
+   "id": "01a0fdd4-70ef-7024-8b68-363111d66595",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:53.328064Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "role_changed",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd4-6d98-73c0-a96d-b85d4c6dea34",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:52.472612Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd4-6b3e-77f6-a2d5-acd1029e40bf",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd4-6b1b-702a-af19-e294feb47a80",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:51.836003Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd4-6254-7768-b034-8383ce3454cc",
+   "role": null
+  },
+  {
+   "id": "01a0fdd4-64c8-71a5-8f74-c48e93aced11",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:50.216402Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd4-6254-7768-b034-8383ce3454cc",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd4-5af7-7318-bed8-631003c4b118",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:47.703372Z",
+   "actor_user_id": "01a0fdd1-c20e-722d-ad76-8b8800047731",
+   "actor_display_name": null,
+   "action": "left",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-c20e-722d-ad76-8b8800047731",
+   "role": null
+  },
+  {
+   "id": "01a0fdd4-4f52-71fc-9cf8-a5e25ca17458",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:44.722758Z",
+   "actor_user_id": "01a0fdd1-c20e-722d-ad76-8b8800047731",
+   "actor_display_name": null,
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-c20e-722d-ad76-8b8800047731",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd4-40b6-7094-941e-4e9e8411eb22",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:40.983227Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd4-3e5b-75cf-bcf1-e8721c7a2a60",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd4-25a8-72af-bbde-25ddc0785018",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:34.057342Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd4-2313-764c-acdb-606b9230e36d",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-df44-7048-bff5-6647cf521560",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:16.036749Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-dcd8-7240-9a7c-9e68816a9952",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-dcb2-73ef-82ae-af67aed3e9d1",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:15.378743Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-d595-7003-a680-4ab1825c244f",
+   "role": null
+  },
+  {
+   "id": "01a0fdd3-d7e2-71b7-98f9-44189cbfa751",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:14.146762Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-d595-7003-a680-4ab1825c244f",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd3-d54d-739c-aa8d-0c6ac82f0dde",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:13.485717Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-d32d-7222-a4e0-670f3974ef31",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-c02a-7380-af49-ee25973c4e69",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:08.074441Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-a056-75e5-8223-60e6b324e617",
+   "role": null
+  },
+  {
+   "id": "01a0fdd3-a3ed-7391-bbee-cb182a6f2f48",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:00.845592Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-a056-75e5-8223-60e6b324e617",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-a034-73b7-a5cf-3d2584b6a186",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:59.892876Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-5d08-7712-b17a-d48b3939dc03",
+   "role": null
+  },
+  {
+   "id": "01a0fdd3-8c0b-72cb-9113-773f8c9a2ddc",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:54.731315Z",
+   "actor_user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+   "actor_display_name": null,
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-7bfb-7359-b3ef-4342b6bb1270",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:50.619290Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-79d4-763c-815f-ab9195420e76",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-5f34-7070-baea-76b7b914001a",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:43.253205Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-5d08-7712-b17a-d48b3939dc03",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-309d-7391-b6c4-22d10dec83d4",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:31.325328Z",
+   "actor_user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+   "actor_display_name": "Karim QA",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd2-d826-7267-8d67-dac5a04cbbce",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:08.678590Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd2-d57c-74c3-b6eb-96887c04c140",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd2-ce67-73f6-af26-1b78824d75a2",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:06.183788Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd2-cb70-7282-ac30-110efda7281e",
+   "role": "editor"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] activity removed (no role) 
+CHECK [PASS] removed member display name gone from activity 

@@ -1,0 +1,39 @@
+===== us3-s2 US3-2 owner revokes: tombstone revoked, address erased, token dead, seat freed 2026-10-02T18:31:19.095522Z
+
+DELETE /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/invitations/01a0fde2-8a43-7458-9de5-3a0b2c31cac6
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fde2-8a43-7458-9de5-3a0b2c31cac6",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 2,
+  "change_seq": 32,
+  "created_at": "2026-10-02T18:31:17.932570Z",
+  "updated_at": "2026-10-02T18:31:24.279935Z",
+  "deleted_at": "2026-10-02T18:31:24.279935Z",
+  "role": "viewer",
+  "channel": "email",
+  "invitee_email": null,
+  "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "status": "revoked",
+  "expires_at": "2026-10-09T18:31:17.890819Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] 200 revoked tombstone, address null 
+POST /invitations/preview
+> {"token": "[redacted]"}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fde2-a685-727e-91e6-d338b9b00d1a"
+}
+
+CHECK [PASS] token dead 
+CHECK [PASS] seat freed 

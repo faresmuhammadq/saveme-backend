@@ -129,6 +129,7 @@ The four standard members, plus extension members that sit **flat beside them**,
 | `errors` | validation only | one entry per offending input |
 | `current` | `VERSION_CONFLICT` only | the record's present state |
 | `minimum_version` | `CLIENT_VERSION_UNSUPPORTED` only | the version to update to |
+| `feature` | `FEATURE_NOT_ENTITLED`, from v1.9 | the capability key the plan lacks or whose quota is spent, e.g. `sharing.enabled`, `sharing.max_members_per_wallet`, `wallets.max` |
 | `retry_after_seconds` | when `Retry-After` is sent | a mirror of that header |
 
 ### Branch on `code`, never on the message
@@ -399,7 +400,7 @@ This is what makes a retry safe. The client cannot know whether a request that t
 
 ### Batch upload
 
-`POST /api/v1/sync/batch` carries 1 to 50 per-record writes in one request ([ADR-0016](adr/0016-batch-upload-beside-per-record-writes.md)). It is a transport, not a new kind of write: each item is exactly one per-record write (`PUT`, `DELETE`, or the restoring `PATCH`) and obeys exactly its rules. Items are independent, applied one at a time in array order, and each is answered by its own result (`applied`, `conflict` or `rejected`, with the status and body the single write gives). An unusable envelope is refused whole with `422` and nothing is applied. The per-record writes stay available and unchanged beside it. The item types are `wallet`, `category`, `transaction`, `profile`, `recurring_rule`, `budget` (`upsert`, `delete`) and `occurrence` (`upsert` only: an occurrence is confirmed, skipped or edited, never created or deleted by a client).
+`POST /api/v1/sync/batch` carries 1 to 50 per-record writes in one request ([ADR-0016](adr/0016-batch-upload-beside-per-record-writes.md)). It is a transport, not a new kind of write: each item is exactly one per-record write (`PUT`, `DELETE`, or the restoring `PATCH`) and obeys exactly its rules. Items are independent, applied one at a time in array order, and each is answered by its own result (`applied`, `conflict` or `rejected`, with the status and body the single write gives). An unusable envelope is refused whole with `422` and nothing is applied. The per-record writes stay available and unchanged beside it. The item types are `wallet`, `category`, `transaction`, `profile`, `recurring_rule`, `budget` (`upsert`, `delete`) and `occurrence` (`upsert` only: an occurrence is confirmed, skipped or edited, never created or deleted by a client). **Invitations are not batch items** (spec 016): creating one sends a mail or returns a one-time link, so it goes through `PUT /wallets/{id}/invitations/{iid}` alone.
 
 ### Every outcome
 

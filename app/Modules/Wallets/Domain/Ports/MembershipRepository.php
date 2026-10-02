@@ -48,4 +48,43 @@ interface MembershipRepository
      * @param  Closure(string): int  $nextMemberChangeSeq  given the member's user id
      */
     public function tombstoneAllIn(string $walletId, DateTimeImmutable $at, Closure $nextChangeSeq, Closure $nextMemberChangeSeq): void;
+
+    /**
+     * Tombstones one membership: `deleted_at` = $at, version + 1, with the
+     * given change_seq and user-feed stamp (ADR-0017 rule 4).
+     */
+    public function tombstone(string $memberId, DateTimeImmutable $at, int $changeSeq, int $memberChangeSeq): void;
+
+    /**
+     * The person's newest membership of the wallet, live or tombstoned.
+     */
+    public function latestFor(string $walletId, string $userId): ?MemberRecord;
+
+    /**
+     * Active members ranked for the plan quota: the owner first, then by
+     * joining order (`created_at`, `id`).
+     *
+     * @return list<MemberRecord>
+     */
+    public function activeRanked(string $walletId): array;
+
+    /**
+     * Active members of the wallet, the owner included.
+     */
+    public function countActive(string $walletId): int;
+
+    /**
+     * Ids of the live wallets the person currently owns.
+     *
+     * @return list<string>
+     */
+    public function ownedLiveWalletsOf(string $userId): array;
+
+    /**
+     * Which of the given people are active members of the wallet.
+     *
+     * @param  list<string>  $userIds
+     * @return list<string>
+     */
+    public function activeAmong(string $walletId, array $userIds): array;
 }

@@ -1,0 +1,544 @@
+===== TC-008 US3-2/4: revoke by owner (tombstone, address erased, token dead); editor/viewer 403; non-member 404; stale 409; repeat returns tombstone 2026-10-02T18:14:59.473279Z
+
+DELETE /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd3-5d08-7712-b17a-d48b3939dc03
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fdd3-5d08-7712-b17a-d48b3939dc03",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 2,
+  "change_seq": 18,
+  "created_at": "2026-10-02T18:14:43.236607Z",
+  "updated_at": "2026-10-02T18:14:59.875440Z",
+  "deleted_at": "2026-10-02T18:14:59.875440Z",
+  "role": "viewer",
+  "channel": "email",
+  "invitee_email": null,
+  "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "status": "revoked",
+  "expires_at": "2026-10-09T18:14:43.207281Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] free a seat: revoke I5 (quota is owner+2 members+2 pending = 5) 200
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd3-a056-75e5-8223-60e6b324e617
+> {"role": "viewer", "invitee_email": "qs016-x-1790964767@example.test"}
+< 201
+{
+ "data": {
+  "id": "01a0fdd3-a056-75e5-8223-60e6b324e617",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 20,
+  "created_at": "2026-10-02T18:15:00.776831Z",
+  "updated_at": "2026-10-02T18:15:00.776831Z",
+  "deleted_at": null,
+  "role": "viewer",
+  "channel": "email",
+  "invitee_email": "qs016-x-1790964767@example.test",
+  "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:15:00.724477Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] I8 201 201
+DELETE /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd3-a056-75e5-8223-60e6b324e617
+> {"version": 1}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/forbidden",
+ "title": "Forbidden",
+ "status": 403,
+ "detail": "Your role in this wallet does not allow this.",
+ "code": "FORBIDDEN",
+ "request_id": "01a0fdd3-b230-7288-baf0-26b313bb582b"
+}
+
+CHECK [PASS] k revoke -> 403 FORBIDDEN 403 FORBIDDEN
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd3-b304-7655-be60-d1533f1461ce
+> {"role": "viewer", "invitee_email": null}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/forbidden",
+ "title": "Forbidden",
+ "status": 403,
+ "detail": "Your role in this wallet does not allow this.",
+ "code": "FORBIDDEN",
+ "request_id": "01a0fdd3-b3ac-737e-b991-e8b39d7302ad"
+}
+
+CHECK [PASS] k invite -> 403 FORBIDDEN 403 FORBIDDEN
+DELETE /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd3-a056-75e5-8223-60e6b324e617
+> {"version": 1}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/forbidden",
+ "title": "Forbidden",
+ "status": 403,
+ "detail": "Your role in this wallet does not allow this.",
+ "code": "FORBIDDEN",
+ "request_id": "01a0fdd3-b570-708d-a0c7-79d8b005dfa7"
+}
+
+CHECK [PASS] s revoke -> 403 FORBIDDEN 403 FORBIDDEN
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd3-b63e-7117-971e-c5512f1fd65b
+> {"role": "viewer", "invitee_email": null}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/forbidden",
+ "title": "Forbidden",
+ "status": 403,
+ "detail": "Your role in this wallet does not allow this.",
+ "code": "FORBIDDEN",
+ "request_id": "01a0fdd3-b6e7-7287-9790-44407722098e"
+}
+
+CHECK [PASS] s invite -> 403 FORBIDDEN 403 FORBIDDEN
+DELETE /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd3-a056-75e5-8223-60e6b324e617
+> {"version": 1}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd3-b8d8-709a-8677-69d634cd7491"
+}
+
+CHECK [PASS] non-member revoke -> 404 
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd3-b9c1-75f4-9c23-90a04e805b3c
+> {"role": "viewer", "invitee_email": null}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd3-ba71-70cb-bfde-87bf5fcd89b0"
+}
+
+CHECK [PASS] non-member invite -> 404 
+DELETE /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd3-a056-75e5-8223-60e6b324e617
+> {"version": 7}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fdd3-bc30-71f1-ae69-cc31430bbc95",
+ "current": {
+  "id": "01a0fdd3-a056-75e5-8223-60e6b324e617",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 20,
+  "created_at": "2026-10-02T18:15:00.776831Z",
+  "updated_at": "2026-10-02T18:15:00.776831Z",
+  "deleted_at": null,
+  "role": "viewer",
+  "channel": "email",
+  "invitee_email": "qs016-x-1790964767@example.test",
+  "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:15:00.724477Z"
+ }
+}
+
+CHECK [PASS] stale revoke -> 409 with current 409 VERSION_CONFLICT
+DELETE /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd3-a056-75e5-8223-60e6b324e617
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fdd3-be0e-71b5-999c-f8c0c0a310fa",
+ "errors": [
+  {
+   "pointer": "/version",
+   "code": "REQUIRED",
+   "detail": "This field is required."
+  }
+ ]
+}
+
+CHECK [PASS] revoke without body -> 422 REQUIRED /version 422 [('/version', 'REQUIRED')]
+DELETE /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd3-a056-75e5-8223-60e6b324e617
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fdd3-a056-75e5-8223-60e6b324e617",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 2,
+  "change_seq": 22,
+  "created_at": "2026-10-02T18:15:00.776831Z",
+  "updated_at": "2026-10-02T18:15:08.059549Z",
+  "deleted_at": "2026-10-02T18:15:08.059549Z",
+  "role": "viewer",
+  "channel": "email",
+  "invitee_email": null,
+  "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "status": "revoked",
+  "expires_at": "2026-10-09T18:15:00.724477Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] revoke 200 tombstone revoked, invitee_email null, v2 {"id": "01a0fdd3-a056-75e5-8223-60e6b324e617", "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404", "version": 2, "change_seq": 22, "created_at": "2026-10-02T18:15:00.776831Z", "updated_at": "2026-10-02T18:15:08.059549Z", "deleted_at": "2026-10-02T18:15:08.059549Z", "role": "viewer", "channel": "email", "invitee_email": null, "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e", "status": "revoked", "expires_at": "2026-10-09T18:15:00.724477Z"}
+CHECK [PASS] DB address erased 
+DELETE /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd3-a056-75e5-8223-60e6b324e617
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fdd3-a056-75e5-8223-60e6b324e617",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 2,
+  "change_seq": 22,
+  "created_at": "2026-10-02T18:15:00.776831Z",
+  "updated_at": "2026-10-02T18:15:08.059549Z",
+  "deleted_at": "2026-10-02T18:15:08.059549Z",
+  "role": "viewer",
+  "channel": "email",
+  "invitee_email": null,
+  "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "status": "revoked",
+  "expires_at": "2026-10-09T18:15:00.724477Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] repeat revoke -> 200 same tombstone 
+POST /invitations/preview
+> {"token": "[redacted]"}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd3-ccd8-7168-8c91-4ff0ceff986b"
+}
+
+CHECK [PASS] token dead -> 404 
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd3-a056-75e5-8223-60e6b324e617
+> {"role": "viewer", "invitee_email": "qs016-x-1790964767@example.test"}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fdd3-ce7a-7092-b0ca-5ee954cbdd20",
+ "current": {
+  "id": "01a0fdd3-a056-75e5-8223-60e6b324e617",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 2,
+  "change_seq": 22,
+  "created_at": "2026-10-02T18:15:00.776831Z",
+  "updated_at": "2026-10-02T18:15:08.059549Z",
+  "deleted_at": "2026-10-02T18:15:08.059549Z",
+  "role": "viewer",
+  "channel": "email",
+  "invitee_email": null,
+  "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "status": "revoked",
+  "expires_at": "2026-10-09T18:15:00.724477Z"
+ }
+}
+
+CHECK [PASS] write to closed invitation -> 409 with tombstone 409 VERSION_CONFLICT
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/activity params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fdd3-c02a-7380-af49-ee25973c4e69",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:08.074441Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-a056-75e5-8223-60e6b324e617",
+   "role": null
+  },
+  {
+   "id": "01a0fdd3-a3ed-7391-bbee-cb182a6f2f48",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:00.845592Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-a056-75e5-8223-60e6b324e617",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-a034-73b7-a5cf-3d2584b6a186",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:59.892876Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-5d08-7712-b17a-d48b3939dc03",
+   "role": null
+  },
+  {
+   "id": "01a0fdd3-8c0b-72cb-9113-773f8c9a2ddc",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:54.731315Z",
+   "actor_user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+   "actor_display_name": "Sara QA",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-7bfb-7359-b3ef-4342b6bb1270",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:50.619290Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-79d4-763c-815f-ab9195420e76",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-5f34-7070-baea-76b7b914001a",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:43.253205Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-5d08-7712-b17a-d48b3939dc03",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-309d-7391-b6c4-22d10dec83d4",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:31.325328Z",
+   "actor_user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+   "actor_display_name": "Karim QA",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd2-d826-7267-8d67-dac5a04cbbce",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:08.678590Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd2-d57c-74c3-b6eb-96887c04c140",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd2-ce67-73f6-af26-1b78824d75a2",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:06.183788Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd2-cb70-7282-ac30-110efda7281e",
+   "role": "editor"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] activity invitation_revoked 
+GET /sync/wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fdd2-b647-72e6-8718-dfc003cbfe5d",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T18:14:00.008079Z",
+    "updated_at": "2026-10-02T18:14:00.008079Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "display_name": "Mona QA",
+    "role": "owner"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd2-d57c-74c3-b6eb-96887c04c140",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 1,
+    "change_seq": 6,
+    "created_at": "2026-10-02T18:14:08.650124Z",
+    "updated_at": "2026-10-02T18:14:08.650124Z",
+    "deleted_at": null,
+    "role": "editor",
+    "channel": "email",
+    "invitee_email": "qs016-nobody-1790964767@example.test",
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "pending",
+    "expires_at": "2026-10-09T18:14:08.596330Z"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fdd3-3079-7052-94ca-36eff79df38e",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 1,
+    "change_seq": 8,
+    "created_at": "2026-10-02T18:14:31.289833Z",
+    "updated_at": "2026-10-02T18:14:31.289833Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd2-cb70-7282-ac30-110efda7281e",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 9,
+    "created_at": "2026-10-02T18:14:06.163903Z",
+    "updated_at": "2026-10-02T18:14:31.332797Z",
+    "deleted_at": "2026-10-02T18:14:31.332797Z",
+    "role": "editor",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "accepted",
+    "expires_at": "2026-10-09T18:14:06.121296Z"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fdd3-8bec-73b2-bf6c-ee58aac4b68a",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 1,
+    "change_seq": 15,
+    "created_at": "2026-10-02T18:14:54.701369Z",
+    "updated_at": "2026-10-02T18:14:54.701369Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+    "display_name": "Sara QA",
+    "role": "viewer"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd3-79d4-763c-815f-ab9195420e76",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 16,
+    "created_at": "2026-10-02T18:14:50.602595Z",
+    "updated_at": "2026-10-02T18:14:54.737842Z",
+    "deleted_at": "2026-10-02T18:14:54.737842Z",
+    "role": "viewer",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "accepted",
+    "expires_at": "2026-10-09T18:14:50.587016Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd3-5d08-7712-b17a-d48b3939dc03",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 18,
+    "created_at": "2026-10-02T18:14:43.236607Z",
+    "updated_at": "2026-10-02T18:14:59.875440Z",
+    "deleted_at": "2026-10-02T18:14:59.875440Z",
+    "role": "viewer",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "revoked",
+    "expires_at": "2026-10-09T18:14:43.207281Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd3-a056-75e5-8223-60e6b324e617",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 22,
+    "created_at": "2026-10-02T18:15:00.776831Z",
+    "updated_at": "2026-10-02T18:15:08.059549Z",
+    "deleted_at": "2026-10-02T18:15:08.059549Z",
+    "role": "viewer",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "revoked",
+    "expires_at": "2026-10-09T18:15:00.724477Z"
+   }
+  },
+  {
+   "type": "wallet",
+   "record": {
+    "id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 1,
+    "change_seq": 23,
+    "created_at": "2026-10-02T18:13:59.987749Z",
+    "updated_at": "2026-10-02T18:13:59.987749Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "Home QA016",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmRkMi1iNDY0LTc2MmItOTkzYi03NmZiZDk3ZDk0MDQiLCJyIjoiMDFhMGZkZDEtYjViNy03MzkyLWIxNTQtYjZiOTAyYjUyNmQwIiwicCI6MjN9PfVQO3iMXAZOcloZTaxpXQ"
+ }
+}
+
+CHECK [PASS] wallet feed carries revoked tombstone 

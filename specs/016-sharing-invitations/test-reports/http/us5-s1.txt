@@ -1,0 +1,1074 @@
+===== us5-s1 US5-1 role change: version +1, wallet feed and member user feed, one audit, one activity 2026-10-02T18:32:13.812087Z
+
+GET /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/members params={'limit': 50}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fde1-fd42-716e-bfda-f7861c23f8a7",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "version": 1,
+   "change_seq": 2,
+   "created_at": "2026-10-02T18:30:41.218707Z",
+   "updated_at": "2026-10-02T18:30:41.218707Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "display_name": "Mona",
+   "role": "owner"
+  },
+  {
+   "id": "01a0fde2-4a25-701e-a4cc-1e03774735c2",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "version": 1,
+   "change_seq": 10,
+   "created_at": "2026-10-02T18:31:00.907544Z",
+   "updated_at": "2026-10-02T18:31:00.907544Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+   "display_name": "Karim",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde2-7d66-7095-88f1-f5d1ffd1bf0a",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "version": 1,
+   "change_seq": 19,
+   "created_at": "2026-10-02T18:31:14.022950Z",
+   "updated_at": "2026-10-02T18:31:14.022950Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+   "display_name": "Sara",
+   "role": "viewer"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+GET /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/activity params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fde3-66cb-7303-a5c3-1002da528dd5",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:32:13.771516Z",
+   "actor_user_id": "01a0fde1-8c79-7201-82c4-05ad518612c8",
+   "actor_display_name": null,
+   "action": "left",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-8c79-7201-82c4-05ad518612c8",
+   "role": null
+  },
+  {
+   "id": "01a0fde3-6301-708f-bf9e-968340c5f1c9",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:32:12.802072Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde3-60d1-7507-878a-d511cc70a384",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde3-5cf6-724f-bad5-3452e28b99b1",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:32:11.255194Z",
+   "actor_user_id": "01a0fde1-8c79-7201-82c4-05ad518612c8",
+   "actor_display_name": null,
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-8c79-7201-82c4-05ad518612c8",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde3-547d-714a-8ba8-4a9b3b6a744a",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:32:09.085691Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde3-5218-739e-ab59-4518e28efb96",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde3-51f1-72f3-9711-04d042322dfc",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:32:08.433989Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde3-2ef6-74b5-9f32-fb3ed6024256",
+   "role": null
+  },
+  {
+   "id": "01a0fde3-3143-73e4-ad3d-95285509e9e5",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:32:00.067837Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde3-2ef6-74b5-9f32-fb3ed6024256",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde3-0718-73f8-8e07-2165fedfb58f",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:49.272463Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde3-03f0-70ae-9ce5-564690badc5f",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde2-ff73-739f-a6f9-40eae47cd7f5",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:47.315239Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-fcf1-703e-95dd-8837c41606fa",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde2-dd26-70b8-8a45-b5aaa04f0397",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:38.534531Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-daf8-7034-b55c-65ebdb6e6466",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde2-dad3-70aa-bea9-e871794ce115",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:37.939224Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-ca8b-7629-af08-9b676059da7d",
+   "role": null
+  },
+  {
+   "id": "01a0fde2-cd22-7333-a03a-a374f07e299d",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:34.435306Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-ca8b-7629-af08-9b676059da7d",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde2-a58f-72f5-b472-aa0af57b23c7",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:24.303297Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-8a43-7458-9de5-3a0b2c31cac6",
+   "role": null
+  },
+  {
+   "id": "01a0fde2-8cbd-7373-abe4-576ea8cb58a5",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:17.949910Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-8a43-7458-9de5-3a0b2c31cac6",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde2-8a1a-72f5-8f4c-39d81f17ee93",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:17.274709Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-85e7-7325-a7a9-e526d238435d",
+   "role": null
+  },
+  {
+   "id": "01a0fde2-8807-7054-aafc-8ed36fd75e37",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:16.743371Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-85e7-7325-a7a9-e526d238435d",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde2-85c7-7125-a391-07a0cd475e5b",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:16.167298Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-7f74-76a1-82ae-30f739a13e14",
+   "role": null
+  },
+  {
+   "id": "01a0fde2-81a4-70d8-81e7-a873ffd055d0",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:15.108860Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-7f74-76a1-82ae-30f739a13e14",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde2-7d87-72d7-9873-ad379c648fd0",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:14.055260Z",
+   "actor_user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+   "actor_display_name": "Sara",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde2-7066-71d4-8040-c815f5a1b45e",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:10.695175Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-6e15-7013-bbf2-149c3b4ee789",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde2-6deb-718c-8eb8-f22bb738967d",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:10.059528Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-66a5-774e-b03a-6c036a12ab92",
+   "role": null
+  },
+  {
+   "id": "01a0fde2-68cf-73b6-9b3d-97fd440fa68e",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:08.752124Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-66a5-774e-b03a-6c036a12ab92",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde2-4afc-7376-8374-f75cb5eb2dd0",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:01.116811Z",
+   "actor_user_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+   "actor_display_name": "Karim",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde2-43ce-72c5-9365-fc5d06523a3b",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:30:59.278572Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-3780-7421-ab5f-389e2c7f19c9",
+   "role": null
+  },
+  {
+   "id": "01a0fde2-39c3-720e-9183-5546efe8f7ba",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:30:56.707993Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-3780-7421-ab5f-389e2c7f19c9",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde1-ffdd-73a0-808b-876eb53c3203",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:30:41.886093Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde1-fd75-739b-9302-7b065200ce7f",
+   "role": "editor"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+PATCH /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/members/01a0fde1-8122-7047-abe4-592cd68792f7
+> {"role": "editor", "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fde2-7d66-7095-88f1-f5d1ffd1bf0a",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 2,
+  "change_seq": 64,
+  "created_at": "2026-10-02T18:31:14.022950Z",
+  "updated_at": "2026-10-02T18:32:15.147591Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+  "display_name": "Sara",
+  "role": "editor"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] 200 editor v+1 
+GET /sync/wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fde1-fd42-716e-bfda-f7861c23f8a7",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T18:30:41.218707Z",
+    "updated_at": "2026-10-02T18:30:41.218707Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+    "display_name": "Mona",
+    "role": "owner"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fde2-3780-7421-ab5f-389e2c7f19c9",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 2,
+    "change_seq": 8,
+    "created_at": "2026-10-02T18:30:56.690619Z",
+    "updated_at": "2026-10-02T18:30:59.262647Z",
+    "deleted_at": "2026-10-02T18:30:59.262647Z",
+    "role": "editor",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+    "status": "revoked",
+    "expires_at": "2026-10-09T18:30:56.658779Z"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fde2-4a25-701e-a4cc-1e03774735c2",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 1,
+    "change_seq": 10,
+    "created_at": "2026-10-02T18:31:00.907544Z",
+    "updated_at": "2026-10-02T18:31:00.907544Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+    "display_name": "Karim",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fde1-fd75-739b-9302-7b065200ce7f",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 2,
+    "change_seq": 11,
+    "created_at": "2026-10-02T18:30:41.861433Z",
+    "updated_at": "2026-10-02T18:31:01.150666Z",
+    "deleted_at": "2026-10-02T18:31:01.150666Z",
+    "role": "editor",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+    "status": "accepted",
+    "expires_at": "2026-10-09T18:30:41.818483Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fde2-66a5-774e-b03a-6c036a12ab92",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 2,
+    "change_seq": 15,
+    "created_at": "2026-10-02T18:31:08.735075Z",
+    "updated_at": "2026-10-02T18:31:10.043973Z",
+    "deleted_at": "2026-10-02T18:31:10.043973Z",
+    "role": "viewer",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+    "status": "revoked",
+    "expires_at": "2026-10-09T18:31:08.717910Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fde2-6e15-7013-bbf2-149c3b4ee789",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 2,
+    "change_seq": 20,
+    "created_at": "2026-10-02T18:31:10.677450Z",
+    "updated_at": "2026-10-02T18:31:14.062572Z",
+    "deleted_at": "2026-10-02T18:31:14.062572Z",
+    "role": "viewer",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+    "status": "accepted",
+    "expires_at": "2026-10-09T18:31:10.660551Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fde2-7f74-76a1-82ae-30f739a13e14",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 2,
+    "change_seq": 24,
+    "created_at": "2026-10-02T18:31:15.082749Z",
+    "updated_at": "2026-10-02T18:31:16.152866Z",
+    "deleted_at": "2026-10-02T18:31:16.152866Z",
+    "role": "viewer",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+    "status": "revoked",
+    "expires_at": "2026-10-09T18:31:15.062194Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fde2-85e7-7325-a7a9-e526d238435d",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 2,
+    "change_seq": 28,
+    "created_at": "2026-10-02T18:31:16.726514Z",
+    "updated_at": "2026-10-02T18:31:17.255160Z",
+    "deleted_at": "2026-10-02T18:31:17.255160Z",
+    "role": "viewer",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+    "status": "revoked",
+    "expires_at": "2026-10-09T18:31:16.710376Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fde2-8a43-7458-9de5-3a0b2c31cac6",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 2,
+    "change_seq": 32,
+    "created_at": "2026-10-02T18:31:17.932570Z",
+    "updated_at": "2026-10-02T18:31:24.279935Z",
+    "deleted_at": "2026-10-02T18:31:24.279935Z",
+    "role": "viewer",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+    "status": "revoked",
+    "expires_at": "2026-10-09T18:31:17.890819Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fde2-ca8b-7629-af08-9b676059da7d",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 2,
+    "change_seq": 36,
+    "created_at": "2026-10-02T18:31:34.409255Z",
+    "updated_at": "2026-10-02T18:31:37.925230Z",
+    "deleted_at": "2026-10-02T18:31:37.925230Z",
+    "role": "viewer",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+    "status": "revoked",
+    "expires_at": "2026-10-09T18:31:34.389673Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fde2-daf8-7034-b55c-65ebdb6e6466",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 2,
+    "change_seq": 40,
+    "created_at": "2026-10-02T18:31:38.518011Z",
+    "updated_at": "2026-10-02T18:31:43.799505Z",
+    "deleted_at": "2026-10-02T18:31:43.799505Z",
+    "role": "viewer",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+    "status": "expired",
+    "expires_at": "2026-10-02T18:31:40.000000Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fde2-fcf1-703e-95dd-8837c41606fa",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 2,
+    "change_seq": 44,
+    "created_at": "2026-10-02T18:31:47.298291Z",
+    "updated_at": "2026-10-02T18:31:49.206208Z",
+    "deleted_at": "2026-10-02T18:31:49.206208Z",
+    "role": "viewer",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+    "status": "revoked",
+    "expires_at": "2026-10-09T18:31:47.261553Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fde3-03f0-70ae-9ce5-564690badc5f",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 2,
+    "change_seq": 47,
+    "created_at": "2026-10-02T18:31:49.255948Z",
+    "updated_at": "2026-10-02T18:31:55.841506Z",
+    "deleted_at": "2026-10-02T18:31:55.841506Z",
+    "role": "editor",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+    "status": "declined",
+    "expires_at": "2026-10-09T18:31:49.206208Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fde3-2ef6-74b5-9f32-fb3ed6024256",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 2,
+    "change_seq": 51,
+    "created_at": "2026-10-02T18:32:00.049140Z",
+    "updated_at": "2026-10-02T18:32:08.419466Z",
+    "deleted_at": "2026-10-02T18:32:08.419466Z",
+    "role": "viewer",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+    "status": "revoked",
+    "expires_at": "2026-10-09T18:32:00.018925Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fde3-5218-739e-ab59-4518e28efb96",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 2,
+    "change_seq": 56,
+    "created_at": "2026-10-02T18:32:09.067852Z",
+    "updated_at": "2026-10-02T18:32:11.262659Z",
+    "deleted_at": "2026-10-02T18:32:11.262659Z",
+    "role": "viewer",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+    "status": "accepted",
+    "expires_at": "2026-10-09T18:32:09.031460Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fde3-60d1-7507-878a-d511cc70a384",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 2,
+    "change_seq": 60,
+    "created_at": "2026-10-02T18:32:12.784538Z",
+    "updated_at": "2026-10-02T18:32:13.293293Z",
+    "deleted_at": "2026-10-02T18:32:13.293293Z",
+    "role": "viewer",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+    "status": "declined",
+    "expires_at": "2026-10-09T18:32:12.768359Z"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fde3-5cd7-73ef-ad90-7c1eb0020433",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 2,
+    "change_seq": 62,
+    "created_at": "2026-10-02T18:32:11.224177Z",
+    "updated_at": "2026-10-02T18:32:13.726487Z",
+    "deleted_at": "2026-10-02T18:32:13.726487Z",
+    "member_user_id": "01a0fde1-8c79-7201-82c4-05ad518612c8",
+    "display_name": null,
+    "role": "viewer"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fde2-7d66-7095-88f1-f5d1ffd1bf0a",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 2,
+    "change_seq": 64,
+    "created_at": "2026-10-02T18:31:14.022950Z",
+    "updated_at": "2026-10-02T18:32:15.147591Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+    "display_name": "Sara",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet",
+   "record": {
+    "id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 1,
+    "change_seq": 65,
+    "created_at": "2026-10-02T18:30:41.199672Z",
+    "updated_at": "2026-10-02T18:30:41.199672Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "E2E Home",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmRlMS1mYjEyLTc0ZjAtYTI2NC1jYzI4YjkzZWE1ZWEiLCJyIjoiMDFhMGZkZTEtNzRjNy03MzNkLTg3MmUtZDhiYTMwYTcxMTE5IiwicCI6NjV9r2M9UrS3g76PGJj09eBwww"
+ }
+}
+
+CHECK [PASS] wallet feed row 
+GET /sync/user/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fde1-a6a5-7079-ae0e-dcb910653308",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T18:30:20.279015Z",
+    "updated_at": "2026-10-02T18:32:16.113440Z",
+    "deleted_at": null,
+    "user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T18:30:20.272629Z",
+    "last_used_at": "2026-10-02T18:32:16.111933Z",
+    "ended_at": null,
+    "current": true
+   }
+  },
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fde1-84e0-7368-9431-12d6111e9930",
+    "version": 2,
+    "change_seq": 3,
+    "created_at": "2026-10-02T18:30:10.400521Z",
+    "updated_at": "2026-10-02T18:30:30.179571Z",
+    "deleted_at": null,
+    "user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+    "display_name": "Sara",
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": false,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fde2-7d66-7095-88f1-f5d1ffd1bf0a",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 2,
+    "change_seq": 64,
+    "created_at": "2026-10-02T18:31:14.022950Z",
+    "updated_at": "2026-10-02T18:32:15.147591Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+    "display_name": "Sara",
+    "role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmRlMS04MTIyLTcwNDctYWJlNC01OTJjZDY4NzkyZjciLCJyIjoiMDFhMGZkZTEtODEyMi03MDQ3LWFiZTQtNTkyY2Q2ODc5MmY3IiwicCI6NX0w2aikA8NRlh1J6zrnbdpb"
+ }
+}
+
+CHECK [PASS] sara user feed row 
+CHECK [PASS] one audit role_changed 
+GET /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/activity params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fde3-6c43-71b4-9948-89e4bfbd8b70",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:32:15.171896Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "role_changed",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde3-66cb-7303-a5c3-1002da528dd5",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:32:13.771516Z",
+   "actor_user_id": "01a0fde1-8c79-7201-82c4-05ad518612c8",
+   "actor_display_name": null,
+   "action": "left",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-8c79-7201-82c4-05ad518612c8",
+   "role": null
+  },
+  {
+   "id": "01a0fde3-6301-708f-bf9e-968340c5f1c9",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:32:12.802072Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde3-60d1-7507-878a-d511cc70a384",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde3-5cf6-724f-bad5-3452e28b99b1",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:32:11.255194Z",
+   "actor_user_id": "01a0fde1-8c79-7201-82c4-05ad518612c8",
+   "actor_display_name": null,
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-8c79-7201-82c4-05ad518612c8",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde3-547d-714a-8ba8-4a9b3b6a744a",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:32:09.085691Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde3-5218-739e-ab59-4518e28efb96",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde3-51f1-72f3-9711-04d042322dfc",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:32:08.433989Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde3-2ef6-74b5-9f32-fb3ed6024256",
+   "role": null
+  },
+  {
+   "id": "01a0fde3-3143-73e4-ad3d-95285509e9e5",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:32:00.067837Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde3-2ef6-74b5-9f32-fb3ed6024256",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde3-0718-73f8-8e07-2165fedfb58f",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:49.272463Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde3-03f0-70ae-9ce5-564690badc5f",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde2-ff73-739f-a6f9-40eae47cd7f5",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:47.315239Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-fcf1-703e-95dd-8837c41606fa",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde2-dd26-70b8-8a45-b5aaa04f0397",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:38.534531Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-daf8-7034-b55c-65ebdb6e6466",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde2-dad3-70aa-bea9-e871794ce115",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:37.939224Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-ca8b-7629-af08-9b676059da7d",
+   "role": null
+  },
+  {
+   "id": "01a0fde2-cd22-7333-a03a-a374f07e299d",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:34.435306Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-ca8b-7629-af08-9b676059da7d",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde2-a58f-72f5-b472-aa0af57b23c7",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:24.303297Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-8a43-7458-9de5-3a0b2c31cac6",
+   "role": null
+  },
+  {
+   "id": "01a0fde2-8cbd-7373-abe4-576ea8cb58a5",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:17.949910Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-8a43-7458-9de5-3a0b2c31cac6",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde2-8a1a-72f5-8f4c-39d81f17ee93",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:17.274709Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-85e7-7325-a7a9-e526d238435d",
+   "role": null
+  },
+  {
+   "id": "01a0fde2-8807-7054-aafc-8ed36fd75e37",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:16.743371Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-85e7-7325-a7a9-e526d238435d",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde2-85c7-7125-a391-07a0cd475e5b",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:16.167298Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-7f74-76a1-82ae-30f739a13e14",
+   "role": null
+  },
+  {
+   "id": "01a0fde2-81a4-70d8-81e7-a873ffd055d0",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:15.108860Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-7f74-76a1-82ae-30f739a13e14",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde2-7d87-72d7-9873-ad379c648fd0",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:14.055260Z",
+   "actor_user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+   "actor_display_name": "Sara",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde2-7066-71d4-8040-c815f5a1b45e",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:10.695175Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-6e15-7013-bbf2-149c3b4ee789",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde2-6deb-718c-8eb8-f22bb738967d",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:10.059528Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-66a5-774e-b03a-6c036a12ab92",
+   "role": null
+  },
+  {
+   "id": "01a0fde2-68cf-73b6-9b3d-97fd440fa68e",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:08.752124Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-66a5-774e-b03a-6c036a12ab92",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde2-4afc-7376-8374-f75cb5eb2dd0",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:31:01.116811Z",
+   "actor_user_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+   "actor_display_name": "Karim",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde2-43ce-72c5-9365-fc5d06523a3b",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:30:59.278572Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-3780-7421-ab5f-389e2c7f19c9",
+   "role": null
+  },
+  {
+   "id": "01a0fde2-39c3-720e-9183-5546efe8f7ba",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:30:56.707993Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde2-3780-7421-ab5f-389e2c7f19c9",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde1-ffdd-73a0-808b-876eb53c3203",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "occurred_at": "2026-10-02T18:30:41.886093Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde1-fd75-739b-9302-7b065200ce7f",
+   "role": "editor"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] one activity entry 

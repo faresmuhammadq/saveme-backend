@@ -33,6 +33,9 @@
       caller belongs to `wallet_id` with `role` — read that wallet's feed
       (from the beginning when the wallet is new to the phone). Tombstoned:
       the caller no longer belongs to that wallet — purge its local data.
+      From v1.9 (spec 016) memberships also change by invitation acceptance
+      (a new live row), role change and plan demotion (the live row again,
+      with its new `role`), removal and leaving (the tombstone).
 
       Paging: absent `cursor` means from the beginning (a full resync). Store
       `meta.sync_cursor` after applying a page and send it back as `cursor`;
@@ -149,6 +152,13 @@
       014): a rule and its occurrences ride their wallet's feed only (a
       transfer rule's source), whether a member or the server wrote them; the
       transactions they produce ride both wallets' feeds like any transfer.
+      From v1.9 it also carries `invitation` rows (spec 016): pending
+      invitations live, closed ones as tombstones whose `status` says why.
+      Invitations are not batch items (creating one sends mail or returns a
+      one-time link); use `PUT /wallets/{id}/invitations/{iid}`.
+
+      A `wallet_member` tombstone on this feed means that member left or was
+      removed; the person themselves learns it from their own user feed.
 
       The wallet record is re-sent whenever anything in the wallet changes
       (its `change_seq` is the scope counter); a `change_seq` move alone is
@@ -542,8 +552,9 @@ components:
             `wallet_member` (the caller's own memberships), and from v1.8
             `budget` (the caller's own budgets). Wallet feed:
             `wallet`, `wallet_member`, `category_reference`, `transaction`,
-            and from v1.7 `recurring_rule`, `occurrence`.
-          enum: [profile, device_session, category, wallet_member, wallet, category_reference, transaction, recurring_rule, occurrence, budget]
+            and from v1.7 `recurring_rule`, `occurrence`, and from v1.9
+            `invitation`.
+          enum: [profile, device_session, category, wallet_member, wallet, category_reference, transaction, recurring_rule, occurrence, budget, invitation]
         record:
           anyOf:
             - $ref: './identity.yaml#/components/schemas/Profile'
@@ -556,6 +567,7 @@ components:
             - $ref: './recurring.yaml#/components/schemas/RecurringRule'
             - $ref: './recurring.yaml#/components/schemas/Occurrence'
             - $ref: './budgets.yaml#/components/schemas/Budget'
+            - $ref: './sharing.yaml#/components/schemas/Invitation'
 
     ChangeFeedMeta:
       type: object

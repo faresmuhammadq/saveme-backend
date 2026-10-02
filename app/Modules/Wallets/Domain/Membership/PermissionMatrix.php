@@ -17,12 +17,14 @@ final class PermissionMatrix
     }
 
     /**
-     * The capability the wallet owner's plan must also grant, if the row names one.
+     * The capability the wallet owner's plan must also grant, if the row names
+     * one. Row S-03's quota condition for raising to editor is not a flag and
+     * is enforced by Sharing's MemberService.
      */
     public static function capabilityFor(Permission $permission): ?Feature
     {
         return match ($permission) {
-            Permission::S02SendOrRevokeInvitation => Feature::SharingEnabled,
+            Permission::S02SendInvitation => Feature::SharingEnabled,
             default => null,
         };
     }
@@ -36,7 +38,8 @@ final class PermissionMatrix
             Permission::W01ReadWallet,
             Permission::T01ReadTransactions,
             Permission::R01ReadRecurring,
-            Permission::S01SeeInvitations => [Role::Owner, Role::Editor, Role::Viewer],
+            Permission::S01SeeInvitations,
+            Permission::S07ReadActivity => [Role::Owner, Role::Editor, Role::Viewer],
             Permission::T02WriteTransactions,
             Permission::T03Transfer,
             Permission::R02WriteRecurring => [Role::Owner, Role::Editor],
@@ -44,9 +47,10 @@ final class PermissionMatrix
             Permission::W03Archive,
             Permission::W04Delete,
             Permission::W05TransferOwnership,
-            Permission::S02SendOrRevokeInvitation,
+            Permission::S02SendInvitation,
             Permission::S03ChangeRole,
-            Permission::S04RemoveMember => [Role::Owner],
+            Permission::S04RemoveMember,
+            Permission::S06RevokeInvitation => [Role::Owner],
             Permission::S05Leave => [Role::Editor, Role::Viewer],
         };
     }

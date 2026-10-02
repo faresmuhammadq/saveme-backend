@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Wallets\Infrastructure\Models\WalletMember;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Testing\TestResponse;
 
 /*
@@ -8,6 +9,8 @@ use Illuminate\Testing\TestResponse;
  */
 
 beforeEach(function () {
+    // The plan-demotion listener (spec 016) is queued; these tests are about the transfer itself, and the demotion has its own tests.
+    Queue::fake();
     [$this->user, $this->credential] = walletCaller();
     $this->wallet = ownedWallet($this->user->id);
     $this->grace = person('grace@example.test');

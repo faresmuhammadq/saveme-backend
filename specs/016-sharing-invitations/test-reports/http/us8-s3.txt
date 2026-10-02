@@ -1,0 +1,14 @@
+===== us8-s3 US8-3 non-member reads activity: 404 2026-10-02T18:33:39.534918Z
+
+GET /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/activity
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fde4-b67e-707d-8fed-6eb7b680cda1"
+}
+
+CHECK [PASS] 404 

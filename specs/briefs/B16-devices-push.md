@@ -29,3 +29,8 @@ The brief predates decisions ratified since. These collide with it; the ratified
 ## Inherited from B8 (spec 015)
 
 - **`BudgetExceeded` and any overrun push are B16's.** Spec 015 publishes no event and stores no threshold or "notified" state; progress is computed on read, so detecting an overrun needs its own trigger (for example a job that evaluates `BudgetQueryService` for budgets near their limit).
+
+## Inherited from B9 (spec 016)
+
+- **Listen to `InvitationSent`, `InvitationAccepted`, `MemberRevoked` and `MemberRoleChanged`** (after commit, identifiers and scalars only; `MemberRevoked` reason `removed` | `left`, `MemberRoleChanged` reason `owner` | `plan`). The invitation mail is dispatched directly after commit, not through `InvitationSent`, so a push listener does not affect it.
+- No amount, wallet name or address in any push body.

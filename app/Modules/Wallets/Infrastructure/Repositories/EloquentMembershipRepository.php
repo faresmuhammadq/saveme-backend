@@ -100,6 +100,77 @@ final class EloquentMembershipRepository implements MembershipRepository
         }
     }
 
+    public function tombstone(string $memberId, DateTimeImmutable $at, int $changeSeq, int $memberChangeSeq): void
+    {
+        WalletMember::query()->whereKey($memberId)->toBase()->update([
+            'deleted_at' => self::instant($at),
+            'version' => DB::raw('version + 1'),
+            'change_seq' => $changeSeq,
+            'member_change_seq' => $memberChangeSeq,
+            'updated_at' => self::instant($at),
+        ]);
+    }
+
+    public function latestFor(string $walletId, string $userId): ?MemberRecord
+    {
+        $member = WalletMember::query()
+            ->where('wallet_id', $walletId)
+            ->where('user_id', $userId)
+            ->orderByRaw('deleted_at IS NULL DESC')
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->first();
+
+        return $member === null ? null : self::record($member);
+    }
+
+    public function activeRanked(string $walletId): array
+    {
+        return array_values(WalletMember::query()
+            ->where('wallet_id', $walletId)
+            ->whereNull('deleted_at')
+            ->orderByRaw("role = 'owner' DESC")
+            ->orderBy('created_at')
+            ->orderBy('id')
+            ->get()
+            ->map(fn (WalletMember $member): MemberRecord => self::record($member))
+            ->all());
+    }
+
+    public function countActive(string $walletId): int
+    {
+        return WalletMember::query()->where('wallet_id', $walletId)->whereNull('deleted_at')->count();
+    }
+
+    public function ownedLiveWalletsOf(string $userId): array
+    {
+        return array_values(WalletMember::query()
+            ->join('wallets', 'wallets.id', '=', 'wallet_members.wallet_id')
+            ->where('wallet_members.user_id', $userId)
+            ->where('wallet_members.role', Role::Owner->value)
+            ->whereNull('wallet_members.deleted_at')
+            ->whereNull('wallets.deleted_at')
+            ->orderBy('wallets.id')
+            ->pluck('wallets.id')
+            ->map(fn (mixed $id): string => (string) $id)
+            ->all());
+    }
+
+    public function activeAmong(string $walletId, array $userIds): array
+    {
+        if ($userIds === []) {
+            return [];
+        }
+
+        return array_values(WalletMember::query()
+            ->where('wallet_id', $walletId)
+            ->whereIn('user_id', $userIds)
+            ->whereNull('deleted_at')
+            ->pluck('user_id')
+            ->map(fn (mixed $id): string => (string) $id)
+            ->all());
+    }
+
     private static function instant(DateTimeImmutable $at): string
     {
         return $at->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s.uP');

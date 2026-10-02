@@ -1,0 +1,89 @@
+===== us3-s3 US3-3 owner without sharing still revokes 2026-10-02T18:31:27.959130Z
+
+PUT /wallets/01a0fde2-b3d7-7636-92ef-7f23a40ac0e0
+> {"type": "cash", "name": "E2E Nina", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fde2-b3d7-7636-92ef-7f23a40ac0e0",
+  "wallet_id": "01a0fde2-b3d7-7636-92ef-7f23a40ac0e0",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T18:31:28.421733Z",
+  "updated_at": "2026-10-02T18:31:28.421733Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "E2E Nina",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fde2-b3d7-7636-92ef-7f23a40ac0e0/invitations/01a0fde2-b5eb-7323-8f03-cccc8c80a6e6
+> {"role": "viewer", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a0fde2-b5eb-7323-8f03-cccc8c80a6e6",
+  "wallet_id": "01a0fde2-b3d7-7636-92ef-7f23a40ac0e0",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T18:31:29.025813Z",
+  "updated_at": "2026-10-02T18:31:29.025813Z",
+  "deleted_at": null,
+  "role": "viewer",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fde1-93e2-7151-9bb4-01cef08e378a",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:31:29.008052Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=[redacted]"
+ }
+}
+
+PUT /wallets/01a0fde2-b3d7-7636-92ef-7f23a40ac0e0/invitations/01a0fde2-c5b6-707b-b909-024830624f42
+> {"role": "viewer", "invitee_email": null}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/feature-not-entitled",
+ "title": "Feature not entitled",
+ "status": 403,
+ "detail": "Your plan does not include this.",
+ "code": "FEATURE_NOT_ENTITLED",
+ "request_id": "01a0fde2-c68f-71b7-be9b-fcc728d56ef0",
+ "feature": "sharing.enabled"
+}
+
+CHECK [PASS] sharing now off (new invite 403 sharing.enabled) 
+DELETE /wallets/01a0fde2-b3d7-7636-92ef-7f23a40ac0e0/invitations/01a0fde2-b5eb-7323-8f03-cccc8c80a6e6
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fde2-b5eb-7323-8f03-cccc8c80a6e6",
+  "wallet_id": "01a0fde2-b3d7-7636-92ef-7f23a40ac0e0",
+  "version": 2,
+  "change_seq": 6,
+  "created_at": "2026-10-02T18:31:29.025813Z",
+  "updated_at": "2026-10-02T18:31:33.712228Z",
+  "deleted_at": "2026-10-02T18:31:33.712228Z",
+  "role": "viewer",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fde1-93e2-7151-9bb4-01cef08e378a",
+  "status": "revoked",
+  "expires_at": "2026-10-09T18:31:29.008052Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] revoke 200 

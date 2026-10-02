@@ -1,0 +1,99 @@
+===== us4-s2 US4-2 mismatched person: preview/accept/decline 404, nothing changes 2026-10-02T18:31:59.478146Z
+
+PUT /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/invitations/01a0fde3-2ef6-74b5-9f32-fb3ed6024256
+> {"role": "viewer", "invitee_email": "qs016-omar-e1790965803@example.test"}
+< 201
+{
+ "data": {
+  "id": "01a0fde3-2ef6-74b5-9f32-fb3ed6024256",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 1,
+  "change_seq": 49,
+  "created_at": "2026-10-02T18:32:00.049140Z",
+  "updated_at": "2026-10-02T18:32:00.049140Z",
+  "deleted_at": null,
+  "role": "viewer",
+  "channel": "email",
+  "invitee_email": "qs016-omar-e1790965803@example.test",
+  "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:32:00.018925Z"
+ },
+ "meta": {}
+}
+
+POST /invitations/preview
+> {"token": "[redacted]"}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fde3-3f29-72e0-81c3-d0ccec48f40b"
+}
+
+CHECK [PASS] preview 404 NOT_FOUND 
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fde3-40dc-70fc-835d-3ccebdd4e676"
+}
+
+CHECK [PASS] accept 404 NOT_FOUND 
+POST /invitations/decline
+> {"token": "[redacted]"}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fde3-42c1-7258-9951-e0a5f9cd9e96"
+}
+
+CHECK [PASS] decline 404 NOT_FOUND 
+POST /invitations/preview
+> {"token": "[redacted]"}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fde3-4462-709e-a1f7-8eb4c162fc9f"
+}
+
+CHECK [PASS] identical to unknown token 
+CHECK [PASS] unchanged (pending) 
+DELETE /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/invitations/01a0fde3-2ef6-74b5-9f32-fb3ed6024256
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fde3-2ef6-74b5-9f32-fb3ed6024256",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 2,
+  "change_seq": 51,
+  "created_at": "2026-10-02T18:32:00.049140Z",
+  "updated_at": "2026-10-02T18:32:08.419466Z",
+  "deleted_at": "2026-10-02T18:32:08.419466Z",
+  "role": "viewer",
+  "channel": "email",
+  "invitee_email": null,
+  "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "status": "revoked",
+  "expires_at": "2026-10-09T18:32:00.018925Z"
+ },
+ "meta": {}
+}
+

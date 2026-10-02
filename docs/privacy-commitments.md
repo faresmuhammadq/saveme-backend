@@ -64,6 +64,8 @@ We would rather tell you exactly what is protected than tell you "everything is 
 - **Nobody outside it sees anything at all** — not the wallet, not its name, not that it exists.
 - **Your categories and your budgets stay yours.** Sharing a wallet with someone does not show them how you organise your own spending, and does not let them change it.
 - **You choose who joins, and you can remove them.** Removing someone stops them reaching the wallet from that moment.
+- **When you invite someone by email, we keep their address only until they answer or 7 days pass, and only the wallet's members see it.**
+- **If your plan ends, the people you share with become viewers; nobody is removed.**
 
 One honest limit: if someone was a member and you removed them, whatever their phone already downloaded is on their phone. We can stop them getting anything new. We cannot reach into a device we do not control, and we will not pretend otherwise.
 
@@ -73,6 +75,8 @@ One honest limit: if someone was a member and you removed them, whatever their p
 - **لا أحد خارجها يرى أي شيء** — لا المحفظة، ولا اسمها، ولا حتى أنها موجودة.
 - **فئاتك وميزانياتك تبقى لك.** مشاركة محفظة مع شخص لا تُظهر له طريقتك في تنظيم إنفاقك، ولا تتيح له تغييرها.
 - **أنت تختار من ينضم، ويمكنك إزالته.** والإزالة توقف وصوله إلى المحفظة من تلك اللحظة.
+- **عندما تدعو شخصاً بالبريد الإلكتروني، نحتفظ بعنوانه فقط إلى أن يردّ أو تمرّ 7 أيام، ولا يراه إلا أعضاء المحفظة.**
+- **إذا انتهت خطتك، يصبح من تشاركهم مشاهدين فقط؛ ولا يُزال أحد.**
 
 حدٌّ واحد نقوله بصراحة: إذا كان شخص عضواً ثم أزلته، فما نزّله هاتفه بالفعل موجود على هاتفه. نستطيع منعه من الحصول على أي جديد، ولا نستطيع الوصول إلى جهاز لا نتحكم فيه، ولن ندّعي غير ذلك.
 

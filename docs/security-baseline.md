@@ -131,6 +131,9 @@ The routes that send mail or create accounts carry their own budgets, independen
 | Registration | 10 per hour per origin |
 | Resend verification | 3 per hour per address |
 | Password reset request | 3 per hour per address, counted per lookup value whether the address is registered or not |
+| Invitation create | 20 per 24 hours per inviter, counted for applied creates only (429) |
+| Invitation mail | 5 per 24 hours per address lookup value, across all inviters; silent: the invitation is created and answered the same, no mail is sent |
+| Invitation token operations (preview, accept, decline) | 30 per hour per person (429) |
 
 **Owned by**: Identity.
 
@@ -143,7 +146,7 @@ Four surfaces can be used to ask "does this address have an account here". Three
 | Sign-in | `401 INVALID_CREDENTIALS` |
 | Password reset request | `202` — "if that address is registered, a link is on its way" |
 | Registration | **not uniform**: `202` for a new address, `409 EMAIL_ALREADY_REGISTERED` for one that has an account, with no mail |
-| Invitation | `202`, with no indication of whether the invitee is registered |
+| Invitation | `201` (or `200` for a replay) with the same body whether or not the address is registered; only the mail differs |
 
 **Rules**
 
@@ -161,7 +164,9 @@ Four surfaces can be used to ask "does this address have an account here". Three
 | Read anything they were invited to | allowed |
 | Manage their own profile | allowed |
 | Manage their own sessions | allowed |
-| **Any write to any wallet** — including a recurring rule or one of its occurrences, and a rule's catch-up request | **refused** |
+| Preview, accept or decline an invitation addressed to them | allowed |
+| Leave a wallet | allowed |
+| **Any write to any wallet** — including a recurring rule or one of its occurrences, and a rule's catch-up request — and, for the wallet's owner, sending or revoking an invitation, changing a role and removing a member | **refused** |
 | **Any write to their own categories** | **refused** |
 | **Any write to their own budgets** (save, change, archive, delete) | **refused** |
 
@@ -194,6 +199,9 @@ There is no blanket claim here, because a blanket claim collapses under one ques
 | Password | argon2id hash | no | nobody, ever, at any level of privilege |
 | Session credential | hash | by hash | nobody after issue |
 | Reset and verification tokens | hash | by hash | nobody after issue |
+| Invited address | encrypted under the inviter's data key, with a keyed lookup value beside it; erased when the invitation closes | by lookup value only | members of the wallet, while the invitation is pending |
+| Invitation token | hash | by hash | nobody after issue |
+| Activity entries | none at rest, identifiers only: no amount, note, name or address | yes | members of the wallet |
 | Amount, balance | **none at rest** | yes | members of the wallet |
 | Note | **none at rest** | yes | members of the wallet |
 | Budget limit and progress (`amount_minor`, spent, remaining, projection) | **none at rest**, never logged | yes | the budget's owner only |

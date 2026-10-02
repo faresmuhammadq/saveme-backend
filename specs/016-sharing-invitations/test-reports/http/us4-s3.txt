@@ -1,0 +1,136 @@
+===== us4-s3 US4-3 unverified person previews and accepts; reads OK; writes EMAIL_NOT_VERIFIED 2026-10-02T18:32:08.471738Z
+
+PUT /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/invitations/01a0fde3-5218-739e-ab59-4518e28efb96
+> {"role": "viewer", "invitee_email": "qs016-unv-e1790965803@example.test"}
+< 201
+{
+ "data": {
+  "id": "01a0fde3-5218-739e-ab59-4518e28efb96",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 1,
+  "change_seq": 53,
+  "created_at": "2026-10-02T18:32:09.067852Z",
+  "updated_at": "2026-10-02T18:32:09.067852Z",
+  "deleted_at": null,
+  "role": "viewer",
+  "channel": "email",
+  "invitee_email": "qs016-unv-e1790965803@example.test",
+  "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:32:09.031460Z"
+ },
+ "meta": {}
+}
+
+POST /invitations/preview
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "invitation_id": "01a0fde3-5218-739e-ab59-4518e28efb96",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "wallet_name": "E2E Home",
+  "role": "viewer",
+  "invited_by_display_name": "Mona",
+  "expires_at": "2026-10-09T18:32:09.031460Z",
+  "already_member": false
+ },
+ "meta": {}
+}
+
+CHECK [PASS] preview 200 
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "id": "01a0fde3-5cd7-73ef-ad90-7c1eb0020433",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 1,
+  "change_seq": 55,
+  "created_at": "2026-10-02T18:32:11.224177Z",
+  "updated_at": "2026-10-02T18:32:11.224177Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fde1-8c79-7201-82c4-05ad518612c8",
+  "display_name": null,
+  "role": "viewer"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] accept 200 
+GET /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/transactions
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] reads 200 
+PUT /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/transactions/01a0fde3-5f31-7398-84cf-f60965533b20
+> {"kind": "expense", "date": "2026-10-01", "amount_minor": 5, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "x", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/email-not-verified",
+ "title": "Address not verified",
+ "status": 403,
+ "detail": "Verify your email address first. We can send the link again.",
+ "code": "EMAIL_NOT_VERIFIED",
+ "request_id": "01a0fde3-602e-704c-b0f3-40e5064e627b"
+}
+
+CHECK [PASS] write 403 EMAIL_NOT_VERIFIED 
+PUT /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/invitations/01a0fde3-60d1-7507-878a-d511cc70a384
+> {"role": "viewer", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a0fde3-60d1-7507-878a-d511cc70a384",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 1,
+  "change_seq": 58,
+  "created_at": "2026-10-02T18:32:12.784538Z",
+  "updated_at": "2026-10-02T18:32:12.784538Z",
+  "deleted_at": null,
+  "role": "viewer",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:32:12.768359Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=[redacted]"
+ }
+}
+
+POST /invitations/decline
+> {"token": "[redacted]"}
+< 204
+
+
+CHECK [PASS] unverified may decline 
+POST /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/leave
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fde3-5cd7-73ef-ad90-7c1eb0020433",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 2,
+  "change_seq": 62,
+  "created_at": "2026-10-02T18:32:11.224177Z",
+  "updated_at": "2026-10-02T18:32:13.726487Z",
+  "deleted_at": "2026-10-02T18:32:13.726487Z",
+  "member_user_id": "01a0fde1-8c79-7201-82c4-05ad518612c8",
+  "display_name": null,
+  "role": "viewer"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] unverified may leave 

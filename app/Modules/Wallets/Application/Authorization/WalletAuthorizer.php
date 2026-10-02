@@ -49,13 +49,15 @@ final class WalletAuthorizer
     /**
      * Allows the action or refuses it: not-found for a non-member, forbidden
      * for a role the row does not allow, not-entitled when the row names a
-     * capability the wallet owner's plan lacks.
+     * capability the wallet owner's plan lacks. A caller that decides the
+     * capability itself (Sharing, which checks sharing.enabled only for a new
+     * invitation) passes `$checkCapability` false.
      *
      * @throws WalletNotFound
      * @throws WalletActionForbidden
      * @throws FeatureNotEntitled
      */
-    public function authorize(string $userId, string $walletId, Permission $permission): Role
+    public function authorize(string $userId, string $walletId, Permission $permission, bool $checkCapability = true): Role
     {
         $role = $this->memberRole($userId, $walletId);
 
@@ -65,8 +67,8 @@ final class WalletAuthorizer
 
         $capability = PermissionMatrix::capabilityFor($permission);
 
-        if ($capability !== null && ! $this->entitlements->forWallet($walletId)->allows($capability)) {
-            throw new FeatureNotEntitled;
+        if ($checkCapability && $capability !== null && ! $this->entitlements->forWallet($walletId)->allows($capability)) {
+            throw new FeatureNotEntitled($capability);
         }
 
         return $role;

@@ -9,12 +9,15 @@ use App\Modules\Wallets\Infrastructure\Models\Wallet;
 use App\Modules\Wallets\Infrastructure\Models\WalletMember;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 
 /*
  * Ownership transfer (spec 010, US4; FR-015, FR-017, FR-023, R-10).
  */
 
 beforeEach(function () {
+    // The plan-demotion listener (spec 016) is queued; these tests are about the transfer itself, and the demotion has its own tests.
+    Queue::fake();
     $this->owner = person();
     $this->editor = person('grace@example.test');
     $this->wallet = ownedWallet($this->owner->id);

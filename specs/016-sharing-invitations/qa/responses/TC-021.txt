@@ -1,0 +1,40 @@
+===== TC-021 Envelope: 401, 405, meta {}, no secrets in logs 2026-10-02T18:18:30.168443Z
+
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations
+< 401
+{
+ "type": "http://saveme-backend.test/problems/unauthenticated",
+ "title": "Unauthenticated",
+ "status": 401,
+ "detail": "Please sign in again.",
+ "code": "UNAUTHENTICATED",
+ "request_id": "01a0fdd6-d64c-70a1-934c-a25241e30d0d"
+}
+
+CHECK [PASS] no credential -> 401 
+POST /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations
+> {"role": "viewer"}
+< 405 Allow: GET, HEAD
+{
+ "type": "http://saveme-backend.test/problems/method-not-allowed",
+ "title": "Method not allowed",
+ "status": 405,
+ "detail": "This action is not available here.",
+ "code": "METHOD_NOT_ALLOWED",
+ "request_id": "01a0fdd6-d738-72b2-9147-41daf5a20fff"
+}
+
+CHECK [PASS] POST collection -> 405 405
+GET /invitations/accept
+< 405 Allow: POST
+{
+ "type": "http://saveme-backend.test/problems/method-not-allowed",
+ "title": "Method not allowed",
+ "status": 405,
+ "detail": "This action is not available here.",
+ "code": "METHOD_NOT_ALLOWED",
+ "request_id": "01a0fdd6-d865-7091-acea-aede3e604360"
+}
+
+CHECK [PASS] GET accept -> 405 405
+CHECK [PASS] no invited address or token in application logs 0

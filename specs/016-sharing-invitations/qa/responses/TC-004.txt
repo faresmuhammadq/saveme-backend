@@ -1,0 +1,355 @@
+===== TC-004 US1-5/6: accept -> member with role in one unit of work; retry returns same membership; feeds, audit, activity 2026-10-02T18:14:30.607209Z
+
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "id": "01a0fdd3-3079-7052-94ca-36eff79df38e",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 8,
+  "created_at": "2026-10-02T18:14:31.289833Z",
+  "updated_at": "2026-10-02T18:14:31.289833Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+  "display_name": "Karim QA",
+  "role": "editor"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] accept 200 200 None
+CHECK [PASS] WalletMember: editor, member_user_id k, display name {"id": "01a0fdd3-3079-7052-94ca-36eff79df38e", "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404", "version": 1, "change_seq": 8, "created_at": "2026-10-02T18:14:31.289833Z", "updated_at": "2026-10-02T18:14:31.289833Z", "deleted_at": null, "member_user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0", "display_name": "Karim QA", "role": "editor"}
+CHECK [PASS] meta {} 
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "id": "01a0fdd3-3079-7052-94ca-36eff79df38e",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 8,
+  "created_at": "2026-10-02T18:14:31.289833Z",
+  "updated_at": "2026-10-02T18:14:31.289833Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+  "display_name": "Karim QA",
+  "role": "editor"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] retry -> 200 same membership {"id": "01a0fdd3-3079-7052-94ca-36eff79df38e", "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404", "version": 1, "change_seq": 8, "created_at": "2026-10-02T18:14:31.289833Z", "updated_at": "2026-10-02T18:14:31.289833Z", "deleted_at": null, "member_user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0", "display_name": "Karim QA", "role": "editor"}
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404
+< 200
+{
+ "data": {
+  "id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 10,
+  "created_at": "2026-10-02T18:13:59.987749Z",
+  "updated_at": "2026-10-02T18:13:59.987749Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "Home QA016",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "editor"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] k reads the wallet, my_role editor 200 editor
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd2-cb70-7282-ac30-110efda7281e
+< 200
+{
+ "data": {
+  "id": "01a0fdd2-cb70-7282-ac30-110efda7281e",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 2,
+  "change_seq": 9,
+  "created_at": "2026-10-02T18:14:06.163903Z",
+  "updated_at": "2026-10-02T18:14:31.332797Z",
+  "deleted_at": "2026-10-02T18:14:31.332797Z",
+  "role": "editor",
+  "channel": "email",
+  "invitee_email": null,
+  "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "status": "accepted",
+  "expires_at": "2026-10-09T18:14:06.121296Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] invitation tombstone accepted, address erased {"id": "01a0fdd2-cb70-7282-ac30-110efda7281e", "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404", "version": 2, "change_seq": 9, "created_at": "2026-10-02T18:14:06.163903Z", "updated_at": "2026-10-02T18:14:31.332797Z", "deleted_at": "2026-10-02T18:14:31.332797Z", "role": "editor", "channel": "email", "invitee_email": null, "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e", "status": "accepted", "expires_at": "2026-10-09T18:14:06.121296Z"}
+CHECK [PASS] DB: sealed address and lookup erased {"address_sealed": null, "address_lookup": null, "responder_user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0", "status": "accepted"}
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fdd2-d57c-74c3-b6eb-96887c04c140",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "version": 1,
+   "change_seq": 6,
+   "created_at": "2026-10-02T18:14:08.650124Z",
+   "updated_at": "2026-10-02T18:14:08.650124Z",
+   "deleted_at": null,
+   "role": "editor",
+   "channel": "email",
+   "invitee_email": "qs016-nobody-1790964767@example.test",
+   "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "status": "pending",
+   "expires_at": "2026-10-09T18:14:08.596330Z"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] not in pending list 
+GET /sync/wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fdd2-b647-72e6-8718-dfc003cbfe5d",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T18:14:00.008079Z",
+    "updated_at": "2026-10-02T18:14:00.008079Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "display_name": "Mona QA",
+    "role": "owner"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd2-d57c-74c3-b6eb-96887c04c140",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 1,
+    "change_seq": 6,
+    "created_at": "2026-10-02T18:14:08.650124Z",
+    "updated_at": "2026-10-02T18:14:08.650124Z",
+    "deleted_at": null,
+    "role": "editor",
+    "channel": "email",
+    "invitee_email": "qs016-nobody-1790964767@example.test",
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "pending",
+    "expires_at": "2026-10-09T18:14:08.596330Z"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fdd3-3079-7052-94ca-36eff79df38e",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 1,
+    "change_seq": 8,
+    "created_at": "2026-10-02T18:14:31.289833Z",
+    "updated_at": "2026-10-02T18:14:31.289833Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd2-cb70-7282-ac30-110efda7281e",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 9,
+    "created_at": "2026-10-02T18:14:06.163903Z",
+    "updated_at": "2026-10-02T18:14:31.332797Z",
+    "deleted_at": "2026-10-02T18:14:31.332797Z",
+    "role": "editor",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "accepted",
+    "expires_at": "2026-10-09T18:14:06.121296Z"
+   }
+  },
+  {
+   "type": "wallet",
+   "record": {
+    "id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 1,
+    "change_seq": 10,
+    "created_at": "2026-10-02T18:13:59.987749Z",
+    "updated_at": "2026-10-02T18:13:59.987749Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "Home QA016",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmRkMi1iNDY0LTc2MmItOTkzYi03NmZiZDk3ZDk0MDQiLCJyIjoiMDFhMGZkZDEtYTg1ZC03MDc0LWI2MGUtYzc1NDMyNGM3ODNlIiwicCI6MTB9vPTVHvK-gnRlNf8goGIc2g"
+ }
+}
+
+CHECK [PASS] wallet feed: invitation tombstone row 
+CHECK [PASS] wallet feed: wallet_member row for k {"type": "wallet_member", "record": {"id": "01a0fdd3-3079-7052-94ca-36eff79df38e", "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404", "version": 1, "change_seq": 8, "created_at": "2026-10-02T18:14:31.289833Z", "updated_at": "2026-10-02T18:14:31.289833Z", "deleted_at": null, "member_user_id": "01a0
+GET /sync/user/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fdd2-0544-7791-b095-c01c0b1ccf5e",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T18:13:16.194884Z",
+    "updated_at": "2026-10-02T18:14:36.444841Z",
+    "deleted_at": null,
+    "user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T18:13:16.186681Z",
+    "last_used_at": "2026-10-02T18:14:36.443207Z",
+    "ended_at": null,
+    "current": true
+   }
+  },
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fdd1-b9cd-7298-b041-52e7ddd63471",
+    "version": 2,
+    "change_seq": 3,
+    "created_at": "2026-10-02T18:12:55.373690Z",
+    "updated_at": "2026-10-02T18:13:39.881736Z",
+    "deleted_at": null,
+    "user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+    "display_name": "Karim QA",
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": false,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fdd3-3079-7052-94ca-36eff79df38e",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 1,
+    "change_seq": 8,
+    "created_at": "2026-10-02T18:14:31.289833Z",
+    "updated_at": "2026-10-02T18:14:31.289833Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmRkMS1iNWI3LTczOTItYjE1NC1iNmI5MDJiNTI2ZDAiLCJyIjoiMDFhMGZkZDEtYjViNy03MzkyLWIxNTQtYjZiOTAyYjUyNmQwIiwicCI6NH0-80rh7yzEqyUAlImvcpAO"
+ }
+}
+
+CHECK [PASS] k user feed: live wallet_member row {"type": "wallet_member", "record": {"id": "01a0fdd3-3079-7052-94ca-36eff79df38e", "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404", "version": 1, "change_seq": 8, "created_at": "2026-10-02T18:14:31.289833Z", "updated_at": "2026-10-02T18:14:31.289833Z", "deleted_at": null, "member_user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0", "display_name": "Karim QA", "role": "editor"}}
+user feed wallet_member record keys: ['change_seq', 'created_at', 'deleted_at', 'display_name', 'id', 'member_user_id', 'role', 'updated_at', 'version', 'wallet_id']
+POST /invitations/preview
+> {"token": "[redacted]"}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd3-45e0-7349-a7bb-62b012f5122a"
+}
+
+CHECK [PASS] preview of used token -> 404 
+CHECK [PASS] audit membership_granted for k 1
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/activity params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fdd3-309d-7391-b6c4-22d10dec83d4",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:31.325328Z",
+   "actor_user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+   "actor_display_name": "Karim QA",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd2-d826-7267-8d67-dac5a04cbbce",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:08.678590Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd2-d57c-74c3-b6eb-96887c04c140",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd2-ce67-73f6-af26-1b78824d75a2",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:06.183788Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd2-cb70-7282-ac30-110efda7281e",
+   "role": "editor"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] activity: joined entry for k (member, role editor) [{"id": "01a0fdd3-309d-7391-b6c4-22d10dec83d4", "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404", "occurred_at": "2026-10-02T18:14:31.325328Z", "actor_user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0", "actor_display_name": "Karim QA", "action": "joined", "subject_type": "member", "subject_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0", "role": "editor"}, {"id": "01a0fdd2-d826-7267-8d67-dac5a04cbbce", "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404", "occurred_at": "2026-10-02T18:14:08.678590Z", "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e", "actor_display_name": "Mona QA", "action": "invited", "subject_type": "invitation", "subject_id": "01a0fdd2-d57c-74c3-b6eb-96887c04c140", "role": "editor"}, {"id": "01a0fdd2-ce67-73f6-af26-1b78824d75a2", "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404", "occurred_at": "2026-10-02T18:14:06.183788Z", "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e", "actor_display_name": "Mona QA", "action": "invited", "subject_type": "invitation", "subject_id": "01a0fdd2-cb70-7282-ac30-110efda7281e", "role": "editor"}]
+CHECK [PASS] activity: invited entry for I1 

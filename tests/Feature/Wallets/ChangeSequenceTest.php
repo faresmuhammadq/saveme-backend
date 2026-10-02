@@ -1,6 +1,9 @@
 <?php
 
+use App\Modules\Wallets\Application\ScopeWrite;
+use App\Modules\Wallets\Application\WalletScopeWrites;
 use App\Modules\Wallets\Application\WalletService;
+use App\Modules\Wallets\Domain\Refusals\WalletNotFound;
 use App\Modules\Wallets\Infrastructure\Models\Wallet;
 use App\Modules\Wallets\Infrastructure\Models\WalletMember;
 use Illuminate\Support\Str;
@@ -93,4 +96,41 @@ test('two wallets count independently', function () {
 
     expect(Wallet::query()->find($b->id)->change_seq)->toBe(3)
         ->and(Wallet::query()->find($a->id)->change_seq)->toBe(4);
+});
+
+test('a write through WalletScopeWrites stamps its record and gives the wallet the last, without moving its version', function () {
+    $user = person();
+    $wallet = ownedWallet($user->id);
+    $before = Wallet::query()->findOrFail($wallet->id);
+
+    $stamps = app(WalletScopeWrites::class)->within($wallet->id, fn (ScopeWrite $scope): array => [$scope->nextChangeSeq(), $scope->nextChangeSeq()]);
+
+    $after = Wallet::query()->findOrFail($wallet->id);
+    expect($stamps)->toBe([$before->change_seq + 1, $before->change_seq + 2])
+        ->and($after->change_seq)->toBe($before->change_seq + 3)
+        ->and($after->version)->toBe($before->version);
+});
+
+test('a scope that stamped nothing leaves the counter alone, and a missing wallet is not-found', function () {
+    $wallet = ownedWallet(person()->id);
+    $before = Wallet::query()->findOrFail($wallet->id)->change_seq;
+
+    app(WalletScopeWrites::class)->within($wallet->id, fn (): null => null);
+
+    expect(Wallet::query()->findOrFail($wallet->id)->change_seq)->toBe($before)
+        ->and(fn () => app(WalletScopeWrites::class)->within((string) Str::uuid7(), fn (): null => null))
+        ->toThrow(WalletNotFound::class);
+});
+
+test('a nested scope for the same wallet joins the outer one: one final stamp, taken by the outer', function () {
+    $wallet = ownedWallet(person()->id);
+    $before = Wallet::query()->findOrFail($wallet->id)->change_seq;
+    $scopes = app(WalletScopeWrites::class);
+
+    $scopes->within($wallet->id, function (ScopeWrite $outer) use ($scopes, $wallet): void {
+        $outer->nextChangeSeq();
+        $scopes->within($wallet->id, fn (ScopeWrite $inner): int => $inner->nextChangeSeq());
+    });
+
+    expect(Wallet::query()->findOrFail($wallet->id)->change_seq)->toBe($before + 3);
 });

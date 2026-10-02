@@ -1,0 +1,55 @@
+===== us5-s3 US5-3 owner role or owner target refused; non-member 404 2026-10-02T18:32:36.046891Z
+
+PATCH /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/members/01a0fde1-8122-7047-abe4-592cd68792f7
+> {"role": "owner", "version": 2}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fde3-bee5-72e3-b4cf-665e9bde747a",
+ "errors": [
+  {
+   "pointer": "/role",
+   "code": "IMMUTABLE_FIELD",
+   "detail": "This field cannot be changed."
+  }
+ ]
+}
+
+CHECK [PASS] owner role 422 IMMUTABLE_FIELD /role 
+PATCH /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/members/01a0fde1-74c7-733d-872e-d8ba30a71119
+> {"role": "viewer", "version": 1}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fde3-c071-7119-8d14-d5730f66bf90",
+ "errors": [
+  {
+   "pointer": "/role",
+   "code": "IMMUTABLE_FIELD",
+   "detail": "This field cannot be changed."
+  }
+ ]
+}
+
+CHECK [PASS] owner target 422 IMMUTABLE_FIELD /role 
+PATCH /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/members/01a0fde1-97c5-73eb-8144-60b9a6a8ecb8
+> {"role": "viewer", "version": 1}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fde3-c228-72b5-9daf-bf7337e38b72"
+}
+
+CHECK [PASS] non-member 404 

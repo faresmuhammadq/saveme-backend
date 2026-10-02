@@ -1,0 +1,52 @@
+===== us5-s4 US5-4 stale version: 409 with present membership (role change and removal) 2026-10-02T18:32:37.413169Z
+
+PATCH /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/members/01a0fde1-8122-7047-abe4-592cd68792f7
+> {"role": "viewer", "version": 1}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fde3-c411-7127-819c-a018f3f1d826",
+ "current": {
+  "id": "01a0fde2-7d66-7095-88f1-f5d1ffd1bf0a",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 2,
+  "change_seq": 64,
+  "created_at": "2026-10-02T18:31:14.022950Z",
+  "updated_at": "2026-10-02T18:32:15.147591Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+  "display_name": "Sara",
+  "role": "editor"
+ }
+}
+
+CHECK [PASS] role change 409 current 
+DELETE /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/members/01a0fde1-8122-7047-abe4-592cd68792f7
+> {"version": 1}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fde3-c62b-7337-89d9-25d5214b8c68",
+ "current": {
+  "id": "01a0fde2-7d66-7095-88f1-f5d1ffd1bf0a",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 2,
+  "change_seq": 64,
+  "created_at": "2026-10-02T18:31:14.022950Z",
+  "updated_at": "2026-10-02T18:32:15.147591Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+  "display_name": "Sara",
+  "role": "editor"
+ }
+}
+
+CHECK [PASS] removal 409 current 

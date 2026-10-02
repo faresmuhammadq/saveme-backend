@@ -5,11 +5,14 @@ namespace App\Modules\Wallets\Application\Recurring;
 use App\Modules\Identity\Application\Profiles\Profiles;
 use App\Modules\Shared\Domain\Errors\ErrorCode;
 use App\Modules\Shared\Domain\Errors\FieldError;
+use App\Modules\Wallets\Application\Activity\WalletActivity;
 use App\Modules\Wallets\Application\Authorization\WalletAuthorizer;
 use App\Modules\Wallets\Application\Categories\CategoryReferences;
 use App\Modules\Wallets\Application\Categories\WalletCategoryUses;
 use App\Modules\Wallets\Application\Recurring\Dto\RuleView;
 use App\Modules\Wallets\Application\Recurring\Dto\SavedRecurringRule;
+use App\Modules\Wallets\Domain\Activity\ActivityAction;
+use App\Modules\Wallets\Domain\Activity\ActivitySubject;
 use App\Modules\Wallets\Domain\Membership\Permission;
 use App\Modules\Wallets\Domain\Ports\MembershipRepository;
 use App\Modules\Wallets\Domain\Recurring\OccurrenceRecord;
@@ -60,6 +63,7 @@ final class RecurringRuleService
         private readonly AutoConfirmer $autoConfirmer,
         private readonly WalletAuthorizer $authorizer,
         private readonly Profiles $profiles,
+        private readonly WalletActivity $activity,
     ) {}
 
     /**
@@ -145,6 +149,7 @@ final class RecurringRuleService
                     throw new RuntimeException('The recurring rule changed under its own lock.');
                 }
 
+                $this->activity->record($walletId, $actorId, ActivityAction::Deleted, ActivitySubject::RecurringRule, $ruleId);
                 $this->stamps->finish($walletId);
 
                 return new RuleView($this->reload($ruleId));
@@ -370,6 +375,7 @@ final class RecurringRuleService
 
         $rule = $this->reload($ruleId);
         $this->materialiser->extend($rule, $today);
+        $this->activity->record($walletId, $actorId, ActivityAction::Created, ActivitySubject::RecurringRule, $ruleId);
         $this->stamps->finish($walletId);
 
         return new RuleView($rule);
@@ -415,6 +421,7 @@ final class RecurringRuleService
         $this->moveReference($stored->walletId, $stored->categoryId, $rule->categoryId);
         $this->moveReference($stored->walletId, $stored->payoutCategoryId, $rule->payoutCategoryId);
 
+        $this->activity->record($stored->walletId, $actorId, ActivityAction::Edited, ActivitySubject::RecurringRule, $stored->id);
         $this->stamps->finish($stored->walletId);
 
         return new RuleView($rule);

@@ -110,6 +110,14 @@ components:
           type: string
           description: Present on CLIENT_VERSION_UNSUPPORTED only. The semver the app must update to.
           examples: ['1.6.0']
+        feature:
+          type: string
+          description: |
+            Present on FEATURE_NOT_ENTITLED from v1.9: the capability key the
+            governing plan (for a wallet, its owner's) lacks or whose quota is
+            spent, e.g. `sharing.enabled`, `sharing.max_members_per_wallet`,
+            `wallets.max`. A client may branch on it to explain the refusal.
+          examples: ['sharing.max_members_per_wallet']
         retry_after_seconds:
           type: integer
           description: Present when a Retry-After header is sent. A convenience mirror of that header.

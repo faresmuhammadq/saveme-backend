@@ -5,11 +5,14 @@ namespace App\Modules\Wallets\Application\Transactions;
 use App\Modules\Identity\Application\Events;
 use App\Modules\Shared\Domain\Errors\ErrorCode;
 use App\Modules\Shared\Domain\Errors\FieldError;
+use App\Modules\Wallets\Application\Activity\WalletActivity;
 use App\Modules\Wallets\Application\Authorization\WalletAuthorizer;
 use App\Modules\Wallets\Application\Categories\CategoryReferences;
 use App\Modules\Wallets\Application\Categories\WalletCategoryUses;
 use App\Modules\Wallets\Application\Transactions\Dto\SavedTransaction;
 use App\Modules\Wallets\Application\Transactions\Dto\TransactionView;
+use App\Modules\Wallets\Domain\Activity\ActivityAction;
+use App\Modules\Wallets\Domain\Activity\ActivitySubject;
 use App\Modules\Wallets\Domain\Categories\Ports\CategoryRepository;
 use App\Modules\Wallets\Domain\Events\TransactionPosted;
 use App\Modules\Wallets\Domain\Events\TransactionVoided;
@@ -67,6 +70,7 @@ final class TransactionService
         private readonly PostingTotals $totals,
         private readonly WalletAuthorizer $authorizer,
         private readonly WalletCategoryUses $categoryUses,
+        private readonly WalletActivity $activity,
     ) {}
 
     /**
@@ -251,6 +255,7 @@ final class TransactionService
             $saved = $this->reload($stored->id);
             $this->postings->replaceFor($saved->id, PostingDerivation::for($saved));
             $this->settle($saved->walletIds(), $wallets);
+            $this->recordActivity($actorId, $saved, ActivityAction::Restored);
 
             event(new TransactionPosted(...Events::stamp(), transactionId: $saved->id, walletId: $saved->walletId, counterWalletId: $saved->counterWalletId, kind: $saved->kind->value, date: $saved->date, previousDate: null, categoryId: $saved->categoryId, previousCategoryId: null, actorUserId: $actorId, change: 'restored'));
 
@@ -285,6 +290,7 @@ final class TransactionService
 
             $this->postings->removeFor($stored->id);
             $this->settle($stored->walletIds(), $wallets);
+            $this->recordActivity($actorId, $stored, ActivityAction::Deleted);
 
             event(new TransactionVoided(...Events::stamp(), transactionId: $stored->id, walletId: $stored->walletId, counterWalletId: $stored->counterWalletId, kind: $stored->kind->value, date: $stored->date, categoryId: $stored->categoryId, actorUserId: $actorId));
 
@@ -424,6 +430,8 @@ final class TransactionService
 
         $this->settle($saved->walletIds(), $wallets);
 
+        $this->recordActivity($actorId, $saved, ActivityAction::Created);
+
         event(new TransactionPosted(...Events::stamp(), transactionId: $saved->id, walletId: $saved->walletId, counterWalletId: $saved->counterWalletId, kind: $saved->kind->value, date: $saved->date, previousDate: null, categoryId: $saved->categoryId, previousCategoryId: null, actorUserId: $actorId, change: 'recorded'));
 
         return new TransactionView($saved);
@@ -464,10 +472,22 @@ final class TransactionService
         }
 
         $this->settle($saved->walletIds(), $wallets);
+        $this->recordActivity($actorId, $saved, ActivityAction::Edited);
 
         event(new TransactionPosted(...Events::stamp(), transactionId: $saved->id, walletId: $saved->walletId, counterWalletId: $saved->counterWalletId, kind: $saved->kind->value, date: $saved->date, previousDate: $stored->date, categoryId: $saved->categoryId, previousCategoryId: $stored->categoryId, actorUserId: $actorId, change: 'amended'));
 
         return new TransactionView($saved);
+    }
+
+    /**
+     * One activity entry per wallet the transaction touches, so the members
+     * of a transfer's other wallet see it too (ADR-0020). Identifiers only.
+     */
+    private function recordActivity(string $actorId, TransactionRecord $transaction, ActivityAction $action): void
+    {
+        foreach ($transaction->walletIds() as $walletId) {
+            $this->activity->record($walletId, $actorId, $action, ActivitySubject::Transaction, $transaction->id);
+        }
     }
 
     /**

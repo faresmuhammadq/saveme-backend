@@ -52,3 +52,9 @@ The brief predates decisions ratified since. These collide with it; the ratified
 
 - **Export budgets** with the person's other user-scoped records (category, currency, limit, period type, `archived_at`; tombstones as tombstones). Progress is derived and not exported.
 - **Purge budgets and `budget_start_days` with the account.** `budget_start_days` cascades on the user row; budgets (no cross-module FK) must be deleted by B15 explicitly.
+
+## Inherited from B9 (spec 016)
+
+- **A deleted inviter's pending invitations become unreadable and must be revoked.** The invited address is sealed under the inviter's data key (destroying the key makes it unreadable), but the invitation row and its token stay live; account deletion must close the person's pending invitations (as `revoked`, through Sharing's application layer) before the key goes.
+- **The departing member's activity actor name goes null.** Activity entries (`wallet_activity`) keep `actor_user_id` only as an identifier; `actor_display_name` is filled only while the actor is an active member, so it goes null as soon as they leave. Entries are removed after 90 days; the export does not need them.
+- Membership removal and leaving are tombstones of the membership (glossary state `revoked`), exported as tombstones.

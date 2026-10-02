@@ -1,0 +1,5 @@
+===== us8-s4 US8-4 entries older than 90 days removed by the daily purge 2026-10-02T18:33:39.897163Z
+
+Purged 1 tombstones.
+CHECK [PASS] old entry removed 
+CHECK [PASS] recent entries kept 

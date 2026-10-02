@@ -1,0 +1,841 @@
+===== TC-013 US5-1/2/3/4/7: role change by owner; replay; stale 409; owner target/role 422 IMMUTABLE_FIELD; non-member 404; editor 403 2026-10-02T18:15:52.541633Z
+
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/members params={'limit': 50}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fdd2-b647-72e6-8718-dfc003cbfe5d",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "version": 1,
+   "change_seq": 2,
+   "created_at": "2026-10-02T18:14:00.008079Z",
+   "updated_at": "2026-10-02T18:14:00.008079Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "display_name": "Mona QA",
+   "role": "owner"
+  },
+  {
+   "id": "01a0fdd3-3079-7052-94ca-36eff79df38e",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "version": 1,
+   "change_seq": 8,
+   "created_at": "2026-10-02T18:14:31.289833Z",
+   "updated_at": "2026-10-02T18:14:31.289833Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+   "display_name": "Karim QA",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd3-8bec-73b2-bf6c-ee58aac4b68a",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "version": 1,
+   "change_seq": 15,
+   "created_at": "2026-10-02T18:14:54.701369Z",
+   "updated_at": "2026-10-02T18:14:54.701369Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+   "display_name": "Sara QA",
+   "role": "viewer"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+PATCH /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/members/01a0fdd1-b9d8-73a5-842b-187961d1f257
+> {"role": "editor", "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fdd3-8bec-73b2-bf6c-ee58aac4b68a",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 2,
+  "change_seq": 52,
+  "created_at": "2026-10-02T18:14:54.701369Z",
+  "updated_at": "2026-10-02T18:15:53.305803Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+  "display_name": "Sara QA",
+  "role": "editor"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] viewer -> editor 200, version +1 200 None {"id": "01a0fdd3-8bec-73b2-bf6c-ee58aac4b68a", "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404", "version": 2, "change_seq": 52, "created_at": "2026-10-02T18:14:54.701369Z", "updated_at": "2026-10-02T18:15:53.305803Z", "deleted_at": null, "member_user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257", "display_name": "Sara QA", "role": "editor"}
+CHECK [PASS] meta {} 
+PATCH /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/members/01a0fdd1-b9d8-73a5-842b-187961d1f257
+> {"role": "editor", "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fdd3-8bec-73b2-bf6c-ee58aac4b68a",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 2,
+  "change_seq": 52,
+  "created_at": "2026-10-02T18:14:54.701369Z",
+  "updated_at": "2026-10-02T18:15:53.305803Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+  "display_name": "Sara QA",
+  "role": "editor"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] same role replay -> 200 unchanged 200
+PATCH /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/members/01a0fdd1-b9d8-73a5-842b-187961d1f257
+> {"role": "viewer", "version": 1}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fdd4-73ba-712e-abda-952d9f56ab1b",
+ "current": {
+  "id": "01a0fdd3-8bec-73b2-bf6c-ee58aac4b68a",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 2,
+  "change_seq": 52,
+  "created_at": "2026-10-02T18:14:54.701369Z",
+  "updated_at": "2026-10-02T18:15:53.305803Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+  "display_name": "Sara QA",
+  "role": "editor"
+ }
+}
+
+CHECK [PASS] stale -> 409 VERSION_CONFLICT with current 409 VERSION_CONFLICT
+PATCH /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/members/01a0fdd1-b9d8-73a5-842b-187961d1f257
+> {"role": "owner", "version": 2}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fdd4-75a6-7166-bcd4-31fa40fe2bb6",
+ "errors": [
+  {
+   "pointer": "/role",
+   "code": "IMMUTABLE_FIELD",
+   "detail": "This field cannot be changed."
+  }
+ ]
+}
+
+CHECK [PASS] role owner -> 422 IMMUTABLE_FIELD /role 422 [('/role', 'IMMUTABLE_FIELD')]
+PATCH /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/members/01a0fdd1-a85d-7074-b60e-c754324c783e
+> {"role": "viewer", "version": 1}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fdd4-772b-7395-a288-1ed7888ea7b5",
+ "errors": [
+  {
+   "pointer": "/role",
+   "code": "IMMUTABLE_FIELD",
+   "detail": "This field cannot be changed."
+  }
+ ]
+}
+
+CHECK [PASS] owner as target -> 422 IMMUTABLE_FIELD /role 422 [('/role', 'IMMUTABLE_FIELD')]
+PATCH /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/members/01a0fdd1-bddb-70d6-b5fc-49bcceb302e7
+> {"role": "viewer", "version": 1}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd4-78b3-731f-9f5d-b59e27b1d583"
+}
+
+CHECK [PASS] non-member target -> 404 404
+PATCH /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/members/01a0fdd1-b9d8-73a5-842b-187961d1f257
+> {"role": "viewer", "version": 2}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/forbidden",
+ "title": "Forbidden",
+ "status": 403,
+ "detail": "Your role in this wallet does not allow this.",
+ "code": "FORBIDDEN",
+ "request_id": "01a0fdd4-7a56-72a8-af93-48e729f19a83"
+}
+
+CHECK [PASS] editor changes a role -> 403 FORBIDDEN 403 FORBIDDEN
+PATCH /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/members/01a0fdd1-b9d8-73a5-842b-187961d1f257
+> {"role": "viewer", "version": 2}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd4-7c59-73eb-b1ae-ec60960806b6"
+}
+
+CHECK [PASS] non-member caller -> 404 
+PATCH /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/members/01a0fdd1-b9d8-73a5-842b-187961d1f257
+> {"role": "admin", "version": 2}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fdd4-7e24-7049-8c89-277059cb066f",
+ "errors": [
+  {
+   "pointer": "/role",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+
+CHECK [PASS] bad role -> 422 INVALID_ENUM_VALUE 422 [('/role', 'INVALID_ENUM_VALUE')]
+GET /sync/wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fdd2-b647-72e6-8718-dfc003cbfe5d",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T18:14:00.008079Z",
+    "updated_at": "2026-10-02T18:14:00.008079Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "display_name": "Mona QA",
+    "role": "owner"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd2-d57c-74c3-b6eb-96887c04c140",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 1,
+    "change_seq": 6,
+    "created_at": "2026-10-02T18:14:08.650124Z",
+    "updated_at": "2026-10-02T18:14:08.650124Z",
+    "deleted_at": null,
+    "role": "editor",
+    "channel": "email",
+    "invitee_email": "qs016-nobody-1790964767@example.test",
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "pending",
+    "expires_at": "2026-10-09T18:14:08.596330Z"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fdd3-3079-7052-94ca-36eff79df38e",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 1,
+    "change_seq": 8,
+    "created_at": "2026-10-02T18:14:31.289833Z",
+    "updated_at": "2026-10-02T18:14:31.289833Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd2-cb70-7282-ac30-110efda7281e",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 9,
+    "created_at": "2026-10-02T18:14:06.163903Z",
+    "updated_at": "2026-10-02T18:14:31.332797Z",
+    "deleted_at": "2026-10-02T18:14:31.332797Z",
+    "role": "editor",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "accepted",
+    "expires_at": "2026-10-09T18:14:06.121296Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd3-79d4-763c-815f-ab9195420e76",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 16,
+    "created_at": "2026-10-02T18:14:50.602595Z",
+    "updated_at": "2026-10-02T18:14:54.737842Z",
+    "deleted_at": "2026-10-02T18:14:54.737842Z",
+    "role": "viewer",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "accepted",
+    "expires_at": "2026-10-09T18:14:50.587016Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd3-5d08-7712-b17a-d48b3939dc03",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 18,
+    "created_at": "2026-10-02T18:14:43.236607Z",
+    "updated_at": "2026-10-02T18:14:59.875440Z",
+    "deleted_at": "2026-10-02T18:14:59.875440Z",
+    "role": "viewer",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "revoked",
+    "expires_at": "2026-10-09T18:14:43.207281Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd3-a056-75e5-8223-60e6b324e617",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 22,
+    "created_at": "2026-10-02T18:15:00.776831Z",
+    "updated_at": "2026-10-02T18:15:08.059549Z",
+    "deleted_at": "2026-10-02T18:15:08.059549Z",
+    "role": "viewer",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "revoked",
+    "expires_at": "2026-10-09T18:15:00.724477Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd3-d32d-7222-a4e0-670f3974ef31",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 26,
+    "created_at": "2026-10-02T18:15:13.469084Z",
+    "updated_at": "2026-10-02T18:15:14.087854Z",
+    "deleted_at": "2026-10-02T18:15:14.087854Z",
+    "role": "viewer",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "revoked",
+    "expires_at": "2026-10-09T18:15:13.437556Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd3-d595-7003-a680-4ab1825c244f",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 29,
+    "created_at": "2026-10-02T18:15:14.128148Z",
+    "updated_at": "2026-10-02T18:15:15.364314Z",
+    "deleted_at": "2026-10-02T18:15:15.364314Z",
+    "role": "editor",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "revoked",
+    "expires_at": "2026-10-09T18:15:14.087854Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd3-dcd8-7240-9a7c-9e68816a9952",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 33,
+    "created_at": "2026-09-25T18:14:22.000000Z",
+    "updated_at": "2026-10-02T18:15:29.344476Z",
+    "deleted_at": "2026-10-02T18:15:29.344476Z",
+    "role": "viewer",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "expired",
+    "expires_at": "2026-10-02T18:14:22.000000Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd4-2313-764c-acdb-606b9230e36d",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 37,
+    "created_at": "2026-10-02T18:15:34.025311Z",
+    "updated_at": "2026-10-02T18:15:36.278944Z",
+    "deleted_at": "2026-10-02T18:15:36.278944Z",
+    "role": "viewer",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "declined",
+    "expires_at": "2026-10-09T18:15:33.987316Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd4-3e5b-75cf-bcf1-e8721c7a2a60",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 42,
+    "created_at": "2026-10-02T18:15:40.961793Z",
+    "updated_at": "2026-10-02T18:15:44.730061Z",
+    "deleted_at": "2026-10-02T18:15:44.730061Z",
+    "role": "viewer",
+    "channel": "email",
+    "invitee_email": null,
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "accepted",
+    "expires_at": "2026-10-09T18:15:40.929550Z"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fdd4-4f33-7133-9830-4b1e952f68bc",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 44,
+    "created_at": "2026-10-02T18:15:44.691867Z",
+    "updated_at": "2026-10-02T18:15:47.672224Z",
+    "deleted_at": "2026-10-02T18:15:47.672224Z",
+    "member_user_id": "01a0fdd1-c20e-722d-ad76-8b8800047731",
+    "display_name": null,
+    "role": "viewer"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd4-6254-7768-b034-8383ce3454cc",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 48,
+    "created_at": "2026-10-02T18:15:50.198038Z",
+    "updated_at": "2026-10-02T18:15:51.820113Z",
+    "deleted_at": "2026-10-02T18:15:51.820113Z",
+    "role": "viewer",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "revoked",
+    "expires_at": "2026-10-09T18:15:50.180229Z"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fdd4-6b3e-77f6-a2d5-acd1029e40bf",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 1,
+    "change_seq": 50,
+    "created_at": "2026-10-02T18:15:52.446414Z",
+    "updated_at": "2026-10-02T18:15:52.446414Z",
+    "deleted_at": null,
+    "role": "viewer",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+    "status": "pending",
+    "expires_at": "2026-10-09T18:15:52.424710Z"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fdd3-8bec-73b2-bf6c-ee58aac4b68a",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 52,
+    "created_at": "2026-10-02T18:14:54.701369Z",
+    "updated_at": "2026-10-02T18:15:53.305803Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+    "display_name": "Sara QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet",
+   "record": {
+    "id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 1,
+    "change_seq": 53,
+    "created_at": "2026-10-02T18:13:59.987749Z",
+    "updated_at": "2026-10-02T18:13:59.987749Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "Home QA016",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmRkMi1iNDY0LTc2MmItOTkzYi03NmZiZDk3ZDk0MDQiLCJyIjoiMDFhMGZkZDEtYTg1ZC03MDc0LWI2MGUtYzc1NDMyNGM3ODNlIiwicCI6NTN9-UyoiQbLYArh_LDEqGUUDw"
+ }
+}
+
+CHECK [PASS] wallet feed: member row editor 
+GET /sync/user/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fdd2-0b9f-74c8-b1c8-6de782a577b9",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T18:13:17.757979Z",
+    "updated_at": "2026-10-02T18:15:57.814781Z",
+    "deleted_at": null,
+    "user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T18:13:17.750707Z",
+    "last_used_at": "2026-10-02T18:15:57.813297Z",
+    "ended_at": null,
+    "current": true
+   }
+  },
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fdd1-bdcf-7236-bf75-240143332dbf",
+    "version": 2,
+    "change_seq": 3,
+    "created_at": "2026-10-02T18:12:56.400382Z",
+    "updated_at": "2026-10-02T18:13:40.463469Z",
+    "deleted_at": null,
+    "user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+    "display_name": "Sara QA",
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": false,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fdd3-8bec-73b2-bf6c-ee58aac4b68a",
+    "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+    "version": 2,
+    "change_seq": 52,
+    "created_at": "2026-10-02T18:14:54.701369Z",
+    "updated_at": "2026-10-02T18:15:53.305803Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+    "display_name": "Sara QA",
+    "role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmRkMS1iOWQ4LTczYTUtODQyYi0xODc5NjFkMWYyNTciLCJyIjoiMDFhMGZkZDEtYjlkOC03M2E1LTg0MmItMTg3OTYxZDFmMjU3IiwicCI6NX17QXpERPNyLcQ0KyRs0LG4"
+ }
+}
+
+CHECK [PASS] s user feed: member row editor 
+CHECK [PASS] audit role_changed 
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/activity params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fdd4-70ef-7024-8b68-363111d66595",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:53.328064Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "role_changed",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd4-6d98-73c0-a96d-b85d4c6dea34",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:52.472612Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd4-6b3e-77f6-a2d5-acd1029e40bf",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd4-6b1b-702a-af19-e294feb47a80",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:51.836003Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd4-6254-7768-b034-8383ce3454cc",
+   "role": null
+  },
+  {
+   "id": "01a0fdd4-64c8-71a5-8f74-c48e93aced11",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:50.216402Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd4-6254-7768-b034-8383ce3454cc",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd4-5af7-7318-bed8-631003c4b118",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:47.703372Z",
+   "actor_user_id": "01a0fdd1-c20e-722d-ad76-8b8800047731",
+   "actor_display_name": null,
+   "action": "left",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-c20e-722d-ad76-8b8800047731",
+   "role": null
+  },
+  {
+   "id": "01a0fdd4-4f52-71fc-9cf8-a5e25ca17458",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:44.722758Z",
+   "actor_user_id": "01a0fdd1-c20e-722d-ad76-8b8800047731",
+   "actor_display_name": null,
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-c20e-722d-ad76-8b8800047731",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd4-40b6-7094-941e-4e9e8411eb22",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:40.983227Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd4-3e5b-75cf-bcf1-e8721c7a2a60",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd4-25a8-72af-bbde-25ddc0785018",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:34.057342Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd4-2313-764c-acdb-606b9230e36d",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-df44-7048-bff5-6647cf521560",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:16.036749Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-dcd8-7240-9a7c-9e68816a9952",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-dcb2-73ef-82ae-af67aed3e9d1",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:15.378743Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-d595-7003-a680-4ab1825c244f",
+   "role": null
+  },
+  {
+   "id": "01a0fdd3-d7e2-71b7-98f9-44189cbfa751",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:14.146762Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-d595-7003-a680-4ab1825c244f",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd3-d54d-739c-aa8d-0c6ac82f0dde",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:13.485717Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-d32d-7222-a4e0-670f3974ef31",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-c02a-7380-af49-ee25973c4e69",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:08.074441Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-a056-75e5-8223-60e6b324e617",
+   "role": null
+  },
+  {
+   "id": "01a0fdd3-a3ed-7391-bbee-cb182a6f2f48",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:15:00.845592Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-a056-75e5-8223-60e6b324e617",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-a034-73b7-a5cf-3d2584b6a186",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:59.892876Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invitation_revoked",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-5d08-7712-b17a-d48b3939dc03",
+   "role": null
+  },
+  {
+   "id": "01a0fdd3-8c0b-72cb-9113-773f8c9a2ddc",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:54.731315Z",
+   "actor_user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+   "actor_display_name": "Sara QA",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-7bfb-7359-b3ef-4342b6bb1270",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:50.619290Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-79d4-763c-815f-ab9195420e76",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-5f34-7070-baea-76b7b914001a",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:43.253205Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd3-5d08-7712-b17a-d48b3939dc03",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd3-309d-7391-b6c4-22d10dec83d4",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:31.325328Z",
+   "actor_user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+   "actor_display_name": "Karim QA",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd2-d826-7267-8d67-dac5a04cbbce",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:08.678590Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd2-d57c-74c3-b6eb-96887c04c140",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd2-ce67-73f6-af26-1b78824d75a2",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "occurred_at": "2026-10-02T18:14:06.183788Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": "Mona QA",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd2-cb70-7282-ac30-110efda7281e",
+   "role": "editor"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] activity role_changed role editor actor o 

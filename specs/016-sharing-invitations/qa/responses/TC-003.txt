@@ -1,0 +1,97 @@
+===== TC-003 US1-4 / US4-2: preview by the matching account; a mismatched account gets 404 on preview, accept, decline 2026-10-02T18:14:24.033943Z
+
+POST /invitations/preview
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "invitation_id": "01a0fdd2-cb70-7282-ac30-110efda7281e",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "wallet_name": "Home QA016",
+  "role": "editor",
+  "invited_by_display_name": "Mona QA",
+  "expires_at": "2026-10-09T18:14:06.121296Z",
+  "already_member": false
+ },
+ "meta": {}
+}
+
+CHECK [PASS] preview 200 200 None
+CHECK [PASS] preview shape ['already_member', 'expires_at', 'invitation_id', 'invited_by_display_name', 'role', 'wallet_id', 'wallet_name']
+CHECK [PASS] preview values {"invitation_id": "01a0fdd2-cb70-7282-ac30-110efda7281e", "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404", "wallet_name": "Home QA016", "role": "editor", "invited_by_display_name": "Mona QA", "expires_at": "2026-10-09T18:14:06.121296Z", "already_member": false}
+CHECK [PASS] preview carries no amount/balance/address 
+CHECK [PASS] preview meta {} 
+CHECK [PASS] RateLimit headers on token op 30
+POST /invitations/preview
+> {"token": "[redacted]"}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd3-17ab-7174-80ed-c51d8a65338c"
+}
+
+CHECK [PASS] mismatched preview -> 404 NOT_FOUND 404 NOT_FOUND
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd3-19c8-7115-a56a-61095995c153"
+}
+
+CHECK [PASS] mismatched accept -> 404 NOT_FOUND 404 NOT_FOUND
+POST /invitations/decline
+> {"token": "[redacted]"}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd3-1c27-72a3-8053-aec239dab6c8"
+}
+
+CHECK [PASS] mismatched decline -> 404 NOT_FOUND 404 NOT_FOUND
+POST /invitations/preview
+> {"token": "[redacted]"}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd3-1e32-705d-a384-6a38127f23f8"
+}
+
+CHECK [PASS] unknown token -> 404 identical code 
+POST /invitations/preview
+> {"token": "[redacted]"}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fdd3-1ff6-706f-9121-633d07e30670",
+ "errors": [
+  {
+   "pointer": "/token",
+   "code": "INVALID_TYPE",
+   "detail": "This value is not in the expected form."
+  }
+ ]
+}
+
+CHECK [PASS] malformed token -> 422 at /token 422 [('/token', 'INVALID_TYPE')]
+CHECK [PASS] invitation still pending 

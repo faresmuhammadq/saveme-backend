@@ -1,0 +1,211 @@
+===== setup Seed and sign in 2026-10-02T18:30:03.226535Z
+
+POST /auth/login
+> {"email": "qs016-mona-e1790965803@example.test", "password": "[redacted]", "device": {"session_id": "01a0fde1-9bf9-746a-9ed0-029c7bd4999b", "device_id": "qs016-mona-e1790965803", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+POST /auth/login
+> {"email": "qs016-karim-e1790965803@example.test", "password": "[redacted]", "device": {"session_id": "01a0fde1-a176-748f-956f-a7da6a72c118", "device_id": "qs016-karim-e1790965803", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+POST /auth/login
+> {"email": "qs016-sara-e1790965803@example.test", "password": "[redacted]", "device": {"session_id": "01a0fde1-a6a5-7079-ae0e-dcb910653308", "device_id": "qs016-sara-e1790965803", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+POST /auth/login
+> {"email": "qs016-omar-e1790965803@example.test", "password": "[redacted]", "device": {"session_id": "01a0fde1-abdf-779e-8584-089be8cfaf66", "device_id": "qs016-omar-e1790965803", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+POST /auth/login
+> {"email": "qs016-lina-e1790965803@example.test", "password": "[redacted]", "device": {"session_id": "01a0fde1-b190-7153-9391-0152e6b79cc3", "device_id": "qs016-lina-e1790965803", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+POST /auth/login
+> {"email": "qs016-unv-e1790965803@example.test", "password": "[redacted]", "device": {"session_id": "01a0fde1-b74e-7471-b064-3fbd02e52e59", "device_id": "qs016-unv-e1790965803", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+POST /auth/login
+> {"email": "qs016-free-e1790965803@example.test", "password": "[redacted]", "device": {"session_id": "01a0fde1-bcc0-75c1-925f-6b70ad1e1ebf", "device_id": "qs016-free-e1790965803", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+POST /auth/login
+> {"email": "qs016-nina-e1790965803@example.test", "password": "[redacted]", "device": {"session_id": "01a0fde1-c227-75b8-9013-0cade55432d6", "device_id": "qs016-nina-e1790965803", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+POST /auth/login
+> {"email": "qs016-zed-e1790965803@example.test", "password": "[redacted]", "device": {"session_id": "01a0fde1-c781-7791-8313-4d6adb901cd6", "device_id": "qs016-zed-e1790965803", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+PUT /me/profile
+> {"display_name": "Mona", "locale": "en", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fde1-7d56-70c9-ac60-c73fdb3df7b4",
+  "version": 2,
+  "change_seq": 3,
+  "created_at": "2026-10-02T18:30:08.471324Z",
+  "updated_at": "2026-10-02T18:30:29.279897Z",
+  "deleted_at": null,
+  "user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "display_name": "Mona",
+  "locale": "en",
+  "timezone": "Africa/Cairo",
+  "default_currency": "EGP",
+  "default_currency_locked": false,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": null
+ },
+ "meta": {}
+}
+
+PUT /me/profile
+> {"display_name": "Karim", "locale": "en", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fde1-8113-726c-bc5a-a73e6441f3a8",
+  "version": 2,
+  "change_seq": 3,
+  "created_at": "2026-10-02T18:30:09.428188Z",
+  "updated_at": "2026-10-02T18:30:29.736110Z",
+  "deleted_at": null,
+  "user_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+  "display_name": "Karim",
+  "locale": "en",
+  "timezone": "Africa/Cairo",
+  "default_currency": "EGP",
+  "default_currency_locked": false,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": null
+ },
+ "meta": {}
+}
+
+PUT /me/profile
+> {"display_name": "Sara", "locale": "en", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fde1-84e0-7368-9431-12d6111e9930",
+  "version": 2,
+  "change_seq": 3,
+  "created_at": "2026-10-02T18:30:10.400521Z",
+  "updated_at": "2026-10-02T18:30:30.179571Z",
+  "deleted_at": null,
+  "user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+  "display_name": "Sara",
+  "locale": "en",
+  "timezone": "Africa/Cairo",
+  "default_currency": "EGP",
+  "default_currency_locked": false,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": null
+ },
+ "meta": {}
+}
+
+PUT /me/profile
+> {"display_name": "Omar", "locale": "en", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fde1-88b5-73fe-9cfa-227b2a633fed",
+  "version": 2,
+  "change_seq": 3,
+  "created_at": "2026-10-02T18:30:11.382158Z",
+  "updated_at": "2026-10-02T18:30:30.554719Z",
+  "deleted_at": null,
+  "user_id": "01a0fde1-84eb-711b-b2f4-f4fdb1664a1b",
+  "display_name": "Omar",
+  "locale": "en",
+  "timezone": "Africa/Cairo",
+  "default_currency": "EGP",
+  "default_currency_locked": false,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": null
+ },
+ "meta": {}
+}
+
+PUT /me/profile
+> {"display_name": "Lina", "locale": "en", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fde1-8c6d-7140-90a9-6c499e96f936",
+  "version": 2,
+  "change_seq": 3,
+  "created_at": "2026-10-02T18:30:12.333797Z",
+  "updated_at": "2026-10-02T18:30:30.948556Z",
+  "deleted_at": null,
+  "user_id": "01a0fde1-88c2-7034-8f0f-444527633af1",
+  "display_name": "Lina",
+  "locale": "en",
+  "timezone": "Africa/Cairo",
+  "default_currency": "EGP",
+  "default_currency_locked": false,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": null
+ },
+ "meta": {}
+}
+
+PUT /me/profile
+> {"display_name": "Nina", "locale": "en", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fde1-97b6-72d8-b565-033e985feded",
+  "version": 2,
+  "change_seq": 3,
+  "created_at": "2026-10-02T18:30:15.223459Z",
+  "updated_at": "2026-10-02T18:30:31.338526Z",
+  "deleted_at": null,
+  "user_id": "01a0fde1-93e2-7151-9bb4-01cef08e378a",
+  "display_name": "Nina",
+  "locale": "en",
+  "timezone": "Africa/Cairo",
+  "default_currency": "EGP",
+  "default_currency_locked": false,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": null
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea
+> {"type": "cash", "name": "E2E Home", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T18:30:41.199672Z",
+  "updated_at": "2026-10-02T18:30:41.199672Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "E2E Home",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+

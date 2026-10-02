@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Wallets\Http\Controllers\ActivityController;
 use App\Modules\Wallets\Http\Controllers\CategoryController;
 use App\Modules\Wallets\Http\Controllers\CategoryReferenceController;
 use App\Modules\Wallets\Http\Controllers\PlatformCategoryController;
@@ -24,6 +25,7 @@ Route::name('wallets.')->middleware('auth:api')->group(function (): void {
     Route::get('wallets', [WalletController::class, 'index'])->name('index');
     Route::get('wallets/{id}', [WalletController::class, 'show'])->name('show');
     Route::get('wallets/{id}/members', [WalletMembersController::class, 'index'])->name('members.index');
+    Route::get('wallets/{id}/activity', [ActivityController::class, 'index'])->name('activity.index');
 
     Route::middleware('address.verified')->group(function (): void {
         Route::put('wallets/{id}', [WalletController::class, 'upsert'])->name('upsert');

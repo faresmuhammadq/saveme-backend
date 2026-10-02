@@ -1,0 +1,190 @@
+===== TC-020 Edge: wallet deletion tombstones pending invitations (revoked); token dead; sharing writes 404 2026-10-02T18:18:20.055964Z
+
+PUT /wallets/01a0fdd6-ae18-75d8-a1b9-7b74b6258e5f
+> {"type": "cash", "name": "Doomed QA016", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fdd6-ae18-75d8-a1b9-7b74b6258e5f",
+  "wallet_id": "01a0fdd6-ae18-75d8-a1b9-7b74b6258e5f",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T18:18:20.560469Z",
+  "updated_at": "2026-10-02T18:18:20.560469Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "Doomed QA016",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] wallet Doomed QA016 by o 201 None
+PUT /wallets/01a0fdd6-ae18-75d8-a1b9-7b74b6258e5f/invitations/01a0fdd6-b061-73f6-b186-ff1f579bceb2
+> {"role": "viewer", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a0fdd6-b061-73f6-b186-ff1f579bceb2",
+  "wallet_id": "01a0fdd6-ae18-75d8-a1b9-7b74b6258e5f",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T18:18:21.346860Z",
+  "updated_at": "2026-10-02T18:18:21.346860Z",
+  "deleted_at": null,
+  "role": "viewer",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:18:21.330503Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=[redacted]"
+ }
+}
+
+PUT /wallets/01a0fdd6-ae18-75d8-a1b9-7b74b6258e5f/invitations/01a0fdd6-b370-767c-a39c-90ba9d216cbc
+> {"role": "viewer", "invitee_email": "qs016-x-1790964767@example.test"}
+< 201
+{
+ "data": {
+  "id": "01a0fdd6-b370-767c-a39c-90ba9d216cbc",
+  "wallet_id": "01a0fdd6-ae18-75d8-a1b9-7b74b6258e5f",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-02T18:18:21.997241Z",
+  "updated_at": "2026-10-02T18:18:21.997241Z",
+  "deleted_at": null,
+  "role": "viewer",
+  "channel": "email",
+  "invitee_email": "qs016-x-1790964767@example.test",
+  "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:18:21.964142Z"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fdd6-ae18-75d8-a1b9-7b74b6258e5f
+< 200
+{
+ "data": {
+  "id": "01a0fdd6-ae18-75d8-a1b9-7b74b6258e5f",
+  "wallet_id": "01a0fdd6-ae18-75d8-a1b9-7b74b6258e5f",
+  "version": 1,
+  "change_seq": 7,
+  "created_at": "2026-10-02T18:18:20.560469Z",
+  "updated_at": "2026-10-02T18:18:20.560469Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "Doomed QA016",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+DELETE /wallets/01a0fdd6-ae18-75d8-a1b9-7b74b6258e5f
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fdd6-ae18-75d8-a1b9-7b74b6258e5f",
+  "wallet_id": "01a0fdd6-ae18-75d8-a1b9-7b74b6258e5f",
+  "version": 2,
+  "change_seq": 11,
+  "created_at": "2026-10-02T18:18:20.560469Z",
+  "updated_at": "2026-10-02T18:18:23.098102Z",
+  "deleted_at": "2026-10-02T18:18:22.978985Z",
+  "type": "cash",
+  "name": "Doomed QA016",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] wallet deleted 200 None
+CHECK [PASS] invitation ceb2 revoked tombstone, address erased 
+CHECK [PASS] invitation 6cbc revoked tombstone, address erased 
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd6-d134-70e3-8650-091c4c4165af"
+}
+
+CHECK [PASS] token of deleted wallet -> 404 
+PUT /wallets/01a0fdd6-ae18-75d8-a1b9-7b74b6258e5f/invitations/01a0fdd6-d26f-7052-bdcb-a118e7a5fcd1
+> {"role": "viewer", "invitee_email": null}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd6-d320-7296-a364-600b94b28c45"
+}
+
+CHECK [PASS] invite on deleted wallet -> 404 404
+GET /wallets/01a0fdd6-ae18-75d8-a1b9-7b74b6258e5f/activity
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fdd6-b5bf-73ea-92ad-e2955f81b9ac",
+   "wallet_id": "01a0fdd6-ae18-75d8-a1b9-7b74b6258e5f",
+   "occurred_at": "2026-10-02T18:18:22.015833Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": null,
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd6-b370-767c-a39c-90ba9d216cbc",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fdd6-b334-7299-8faa-8d4ec2423bde",
+   "wallet_id": "01a0fdd6-ae18-75d8-a1b9-7b74b6258e5f",
+   "occurred_at": "2026-10-02T18:18:21.364553Z",
+   "actor_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "actor_display_name": null,
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fdd6-b061-73f6-b186-ff1f579bceb2",
+   "role": "viewer"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] activity of deleted wallet stays readable by its former member (N-12) 200

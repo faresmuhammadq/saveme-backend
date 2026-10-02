@@ -1,0 +1,68 @@
+===== us7-s5 US7-5 owner without sharing: send and accept refused naming the capability 2026-10-02T18:33:30.857378Z
+
+PUT /wallets/01a0fde4-15d5-757e-b346-58249dc26387/invitations/01a0fde4-93ea-74f0-a04c-d434dff97742
+> {"role": "viewer", "invitee_email": null}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/feature-not-entitled",
+ "title": "Feature not entitled",
+ "status": 403,
+ "detail": "Your plan does not include this.",
+ "code": "FEATURE_NOT_ENTITLED",
+ "request_id": "01a0fde4-94dc-7012-b5bd-be4838ff3469",
+ "feature": "sharing.enabled"
+}
+
+CHECK [PASS] send 403 sharing.enabled 
+PUT /wallets/01a0fde4-15d5-757e-b346-58249dc26387/invitations/01a0fde4-9672-73ab-bdc0-d389a3b665db
+> {"role": "viewer", "invitee_email": "qs016-zed-e1790965803@example.test"}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/feature-not-entitled",
+ "title": "Feature not entitled",
+ "status": 403,
+ "detail": "Your plan does not include this.",
+ "code": "FEATURE_NOT_ENTITLED",
+ "request_id": "01a0fde4-9723-718e-93a6-dca1ba802efa",
+ "feature": "sharing.enabled"
+}
+
+CHECK [PASS] email send 403 sharing.enabled 
+PUT /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/invitations/01a0fde4-987f-72e1-949f-0ce11fe3de18
+> {"role": "viewer", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a0fde4-987f-72e1-949f-0ce11fe3de18",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 1,
+  "change_seq": 85,
+  "created_at": "2026-10-02T18:33:32.644048Z",
+  "updated_at": "2026-10-02T18:33:32.644048Z",
+  "deleted_at": null,
+  "role": "viewer",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:33:32.624538Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=[redacted]"
+ }
+}
+
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/feature-not-entitled",
+ "title": "Feature not entitled",
+ "status": 403,
+ "detail": "Your plan does not include this.",
+ "code": "FEATURE_NOT_ENTITLED",
+ "request_id": "01a0fde4-a70a-71b6-bcfc-5fb53f93a093",
+ "feature": "sharing.enabled"
+}
+
+CHECK [PASS] accept 403 FEATURE_NOT_ENTITLED sharing.enabled 

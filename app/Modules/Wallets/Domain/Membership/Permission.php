@@ -20,10 +20,12 @@ enum Permission: string
     case R01ReadRecurring = 'R-01';
     case R02WriteRecurring = 'R-02';
     case S01SeeInvitations = 'S-01';
-    case S02SendOrRevokeInvitation = 'S-02';
+    case S02SendInvitation = 'S-02';
     case S03ChangeRole = 'S-03';
     case S04RemoveMember = 'S-04';
     case S05Leave = 'S-05';
+    case S06RevokeInvitation = 'S-06';
+    case S07ReadActivity = 'S-07';
 
     /**
      * The matrix row ID, e.g. W-02.

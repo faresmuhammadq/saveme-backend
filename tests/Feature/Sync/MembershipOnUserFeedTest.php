@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 
 /*
@@ -8,6 +9,8 @@ use Illuminate\Support\Str;
  */
 
 beforeEach(function () {
+    // The plan-demotion listener (spec 016) is queued; these tests are about the transfer itself, and the demotion has its own tests.
+    Queue::fake();
     [$this->ada, $this->adaCredential] = walletCaller('ada@example.test');
     [$this->grace, $this->graceCredential] = walletCaller('grace@example.test');
     $this->walletId = (string) Str::uuid7();

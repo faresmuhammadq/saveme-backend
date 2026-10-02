@@ -287,10 +287,12 @@ Under `/api/v1`, in `docs/openapi/paths/wallets.yaml`, tag `Wallets & Ledger`. *
 | R-01 | Read recurring rules and their occurrences | yes | yes | yes | — | B7 |
 | R-02 | Create, edit, pause, end, delete a recurring rule and request its catch-up; confirm, skip or edit one of its occurrences. A recurring transfer rule also needs T-02 in its destination (as T-03) | yes | yes | — | — | B7 |
 | S-01 | See the wallet's pending invitations | yes | yes | yes | — | B9 |
-| S-02 | Send or revoke an invitation | yes | — | — | `sharing.enabled`, and `sharing.max_members_per_wallet` not exceeded | B9 |
-| S-03 | Change another member's role (never to `owner`; that is W-05) | yes | — | — | — | B9 |
+| S-02 | Send an invitation | yes | — | — | `sharing.enabled`, and `sharing.max_members_per_wallet` not exceeded, pending invitations counted | B9 |
+| S-03 | Change another member's role (never to `owner`; that is W-05); raising to `editor` also needs the owner's `sharing.enabled` and the active member count within `sharing.max_members_per_wallet` | yes | — | — | — (enforced by Sharing's `MemberService`: a quota, not a flag) | B9 |
 | S-04 | Remove another member | yes | — | — | — | B9 |
 | S-05 | Leave the wallet | — (must transfer first) | yes | yes | — | B9 |
+| S-06 | Revoke a pending invitation | yes | — | — | — (a lapsed plan can still withdraw an offer) | B9 |
+| S-07 | Read the wallet's activity | yes | yes | yes | — | B9 |
 
 Outside the matrix: **creating** a wallet is not wallet-scoped — any verified person may, subject to their own `wallets.max` (FR-013). **Categories and budgets** are user-scoped (glossary, ADR-0012): nobody gains a right over another person's categories or budgets through a wallet; the Category Reference is read-only and covered by T-01.
 
@@ -326,7 +328,7 @@ Dispatched after commit; identifiers and scalars only (P-11). The two new events
 2. **How B9 represents a revoked member** — tombstone (`deleted_at`) or a separate state. The B4 schema already carries `deleted_at`; B9 decides and any new member is additive. Does not block.
 3. **Transactions into an archived wallet** — B6 decides (recommended: refused). Does not block.
 4. **Existing members after the owner's downgrade** — B9 (ADR-0013). Does not block.
-5. **Whether pending invitations count toward `sharing.max_members_per_wallet`** in row S-02 — B9 decides. Does not block.
+5. **Whether pending invitations count toward `sharing.max_members_per_wallet`** in row S-02 — B9 decides. Does not block. *Resolved by spec 016: they count (research R-7).*
 
 ## Success Criteria *(mandatory)*
 

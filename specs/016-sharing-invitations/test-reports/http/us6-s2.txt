@@ -1,0 +1,15 @@
+===== us6-s2 US6-2 owner cannot leave (403) 2026-10-02T18:32:51.421549Z
+
+POST /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/leave
+> {"version": 1}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/forbidden",
+ "title": "Forbidden",
+ "status": 403,
+ "detail": "Your role in this wallet does not allow this.",
+ "code": "FORBIDDEN",
+ "request_id": "01a0fde3-fac0-726f-b391-f890632564dd"
+}
+
+CHECK [PASS] 403 FORBIDDEN 

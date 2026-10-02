@@ -1,0 +1,20 @@
+===== us1-s4 US1-4 matching person previews: wallet name, inviter, role, expiry; no amounts 2026-10-02T18:30:59.312442Z
+
+POST /invitations/preview
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "invitation_id": "01a0fde1-fd75-739b-9302-7b065200ce7f",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "wallet_name": "E2E Home",
+  "role": "editor",
+  "invited_by_display_name": "Mona",
+  "expires_at": "2026-10-09T18:30:41.818483Z",
+  "already_member": false
+ },
+ "meta": {}
+}
+
+CHECK [PASS] 200 preview 
+CHECK [PASS] no amount/balance/address 

@@ -10,6 +10,7 @@ use App\Modules\Wallets\Infrastructure\Models\Wallet;
 use App\Modules\Wallets\Infrastructure\Models\WalletMember;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 
 /*
  * Lock order (spec 013, FR-020; ADR-0017 rule 5): category rows, then wallet
@@ -56,6 +57,8 @@ function counterOf(string $userId): int
 }
 
 beforeEach(function () {
+    // The plan-demotion listener (spec 016) is queued; these tests are about the transfer itself, and the demotion has its own tests.
+    Queue::fake();
     while (DB::connection('pgsql')->transactionLevel() > 0) {
         DB::connection('pgsql')->commit();
     }

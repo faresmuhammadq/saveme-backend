@@ -3,7 +3,10 @@
 namespace App\Modules\Wallets\Application\Recurring;
 
 use App\Modules\Shared\Domain\Errors\ErrorCode;
+use App\Modules\Wallets\Application\Activity\WalletActivity;
 use App\Modules\Wallets\Application\Transactions\TransactionService;
+use App\Modules\Wallets\Domain\Activity\ActivityAction;
+use App\Modules\Wallets\Domain\Activity\ActivitySubject;
 use App\Modules\Wallets\Domain\Recurring\AutoConfirmRefusal;
 use App\Modules\Wallets\Domain\Recurring\OccurrenceRecord;
 use App\Modules\Wallets\Domain\Recurring\Ports\OccurrenceRepository;
@@ -41,6 +44,7 @@ final class AutoConfirmer
         private readonly OccurrenceRepository $occurrences,
         private readonly TransactionService $transactions,
         private readonly RecurringStamps $stamps,
+        private readonly WalletActivity $activity,
     ) {}
 
     /**
@@ -112,6 +116,8 @@ final class AutoConfirmer
                     $rule->id,
                     $occurrence->id,
                 );
+
+                $this->activity->record($rule->walletId, null, ActivityAction::Confirmed, ActivitySubject::Occurrence, $occurrence->id);
             });
         } catch (WalletActionForbidden|WalletNotFound|TransactionNotFound) {
             return AutoConfirmRefusal::NotPermitted;

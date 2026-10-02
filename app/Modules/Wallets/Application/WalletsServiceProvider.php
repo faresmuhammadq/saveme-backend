@@ -25,6 +25,9 @@ class WalletsServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        // One instance, so a write for a wallet that is already in scope joins the open scope (spec 016, R-10).
+        $this->app->singleton(WalletScopeWrites::class);
+
         $this->app->bind(TransactionQueryService::class, LedgerTransactionQueryService::class);
 
         $this->app->when(WalletService::class)

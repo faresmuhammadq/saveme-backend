@@ -4,11 +4,14 @@ namespace App\Modules\Wallets\Application\Recurring;
 
 use App\Modules\Shared\Domain\Errors\ErrorCode;
 use App\Modules\Shared\Domain\Errors\FieldError;
+use App\Modules\Wallets\Application\Activity\WalletActivity;
 use App\Modules\Wallets\Application\Authorization\WalletAuthorizer;
 use App\Modules\Wallets\Application\Categories\CategoryReferences;
 use App\Modules\Wallets\Application\Categories\WalletCategoryUses;
 use App\Modules\Wallets\Application\Recurring\Dto\OccurrenceView;
 use App\Modules\Wallets\Application\Transactions\TransactionService;
+use App\Modules\Wallets\Domain\Activity\ActivityAction;
+use App\Modules\Wallets\Domain\Activity\ActivitySubject;
 use App\Modules\Wallets\Domain\Membership\Permission;
 use App\Modules\Wallets\Domain\Ports\MembershipRepository;
 use App\Modules\Wallets\Domain\Recurring\OccurrencePlan;
@@ -54,6 +57,7 @@ final class OccurrenceService
         private readonly WalletCategoryUses $categoryUses,
         private readonly TransactionService $transactions,
         private readonly WalletAuthorizer $authorizer,
+        private readonly WalletActivity $activity,
     ) {}
 
     /**
@@ -195,9 +199,23 @@ final class OccurrenceService
             }
         }
 
+        $this->activity->record($stored->walletId, $actorId, self::actionFor($stored->status, $values['status']), ActivitySubject::Occurrence, $stored->id);
         $this->stamps->finish($stored->walletId);
 
         return new OccurrenceView($this->occurrences->find($stored->id) ?? throw new OccurrenceNotFound);
+    }
+
+    /**
+     * What the write did to the occurrence, as activity names it: a status
+     * moving to confirmed or to skipped, otherwise an edit (ADR-0020).
+     */
+    private static function actionFor(OccurrenceStatus $before, mixed $status): ActivityAction
+    {
+        return match (true) {
+            $status === OccurrenceStatus::Confirmed->value && $before !== OccurrenceStatus::Confirmed => ActivityAction::Confirmed,
+            $status === OccurrenceStatus::Skipped->value && $before !== OccurrenceStatus::Skipped => ActivityAction::Skipped,
+            default => ActivityAction::Edited,
+        };
     }
 
     /**

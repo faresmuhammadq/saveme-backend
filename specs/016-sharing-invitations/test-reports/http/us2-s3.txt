@@ -1,0 +1,118 @@
+===== us2-s3 US2-3 replayed link create: unchanged, no link; revoke + new gives fresh link 2026-10-02T18:31:14.547921Z
+
+PUT /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/invitations/01a0fde2-7f74-76a1-82ae-30f739a13e14
+> {"role": "viewer", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a0fde2-7f74-76a1-82ae-30f739a13e14",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 1,
+  "change_seq": 22,
+  "created_at": "2026-10-02T18:31:15.082749Z",
+  "updated_at": "2026-10-02T18:31:15.082749Z",
+  "deleted_at": null,
+  "role": "viewer",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:31:15.062194Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=[redacted]"
+ }
+}
+
+PUT /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/invitations/01a0fde2-7f74-76a1-82ae-30f739a13e14
+> {"role": "viewer", "invitee_email": null}
+< 200
+{
+ "data": {
+  "id": "01a0fde2-7f74-76a1-82ae-30f739a13e14",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 1,
+  "change_seq": 22,
+  "created_at": "2026-10-02T18:31:15.082749Z",
+  "updated_at": "2026-10-02T18:31:15.082749Z",
+  "deleted_at": null,
+  "role": "viewer",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:31:15.062194Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] replay 200 without share_url 
+DELETE /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/invitations/01a0fde2-7f74-76a1-82ae-30f739a13e14
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fde2-7f74-76a1-82ae-30f739a13e14",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 2,
+  "change_seq": 24,
+  "created_at": "2026-10-02T18:31:15.082749Z",
+  "updated_at": "2026-10-02T18:31:16.152866Z",
+  "deleted_at": "2026-10-02T18:31:16.152866Z",
+  "role": "viewer",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "status": "revoked",
+  "expires_at": "2026-10-09T18:31:15.062194Z"
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/invitations/01a0fde2-85e7-7325-a7a9-e526d238435d
+> {"role": "viewer", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a0fde2-85e7-7325-a7a9-e526d238435d",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 1,
+  "change_seq": 26,
+  "created_at": "2026-10-02T18:31:16.726514Z",
+  "updated_at": "2026-10-02T18:31:16.726514Z",
+  "deleted_at": null,
+  "role": "viewer",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:31:16.710376Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=[redacted]"
+ }
+}
+
+CHECK [PASS] new invitation has a fresh link 
+DELETE /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/invitations/01a0fde2-85e7-7325-a7a9-e526d238435d
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fde2-85e7-7325-a7a9-e526d238435d",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 2,
+  "change_seq": 28,
+  "created_at": "2026-10-02T18:31:16.726514Z",
+  "updated_at": "2026-10-02T18:31:17.255160Z",
+  "deleted_at": "2026-10-02T18:31:17.255160Z",
+  "role": "viewer",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "status": "revoked",
+  "expires_at": "2026-10-09T18:31:16.710376Z"
+ },
+ "meta": {}
+}
+

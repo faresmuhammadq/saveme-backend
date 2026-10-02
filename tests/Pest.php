@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Api\Envelope;
+use App\Modules\Billing\Infrastructure\Models\Subscription;
 use App\Modules\Budgeting\Application\BudgetQueryService;
 use App\Modules\Budgeting\Application\BudgetService;
 use App\Modules\Budgeting\Application\Dto\SavedBudget;
@@ -8,11 +9,15 @@ use App\Modules\Budgeting\Domain\BudgetProgress;
 use App\Modules\Budgeting\Domain\BudgetRecord;
 use App\Modules\Budgeting\Http\Resources\BudgetResource;
 use App\Modules\Budgeting\Infrastructure\Models\Budget;
+use App\Modules\Identity\Application\Sharing\InvitationAddresses;
 use App\Modules\Identity\Domain\Account\LinkKind;
 use App\Modules\Identity\Domain\Ports\LinkRepository;
 use App\Modules\Identity\Infrastructure\Models\Profile;
 use App\Modules\Identity\Infrastructure\Models\User;
 use App\Modules\Shared\Domain\Errors\Refusal;
+use App\Modules\Sharing\Application\Mail\InvitationMail;
+use App\Modules\Sharing\Domain\InvitationSecret;
+use App\Modules\Sharing\Infrastructure\Models\Invitation;
 use App\Modules\Wallets\Application\Categories\CategoryUsage;
 use App\Modules\Wallets\Application\Categories\CategoryUsageQuery;
 use App\Modules\Wallets\Application\Categories\Dto\CategoryView;
@@ -43,6 +48,7 @@ use Illuminate\Routing\Route;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Support\Carbon as ClockInstant;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use Tests\Contract\Api\Support\ProbeRequest;
@@ -1161,4 +1167,125 @@ function budgetProgress(string $userId, string $budgetId, ?string $date = null):
 function nthPlatformCategoryId(int $position, string $kind = 'expense'): string
 {
     return (string) Category::query()->whereNull('user_id')->where('kind', $kind)->orderBy('position')->skip($position)->value('id');
+}
+
+/*
+|--------------------------------------------------------------------------
+| Sharing helpers (spec 016)
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * A verified wallet owner who holds Plus (sharing, 5 members) with one
+ * wallet, signed in.
+ *
+ * @return array{0: User, 1: string, 2: Wallet}
+ */
+function plusOwner(string $email = 'owner@example.test'): array
+{
+    [$user, $credential] = walletCaller($email);
+    Subscription::factory()->create(['user_id' => $user->id]);
+    // The sign-in answered with the Free entitlements; a service called directly must not reuse that memo.
+    app()->forgetScopedInstances();
+
+    return [$user, $credential, ownedWallet($user->id)];
+}
+
+/**
+ * PUT /wallets/{id}/invitations/{iid}; a fresh UUIDv7 unless given.
+ *
+ * @param  array<string, mixed>  $body
+ */
+function sendInvitation(string $credential, string $walletId, array $body = [], ?string $invitationId = null): TestResponse
+{
+    return walletCall('PUT', $credential, '/wallets/'.$walletId.'/invitations/'.($invitationId ?? (string) Str::uuid7()), [
+        'role' => 'editor',
+        'invitee_email' => 'invitee@example.test',
+        ...$body,
+    ]);
+}
+
+/**
+ * The token inside an invitation link.
+ */
+function tokenOf(string $link): string
+{
+    parse_str((string) parse_url($link, PHP_URL_QUERY), $query);
+
+    return (string) $query['token'];
+}
+
+/**
+ * The token of the latest invitation mail captured by Mail::fake().
+ */
+function mailedToken(): string
+{
+    $mails = Mail::sent(InvitationMail::class);
+
+    return tokenOf($mails->last()->link);
+}
+
+/**
+ * A pending invitation created through the service, so its token is known.
+ *
+ * @return array{id: string, token: string}
+ */
+function pendingInvitation(string $inviterId, string $walletId, ?string $email = 'invitee@example.test', string $role = 'editor'): array
+{
+    $id = (string) Str::uuid7();
+    $token = InvitationSecret::generate();
+    $address = $email === null ? null : app(InvitationAddresses::class)->normaliseAndLookup($email);
+
+    Invitation::factory()
+        ->withToken($token->value)
+        ->create([
+            'id' => $id,
+            'wallet_id' => $walletId,
+            'invited_by' => $inviterId,
+            'role' => $role,
+            'channel' => $email === null ? 'link' : 'email',
+            'address_sealed' => $address === null ? null : app(InvitationAddresses::class)->seal($inviterId, $address['address']),
+            'address_lookup' => $address['lookup'] ?? null,
+        ]);
+
+    return ['id' => $id, 'token' => $token->value];
+}
+
+/**
+ * POST /invitations/{preview|accept|decline} with a token.
+ */
+function respondToInvitation(string $credential, string $action, string $token): TestResponse
+{
+    return walletCall('POST', $credential, '/invitations/'.$action, ['token' => $token]);
+}
+
+/**
+ * The refusals every endpoint shares, as the path file documents them: 401
+ * without a credential, 406 for a media type the API does not speak, 415 for a
+ * body that is not JSON (only when the operation takes a body), 426 for a
+ * client below the minimum version, and 400 MALFORMED_JSON for a body that is
+ * not JSON text.
+ *
+ * @param  array<string, mixed>  $body
+ */
+function assertSharedRefusals(string $method, string $uri, array $body, string $credential): void
+{
+    $uri = '/api/v1'.$uri;
+    $test = test();
+
+    $test->withHeaders(jsonHeaders())->json($method, $uri, $body)->assertValidResponse(401);
+
+    $test->call($method, $uri, [], [], [], $test->transformHeadersToServerVars([...asCredential($credential), 'Accept' => 'text/html']), '{}')
+        ->assertStatus(406);
+
+    if ($body !== []) {
+        $test->call($method, $uri, [], [], [], $test->transformHeadersToServerVars([...asCredential($credential), 'Content-Type' => 'text/plain']), 'x=1')
+            ->assertStatus(415);
+
+        $test->call($method, $uri, [], [], [], $test->transformHeadersToServerVars([...asCredential($credential), 'Content-Type' => 'application/json']), '{not json')
+            ->assertStatus(400)
+            ->assertJsonPath('code', 'MALFORMED_JSON');
+    }
+
+    $test->withHeaders([...asCredential($credential), 'X-Client-Version' => '0.0.1'])->json($method, $uri, $body)->assertStatus(426);
 }

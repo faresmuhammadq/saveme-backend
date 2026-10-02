@@ -1,0 +1,125 @@
+===== us1-s1 US1-1 invite creates pending, 7 days, counted, listed, on feed, mail queued 2026-10-02T18:30:41.269487Z
+
+PUT /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/invitations/01a0fde1-fd75-739b-9302-7b065200ce7f
+> {"role": "editor", "invitee_email": "qs016-karim-e1790965803@example.test"}
+< 201
+{
+ "data": {
+  "id": "01a0fde1-fd75-739b-9302-7b065200ce7f",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T18:30:41.861433Z",
+  "updated_at": "2026-10-02T18:30:41.861433Z",
+  "deleted_at": null,
+  "role": "editor",
+  "channel": "email",
+  "invitee_email": "qs016-karim-e1790965803@example.test",
+  "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:30:41.818483Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] 201 pending 
+CHECK [PASS] expires 7 days later 
+GET /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/invitations
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fde1-fd75-739b-9302-7b065200ce7f",
+   "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+   "version": 1,
+   "change_seq": 4,
+   "created_at": "2026-10-02T18:30:41.861433Z",
+   "updated_at": "2026-10-02T18:30:41.861433Z",
+   "deleted_at": null,
+   "role": "editor",
+   "channel": "email",
+   "invitee_email": "qs016-karim-e1790965803@example.test",
+   "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "status": "pending",
+   "expires_at": "2026-10-09T18:30:41.818483Z"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] in pending list 
+GET /sync/wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fde1-fd42-716e-bfda-f7861c23f8a7",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T18:30:41.218707Z",
+    "updated_at": "2026-10-02T18:30:41.218707Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+    "display_name": "Mona",
+    "role": "owner"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fde1-fd75-739b-9302-7b065200ce7f",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 1,
+    "change_seq": 4,
+    "created_at": "2026-10-02T18:30:41.861433Z",
+    "updated_at": "2026-10-02T18:30:41.861433Z",
+    "deleted_at": null,
+    "role": "editor",
+    "channel": "email",
+    "invitee_email": "qs016-karim-e1790965803@example.test",
+    "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+    "status": "pending",
+    "expires_at": "2026-10-09T18:30:41.818483Z"
+   }
+  },
+  {
+   "type": "wallet",
+   "record": {
+    "id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 1,
+    "change_seq": 5,
+    "created_at": "2026-10-02T18:30:41.199672Z",
+    "updated_at": "2026-10-02T18:30:41.199672Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "E2E Home",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmRlMS1mYjEyLTc0ZjAtYTI2NC1jYzI4YjkzZWE1ZWEiLCJyIjoiMDFhMGZkZTEtNzRjNy03MzNkLTg3MmUtZDhiYTMwYTcxMTE5IiwicCI6NX0Bk1IuXI6m3z-ClyYXMtQ-"
+ }
+}
+
+CHECK [PASS] on wallet feed 
+CHECK [PASS] mail with single-use link reached the address 
+CHECK [PASS] counts toward quota 

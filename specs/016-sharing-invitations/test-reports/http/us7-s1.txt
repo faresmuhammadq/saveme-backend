@@ -1,0 +1,823 @@
+===== us7-s1 US7-1/2 lapse: every editor beyond quota (Free: owner only) becomes viewer; nobody removed; system audit; activity role_limited_by_plan 2026-10-02T18:32:58.581050Z
+
+PUT /wallets/01a0fde4-15d5-757e-b346-58249dc26387
+> {"type": "cash", "name": "E2E Family", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fde4-15d5-757e-b346-58249dc26387",
+  "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T18:32:58.993786Z",
+  "updated_at": "2026-10-02T18:32:58.993786Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "E2E Family",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fde4-15d5-757e-b346-58249dc26387/invitations/01a0fde4-17b0-77df-944e-deb1ec0b42f7
+> {"role": "editor", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a0fde4-17b0-77df-944e-deb1ec0b42f7",
+  "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T18:32:59.602349Z",
+  "updated_at": "2026-10-02T18:32:59.602349Z",
+  "deleted_at": null,
+  "role": "editor",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:32:59.583717Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=[redacted]"
+ }
+}
+
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "id": "01a0fde4-1c7b-737b-a2c0-eb0e5ef5144d",
+  "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-02T18:33:00.284070Z",
+  "updated_at": "2026-10-02T18:33:00.284070Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+  "display_name": "Karim",
+  "role": "editor"
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fde4-15d5-757e-b346-58249dc26387/invitations/01a0fde4-1d29-71a4-89e1-80c33290d736
+> {"role": "editor", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a0fde4-1d29-71a4-89e1-80c33290d736",
+  "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+  "version": 1,
+  "change_seq": 9,
+  "created_at": "2026-10-02T18:33:01.709431Z",
+  "updated_at": "2026-10-02T18:33:01.709431Z",
+  "deleted_at": null,
+  "role": "editor",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:33:01.685102Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=[redacted]"
+ }
+}
+
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "id": "01a0fde4-2797-7352-92e1-ccf5ab7ccafd",
+  "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+  "version": 1,
+  "change_seq": 11,
+  "created_at": "2026-10-02T18:33:03.128656Z",
+  "updated_at": "2026-10-02T18:33:03.128656Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+  "display_name": "Sara",
+  "role": "editor"
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fde4-15d5-757e-b346-58249dc26387/invitations/01a0fde4-2823-7012-88f8-1e0eb1ad7af1
+> {"role": "viewer", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a0fde4-2823-7012-88f8-1e0eb1ad7af1",
+  "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+  "version": 1,
+  "change_seq": 14,
+  "created_at": "2026-10-02T18:33:03.825565Z",
+  "updated_at": "2026-10-02T18:33:03.825565Z",
+  "deleted_at": null,
+  "role": "viewer",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:33:03.807930Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=[redacted]"
+ }
+}
+
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "id": "01a0fde4-2c6d-7168-a37f-942e6ca5cecd",
+  "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+  "version": 1,
+  "change_seq": 16,
+  "created_at": "2026-10-02T18:33:04.365950Z",
+  "updated_at": "2026-10-02T18:33:04.365950Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fde1-84eb-711b-b2f4-f4fdb1664a1b",
+  "display_name": "Omar",
+  "role": "viewer"
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fde4-15d5-757e-b346-58249dc26387/invitations/01a0fde4-2cc7-71cb-b7d6-fdb6e0bc89c1
+> {"role": "editor", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a0fde4-2cc7-71cb-b7d6-fdb6e0bc89c1",
+  "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+  "version": 1,
+  "change_seq": 19,
+  "created_at": "2026-10-02T18:33:05.038638Z",
+  "updated_at": "2026-10-02T18:33:05.038638Z",
+  "deleted_at": null,
+  "role": "editor",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:33:05.019417Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=[redacted]"
+ }
+}
+
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "id": "01a0fde4-3149-702e-b37a-5ae0fea65b9d",
+  "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+  "version": 1,
+  "change_seq": 21,
+  "created_at": "2026-10-02T18:33:05.609836Z",
+  "updated_at": "2026-10-02T18:33:05.609836Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fde1-88c2-7034-8f0f-444527633af1",
+  "display_name": "Lina",
+  "role": "editor"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fde4-15d5-757e-b346-58249dc26387/members params={'limit': 50}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fde4-1784-71a7-aead-59faa62064d9",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "version": 1,
+   "change_seq": 2,
+   "created_at": "2026-10-02T18:32:59.012697Z",
+   "updated_at": "2026-10-02T18:32:59.012697Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "display_name": "Mona",
+   "role": "owner"
+  },
+  {
+   "id": "01a0fde4-1c7b-737b-a2c0-eb0e5ef5144d",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "version": 1,
+   "change_seq": 6,
+   "created_at": "2026-10-02T18:33:00.284070Z",
+   "updated_at": "2026-10-02T18:33:00.284070Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+   "display_name": "Karim",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde4-2797-7352-92e1-ccf5ab7ccafd",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "version": 1,
+   "change_seq": 11,
+   "created_at": "2026-10-02T18:33:03.128656Z",
+   "updated_at": "2026-10-02T18:33:03.128656Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+   "display_name": "Sara",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde4-2c6d-7168-a37f-942e6ca5cecd",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "version": 1,
+   "change_seq": 16,
+   "created_at": "2026-10-02T18:33:04.365950Z",
+   "updated_at": "2026-10-02T18:33:04.365950Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fde1-84eb-711b-b2f4-f4fdb1664a1b",
+   "display_name": "Omar",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde4-3149-702e-b37a-5ae0fea65b9d",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "version": 1,
+   "change_seq": 21,
+   "created_at": "2026-10-02T18:33:05.609836Z",
+   "updated_at": "2026-10-02T18:33:05.609836Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fde1-88c2-7034-8f0f-444527633af1",
+   "display_name": "Lina",
+   "role": "editor"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+GET /wallets/01a0fde4-15d5-757e-b346-58249dc26387/members params={'limit': 50}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fde4-1784-71a7-aead-59faa62064d9",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "version": 1,
+   "change_seq": 2,
+   "created_at": "2026-10-02T18:32:59.012697Z",
+   "updated_at": "2026-10-02T18:32:59.012697Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "display_name": "Mona",
+   "role": "owner"
+  },
+  {
+   "id": "01a0fde4-1c7b-737b-a2c0-eb0e5ef5144d",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "version": 1,
+   "change_seq": 6,
+   "created_at": "2026-10-02T18:33:00.284070Z",
+   "updated_at": "2026-10-02T18:33:00.284070Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+   "display_name": "Karim",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde4-2797-7352-92e1-ccf5ab7ccafd",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "version": 1,
+   "change_seq": 11,
+   "created_at": "2026-10-02T18:33:03.128656Z",
+   "updated_at": "2026-10-02T18:33:03.128656Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+   "display_name": "Sara",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde4-2c6d-7168-a37f-942e6ca5cecd",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "version": 1,
+   "change_seq": 16,
+   "created_at": "2026-10-02T18:33:04.365950Z",
+   "updated_at": "2026-10-02T18:33:04.365950Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fde1-84eb-711b-b2f4-f4fdb1664a1b",
+   "display_name": "Omar",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde4-3149-702e-b37a-5ae0fea65b9d",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "version": 1,
+   "change_seq": 21,
+   "created_at": "2026-10-02T18:33:05.609836Z",
+   "updated_at": "2026-10-02T18:33:05.609836Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fde1-88c2-7034-8f0f-444527633af1",
+   "display_name": "Lina",
+   "role": "editor"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+GET /wallets/01a0fde4-15d5-757e-b346-58249dc26387/members params={'limit': 50}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fde4-1784-71a7-aead-59faa62064d9",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "version": 1,
+   "change_seq": 2,
+   "created_at": "2026-10-02T18:32:59.012697Z",
+   "updated_at": "2026-10-02T18:32:59.012697Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "display_name": "Mona",
+   "role": "owner"
+  },
+  {
+   "id": "01a0fde4-1c7b-737b-a2c0-eb0e5ef5144d",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "version": 2,
+   "change_seq": 24,
+   "created_at": "2026-10-02T18:33:00.284070Z",
+   "updated_at": "2026-10-02T18:33:10.170273Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+   "display_name": "Karim",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde4-2797-7352-92e1-ccf5ab7ccafd",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "version": 2,
+   "change_seq": 25,
+   "created_at": "2026-10-02T18:33:03.128656Z",
+   "updated_at": "2026-10-02T18:33:10.195239Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+   "display_name": "Sara",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde4-2c6d-7168-a37f-942e6ca5cecd",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "version": 1,
+   "change_seq": 16,
+   "created_at": "2026-10-02T18:33:04.365950Z",
+   "updated_at": "2026-10-02T18:33:04.365950Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fde1-84eb-711b-b2f4-f4fdb1664a1b",
+   "display_name": "Omar",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde4-3149-702e-b37a-5ae0fea65b9d",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "version": 2,
+   "change_seq": 26,
+   "created_at": "2026-10-02T18:33:05.609836Z",
+   "updated_at": "2026-10-02T18:33:10.217707Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fde1-88c2-7034-8f0f-444527633af1",
+   "display_name": "Lina",
+   "role": "viewer"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] all non-owners viewers 
+CHECK [PASS] nobody removed 
+GET /sync/user/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fde1-a176-748f-956f-a7da6a72c118",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T18:30:18.951251Z",
+    "updated_at": "2026-10-02T18:33:12.409480Z",
+    "deleted_at": null,
+    "user_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T18:30:18.944889Z",
+    "last_used_at": "2026-10-02T18:33:12.407800Z",
+    "ended_at": null,
+    "current": true
+   }
+  },
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fde1-8113-726c-bc5a-a73e6441f3a8",
+    "version": 2,
+    "change_seq": 3,
+    "created_at": "2026-10-02T18:30:09.428188Z",
+    "updated_at": "2026-10-02T18:30:29.736110Z",
+    "deleted_at": null,
+    "user_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+    "display_name": "Karim",
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": true,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  },
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fde3-fd20-77ce-9a0d-27a3fab40823",
+    "user_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+    "version": 1,
+    "change_seq": 5,
+    "created_at": "2026-10-02T18:32:52.726575Z",
+    "updated_at": "2026-10-02T18:32:52.726575Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "Karim own",
+    "icon": "cup",
+    "color": "#6D4C41",
+    "archived_at": null,
+    "in_use": true
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fde2-4a25-701e-a4cc-1e03774735c2",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 2,
+    "change_seq": 83,
+    "created_at": "2026-10-02T18:31:00.907544Z",
+    "updated_at": "2026-10-02T18:32:54.504219Z",
+    "deleted_at": "2026-10-02T18:32:54.504219Z",
+    "member_user_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+    "display_name": "Karim",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fde4-1c7b-737b-a2c0-eb0e5ef5144d",
+    "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+    "version": 2,
+    "change_seq": 24,
+    "created_at": "2026-10-02T18:33:00.284070Z",
+    "updated_at": "2026-10-02T18:33:10.170273Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+    "display_name": "Karim",
+    "role": "viewer"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmRlMS03ZDYzLTcxNTYtYjI1Zi00Njg4OWUyY2E0OTMiLCJyIjoiMDFhMGZkZTEtN2Q2My03MTU2LWIyNWYtNDY4ODllMmNhNDkzIiwicCI6OH1E2s0lz8BZrBzW6GVA4u_N"
+ }
+}
+
+CHECK [PASS] karim demotion stamped on user feed 
+GET /sync/user/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fde1-a6a5-7079-ae0e-dcb910653308",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T18:30:20.279015Z",
+    "updated_at": "2026-10-02T18:33:13.105530Z",
+    "deleted_at": null,
+    "user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T18:30:20.272629Z",
+    "last_used_at": "2026-10-02T18:33:13.102973Z",
+    "ended_at": null,
+    "current": true
+   }
+  },
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fde1-84e0-7368-9431-12d6111e9930",
+    "version": 2,
+    "change_seq": 3,
+    "created_at": "2026-10-02T18:30:10.400521Z",
+    "updated_at": "2026-10-02T18:30:30.179571Z",
+    "deleted_at": null,
+    "user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+    "display_name": "Sara",
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": false,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fde2-7d66-7095-88f1-f5d1ffd1bf0a",
+    "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+    "version": 3,
+    "change_seq": 66,
+    "created_at": "2026-10-02T18:31:14.022950Z",
+    "updated_at": "2026-10-02T18:32:38.788261Z",
+    "deleted_at": "2026-10-02T18:32:38.788261Z",
+    "member_user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+    "display_name": "Sara",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fde4-2797-7352-92e1-ccf5ab7ccafd",
+    "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+    "version": 2,
+    "change_seq": 25,
+    "created_at": "2026-10-02T18:33:03.128656Z",
+    "updated_at": "2026-10-02T18:33:10.195239Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+    "display_name": "Sara",
+    "role": "viewer"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmRlMS04MTIyLTcwNDctYWJlNC01OTJjZDY4NzkyZjciLCJyIjoiMDFhMGZkZTEtODEyMi03MDQ3LWFiZTQtNTkyY2Q2ODc5MmY3IiwicCI6OH10aVY_Ke-sig6q6dICG02w"
+ }
+}
+
+CHECK [PASS] sara demotion stamped on user feed 
+GET /sync/user/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fde1-b190-7153-9391-0152e6b79cc3",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T18:30:23.197004Z",
+    "updated_at": "2026-10-02T18:33:13.590573Z",
+    "deleted_at": null,
+    "user_id": "01a0fde1-88c2-7034-8f0f-444527633af1",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T18:30:23.188600Z",
+    "last_used_at": "2026-10-02T18:33:13.589081Z",
+    "ended_at": null,
+    "current": true
+   }
+  },
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fde1-8c6d-7140-90a9-6c499e96f936",
+    "version": 2,
+    "change_seq": 3,
+    "created_at": "2026-10-02T18:30:12.333797Z",
+    "updated_at": "2026-10-02T18:30:30.948556Z",
+    "deleted_at": null,
+    "user_id": "01a0fde1-88c2-7034-8f0f-444527633af1",
+    "display_name": "Lina",
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": false,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fde3-91ad-7185-8345-f9626b287aca",
+    "wallet_id": "01a0fde2-b3d7-7636-92ef-7f23a40ac0e0",
+    "version": 2,
+    "change_seq": 18,
+    "created_at": "2026-10-02T18:32:24.750343Z",
+    "updated_at": "2026-10-02T18:32:33.681295Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fde1-88c2-7034-8f0f-444527633af1",
+    "display_name": "Lina",
+    "role": "viewer"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fde4-3149-702e-b37a-5ae0fea65b9d",
+    "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+    "version": 2,
+    "change_seq": 26,
+    "created_at": "2026-10-02T18:33:05.609836Z",
+    "updated_at": "2026-10-02T18:33:10.217707Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fde1-88c2-7034-8f0f-444527633af1",
+    "display_name": "Lina",
+    "role": "viewer"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmRlMS04OGMyLTcwMzQtOGYwZi00NDQ1Mjc2MzNhZjEiLCJyIjoiMDFhMGZkZTEtODhjMi03MDM0LThmMGYtNDQ0NTI3NjMzYWYxIiwicCI6N301ZesT1R7sgG5Y3hGDYxAy"
+ }
+}
+
+CHECK [PASS] lina demotion stamped on user feed 
+CHECK [PASS] system audit role_changed 
+GET /wallets/01a0fde4-15d5-757e-b346-58249dc26387/activity params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fde4-4354-70db-a70e-81d276c64e9c",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:10.228606Z",
+   "actor_user_id": null,
+   "actor_display_name": null,
+   "action": "role_limited_by_plan",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-88c2-7034-8f0f-444527633af1",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde4-433e-7049-a20f-adaeca4ed42f",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:10.206343Z",
+   "actor_user_id": null,
+   "actor_display_name": null,
+   "action": "role_limited_by_plan",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde4-4327-73a5-9156-33582d353fff",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:10.183382Z",
+   "actor_user_id": null,
+   "actor_display_name": null,
+   "action": "role_limited_by_plan",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde4-3167-7077-86ac-71a5e93e1bb4",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:05.639307Z",
+   "actor_user_id": "01a0fde1-88c2-7034-8f0f-444527633af1",
+   "actor_display_name": "Lina",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-88c2-7034-8f0f-444527633af1",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde4-2f27-70c6-b156-796595bdf0e4",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:05.063847Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde4-2cc7-71cb-b7d6-fdb6e0bc89c1",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde4-2c8c-717b-b6eb-40ce55ea0d9b",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:04.396906Z",
+   "actor_user_id": "01a0fde1-84eb-711b-b2f4-f4fdb1664a1b",
+   "actor_display_name": "Omar",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-84eb-711b-b2f4-f4fdb1664a1b",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde4-2a63-735d-98fd-4d1761845d2c",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:03.844226Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde4-2823-7012-88f8-1e0eb1ad7af1",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde4-27c9-707a-8cfb-fe2723cc8895",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:03.177507Z",
+   "actor_user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+   "actor_display_name": "Sara",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde4-222b-7293-8752-8c5254bc892d",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:01.739967Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde4-1d29-71a4-89e1-80c33290d736",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde4-1cb6-7026-a665-684f952cd1f2",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:00.342799Z",
+   "actor_user_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+   "actor_display_name": "Karim",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde4-19e3-711b-a7b3-29606fbf8162",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:32:59.619353Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde4-17b0-77df-944e-deb1ec0b42f7",
+   "role": "editor"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] 3 activity role_limited_by_plan by server 

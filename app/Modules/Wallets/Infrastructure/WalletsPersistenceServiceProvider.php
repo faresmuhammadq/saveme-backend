@@ -5,6 +5,7 @@ namespace App\Modules\Wallets\Infrastructure;
 use App\Modules\Wallets\Domain\Categories\Ports\CategoryReferenceRepository;
 use App\Modules\Wallets\Domain\Categories\Ports\CategoryRepository;
 use App\Modules\Wallets\Domain\Categories\Ports\UserScopeSequence as UserScopeSequencePort;
+use App\Modules\Wallets\Domain\Ports\ActivityLog;
 use App\Modules\Wallets\Domain\Ports\MembershipRepository;
 use App\Modules\Wallets\Domain\Ports\PostingTotals;
 use App\Modules\Wallets\Domain\Ports\ScopeSequence;
@@ -17,6 +18,7 @@ use App\Modules\Wallets\Domain\Recurring\Ports\StampBlock;
 use App\Modules\Wallets\Domain\Transactions\Ports\PostingRepository;
 use App\Modules\Wallets\Domain\Transactions\Ports\TransactionRepository;
 use App\Modules\Wallets\Infrastructure\Ledger\EloquentPostingTotals;
+use App\Modules\Wallets\Infrastructure\Repositories\EloquentActivityLog;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentCategoryReferenceRepository;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentCategoryRepository;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentMembershipRepository;
@@ -55,5 +57,6 @@ class WalletsPersistenceServiceProvider extends ServiceProvider
         RecurringRuleRepository::class => EloquentRecurringRuleRepository::class,
         OccurrenceRepository::class => EloquentOccurrenceRepository::class,
         StampBlock::class => WalletScopeSequence::class,
+        ActivityLog::class => EloquentActivityLog::class,
     ];
 }

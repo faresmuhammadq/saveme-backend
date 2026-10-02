@@ -1,0 +1,225 @@
+===== TC-002 US1-2: identical create resent -> 200 same invitation, no second mail 2026-10-02T18:14:10.002751Z
+
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd2-cb70-7282-ac30-110efda7281e
+> {"role": "editor", "invitee_email": "qs016-k-1790964767@example.test"}
+< 200
+{
+ "data": {
+  "id": "01a0fdd2-cb70-7282-ac30-110efda7281e",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T18:14:06.163903Z",
+  "updated_at": "2026-10-02T18:14:06.163903Z",
+  "deleted_at": null,
+  "role": "editor",
+  "channel": "email",
+  "invitee_email": "qs016-k-1790964767@example.test",
+  "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:14:06.121296Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] 200 replay 200
+CHECK [PASS] same invitation {"id": "01a0fdd2-cb70-7282-ac30-110efda7281e", "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404", "version": 1, "change_seq": 4, "created_at": "2026-10-02T18:14:06.163903Z", "updated_at": "2026-10-02T18:14:06.163903Z", "deleted_at": null, "role": "editor", "channel": "email", "invitee_email": "qs016-k-1790964767@example.test", "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e", "status": "pending", "expires_at": "2026-10-09T18:14:06.121296Z"}
+CHECK [PASS] meta {} 
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd2-cb70-7282-ac30-110efda7281e
+> {"role": "editor", "invitee_email": "qs016-k-1790964767@example.test", "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fdd2-cb70-7282-ac30-110efda7281e",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T18:14:06.163903Z",
+  "updated_at": "2026-10-02T18:14:06.163903Z",
+  "deleted_at": null,
+  "role": "editor",
+  "channel": "email",
+  "invitee_email": "qs016-k-1790964767@example.test",
+  "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:14:06.121296Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] replay with version 1 also 200 200
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd2-cb70-7282-ac30-110efda7281e
+> {"role": "viewer", "invitee_email": "qs016-k-1790964767@example.test", "version": 1}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fdd2-e323-72e9-a338-369a64ecd228",
+ "errors": [
+  {
+   "pointer": "/role",
+   "code": "IMMUTABLE_FIELD",
+   "detail": "This field cannot be changed."
+  }
+ ]
+}
+
+CHECK [PASS] differing role at current version -> 422 IMMUTABLE_FIELD /role 422 [('/role', 'IMMUTABLE_FIELD')]
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd2-cb70-7282-ac30-110efda7281e
+> {"role": "editor", "invitee_email": "qs016-x-1790964767@example.test", "version": 1}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fdd2-e578-72f5-88d7-6481fba29ed4",
+ "errors": [
+  {
+   "pointer": "/invitee_email",
+   "code": "IMMUTABLE_FIELD",
+   "detail": "This field cannot be changed."
+  }
+ ]
+}
+
+CHECK [PASS] differing invitee_email -> 422 IMMUTABLE_FIELD /invitee_email 422 [('/invitee_email', 'IMMUTABLE_FIELD')]
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd2-cb70-7282-ac30-110efda7281e
+> {"role": "viewer", "invitee_email": "qs016-k-1790964767@example.test", "version": 0}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fdd2-e7c9-73f7-b2a6-0addf9412dfe",
+ "current": {
+  "id": "01a0fdd2-cb70-7282-ac30-110efda7281e",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T18:14:06.163903Z",
+  "updated_at": "2026-10-02T18:14:06.163903Z",
+  "deleted_at": null,
+  "role": "editor",
+  "channel": "email",
+  "invitee_email": "qs016-k-1790964767@example.test",
+  "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:14:06.121296Z"
+ }
+}
+
+CHECK [PASS] differing body at version 0 -> 409 VERSION_CONFLICT with current 409 VERSION_CONFLICT
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd2-e92b-762a-8ded-bc93b9f0c937
+> {"role": "viewer", "invitee_email": null, "version": 3}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd2-e9fc-7352-9edb-f99d462daaa5"
+}
+
+CHECK [PASS] version>0 for no record -> 404 404 NOT_FOUND
+CHECK [PASS] still exactly one mail to invitee 1
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd3-0afc-768d-b6a9-c5817c6d16cb
+> {"role": "owner", "invitee_email": "qs016-x-1790964767@example.test"}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fdd3-0bf9-7171-9dd8-64d8fc7b10b4",
+ "errors": [
+  {
+   "pointer": "/role",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+
+CHECK [PASS] role owner -> 422 INVALID_ENUM_VALUE /role 422 [('/role', 'INVALID_ENUM_VALUE')]
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd3-0cdc-7579-a223-0ad50b3a01d0
+> {"role": "viewer", "invitee_email": "not-an-address"}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fdd3-0de0-70ff-95bb-89e4ab741929",
+ "errors": [
+  {
+   "pointer": "/invitee_email",
+   "code": "INVALID_TYPE",
+   "detail": "This value is not in the expected form."
+  }
+ ]
+}
+
+CHECK [PASS] bad address -> 422 /invitee_email 422 [('/invitee_email', 'INVALID_TYPE')]
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd3-0ed6-72ea-b595-e4cd2a33a27e
+> {"role": "viewer"}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fdd3-0fc1-703d-a819-98011eb99e00",
+ "errors": [
+  {
+   "pointer": "/invitee_email",
+   "code": "REQUIRED",
+   "detail": "This field is required."
+  }
+ ]
+}
+
+CHECK [PASS] missing invitee_email -> 422 REQUIRED 422 [('/invitee_email', 'REQUIRED')]
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd3-10a5-7619-9b61-b88375175c57
+> {"role": "viewer", "invitee_email": null, "wallet_name": "x"}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fdd3-11b1-7121-ac05-c53717f39acb",
+ "errors": [
+  {
+   "pointer": "/wallet_name",
+   "code": "UNKNOWN_FIELD",
+   "detail": "This field is not accepted here."
+  }
+ ]
+}
+
+CHECK [PASS] unknown field -> 422 UNKNOWN_FIELD 422 [('/wallet_name', 'UNKNOWN_FIELD')]
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/not-a-uuid
+> {"role": "viewer", "invitee_email": null}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/invalid-id",
+ "title": "Invalid identifier",
+ "status": 422,
+ "detail": "The identifier is not valid.",
+ "code": "INVALID_ID",
+ "request_id": "01a0fdd3-134e-7385-aeee-bc5e2014c4ed"
+}
+
+CHECK [PASS] malformed iid -> 422 INVALID_ID 422 INVALID_ID []

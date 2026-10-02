@@ -1,0 +1,329 @@
+===== TC-000-setup Seed people, sign in, profiles, Plus grants, wallets 2026-10-02T18:12:47.634476Z
+
+seed: {"o": {"id": "01a0fdd1-a85d-7074-b60e-c754324c783e", "email": "qs016-o-1790964767@example.test"}, "f": {"id": "01a0fdd1-b14f-7244-9541-13246a735fe9", "email": "qs016-f-1790964767@example.test"}, "k": {"id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0", "email": "qs016-k-1790964767@example.test"}, "s": {"id": "01a0fdd1-b9d8-73a5-842b-187961d1f257", "email": "qs016-s-1790964767@example.test"}, "x": {"id": "01a0fdd1-bddb-70d6-b5fc-49bcceb302e7", "email": "qs016-x-1790964767@example.test"}, "u1": {"id": "01a0fdd1-c20e-722d-ad76-8b8800047731", "email": "qs016-u1-1790964767@example.test"}, "p2": {"id": "01a0fdd1-c687-7280-849b-797c24eccf89", "email": "qs016-p2-1790964767@example.test"}, "e1": {"id": "01a0fdd1-caea-73e8-a0ae-801fa4a48c41", "email": "qs016-e1-1790964767@example.test"}, "e2": {"id": "01a0fdd1-cfad-7262-ac53-ba8983ced69d", "email": "qs016-e2-1790964767@example.test"}, "e3": {"id": "01a0fdd1-d5c4-7343-9c03-2f8faacbdd57", "email": "qs016-e3-1790964767@example.test"}, "v1": {"id": "01a0fdd1-db48-7077-97f8-dd40bb6050eb", "email": "qs016-v1-1790964767@example.test"}, "p3": {"id": "01a0fdd1-df9d-71eb-997d-b8b2abdf7cdd", "email": "qs016-p3-1790964767@example.test"}, "p4": {"id": "01a0fdd1-e3d0-72fe-935c-52f393c7c1da", "email": "qs016-p4-1790964767@example.test"}, "p5": {"id": "01a0fdd1-e7e7-73f3-865d-ce2c48ea311d", "email": "qs016-p5-1790964767@example.test"}, "t": {"id": "01a0fdd1-ec69-702f-bf8a-f33e6aee2ccb", "email": "qs016-t-1790964767@example.test"}, "l": {"id": "01a0fdd1-f097-70ca-967f-2c56c80364c5", "email": "qs016-l-1790964767@example.test"}, "g": {"id": "01a0fdd1-f496-720d-b3e6-62bcbcf33b97", "email": "qs016-g-1790964767@example.test"}}
+POST /auth/login
+> {"email": "qs016-o-1790964767@example.test", "password": "[redacted]", "device": {"session_id": "01a0fdd1-f93e-72a6-b167-14851cf062fe", "device_id": "qs016-o-1790964767", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login o 200
+POST /auth/login
+> {"email": "qs016-f-1790964767@example.test", "password": "[redacted]", "device": {"session_id": "01a0fdd1-ff21-7389-8c8f-f5dba49be25c", "device_id": "qs016-f-1790964767", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login f 200
+POST /auth/login
+> {"email": "qs016-k-1790964767@example.test", "password": "[redacted]", "device": {"session_id": "01a0fdd2-0544-7791-b095-c01c0b1ccf5e", "device_id": "qs016-k-1790964767", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login k 200
+POST /auth/login
+> {"email": "qs016-s-1790964767@example.test", "password": "[redacted]", "device": {"session_id": "01a0fdd2-0b9f-74c8-b1c8-6de782a577b9", "device_id": "qs016-s-1790964767", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login s 200
+POST /auth/login
+> {"email": "qs016-x-1790964767@example.test", "password": "[redacted]", "device": {"session_id": "01a0fdd2-11c0-73ac-9b3c-d12aac7068cb", "device_id": "qs016-x-1790964767", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login x 200
+POST /auth/login
+> {"email": "qs016-u1-1790964767@example.test", "password": "[redacted]", "device": {"session_id": "01a0fdd2-187e-76b4-9fd6-4647dd5c52e8", "device_id": "qs016-u1-1790964767", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login u1 200
+POST /auth/login
+> {"email": "qs016-p2-1790964767@example.test", "password": "[redacted]", "device": {"session_id": "01a0fdd2-1e9a-7028-a934-6c1f78e31990", "device_id": "qs016-p2-1790964767", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login p2 200
+POST /auth/login
+> {"email": "qs016-e1-1790964767@example.test", "password": "[redacted]", "device": {"session_id": "01a0fdd2-2525-73cb-845e-b4108a8e2905", "device_id": "qs016-e1-1790964767", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login e1 200
+POST /auth/login
+> {"email": "qs016-e2-1790964767@example.test", "password": "[redacted]", "device": {"session_id": "01a0fdd2-2aef-74a1-8ff1-4e8e7ac2096f", "device_id": "qs016-e2-1790964767", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login e2 200
+POST /auth/login
+> {"email": "qs016-e3-1790964767@example.test", "password": "[redacted]", "device": {"session_id": "01a0fdd2-31bc-74ea-b223-ca0aa5282891", "device_id": "qs016-e3-1790964767", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login e3 200
+POST /auth/login
+> {"email": "qs016-v1-1790964767@example.test", "password": "[redacted]", "device": {"session_id": "01a0fdd2-3835-7701-9fe8-535fd1efd5d8", "device_id": "qs016-v1-1790964767", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login v1 200
+POST /auth/login
+> {"email": "qs016-p3-1790964767@example.test", "password": "[redacted]", "device": {"session_id": "01a0fdd2-3e66-75f9-afb5-0ccb46887e07", "device_id": "qs016-p3-1790964767", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login p3 200
+POST /auth/login
+> {"email": "qs016-p4-1790964767@example.test", "password": "[redacted]", "device": {"session_id": "01a0fdd2-4411-71c3-99a1-4ec47936596e", "device_id": "qs016-p4-1790964767", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login p4 200
+POST /auth/login
+> {"email": "qs016-p5-1790964767@example.test", "password": "[redacted]", "device": {"session_id": "01a0fdd2-4a84-72e9-a114-eb9386df78aa", "device_id": "qs016-p5-1790964767", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login p5 200
+POST /auth/login
+> {"email": "qs016-t-1790964767@example.test", "password": "[redacted]", "device": {"session_id": "01a0fdd2-50f2-700a-ab93-0d6a5ea3bb35", "device_id": "qs016-t-1790964767", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login t 200
+POST /auth/login
+> {"email": "qs016-l-1790964767@example.test", "password": "[redacted]", "device": {"session_id": "01a0fdd2-575e-74b3-acb3-b2be3c48f93e", "device_id": "qs016-l-1790964767", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login l 200
+POST /auth/login
+> {"email": "qs016-g-1790964767@example.test", "password": "[redacted]", "device": {"session_id": "01a0fdd2-5da8-70b4-a2fe-5cf6826efd2d", "device_id": "qs016-g-1790964767", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login g 200
+PUT /me/profile
+> {"display_name": "Mona QA", "locale": "en", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fdd1-b13b-723e-9c0b-141504a2d4ae",
+  "version": 2,
+  "change_seq": 3,
+  "created_at": "2026-10-02T18:12:53.180218Z",
+  "updated_at": "2026-10-02T18:13:39.380100Z",
+  "deleted_at": null,
+  "user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "display_name": "Mona QA",
+  "locale": "en",
+  "timezone": "Africa/Cairo",
+  "default_currency": "EGP",
+  "default_currency_locked": false,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] profile o 200 None []
+PUT /me/profile
+> {"display_name": "Karim QA", "locale": "en", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fdd1-b9cd-7298-b041-52e7ddd63471",
+  "version": 2,
+  "change_seq": 3,
+  "created_at": "2026-10-02T18:12:55.373690Z",
+  "updated_at": "2026-10-02T18:13:39.881736Z",
+  "deleted_at": null,
+  "user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+  "display_name": "Karim QA",
+  "locale": "en",
+  "timezone": "Africa/Cairo",
+  "default_currency": "EGP",
+  "default_currency_locked": false,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] profile k 200 None []
+PUT /me/profile
+> {"display_name": "Sara QA", "locale": "en", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fdd1-bdcf-7236-bf75-240143332dbf",
+  "version": 2,
+  "change_seq": 3,
+  "created_at": "2026-10-02T18:12:56.400382Z",
+  "updated_at": "2026-10-02T18:13:40.463469Z",
+  "deleted_at": null,
+  "user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+  "display_name": "Sara QA",
+  "locale": "en",
+  "timezone": "Africa/Cairo",
+  "default_currency": "EGP",
+  "default_currency_locked": false,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] profile s 200 None []
+PUT /me/profile
+> {"display_name": "Leaver QA", "locale": "en", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fdd1-f489-71c0-9210-51fd9e3055e2",
+  "version": 2,
+  "change_seq": 3,
+  "created_at": "2026-10-02T18:13:10.410169Z",
+  "updated_at": "2026-10-02T18:13:41.097878Z",
+  "deleted_at": null,
+  "user_id": "01a0fdd1-f097-70ca-967f-2c56c80364c5",
+  "display_name": "Leaver QA",
+  "locale": "en",
+  "timezone": "Africa/Cairo",
+  "default_currency": "EGP",
+  "default_currency_locked": false,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] profile l 200 None []
+PUT /me/profile
+> {"display_name": "Pat QA", "locale": "en", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fdd1-cade-736e-b042-7e2a63af2dbb",
+  "version": 2,
+  "change_seq": 3,
+  "created_at": "2026-10-02T18:12:59.743403Z",
+  "updated_at": "2026-10-02T18:13:41.573090Z",
+  "deleted_at": null,
+  "user_id": "01a0fdd1-c687-7280-849b-797c24eccf89",
+  "display_name": "Pat QA",
+  "locale": "en",
+  "timezone": "Africa/Cairo",
+  "default_currency": "EGP",
+  "default_currency_locked": false,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] profile p2 200 None []
+PUT /me/profile
+> {"display_name": "Eve One", "locale": "en", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fdd1-cf8a-7150-b3e0-3a18b77cfb78",
+  "version": 2,
+  "change_seq": 3,
+  "created_at": "2026-10-02T18:13:00.938932Z",
+  "updated_at": "2026-10-02T18:13:42.092964Z",
+  "deleted_at": null,
+  "user_id": "01a0fdd1-caea-73e8-a0ae-801fa4a48c41",
+  "display_name": "Eve One",
+  "locale": "en",
+  "timezone": "Africa/Cairo",
+  "default_currency": "EGP",
+  "default_currency_locked": false,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] profile e1 200 None []
+CHECK [PASS] grant Plus o 01a0fdd2-7c18-71aa-bda3-cab195b55c98
+CHECK [PASS] grant Plus p2 01a0fdd2-89e3-72a5-97b8-74221e35e82d
+CHECK [PASS] grant Plus p3 01a0fdd2-96f0-7044-aa97-cb6f6edda2bf
+CHECK [PASS] grant Plus p4 01a0fdd2-a3b2-70fe-b739-619db014b006
+CHECK [PASS] grant Plus p5 01a0fdd2-b143-73de-acfa-aaa599dc993d
+GET /me/entitlements
+< 200
+{
+ "data": {
+  "plan": {
+   "id": "01a0e69a-9639-7118-8ed9-3de1ed414a35",
+   "name": "Plus \u00b7 Monthly"
+  },
+  "features": {
+   "sharing.enabled": true,
+   "sharing.max_members_per_wallet": 5,
+   "export.enabled": true,
+   "reports.advanced": true,
+   "wallets.max": null
+  }
+ },
+ "meta": {}
+}
+
+CHECK [PASS] o entitled to sharing, 5 members {"sharing.enabled": true, "sharing.max_members_per_wallet": 5, "export.enabled": true, "reports.advanced": true, "wallets.max": null}
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404
+> {"type": "cash", "name": "Home QA016", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T18:13:59.987749Z",
+  "updated_at": "2026-10-02T18:13:59.987749Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "Home QA016",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] wallet Home QA016 by o 201 None
+CHECK [PASS] platform expense category 01a0fa05-c298-7250-b5b2-2c85cc436f70
+PUT /wallets/01a0fdd2-c868-73ed-978e-7a2c92c5e8e5
+> {"type": "cash", "name": "Free QA016", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fdd2-c868-73ed-978e-7a2c92c5e8e5",
+  "wallet_id": "01a0fdd2-c868-73ed-978e-7a2c92c5e8e5",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T18:14:05.350703Z",
+  "updated_at": "2026-10-02T18:14:05.350703Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "Free QA016",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] wallet Free QA016 by f 201 None

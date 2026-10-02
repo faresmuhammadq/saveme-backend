@@ -72,4 +72,15 @@ final class WalletQueryService
     {
         $this->authorizer->authorize($userId, $walletId, Permission::W01ReadWallet);
     }
+
+    /**
+     * The name of a live wallet, for the invitation preview an invitee sees
+     * before joining (spec 016, A-5); null for a deleted or unknown wallet.
+     */
+    public function liveName(string $walletId): ?string
+    {
+        $wallet = $this->wallets->find($walletId);
+
+        return $wallet === null || $wallet->isTombstone() ? null : $wallet->name;
+    }
 }

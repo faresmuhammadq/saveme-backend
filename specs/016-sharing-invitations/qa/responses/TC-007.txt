@@ -1,0 +1,249 @@
+===== TC-007 US3-1 / FR-007: every member lists pending invitations with address; non-member 404 2026-10-02T18:14:55.642445Z
+
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fdd2-d57c-74c3-b6eb-96887c04c140",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "version": 1,
+   "change_seq": 6,
+   "created_at": "2026-10-02T18:14:08.650124Z",
+   "updated_at": "2026-10-02T18:14:08.650124Z",
+   "deleted_at": null,
+   "role": "editor",
+   "channel": "email",
+   "invitee_email": "qs016-nobody-1790964767@example.test",
+   "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "status": "pending",
+   "expires_at": "2026-10-09T18:14:08.596330Z"
+  },
+  {
+   "id": "01a0fdd3-5d08-7712-b17a-d48b3939dc03",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "version": 1,
+   "change_seq": 11,
+   "created_at": "2026-10-02T18:14:43.236607Z",
+   "updated_at": "2026-10-02T18:14:43.236607Z",
+   "deleted_at": null,
+   "role": "viewer",
+   "channel": "email",
+   "invitee_email": "qs016-k-1790964767@example.test",
+   "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "status": "pending",
+   "expires_at": "2026-10-09T18:14:43.207281Z"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] o lists pending (I5 with address, IG) and not closed (I1, IL) 200 ['01a0fdd2-d57c-74c3-b6eb-96887c04c140', '01a0fdd3-5d08-7712-b17a-d48b3939dc03']
+CHECK [PASS] o list meta is object 
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fdd2-d57c-74c3-b6eb-96887c04c140",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "version": 1,
+   "change_seq": 6,
+   "created_at": "2026-10-02T18:14:08.650124Z",
+   "updated_at": "2026-10-02T18:14:08.650124Z",
+   "deleted_at": null,
+   "role": "editor",
+   "channel": "email",
+   "invitee_email": "qs016-nobody-1790964767@example.test",
+   "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "status": "pending",
+   "expires_at": "2026-10-09T18:14:08.596330Z"
+  },
+  {
+   "id": "01a0fdd3-5d08-7712-b17a-d48b3939dc03",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "version": 1,
+   "change_seq": 11,
+   "created_at": "2026-10-02T18:14:43.236607Z",
+   "updated_at": "2026-10-02T18:14:43.236607Z",
+   "deleted_at": null,
+   "role": "viewer",
+   "channel": "email",
+   "invitee_email": "qs016-k-1790964767@example.test",
+   "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "status": "pending",
+   "expires_at": "2026-10-09T18:14:43.207281Z"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] k lists pending (I5 with address, IG) and not closed (I1, IL) 200 ['01a0fdd2-d57c-74c3-b6eb-96887c04c140', '01a0fdd3-5d08-7712-b17a-d48b3939dc03']
+CHECK [PASS] k list meta is object 
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fdd2-d57c-74c3-b6eb-96887c04c140",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "version": 1,
+   "change_seq": 6,
+   "created_at": "2026-10-02T18:14:08.650124Z",
+   "updated_at": "2026-10-02T18:14:08.650124Z",
+   "deleted_at": null,
+   "role": "editor",
+   "channel": "email",
+   "invitee_email": "qs016-nobody-1790964767@example.test",
+   "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "status": "pending",
+   "expires_at": "2026-10-09T18:14:08.596330Z"
+  },
+  {
+   "id": "01a0fdd3-5d08-7712-b17a-d48b3939dc03",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "version": 1,
+   "change_seq": 11,
+   "created_at": "2026-10-02T18:14:43.236607Z",
+   "updated_at": "2026-10-02T18:14:43.236607Z",
+   "deleted_at": null,
+   "role": "viewer",
+   "channel": "email",
+   "invitee_email": "qs016-k-1790964767@example.test",
+   "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "status": "pending",
+   "expires_at": "2026-10-09T18:14:43.207281Z"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] s lists pending (I5 with address, IG) and not closed (I1, IL) 200 ['01a0fdd2-d57c-74c3-b6eb-96887c04c140', '01a0fdd3-5d08-7712-b17a-d48b3939dc03']
+CHECK [PASS] s list meta is object 
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd3-94bf-72d8-809a-c44976b3a23a"
+}
+
+CHECK [PASS] non-member list -> 404 
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd3-5d08-7712-b17a-d48b3939dc03
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fdd3-963b-736e-b1fa-6a974d7b3dec"
+}
+
+CHECK [PASS] non-member read -> 404 
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations params={'sort': 'role'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/sort-field-not-supported",
+ "title": "Sort field not supported",
+ "status": 400,
+ "detail": "This list cannot be sorted by that field.",
+ "code": "SORT_FIELD_NOT_SUPPORTED",
+ "request_id": "01a0fdd3-97e3-71ca-801b-0f2cc86d6bc6"
+}
+
+CHECK [PASS] sort -> 400 SORT_FIELD_NOT_SUPPORTED 400 SORT_FIELD_NOT_SUPPORTED
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations params={'filter[role]': 'viewer'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/filter-field-not-supported",
+ "title": "Filter field not supported",
+ "status": 400,
+ "detail": "This list cannot be filtered by that field.",
+ "code": "FILTER_FIELD_NOT_SUPPORTED",
+ "request_id": "01a0fdd3-9941-7074-9a3b-61cb078b9645"
+}
+
+CHECK [PASS] filter -> 400 FILTER_FIELD_NOT_SUPPORTED 400 FILTER_FIELD_NOT_SUPPORTED
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations params={'cursor': 'garbage'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-cursor",
+ "title": "Invalid cursor",
+ "status": 400,
+ "detail": "The page cursor is not valid. Start again from the first page.",
+ "code": "INVALID_CURSOR",
+ "request_id": "01a0fdd3-9ab6-73af-a203-1f4c8ba8ced7"
+}
+
+CHECK [PASS] bad cursor -> 400 INVALID_CURSOR 400 INVALID_CURSOR
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations params={'limit': 1}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fdd2-d57c-74c3-b6eb-96887c04c140",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "version": 1,
+   "change_seq": 6,
+   "created_at": "2026-10-02T18:14:08.650124Z",
+   "updated_at": "2026-10-02T18:14:08.650124Z",
+   "deleted_at": null,
+   "role": "editor",
+   "channel": "email",
+   "invitee_email": "qs016-nobody-1790964767@example.test",
+   "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "status": "pending",
+   "expires_at": "2026-10-09T18:14:08.596330Z"
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJrIjoiNzM5MzM3NGI0Mzk4MjBmYyIsInAiOnsidmFsdWUiOiIyMDI2LTEwLTAyIDE4OjE0OjA4LjY1MDEyNCswMDowMCIsImlkIjoiMDFhMGZkZDItZDU3Yy03NGMzLWI2ZWItOTY4ODdjMDRjMTQwIn19",
+  "has_more": true,
+  "limit": 1
+ }
+}
+
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations params={'limit': 1, 'cursor': 'eyJrIjoiNzM5MzM3NGI0Mzk4MjBmYyIsInAiOnsidmFsdWUiOiIyMDI2LTEwLTAyIDE4OjE0OjA4LjY1MDEyNCswMDowMCIsImlkIjoiMDFhMGZkZDItZDU3Yy03NGMzLWI2ZWItOTY4ODdjMDRjMTQwIn19'}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fdd3-5d08-7712-b17a-d48b3939dc03",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "version": 1,
+   "change_seq": 11,
+   "created_at": "2026-10-02T18:14:43.236607Z",
+   "updated_at": "2026-10-02T18:14:43.236607Z",
+   "deleted_at": null,
+   "role": "viewer",
+   "channel": "email",
+   "invitee_email": "qs016-k-1790964767@example.test",
+   "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "status": "pending",
+   "expires_at": "2026-10-09T18:14:43.207281Z"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 1
+ }
+}
+
+CHECK [PASS] cursor paging (limit 1) eyJrIjoiNzM5MzM3NGI0Mzk4MjBmYyIsInAiOnsidmFsdWUiOiIyMDI2LTEwLTAyIDE4OjE0OjA4LjY1MDEyNCswMDowMCIsImlkIjoiMDFhMGZkZDItZDU3Yy03NGMzLWI2ZWItOTY4ODdjMDRjMTQwIn19

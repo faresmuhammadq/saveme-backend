@@ -1,0 +1,217 @@
+===== TC-012 FR-022: Free owner 403 sharing.enabled; Plus 5 incl. owner + pending -> 403 sharing.max_members_per_wallet; revoke frees a seat 2026-10-02T18:15:47.743411Z
+
+PUT /wallets/01a0fdd2-c868-73ed-978e-7a2c92c5e8e5/invitations/01a0fdd4-5b1f-73d2-a99e-45ce6bef75be
+> {"role": "viewer", "invitee_email": null}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/feature-not-entitled",
+ "title": "Feature not entitled",
+ "status": 403,
+ "detail": "Your plan does not include this.",
+ "code": "FEATURE_NOT_ENTITLED",
+ "request_id": "01a0fdd4-5bcb-712f-a078-3b6f1eea4239",
+ "feature": "sharing.enabled"
+}
+
+CHECK [PASS] Free owner invite (link) -> 403 FEATURE_NOT_ENTITLED feature=sharing.enabled 403 FEATURE_NOT_ENTITLED sharing.enabled
+PUT /wallets/01a0fdd2-c868-73ed-978e-7a2c92c5e8e5/invitations/01a0fdd4-5d18-75d3-b99d-c2804fe915ba
+> {"role": "viewer", "invitee_email": "qs016-x-1790964767@example.test"}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/feature-not-entitled",
+ "title": "Feature not entitled",
+ "status": 403,
+ "detail": "Your plan does not include this.",
+ "code": "FEATURE_NOT_ENTITLED",
+ "request_id": "01a0fdd4-5dcd-7376-897a-efd8fcc8b675",
+ "feature": "sharing.enabled"
+}
+
+CHECK [PASS] Free owner invite (email) -> 403 FEATURE_NOT_ENTITLED feature=sharing.enabled 403 FEATURE_NOT_ENTITLED sharing.enabled
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fdd2-d57c-74c3-b6eb-96887c04c140",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "version": 1,
+   "change_seq": 6,
+   "created_at": "2026-10-02T18:14:08.650124Z",
+   "updated_at": "2026-10-02T18:14:08.650124Z",
+   "deleted_at": null,
+   "role": "editor",
+   "channel": "email",
+   "invitee_email": "qs016-nobody-1790964767@example.test",
+   "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "status": "pending",
+   "expires_at": "2026-10-09T18:14:08.596330Z"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+GET /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/members params={'limit': 50}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fdd2-b647-72e6-8718-dfc003cbfe5d",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "version": 1,
+   "change_seq": 2,
+   "created_at": "2026-10-02T18:14:00.008079Z",
+   "updated_at": "2026-10-02T18:14:00.008079Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+   "display_name": "Mona QA",
+   "role": "owner"
+  },
+  {
+   "id": "01a0fdd3-3079-7052-94ca-36eff79df38e",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "version": 1,
+   "change_seq": 8,
+   "created_at": "2026-10-02T18:14:31.289833Z",
+   "updated_at": "2026-10-02T18:14:31.289833Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fdd1-b5b7-7392-b154-b6b902b526d0",
+   "display_name": "Karim QA",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fdd3-8bec-73b2-bf6c-ee58aac4b68a",
+   "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+   "version": 1,
+   "change_seq": 15,
+   "created_at": "2026-10-02T18:14:54.701369Z",
+   "updated_at": "2026-10-02T18:14:54.701369Z",
+   "deleted_at": null,
+   "member_user_id": "01a0fdd1-b9d8-73a5-842b-187961d1f257",
+   "display_name": "Sara QA",
+   "role": "viewer"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+active members 3, pending 1
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd4-6254-7768-b034-8383ce3454cc
+> {"role": "viewer", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a0fdd4-6254-7768-b034-8383ce3454cc",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 46,
+  "created_at": "2026-10-02T18:15:50.198038Z",
+  "updated_at": "2026-10-02T18:15:50.198038Z",
+  "deleted_at": null,
+  "role": "viewer",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:15:50.180229Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=[redacted]"
+ }
+}
+
+CHECK [PASS] fill seat 201 201
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd4-650d-72c4-8f9e-f676170d6ba0
+> {"role": "viewer", "invitee_email": null}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/feature-not-entitled",
+ "title": "Feature not entitled",
+ "status": 403,
+ "detail": "Your plan does not include this.",
+ "code": "FEATURE_NOT_ENTITLED",
+ "request_id": "01a0fdd4-65d6-7038-9fd1-70aed46a83a9",
+ "feature": "sharing.max_members_per_wallet"
+}
+
+CHECK [PASS] 6th seat -> 403 FEATURE_NOT_ENTITLED feature=sharing.max_members_per_wallet 403 FEATURE_NOT_ENTITLED sharing.max_members_per_wallet
+CHECK [PASS] Problem has standard members {"type": "http://saveme-backend.test/problems/feature-not-entitled", "title": "Feature not entitled", "status": 403, "detail": "Your plan does not include this.", "code": "FEATURE_NOT_ENTITLED", "request_id": "01a0fdd4-65d6-7038-9fd1-70aed46a83a9", "feature": "sharing.max_members_per_wallet"}
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd2-d57c-74c3-b6eb-96887c04c140
+> {"role": "editor", "invitee_email": "qs016-nobody-1790964767@example.test"}
+< 200
+{
+ "data": {
+  "id": "01a0fdd2-d57c-74c3-b6eb-96887c04c140",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-02T18:14:08.650124Z",
+  "updated_at": "2026-10-02T18:14:08.650124Z",
+  "deleted_at": null,
+  "role": "editor",
+  "channel": "email",
+  "invitee_email": "qs016-nobody-1790964767@example.test",
+  "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:14:08.596330Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] replay of an existing invitation at full quota -> 200 200
+DELETE /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd4-6254-7768-b034-8383ce3454cc
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fdd4-6254-7768-b034-8383ce3454cc",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 2,
+  "change_seq": 48,
+  "created_at": "2026-10-02T18:15:50.198038Z",
+  "updated_at": "2026-10-02T18:15:51.820113Z",
+  "deleted_at": "2026-10-02T18:15:51.820113Z",
+  "role": "viewer",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "status": "revoked",
+  "expires_at": "2026-10-09T18:15:50.180229Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] revoke frees a seat 
+PUT /wallets/01a0fdd2-b464-762b-993b-76fbd97d9404/invitations/01a0fdd4-6b3e-77f6-a2d5-acd1029e40bf
+> {"role": "viewer", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a0fdd4-6b3e-77f6-a2d5-acd1029e40bf",
+  "wallet_id": "01a0fdd2-b464-762b-993b-76fbd97d9404",
+  "version": 1,
+  "change_seq": 50,
+  "created_at": "2026-10-02T18:15:52.446414Z",
+  "updated_at": "2026-10-02T18:15:52.446414Z",
+  "deleted_at": null,
+  "role": "viewer",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fdd1-a85d-7074-b60e-c754324c783e",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:15:52.424710Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=[redacted]"
+ }
+}
+
+CHECK [PASS] create after revoke 201 201

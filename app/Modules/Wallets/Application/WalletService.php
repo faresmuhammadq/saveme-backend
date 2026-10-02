@@ -11,10 +11,13 @@ use App\Modules\Identity\Application\Audit\Details\RoleChangedDetail;
 use App\Modules\Identity\Application\Events;
 use App\Modules\Identity\Domain\Audit\AuditEvent;
 use App\Modules\Identity\Domain\Audit\SubjectType;
+use App\Modules\Wallets\Application\Activity\WalletActivity;
 use App\Modules\Wallets\Application\Authorization\WalletAuthorizer;
 use App\Modules\Wallets\Application\Deletion\WalletDeletionParticipant;
 use App\Modules\Wallets\Application\Dto\SavedWallet;
 use App\Modules\Wallets\Application\Dto\WalletView;
+use App\Modules\Wallets\Domain\Activity\ActivityAction;
+use App\Modules\Wallets\Domain\Activity\ActivitySubject;
 use App\Modules\Wallets\Domain\Categories\Ports\UserScopeSequence;
 use App\Modules\Wallets\Domain\Events\WalletCreated;
 use App\Modules\Wallets\Domain\Events\WalletDeleted;
@@ -69,6 +72,7 @@ final class WalletService
         private readonly WalletAuthorizer $authorizer,
         private readonly EntitlementService $entitlements,
         private readonly AuditLog $audit,
+        private readonly WalletActivity $activity,
         private readonly iterable $participants = [],
     ) {}
 
@@ -130,6 +134,7 @@ final class WalletService
             $this->refuseStale($current, $version, $role, $present);
 
             $this->bump($walletId, $version, ['archived_at' => self::instant(now()->toDateTimeImmutable())]);
+            $this->activity->record($walletId, $actorId, ActivityAction::Archived, ActivitySubject::Wallet, $walletId);
 
             return $this->view($this->reload($walletId), $role);
         });
@@ -212,6 +217,7 @@ final class WalletService
             $this->members->changeRole($actor->id, Role::Editor, $actorSeq, $memberSeq[$actorId]);
             $this->members->changeRole($target->id, Role::Owner, $targetSeq, $memberSeq[$targetUserId]);
             $this->bump($walletId, $version, []);
+            $this->activity->record($walletId, $actorId, ActivityAction::OwnershipTransferred, ActivitySubject::Wallet, $walletId, Role::Owner);
 
             $this->audit->record(AuditRecord::byUser(
                 AuditEvent::RoleChanged,
@@ -235,7 +241,7 @@ final class WalletService
         $max = $this->entitlements->forUser($actorId)->quota(Feature::WalletsMax);
 
         if ($max !== null && $this->wallets->countOwnedLive($actorId) >= $max) {
-            throw new FeatureNotEntitled;
+            throw new FeatureNotEntitled(Feature::WalletsMax);
         }
 
         $view = DB::transaction(function () use ($actorId, $walletId, $values): WalletView {
@@ -281,6 +287,7 @@ final class WalletService
                 'icon' => $values['icon'],
                 'color' => $values['color'],
             ]);
+            $this->activity->record($walletId, $actorId, ActivityAction::Edited, ActivitySubject::Wallet, $walletId);
 
             if ($values['opening_balance_minor'] !== $current->openingBalanceMinor) {
                 $this->wallets->refreshBalance($walletId, $this->postings->sumFor($walletId));

@@ -1,0 +1,171 @@
+===== us8-s1 US8-1 activity newest first, actor/action/subject ids, role for role acts; name only for active members 2026-10-02T18:33:36.147561Z
+
+GET /wallets/01a0fde4-15d5-757e-b346-58249dc26387/activity params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fde4-8aa8-7173-81ee-902de5a69c82",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:28.488560Z",
+   "actor_user_id": null,
+   "actor_display_name": null,
+   "action": "role_limited_by_plan",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde4-8859-70b5-81fa-c898707359f7",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:27.897890Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "ownership_transferred",
+   "subject_type": "wallet",
+   "subject_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "role": "owner"
+  },
+  {
+   "id": "01a0fde4-84c6-7341-87aa-c7ab0d808915",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:26.982889Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "role_changed",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde4-4354-70db-a70e-81d276c64e9c",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:10.228606Z",
+   "actor_user_id": null,
+   "actor_display_name": null,
+   "action": "role_limited_by_plan",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-88c2-7034-8f0f-444527633af1",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde4-433e-7049-a20f-adaeca4ed42f",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:10.206343Z",
+   "actor_user_id": null,
+   "actor_display_name": null,
+   "action": "role_limited_by_plan",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde4-4327-73a5-9156-33582d353fff",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:10.183382Z",
+   "actor_user_id": null,
+   "actor_display_name": null,
+   "action": "role_limited_by_plan",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde4-3167-7077-86ac-71a5e93e1bb4",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:05.639307Z",
+   "actor_user_id": "01a0fde1-88c2-7034-8f0f-444527633af1",
+   "actor_display_name": "Lina",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-88c2-7034-8f0f-444527633af1",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde4-2f27-70c6-b156-796595bdf0e4",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:05.063847Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde4-2cc7-71cb-b7d6-fdb6e0bc89c1",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde4-2c8c-717b-b6eb-40ce55ea0d9b",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:04.396906Z",
+   "actor_user_id": "01a0fde1-84eb-711b-b2f4-f4fdb1664a1b",
+   "actor_display_name": "Omar",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-84eb-711b-b2f4-f4fdb1664a1b",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde4-2a63-735d-98fd-4d1761845d2c",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:03.844226Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde4-2823-7012-88f8-1e0eb1ad7af1",
+   "role": "viewer"
+  },
+  {
+   "id": "01a0fde4-27c9-707a-8cfb-fe2723cc8895",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:03.177507Z",
+   "actor_user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+   "actor_display_name": "Sara",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde4-222b-7293-8752-8c5254bc892d",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:01.739967Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde4-1d29-71a4-89e1-80c33290d736",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde4-1cb6-7026-a665-684f952cd1f2",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:33:00.342799Z",
+   "actor_user_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+   "actor_display_name": "Karim",
+   "action": "joined",
+   "subject_type": "member",
+   "subject_id": "01a0fde1-7d63-7156-b25f-46889e2ca493",
+   "role": "editor"
+  },
+  {
+   "id": "01a0fde4-19e3-711b-a7b3-29606fbf8162",
+   "wallet_id": "01a0fde4-15d5-757e-b346-58249dc26387",
+   "occurred_at": "2026-10-02T18:32:59.619353Z",
+   "actor_user_id": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+   "actor_display_name": "Mona",
+   "action": "invited",
+   "subject_type": "invitation",
+   "subject_id": "01a0fde4-17b0-77df-944e-deb1ec0b42f7",
+   "role": "editor"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] newest first 
+CHECK [PASS] role on role acts, ids only [('role_limited_by_plan', 'viewer'), ('ownership_transferred', 'owner'), ('role_changed', 'editor'), ('role_limited_by_plan', 'viewer'), ('role_limited_by_plan', 'viewer'), ('role_limited_by_plan', 'viewer'), ('joined', 'editor'), ('invited', 'editor'), ('joined', 'viewer'), ('invited', 'viewer'), ('joined', 'editor'), ('invited', 'editor'), ('joined', 'editor'), ('invited', 'editor')]
+CHECK [PASS] active member names shown 

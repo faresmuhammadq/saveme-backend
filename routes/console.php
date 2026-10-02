@@ -22,3 +22,6 @@ Schedule::command('sync:purge-tombstones')->daily();
 
 // Materialises recurring occurrences and confirms the due ones of automatic rules; hourly so each rule's local midnight is met within the hour (spec 014, R-12).
 Schedule::command('wallets:materialise-occurrences')->hourly()->withoutOverlapping();
+
+// Closes pending invitations past their expiry; hourly so the stored status is the truth on the feed (spec 016, R-14).
+Schedule::command('sharing:expire-invitations')->hourly()->withoutOverlapping();

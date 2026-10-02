@@ -4,6 +4,7 @@ namespace App\Modules\Wallets\Application;
 
 use App\Modules\Identity\Application\Profiles\DisplayNames;
 use App\Modules\Wallets\Application\Dto\MemberView;
+use App\Modules\Wallets\Domain\Membership\MemberRecord;
 use App\Modules\Wallets\Domain\Membership\Role;
 use App\Modules\Wallets\Domain\Ports\MembershipRepository;
 use DateTimeZone;
@@ -58,5 +59,47 @@ final class MembershipQueryService
             'items' => array_map(fn ($member): MemberView => new MemberView($member, $names[$member->userId] ?? null), $page),
             'next' => $next,
         ];
+    }
+
+    /**
+     * The person's active membership of the wallet.
+     */
+    public function activeMember(string $walletId, string $userId): ?MemberRecord
+    {
+        return $this->members->activeFor($walletId, $userId);
+    }
+
+    /**
+     * The person's newest membership of the wallet, live or tombstoned.
+     */
+    public function latestMember(string $walletId, string $userId): ?MemberRecord
+    {
+        return $this->members->latestFor($walletId, $userId);
+    }
+
+    /**
+     * Active members of the wallet, the owner included.
+     */
+    public function countActive(string $walletId): int
+    {
+        return $this->members->countActive($walletId);
+    }
+
+    /**
+     * Ids of the live wallets the person currently owns.
+     *
+     * @return list<string>
+     */
+    public function ownedLiveWalletIds(string $userId): array
+    {
+        return $this->members->ownedLiveWalletsOf($userId);
+    }
+
+    /**
+     * A membership with the display name the other members may see.
+     */
+    public function view(MemberRecord $member): MemberView
+    {
+        return new MemberView($member, $this->displayNames->of([$member->userId])[$member->userId] ?? null);
     }
 }

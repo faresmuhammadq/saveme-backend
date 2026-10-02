@@ -21,7 +21,7 @@ Recommended order, with the dependencies that force it. A spec directory takes t
 | 8 | [B14](B14-sync-protocol.md) | Sync protocol | B6 | Contract right after B6. Batch upload supersedes ADR-0008 rule 7 |
 | 9 | [B7](B07-recurring-transactions.md) | Recurring transactions | B6 | |
 | 10 | [B8](B08-budgets.md) | Budgets | B5, B6 | Answers six banked Budgeting questions |
-| 11 | [B9](B09-sharing-invitations.md) | Sharing & invitations | B3, B4 | |
+| 11 | [B9](B09-sharing-invitations.md) | Sharing & invitations | B3, B4 | Specified as spec 016 |
 | 12 | [B10](B10-billing-google-play.md) | Billing — Google Play | B3 | Google SDK needs approval |
 | 13 | [B11](B11-billing-instapay.md) | Billing — InstaPay claims | B3, D1, D2 | |
 | 14 | [B12](B12-back-office-operations.md) | Back-office operations | D1, D2, B3, B11 | Filament replaced by Livewire (P-18) |

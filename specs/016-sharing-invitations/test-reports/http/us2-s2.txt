@@ -1,0 +1,35 @@
+===== us2-s2 US2-2 any signed-in person accepts; link used up; second person not found 2026-10-02T18:31:13.498478Z
+
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "id": "01a0fde2-7d66-7095-88f1-f5d1ffd1bf0a",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 1,
+  "change_seq": 19,
+  "created_at": "2026-10-02T18:31:14.022950Z",
+  "updated_at": "2026-10-02T18:31:14.022950Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fde1-8122-7047-abe4-592cd68792f7",
+  "display_name": "Sara",
+  "role": "viewer"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] sara viewer 
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fde2-7e71-7016-8a70-30e61d1399f4"
+}
+
+CHECK [PASS] omar 404 

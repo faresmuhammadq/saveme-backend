@@ -29,6 +29,8 @@ const MATRIX_ROWS = [
     'S-03' => [true, false, false],
     'S-04' => [true, false, false],
     'S-05' => [false, true, true],
+    'S-06' => [true, false, false],
+    'S-07' => [true, true, true],
 ];
 
 dataset('matrix cells', function () {
@@ -53,6 +55,6 @@ test('the matrix has exactly the rows of the spec', function () {
 test('only S-02 names a capability, and it is sharing', function () {
     foreach (Permission::cases() as $permission) {
         expect(PermissionMatrix::capabilityFor($permission))
-            ->toBe($permission === Permission::S02SendOrRevokeInvitation ? Feature::SharingEnabled : null);
+            ->toBe($permission === Permission::S02SendInvitation ? Feature::SharingEnabled : null);
     }
 });

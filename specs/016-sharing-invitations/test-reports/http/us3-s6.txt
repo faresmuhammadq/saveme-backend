@@ -1,0 +1,48 @@
+===== us3-s6 US3-6 re-invite same address supersedes pending (revoked in same unit of work) 2026-10-02T18:31:46.672940Z
+
+PUT /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/invitations/01a0fde2-fcf1-703e-95dd-8837c41606fa
+> {"role": "viewer", "invitee_email": "qs016-lina-e1790965803@example.test"}
+< 201
+{
+ "data": {
+  "id": "01a0fde2-fcf1-703e-95dd-8837c41606fa",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 1,
+  "change_seq": 42,
+  "created_at": "2026-10-02T18:31:47.298291Z",
+  "updated_at": "2026-10-02T18:31:47.298291Z",
+  "deleted_at": null,
+  "role": "viewer",
+  "channel": "email",
+  "invitee_email": "qs016-lina-e1790965803@example.test",
+  "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:31:47.261553Z"
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fde1-fb12-74f0-a264-cc28b93ea5ea/invitations/01a0fde3-03f0-70ae-9ce5-564690badc5f
+> {"role": "editor", "invitee_email": "qs016-lina-e1790965803@example.test"}
+< 201
+{
+ "data": {
+  "id": "01a0fde3-03f0-70ae-9ce5-564690badc5f",
+  "wallet_id": "01a0fde1-fb12-74f0-a264-cc28b93ea5ea",
+  "version": 1,
+  "change_seq": 45,
+  "created_at": "2026-10-02T18:31:49.255948Z",
+  "updated_at": "2026-10-02T18:31:49.255948Z",
+  "deleted_at": null,
+  "role": "editor",
+  "channel": "email",
+  "invitee_email": "qs016-lina-e1790965803@example.test",
+  "invited_by": "01a0fde1-74c7-733d-872e-d8ba30a71119",
+  "status": "pending",
+  "expires_at": "2026-10-09T18:31:49.206208Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] earlier revoked, later pending 
+CHECK [PASS] same transaction stamps: later change_seq follows 

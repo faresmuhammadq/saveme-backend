@@ -1,0 +1,1153 @@
+# Sharing & invitations (spec 016, brief B9). Every operation sits under
+# /api/v1, inherits the root's bearer scheme and runs through the shared
+# runtime, so each also documents the shared refusals it can produce.
+#
+# Frozen for the C9 client. Authorization follows the permission matrix in
+# specs/010-wallets-membership/spec.md §6 (rows S-01 to S-07, as amended by
+# spec 016) — the only copy of it (P-08 rule 5). A caller who is not an
+# active member of the wallet gets 404 NOT_FOUND on every wallet path here,
+# never 403. Invitation tokens travel only in request bodies, never in a path
+# or query (P-15 rule 4). No new error code: a dead, foreign or mismatched
+# token is 404 NOT_FOUND; a plan refusal is 403 FEATURE_NOT_ENTITLED with the
+# Problem member `feature` naming the capability.
+
+/wallets/{id}/invitations:
+  get:
+    operationId: listInvitations
+    tags: [Sharing]
+    summary: List the wallet's pending invitations (row S-01).
+    description: |
+      Every live (pending) invitation of the wallet, oldest first, stabilised
+      by `id`. A closed invitation (accepted, declined, revoked, expired) is a
+      tombstone: it is never listed, and reaches clients through the wallet
+      feed and the single read. Readable by every active member (owner,
+      editor, viewer). An invitation past its `expires_at` stays listed as
+      `pending` until the hourly sweep closes it; it can no longer be
+      accepted.
+    x-filterable: []
+    x-sortable: []
+    parameters:
+      - &walletId
+        $ref: '../components/parameters.yaml#/components/parameters/ResourceId'
+      - $ref: '../components/parameters.yaml#/components/parameters/Cursor'
+      - $ref: '../components/parameters.yaml#/components/parameters/Limit'
+      - $ref: '../components/parameters.yaml#/components/parameters/Filter'
+      - $ref: '../components/parameters.yaml#/components/parameters/Sort'
+      - &acceptLanguage
+        $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - &correlationId
+        $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - &clientPlatform
+        $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - &clientVersion
+        $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'A page of pending invitations. None is 200 with `data: []`.'
+        headers: &successHeaders
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Invitation'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+            examples:
+              twoPending:
+                summary: One email invitation and one link invitation
+                value:
+                  data:
+                    - &emailInvitation
+                      id: 0192f7b0-0000-7000-8000-0000000000a1
+                      wallet_id: 0192f79e-0000-7000-8000-000000000001
+                      version: 1
+                      change_seq: 41
+                      created_at: '2026-10-02T09:00:00.000000Z'
+                      updated_at: '2026-10-02T09:00:00.000000Z'
+                      deleted_at: null
+                      role: editor
+                      channel: email
+                      invitee_email: karim@example.com
+                      invited_by: 0192f790-0000-7000-8000-00000000000a
+                      status: pending
+                      expires_at: '2026-10-09T09:00:00.000000Z'
+                    - &linkInvitation
+                      id: 0192f7b0-0000-7000-8000-0000000000a2
+                      wallet_id: 0192f79e-0000-7000-8000-000000000001
+                      version: 1
+                      change_seq: 43
+                      created_at: '2026-10-02T09:05:00.000000Z'
+                      updated_at: '2026-10-02T09:05:00.000000Z'
+                      deleted_at: null
+                      role: viewer
+                      channel: link
+                      invitee_email: null
+                      invited_by: 0192f790-0000-7000-8000-00000000000a
+                      status: pending
+                      expires_at: '2026-10-09T09:05:00.000000Z'
+                  meta:
+                    next_cursor: null
+                    has_more: false
+                    limit: 50
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/wallets/{id}/invitations/{iid}:
+  get:
+    operationId: getInvitation
+    tags: [Sharing]
+    summary: Read one invitation of the wallet, tombstone included (row S-01).
+    description: |
+      The record exactly as the wallet feed carries it. A closed invitation is
+      returned as a tombstone (`deleted_at` set, `status` saying why, address
+      erased). An unknown id, an id of another wallet's invitation or of any
+      other kind of record is 404 NOT_FOUND, as is any non-member.
+    parameters:
+      - *walletId
+      - &invitationId
+        name: iid
+        in: path
+        required: true
+        description: The invitation's UUIDv7, generated by the client that created it.
+        schema:
+          type: string
+          format: uuid
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: The invitation.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: &invitationEnvelope
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Invitation'
+            examples:
+              accepted:
+                summary: An invitation closed by its acceptance
+                value:
+                  data:
+                    id: 0192f7b0-0000-7000-8000-0000000000a1
+                    wallet_id: 0192f79e-0000-7000-8000-000000000001
+                    version: 2
+                    change_seq: 52
+                    created_at: '2026-10-02T09:00:00.000000Z'
+                    updated_at: '2026-10-02T10:12:30.000000Z'
+                    deleted_at: '2026-10-02T10:12:30.000000Z'
+                    role: editor
+                    channel: email
+                    invitee_email: null
+                    invited_by: 0192f790-0000-7000-8000-00000000000a
+                    status: accepted
+                    expires_at: '2026-10-09T09:00:00.000000Z'
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  put:
+    operationId: upsertInvitation
+    tags: [Sharing]
+    summary: Send an invitation, addressed by the client-generated identifier (row S-02).
+    description: |
+      A create, not a POST: the client generates the id and the same write may
+      arrive twice. `version` is omitted or 0. An invitation never changes
+      after it is created; to "resend", create a new one (it supersedes a
+      pending invitation to the same address in this wallet, which is closed
+      as `revoked` in the same unit of work).
+
+      `invitee_email` set → an **email invitation**: a mail carrying the link
+      is queued to that address, and only the account holding that address
+      may accept. `invitee_email: null` → a **link invitation**: the `201`
+      answer carries `meta.share_url`, the only time the link is ever
+      returned (the server keeps only its hash); anyone signed in who holds
+      it may accept. The link is
+      `{configured invitation URL}?token={43 base64url characters}`; it never
+      names the wallet or carries an amount. The invitation lives 7 days and
+      its token is single-use.
+
+      The answer is the same — status and body, and the same work on the
+      request path (no account lookup by address) — whether or not the
+      address belongs to an account (security baseline, Uniform answers);
+      only the mail, decided by a queued job, differs. At most 5 invitation mails reach one address in
+      24 hours across all inviters; beyond that the invitation is created and
+      answered the same, and no mail is sent.
+
+      Outcomes, in this order of precedence:
+
+      - not verified → 403 EMAIL_NOT_VERIFIED;
+      - malformed id → 422 INVALID_ID;
+      - more than 20 invitations created by the caller in 24 hours → 429
+        RATE_LIMITED with Retry-After;
+      - malformed body → 422 VALIDATION_FAILED (`role` must be `editor` or
+        `viewer`: INVALID_ENUM_VALUE at `/role`; an address that is not an
+        address, or longer than 254 characters: INVALID_TYPE or OUT_OF_RANGE
+        at `/invitee_email`);
+      - not a member, or the id is held by another wallet's invitation or by
+        any other kind of record → 404 NOT_FOUND;
+      - an editor or viewer → 403 FORBIDDEN;
+      - a new invitation while the owner's plan lacks sharing → 403
+        FEATURE_NOT_ENTITLED with `feature: sharing.enabled`;
+      - a new invitation that would bring owner + active members + live
+        pending invitations above the owner's quota → 403
+        FEATURE_NOT_ENTITLED with `feature: sharing.max_members_per_wallet`;
+      - the invitation is closed (a tombstone) → 409 VERSION_CONFLICT with
+        the tombstone in `current`, even for an identical body;
+      - body identical to the stored invitation → 200, nothing changed and
+        no link in `meta` (a replay);
+      - a version other than the stored one → 409 VERSION_CONFLICT with
+        `current`;
+      - a different `role` or `invitee_email` → 422 IMMUTABLE_FIELD at that
+        member;
+      - a version above 0 for an id that matches no record → 404 NOT_FOUND;
+      - otherwise 201, version 1.
+    parameters:
+      - *walletId
+      - *invitationId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvitationWrite'
+          examples:
+            inviteByEmail:
+              summary: Invite Karim as an editor by address
+              value:
+                role: editor
+                invitee_email: karim@example.com
+                version: 0
+            inviteByLink:
+              summary: Create a viewer link to share in a chat
+              value:
+                role: viewer
+                invitee_email: null
+    responses:
+      '200':
+        description: An identical replay, returning the invitation unchanged. `meta` is `{}`.
+        headers: &rateLimitedSuccessHeaders
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+          RateLimit-Limit:
+            $ref: '../components/headers.yaml#/components/headers/RateLimitLimit'
+          RateLimit-Remaining:
+            $ref: '../components/headers.yaml#/components/headers/RateLimitRemaining'
+          RateLimit-Reset:
+            $ref: '../components/headers.yaml#/components/headers/RateLimitReset'
+        content:
+          application/json:
+            schema: *invitationEnvelope
+      '201':
+        description: Created. A link invitation carries `meta.share_url`; an email invitation has `meta` `{}`.
+        headers: *rateLimitedSuccessHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Invitation'
+                    meta:
+                      $ref: '#/components/schemas/InvitationCreateMeta'
+            examples:
+              emailCreated:
+                summary: An email invitation; the link went to the mailbox only
+                value:
+                  data: *emailInvitation
+                  meta: {}
+              linkCreated:
+                summary: A link invitation; the link is returned this once
+                value:
+                  data: *linkInvitation
+                  meta:
+                    share_url: https://app.example/invite?token=q3W9v_2mZ0bXy8TfL1sKpA4eRgHuJcNdIoVwYzE5x7M
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  delete:
+    operationId: revokeInvitation
+    tags: [Sharing]
+    summary: Withdraw a pending invitation (row S-06), whatever the owner's plan.
+    description: |
+      Closes the invitation as `revoked`: it becomes a tombstone, its address
+      is erased, its token stops working and it no longer counts toward the
+      member quota. The body carries the invitation's version.
+
+      Outcomes, in this order: not verified → 403 EMAIL_NOT_VERIFIED;
+      malformed id → 422 INVALID_ID; missing or malformed body → 422
+      VALIDATION_FAILED (REQUIRED at `/version`); not a member, or unknown
+      invitation → 404 NOT_FOUND; an editor or viewer → 403 FORBIDDEN; the
+      invitation is already closed (for any reason) → 200 with the tombstone
+      unchanged; stale version → 409 VERSION_CONFLICT with `current`;
+      otherwise 200 with the tombstone, version + 1. No entitlement is
+      checked: an owner whose plan lapsed can still withdraw an offer.
+    parameters:
+      - *walletId
+      - *invitationId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/VersionBody'
+          examples:
+            revoke:
+              summary: Revoke at version 1
+              value:
+                version: 1
+    responses:
+      '200':
+        description: The invitation's tombstone.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *invitationEnvelope
+            examples:
+              revoked:
+                summary: The revoked link invitation
+                value:
+                  data:
+                    id: 0192f7b0-0000-7000-8000-0000000000a2
+                    wallet_id: 0192f79e-0000-7000-8000-000000000001
+                    version: 2
+                    change_seq: 57
+                    created_at: '2026-10-02T09:05:00.000000Z'
+                    updated_at: '2026-10-02T11:00:00.000000Z'
+                    deleted_at: '2026-10-02T11:00:00.000000Z'
+                    role: viewer
+                    channel: link
+                    invitee_email: null
+                    invited_by: 0192f790-0000-7000-8000-00000000000a
+                    status: revoked
+                    expires_at: '2026-10-09T09:05:00.000000Z'
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/invitations/preview:
+  post:
+    operationId: previewInvitation
+    tags: [Sharing]
+    summary: Show the signed-in person what an invitation token offers, before answering it.
+    description: |
+      For the invitee's confirmation screen. Needs a session but not a
+      verified address. Returns the wallet's name, the inviter's display
+      name, the role and the expiry — never an amount, a balance or the
+      invited address. Changes nothing.
+
+      A token that is unknown, used, revoked, expired (by its instant, even
+      before the sweep), of a deleted wallet, or — for an email invitation —
+      addressed to a different account than the caller's, is 404 NOT_FOUND:
+      the same answer for every case, so a token reveals nothing about whom
+      it was for. Preview, accept and decline share a budget of 30 per hour
+      per person (429 RATE_LIMITED).
+    parameters:
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvitationToken'
+          examples: &tokenExamples
+            token:
+              summary: The token from the link's `token` parameter
+              value:
+                token: q3W9v_2mZ0bXy8TfL1sKpA4eRgHuJcNdIoVwYzE5x7M
+    responses:
+      '200':
+        description: What the invitation offers.
+        headers: *rateLimitedSuccessHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/InvitationPreview'
+            examples:
+              preview:
+                summary: An editor invitation to "Home"
+                value:
+                  data:
+                    invitation_id: 0192f7b0-0000-7000-8000-0000000000a1
+                    wallet_id: 0192f79e-0000-7000-8000-000000000001
+                    wallet_name: Home
+                    role: editor
+                    invited_by_display_name: Mona
+                    expires_at: '2026-10-09T09:00:00.000000Z'
+                    already_member: false
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/invitations/accept:
+  post:
+    operationId: acceptInvitation
+    tags: [Sharing]
+    summary: Join the wallet the token invites to, with the invitation's role.
+    description: |
+      Needs a session but not a verified address: an unverified member can
+      read the wallet, and every write stays behind the verification gate
+      until they verify. Not an `Idempotency-Key` operation: it is idempotent
+      by token and person.
+
+      Outcomes, in this order:
+
+      - malformed body → 422 VALIDATION_FAILED at `/token`;
+      - over the token budget (30 per hour per person) → 429 RATE_LIMITED;
+      - token unknown, revoked, declined, expired (by its instant), of a
+        deleted wallet, already used by someone else, or an email invitation
+        whose address is not the caller's → 404 NOT_FOUND;
+      - the caller is already an active member of the wallet → 200 with
+        their membership, nothing changed, the invitation stays pending;
+      - the token was used by this caller and their membership is active →
+        200 with it, nothing changed (a retry after a lost answer);
+      - the wallet owner's plan lacks sharing → 403 FEATURE_NOT_ENTITLED
+        with `feature: sharing.enabled`;
+      - owner + active members + the wallet's other live pending
+        invitations + 1 above the owner's quota → 403 FEATURE_NOT_ENTITLED
+        with `feature: sharing.max_members_per_wallet`;
+      - otherwise 200 with the new membership; the invitation is closed as
+        `accepted`, in the same unit of work.
+
+      The new membership appears on the wallet's feed and on the caller's own
+      user feed (a live `wallet_member` row: start reading that wallet's
+      feed from the beginning).
+    parameters:
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvitationToken'
+          examples: *tokenExamples
+    responses:
+      '200':
+        description: The caller's membership of the wallet.
+        headers: *rateLimitedSuccessHeaders
+        content:
+          application/json:
+            schema: &memberEnvelope
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: './wallets.yaml#/components/schemas/WalletMember'
+            examples:
+              joined:
+                summary: Karim joined as an editor
+                value:
+                  data: &karimMember
+                    id: 0192f7c0-0000-7000-8000-0000000000b1
+                    wallet_id: 0192f79e-0000-7000-8000-000000000001
+                    version: 1
+                    change_seq: 51
+                    created_at: '2026-10-02T10:12:30.000000Z'
+                    updated_at: '2026-10-02T10:12:30.000000Z'
+                    deleted_at: null
+                    member_user_id: 0192f791-0000-7000-8000-00000000000b
+                    display_name: Karim
+                    role: editor
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/invitations/decline:
+  post:
+    operationId: declineInvitation
+    tags: [Sharing]
+    summary: Turn an invitation down.
+    description: |
+      Closes the invitation as `declined` (a tombstone, address erased). Needs
+      a session but not a verified address. The same token rules as accept:
+      a token not live, or an email invitation addressed to another account,
+      is 404 NOT_FOUND. Declining again a token this caller already declined
+      is 204, nothing changed. Shares the token budget (429).
+    parameters:
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/InvitationToken'
+          examples: *tokenExamples
+    responses:
+      '204':
+        description: Declined. No body.
+        headers:
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          RateLimit-Limit:
+            $ref: '../components/headers.yaml#/components/headers/RateLimitLimit'
+          RateLimit-Remaining:
+            $ref: '../components/headers.yaml#/components/headers/RateLimitRemaining'
+          RateLimit-Reset:
+            $ref: '../components/headers.yaml#/components/headers/RateLimitReset'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/wallets/{id}/members/{uid}:
+  patch:
+    operationId: changeMemberRole
+    tags: [Sharing]
+    summary: Change another member's role between editor and viewer (row S-03).
+    description: |
+      `{uid}` is the member's user id (`member_user_id`). The body carries
+      the new role and the membership's version. The change rides the
+      wallet's feed and the member's own user feed.
+
+      Outcomes, in this order: not verified → 403 EMAIL_NOT_VERIFIED;
+      malformed id → 422 INVALID_ID; malformed body → 422 VALIDATION_FAILED
+      (INVALID_ENUM_VALUE at `/role` for anything but `owner`, `editor`,
+      `viewer`); caller not a member, or `{uid}` not an active member → 404
+      NOT_FOUND; caller is an editor or viewer → 403 FORBIDDEN; raising to
+      `editor` while the owner's plan lacks sharing, or while the wallet has
+      more active members than the quota → 403 FEATURE_NOT_ENTITLED with
+      `feature`; the role is already the one sent → 200 unchanged; stale
+      version → 409 VERSION_CONFLICT with the membership in `current`; `role:
+      owner`, or `{uid}` is the owner → 422 IMMUTABLE_FIELD at `/role`
+      (ownership moves only through `transfer-ownership`); otherwise 200,
+      version + 1. Lowering to `viewer` is never refused for the plan.
+    parameters:
+      - *walletId
+      - &memberUserId
+        name: uid
+        in: path
+        required: true
+        description: The member's user id, as `member_user_id` in the member list.
+        schema:
+          type: string
+          format: uuid
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MemberRoleWrite'
+          examples:
+            makeViewer:
+              summary: Make Karim a viewer
+              value:
+                role: viewer
+                version: 1
+    responses:
+      '200':
+        description: The membership after the change.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *memberEnvelope
+            examples:
+              viewer:
+                summary: Karim is now a viewer
+                value:
+                  data:
+                    id: 0192f7c0-0000-7000-8000-0000000000b1
+                    wallet_id: 0192f79e-0000-7000-8000-000000000001
+                    version: 2
+                    change_seq: 60
+                    created_at: '2026-10-02T10:12:30.000000Z'
+                    updated_at: '2026-10-02T12:00:00.000000Z'
+                    deleted_at: null
+                    member_user_id: 0192f791-0000-7000-8000-00000000000b
+                    display_name: Karim
+                    role: viewer
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  delete:
+    operationId: removeMember
+    tags: [Sharing]
+    summary: Remove another member from the wallet (row S-04).
+    description: |
+      Tombstones the membership. The removed person's own user feed carries
+      the tombstoned `wallet_member` row — their phone purges the wallet's
+      local data on it — and every later request of theirs on this wallet is
+      404 NOT_FOUND. Nothing they recorded is deleted or reassigned.
+
+      Outcomes, in this order: not verified → 403 EMAIL_NOT_VERIFIED;
+      malformed id → 422 INVALID_ID; missing body → 422 VALIDATION_FAILED
+      (REQUIRED at `/version`); caller not a member, or `{uid}` never a
+      member → 404 NOT_FOUND; caller is an editor or viewer, or `{uid}` is
+      the caller → 403 FORBIDDEN; `{uid}`'s latest membership is already a
+      tombstone → 200 with it unchanged; stale version → 409
+      VERSION_CONFLICT with `current`; otherwise 200 with the tombstone,
+      version + 1. No entitlement is checked.
+    parameters:
+      - *walletId
+      - *memberUserId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/VersionBody'
+          examples:
+            remove:
+              summary: Remove at version 2
+              value:
+                version: 2
+    responses:
+      '200':
+        description: The membership's tombstone.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *memberEnvelope
+            examples:
+              removed:
+                summary: Karim was removed
+                value:
+                  data: &removedMember
+                    id: 0192f7c0-0000-7000-8000-0000000000b1
+                    wallet_id: 0192f79e-0000-7000-8000-000000000001
+                    version: 3
+                    change_seq: 64
+                    created_at: '2026-10-02T10:12:30.000000Z'
+                    updated_at: '2026-10-02T13:00:00.000000Z'
+                    deleted_at: '2026-10-02T13:00:00.000000Z'
+                    member_user_id: 0192f791-0000-7000-8000-00000000000b
+                    display_name: Karim
+                    role: viewer
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/wallets/{id}/leave:
+  post:
+    operationId: leaveWallet
+    tags: [Sharing]
+    summary: Leave the wallet (row S-05); the owner must transfer ownership first.
+    description: |
+      Tombstones the caller's own membership. Open to an unverified member:
+      leaving puts nothing into the wallet. The caller's user feed then
+      carries the tombstoned `wallet_member` row (purge the wallet's local
+      data), and every later request of theirs on this wallet — including a
+      repeated leave — is 404 NOT_FOUND, which the app treats as done.
+      Everything the caller recorded stays in the wallet.
+
+      Outcomes, in this order: malformed id → 422 INVALID_ID; missing body →
+      422 VALIDATION_FAILED (REQUIRED at `/version`, the caller's membership
+      version); not a member → 404 NOT_FOUND; the owner → 403 FORBIDDEN;
+      stale version → 409 VERSION_CONFLICT with the membership in `current`;
+      otherwise 200 with the tombstone, version + 1.
+    parameters:
+      - *walletId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/VersionBody'
+          examples:
+            leave:
+              summary: Leave at membership version 2
+              value:
+                version: 2
+    responses:
+      '200':
+        description: The caller's membership tombstone.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *memberEnvelope
+            examples:
+              left:
+                summary: Karim left
+                value:
+                  data: *removedMember
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/wallets/{id}/activity:
+  get:
+    operationId: listWalletActivity
+    tags: [Wallets & Ledger]
+    summary: Who did what in the wallet, newest first (row S-07).
+    description: |
+      One entry per applied write in the wallet — to the wallet itself, its
+      transactions, recurring rules, occurrences, memberships and
+      invitations — newest first by `occurred_at`, stabilised by `id`.
+      Replays write nothing. Entries name the actor (null: the server, e.g.
+      an automatic confirmation or a plan demotion), the action, the kind and
+      id of the record acted on and, for membership and invitation acts, the
+      role. They carry no amount, note, record name or address: the app
+      resolves `subject_id` from its local copy. `actor_display_name` is
+      filled only while the actor is an active member. Entries are kept 90
+      days. Not a change feed: there is no cursor to resume from and no
+      tombstone. Readable by every active member; anyone else 404.
+    x-filterable: []
+    x-sortable: []
+    parameters:
+      - *walletId
+      - $ref: '../components/parameters.yaml#/components/parameters/Cursor'
+      - $ref: '../components/parameters.yaml#/components/parameters/Limit'
+      - $ref: '../components/parameters.yaml#/components/parameters/Filter'
+      - $ref: '../components/parameters.yaml#/components/parameters/Sort'
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: 'A page of activity entries. None is 200 with `data: []`.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/ActivityEntry'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+            examples:
+              recent:
+                summary: A join, then a transaction added
+                value:
+                  data:
+                    - id: 0192f7d0-0000-7000-8000-0000000000c2
+                      wallet_id: 0192f79e-0000-7000-8000-000000000001
+                      occurred_at: '2026-10-02T10:20:00.000000Z'
+                      actor_user_id: 0192f791-0000-7000-8000-00000000000b
+                      actor_display_name: Karim
+                      action: created
+                      subject_type: transaction
+                      subject_id: 0192f7a0-1c3d-7abc-9f01-2b3c4d5e6f70
+                      role: null
+                    - id: 0192f7d0-0000-7000-8000-0000000000c1
+                      wallet_id: 0192f79e-0000-7000-8000-000000000001
+                      occurred_at: '2026-10-02T10:12:30.000000Z'
+                      actor_user_id: 0192f791-0000-7000-8000-00000000000b
+                      actor_display_name: Karim
+                      action: joined
+                      subject_type: member
+                      subject_id: 0192f791-0000-7000-8000-00000000000b
+                      role: editor
+                  meta:
+                    next_cursor: null
+                    has_more: false
+                    limit: 50
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+components:
+  schemas:
+
+    Invitation:
+      description: |
+        An offer to join a wallet with a role. Wallet-scoped and syncable: it
+        rides the wallet's feed as `invitation` rows, identical to this read.
+        Pending while live; every end (accepted, declined, revoked, expired,
+        or the wallet's deletion) is a tombstone whose `status` says why and
+        whose address is erased.
+      allOf:
+        - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
+        - $ref: '../components/schemas.yaml#/components/schemas/WalletScoped'
+        - type: object
+          required: [role, channel, invitee_email, invited_by, status, expires_at]
+          properties:
+            role:
+              $ref: '#/components/schemas/InvitedRole'
+            channel:
+              type: string
+              enum: [email, link]
+              description: '`email` when created with an address (only that account may accept), `link` when created without one (anyone signed in holding the link may accept).'
+            invitee_email:
+              type: [string, 'null']
+              maxLength: 254
+              description: The invited address while a pending email invitation; null for a link invitation and once the invitation is closed. Visible to every member of the wallet.
+            invited_by:
+              type: string
+              format: uuid
+              description: The user id of the owner who sent it.
+            status:
+              type: string
+              enum: [pending, accepted, declined, revoked, expired]
+              description: '`pending` while live; any other value comes with `deleted_at` set.'
+            expires_at:
+              type: string
+              format: date-time
+              description: 7 days after creation. Past it the token is dead, even before the hourly sweep closes the invitation.
+
+    InvitedRole:
+      type: string
+      enum: [editor, viewer]
+      description: The role the invitee joins with. Never `owner`.
+
+    InvitationWrite:
+      type: object
+      description: The create body. `version` omitted or 0. Every member is fixed once created.
+      required: [role, invitee_email]
+      additionalProperties: false
+      properties:
+        role:
+          $ref: '#/components/schemas/InvitedRole'
+        invitee_email:
+          type: [string, 'null']
+          format: email
+          minLength: 3
+          maxLength: 254
+          description: The address to mail (compared after trimming, Unicode NFKC and lowercasing), or null for a link invitation.
+        version:
+          type: integer
+          minimum: 0
+          description: Omitted or 0 to create; the stored version for an identical replay.
+
+    InvitationCreateMeta:
+      type: object
+      description: The `meta` of a `201`. A link invitation carries `share_url`; an email invitation has none.
+      additionalProperties: false
+      properties:
+        share_url:
+          type: string
+          format: uri
+          description: '`{configured invitation URL}?token={token}`. Returned only here, only once; share it as is. It names no wallet and carries no amount.'
+
+    InvitationToken:
+      type: object
+      required: [token]
+      additionalProperties: false
+      properties:
+        token:
+          type: string
+          pattern: '^[A-Za-z0-9_-]{43}$'
+          description: The `token` query parameter of the invitation link (32 random bytes, base64url without padding).
+
+    InvitationPreview:
+      type: object
+      description: What a token offers, for the invitee's confirmation screen. Not a syncable record.
+      required: [invitation_id, wallet_id, wallet_name, role, invited_by_display_name, expires_at, already_member]
+      additionalProperties: false
+      properties:
+        invitation_id:
+          type: string
+          format: uuid
+        wallet_id:
+          type: string
+          format: uuid
+        wallet_name:
+          type: string
+          maxLength: 100
+        role:
+          $ref: '#/components/schemas/InvitedRole'
+        invited_by_display_name:
+          type: [string, 'null']
+          maxLength: 100
+          description: The inviter's display name, or null when they set none.
+        expires_at:
+          type: string
+          format: date-time
+        already_member:
+          type: boolean
+          description: True when the caller is already an active member; accepting would change nothing.
+
+    MemberRoleWrite:
+      type: object
+      required: [role, version]
+      additionalProperties: false
+      properties:
+        role:
+          $ref: './wallets.yaml#/components/schemas/WalletRole'
+        version:
+          type: integer
+          minimum: 1
+          description: The membership's last-seen version.
+
+    VersionBody:
+      type: object
+      required: [version]
+      additionalProperties: false
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          description: The record's last-seen version (the invitation's, or the membership's).
+
+    ActivityEntry:
+      type: object
+      description: |
+        One recorded act in a wallet. Not syncable and not the audit log:
+        member-visible, identifiers only, kept 90 days.
+      required: [id, wallet_id, occurred_at, actor_user_id, actor_display_name, action, subject_type, subject_id, role]
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+        wallet_id:
+          type: string
+          format: uuid
+        occurred_at:
+          type: string
+          format: date-time
+        actor_user_id:
+          type: [string, 'null']
+          format: uuid
+          description: The person who acted, or null when the server did (automatic confirmation, plan demotion, expiry).
+        actor_display_name:
+          type: [string, 'null']
+          maxLength: 100
+          description: The actor's display name while they are an active member of the wallet; otherwise null.
+        action:
+          type: string
+          enum: [created, edited, deleted, restored, archived, ownership_transferred, confirmed, skipped, joined, left, removed, role_changed, role_limited_by_plan, invited, invitation_revoked]
+          description: |
+            `created`, `edited`, `deleted`, `restored` (transaction, recurring
+            rule; `edited` also wallet, occurrence); `archived` and
+            `ownership_transferred` (wallet); `confirmed`, `skipped`
+            (occurrence); `joined`, `left`, `removed`, `role_changed`,
+            `role_limited_by_plan` (member; the last is the server lowering an
+            editor to viewer when the owner's plan allows fewer members);
+            `invited`, `invitation_revoked` (invitation). Clients skip an
+            action they do not know.
+        subject_type:
+          type: string
+          enum: [wallet, transaction, recurring_rule, occurrence, member, invitation]
+        subject_id:
+          type: string
+          format: uuid
+          description: The record acted on; for `member`, the member's user id.
+        role:
+          type: [string, 'null']
+          enum: [owner, editor, viewer, null]
+          description: The role given, for `joined`, `role_changed`, `role_limited_by_plan`, `invited` and `ownership_transferred` (the new owner's); otherwise null.

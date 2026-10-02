@@ -1,0 +1,15 @@
+===== us4-s1 US4-1 invited person declines; repeated decline succeeds 2026-10-02T18:31:55.279380Z
+
+POST /invitations/decline
+> {"token": "[redacted]"}
+< 204
+
+
+CHECK [PASS] 204 
+CHECK [PASS] declined, address erased 
+POST /invitations/decline
+> {"token": "[redacted]"}
+< 204
+
+
+CHECK [PASS] repeat 204 

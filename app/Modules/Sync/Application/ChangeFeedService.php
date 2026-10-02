@@ -6,6 +6,8 @@ use App\Modules\Budgeting\Application\Sync\FeedRecord as BudgetingRecord;
 use App\Modules\Budgeting\Application\Sync\UserFeedQuery as BudgetingUserFeed;
 use App\Modules\Identity\Application\Sync\FeedRecord as IdentityRecord;
 use App\Modules\Identity\Application\Sync\UserFeedQuery as IdentityUserFeed;
+use App\Modules\Sharing\Application\Sync\FeedRecord as SharingRecord;
+use App\Modules\Sharing\Application\Sync\WalletFeedQuery as SharingWalletFeed;
 use App\Modules\Sync\Domain\Cursor\CursorRefusal;
 use App\Modules\Sync\Domain\Cursor\FeedKind;
 use App\Modules\Sync\Domain\Cursor\SyncCursor;
@@ -34,6 +36,7 @@ final class ChangeFeedService
         private readonly WalletsUserFeed $walletsUserFeed,
         private readonly WalletFeedQuery $walletFeed,
         private readonly BudgetingUserFeed $budgetingUserFeed,
+        private readonly SharingWalletFeed $sharingWalletFeed,
         private readonly CursorSigner $signer,
     ) {}
 
@@ -71,6 +74,7 @@ final class ChangeFeedService
 
         $sources = [
             array_map(fn (WalletsRecord $row): FeedRow => new FeedRow($row->type, $row->position, $row->record), $this->walletFeed->page($readerId, $walletId, $after, $limit)),
+            array_map(fn (SharingRecord $row): FeedRow => new FeedRow($row->type, $row->position, $row->record), $this->sharingWalletFeed->page($readerId, $walletId, $after, $limit)),
         ];
 
         return $this->result(FeedKind::Wallet, $walletId, $readerId, $sources, $after, $limit, $scope['counter'], $cursor === null);

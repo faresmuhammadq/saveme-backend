@@ -184,7 +184,7 @@ description: "Task list for Budgets (B8)"
 - [X] T041 Performance (SC-005), dev stack with Xdebug off: seed 50 budgets and 20,000 in-period expenses for one owner; measure p95 of `GET /budget-progress` (< 300 ms), `GET /budgets` and `GET /budgets/{id}` (< 150 ms); record results in plan.md. If the progress target fails, record it and raise it — do not add a cache without a decision record.
 - [X] T042 Run the gates: `dev exec -- composer test` (lint, types, arch, suite, api) and the quickstart walk. State "Seeder: N/A — no reference data" in the commit/PR description.
 - [X] T043 Apidog sync: bundle with `npx @redocly/cli bundle docs/openapi/openapi.yaml -o <scratchpad>/bundle.json`; import with `apidog import --project 1332822 --format openapi --file <scratchpad>/bundle.json --module-map "Personal finance backend API=1363204"`; create or update the project doc "Budgets" with the C8 client notes (contracts/budgets-api.md "What C8 binds to": attribution, currency, Budget Period boundaries, progress fields, offline estimate, sync types). Record the import counts and doc id for the summary.
-- [ ] T044 Write specs/015-budgets/summary.md (parent writes it)
+- [X] T044 Write specs/015-budgets/summary.md (parent writes it)
 
 ---
 

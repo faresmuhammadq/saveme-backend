@@ -1,0 +1,13 @@
+===== TC-012 Observability: heads and re-stamp summary lines carry counts only 2026-10-02T21:05:09.193877Z
+
+heads lines (last 3):
+[2026-10-02 21:03:52] local.INFO: sync_wallet_heads_read {"wallets":2,"has_more":false} {"request_id":"01a0fe6e-3d49-73b9-96dd-ba2d24a38732"}
+[2026-10-02 21:04:19] local.INFO: sync_wallet_heads_read {"wallets":5,"has_more":false} {"request_id":"01a0fe6e-a651-71ee-ae76-1946916124ad"}
+[2026-10-02 21:04:43] local.INFO: sync_wallet_heads_read {"wallets":5,"has_more":false} {"request_id":"01a0fe6f-0503-7236-88b0-83e120cadcab"}
+restamp lines (last 3):
+[2026-10-02 21:03:27] local.INFO: member_names_restamped {"wallets_restamped":3,"wallets_skipped":0,"continued":false} {"request_id":"01a0fe6d-d927-732c-9627-d7c88cb45562"}
+[2026-10-02 21:03:30] local.INFO: member_names_restamped {"wallets_restamped":3,"wallets_skipped":0,"continued":false} {"request_id":"01a0fe6d-dc91-721d-b948-12e1aeefec39"}
+[2026-10-02 21:03:39] local.INFO: member_names_restamped {"wallets_restamped":3,"wallets_skipped":0,"continued":false} {"request_id":"01a0fe6e-0069-7129-b836-3ea68383a6c8"}
+CHECK [PASS] heads log line present 99
+CHECK [PASS] restamp log line present 57
+CHECK [PASS] no names or wallet ids in those lines 

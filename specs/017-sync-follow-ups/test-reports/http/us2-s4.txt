@@ -1,0 +1,329 @@
+===== us2-s4 US2-4 a timezone change or an identical save re-stamps nothing 2026-10-02T21:14:46.464941Z
+
+GET /sync/wallets/heads params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+   "change_seq": 36,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+   "change_seq": 19,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+GET /sync/user/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fe76-f34c-7369-9dfd-6ae080c2ad5e",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:13:24.768703Z",
+    "updated_at": "2026-10-02T21:14:49.868703Z",
+    "deleted_at": null,
+    "user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T21:13:24.762576Z",
+    "last_used_at": "2026-10-02T21:14:49.867201Z",
+    "ended_at": null,
+    "current": true
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-5b6f-731d-9d9e-b36f6128db9b",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 35,
+    "created_at": "2026-10-02T21:13:50.192284Z",
+    "updated_at": "2026-10-02T21:13:50.192284Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "display_name": null,
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-6056-707f-a1dd-09fd6f9cdae8",
+    "wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+    "version": 1,
+    "change_seq": 18,
+    "created_at": "2026-10-02T21:13:51.446856Z",
+    "updated_at": "2026-10-02T21:13:51.446856Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "display_name": null,
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-6527-72f0-8a6a-fa787585691d",
+    "wallet_id": "01a0fe77-4e49-7011-a8f9-acddf5562443",
+    "version": 1,
+    "change_seq": 11,
+    "created_at": "2026-10-02T21:13:52.679689Z",
+    "updated_at": "2026-10-02T21:13:52.679689Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "display_name": null,
+    "role": "editor"
+   }
+  },
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fe77-a6f1-72fe-bad6-ba9afe2e2b2b",
+    "user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "version": 1,
+    "change_seq": 6,
+    "created_at": "2026-10-02T21:14:09.920259Z",
+    "updated_at": "2026-10-02T21:14:09.920259Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "E2E Karim cat",
+    "icon": "tag",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "in_use": true
+   }
+  },
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fe76-e58d-7121-8f22-90daae8b87a4",
+    "version": 3,
+    "change_seq": 8,
+    "created_at": "2026-10-02T21:13:20.014428Z",
+    "updated_at": "2026-10-02T21:14:43.383308Z",
+    "deleted_at": null,
+    "user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "display_name": null,
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": true,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU3Ni1lNTZiLTczYWEtYmQ1Mi1kNTk2N2E4ZGVlYmUiLCJyIjoiMDFhMGZlNzYtZTU2Yi03M2FhLWJkNTItZDU5NjdhOGRlZWJlIiwicCI6OH3EISOE7sA33xNtWr7yZ2hQ",
+  "sync_position": 8
+ }
+}
+
+PUT /me/profile
+> {"display_name": null, "locale": "en", "timezone": "Europe/London", "default_currency": "EGP", "budget_period_start_day": 1, "version": 3}
+< 200
+{
+ "data": {
+  "id": "01a0fe76-e58d-7121-8f22-90daae8b87a4",
+  "version": 4,
+  "change_seq": 9,
+  "created_at": "2026-10-02T21:13:20.014428Z",
+  "updated_at": "2026-10-02T21:14:50.404326Z",
+  "deleted_at": null,
+  "user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+  "display_name": null,
+  "locale": "en",
+  "timezone": "Europe/London",
+  "default_currency": "EGP",
+  "default_currency_locked": true,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] timezone save 
+GET /sync/user/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fe76-f34c-7369-9dfd-6ae080c2ad5e",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:13:24.768703Z",
+    "updated_at": "2026-10-02T21:14:50.796524Z",
+    "deleted_at": null,
+    "user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T21:13:24.762576Z",
+    "last_used_at": "2026-10-02T21:14:50.794505Z",
+    "ended_at": null,
+    "current": true
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-5b6f-731d-9d9e-b36f6128db9b",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 35,
+    "created_at": "2026-10-02T21:13:50.192284Z",
+    "updated_at": "2026-10-02T21:13:50.192284Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "display_name": null,
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-6056-707f-a1dd-09fd6f9cdae8",
+    "wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+    "version": 1,
+    "change_seq": 18,
+    "created_at": "2026-10-02T21:13:51.446856Z",
+    "updated_at": "2026-10-02T21:13:51.446856Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "display_name": null,
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-6527-72f0-8a6a-fa787585691d",
+    "wallet_id": "01a0fe77-4e49-7011-a8f9-acddf5562443",
+    "version": 1,
+    "change_seq": 11,
+    "created_at": "2026-10-02T21:13:52.679689Z",
+    "updated_at": "2026-10-02T21:13:52.679689Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "display_name": null,
+    "role": "editor"
+   }
+  },
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fe77-a6f1-72fe-bad6-ba9afe2e2b2b",
+    "user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "version": 1,
+    "change_seq": 6,
+    "created_at": "2026-10-02T21:14:09.920259Z",
+    "updated_at": "2026-10-02T21:14:09.920259Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "E2E Karim cat",
+    "icon": "tag",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "in_use": true
+   }
+  },
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fe76-e58d-7121-8f22-90daae8b87a4",
+    "version": 4,
+    "change_seq": 9,
+    "created_at": "2026-10-02T21:13:20.014428Z",
+    "updated_at": "2026-10-02T21:14:50.404326Z",
+    "deleted_at": null,
+    "user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "display_name": null,
+    "locale": "en",
+    "timezone": "Europe/London",
+    "default_currency": "EGP",
+    "default_currency_locked": true,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU3Ni1lNTZiLTczYWEtYmQ1Mi1kNTk2N2E4ZGVlYmUiLCJyIjoiMDFhMGZlNzYtZTU2Yi03M2FhLWJkNTItZDU5NjdhOGRlZWJlIiwicCI6OX20zjUm2lEZCPirP0I83ZG0",
+  "sync_position": 9
+ }
+}
+
+PUT /me/profile
+> {"display_name": null, "locale": "en", "timezone": "Europe/London", "default_currency": "EGP", "budget_period_start_day": 1, "version": 4}
+< 200
+{
+ "data": {
+  "id": "01a0fe76-e58d-7121-8f22-90daae8b87a4",
+  "version": 4,
+  "change_seq": 9,
+  "created_at": "2026-10-02T21:13:20.014428Z",
+  "updated_at": "2026-10-02T21:14:50.404326Z",
+  "deleted_at": null,
+  "user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+  "display_name": null,
+  "locale": "en",
+  "timezone": "Europe/London",
+  "default_currency": "EGP",
+  "default_currency_locked": true,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] identical save 
+GET /sync/wallets/heads params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+   "change_seq": 36,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+   "change_seq": 19,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] HOME and TRIP heads unchanged 

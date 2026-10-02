@@ -1,0 +1,791 @@
+===== TC-011 Purge-horizon fix on the user feed 2026-10-02T21:04:49.894325Z
+
+PUT /categories/01a0fe6f-1ce6-730a-9a4c-0d2bf61290b0
+> {"kind": "expense", "name": "QA017 cat 0", "icon": "tag", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fe6f-1ce6-730a-9a4c-0d2bf61290b0",
+  "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T21:04:50.294201Z",
+  "updated_at": "2026-10-02T21:04:50.294201Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "QA017 cat 0",
+  "icon": "tag",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+CHECK [PASS] category 0 created 201 None []
+PUT /categories/01a0fe6f-1ea6-708d-acf9-814a5089ae10
+> {"kind": "expense", "name": "QA017 cat 1", "icon": "tag", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fe6f-1ea6-708d-acf9-814a5089ae10",
+  "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+  "version": 1,
+  "change_seq": 5,
+  "created_at": "2026-10-02T21:04:50.730745Z",
+  "updated_at": "2026-10-02T21:04:50.730745Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "QA017 cat 1",
+  "icon": "tag",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+CHECK [PASS] category 1 created 201 None []
+PUT /categories/01a0fe6f-205a-7176-9e69-80b832cca36e
+> {"kind": "expense", "name": "QA017 cat 2", "icon": "tag", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fe6f-205a-7176-9e69-80b832cca36e",
+  "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-02T21:04:51.273425Z",
+  "updated_at": "2026-10-02T21:04:51.273425Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "QA017 cat 2",
+  "icon": "tag",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+CHECK [PASS] category 2 created 201 None []
+PUT /categories/01a0fe6f-2278-7224-84c6-10d95cb7ed35
+> {"kind": "expense", "name": "QA017 cat 3", "icon": "tag", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fe6f-2278-7224-84c6-10d95cb7ed35",
+  "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+  "version": 1,
+  "change_seq": 7,
+  "created_at": "2026-10-02T21:04:51.733063Z",
+  "updated_at": "2026-10-02T21:04:51.733063Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "QA017 cat 3",
+  "icon": "tag",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+CHECK [PASS] category 3 created 201 None []
+PUT /categories/01a0fe6f-2450-7495-81dd-20687b7d20e4
+> {"kind": "expense", "name": "QA017 cat 4", "icon": "tag", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fe6f-2450-7495-81dd-20687b7d20e4",
+  "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+  "version": 1,
+  "change_seq": 8,
+  "created_at": "2026-10-02T21:04:52.215678Z",
+  "updated_at": "2026-10-02T21:04:52.215678Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "QA017 cat 4",
+  "icon": "tag",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+CHECK [PASS] category 4 created 201 None []
+PUT /categories/01a0fe6f-2629-7780-9a39-34e6efea750f
+> {"kind": "expense", "name": "QA017 cat 5", "icon": "tag", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fe6f-2629-7780-9a39-34e6efea750f",
+  "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+  "version": 1,
+  "change_seq": 9,
+  "created_at": "2026-10-02T21:04:52.668767Z",
+  "updated_at": "2026-10-02T21:04:52.668767Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "QA017 cat 5",
+  "icon": "tag",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+CHECK [PASS] category 5 created 201 None []
+GET /sync/user/changes params={'limit': 1}
+< 200
+{
+ "data": [
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fe6c-2e5d-7231-ba73-0e841edeb7c3",
+    "version": 1,
+    "change_seq": 1,
+    "created_at": "2026-10-02T21:01:37.758147Z",
+    "updated_at": "2026-10-02T21:01:37.758147Z",
+    "deleted_at": null,
+    "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "display_name": "Xavier QA",
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": false,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6MX2WxyEhm-hlTkFRabxfLWsM",
+  "has_more": true,
+  "limit": 1,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6MX2WxyEhm-hlTkFRabxfLWsM",
+  "sync_position": 1
+ }
+}
+
+DELETE /categories/01a0fe6f-1ce6-730a-9a4c-0d2bf61290b0
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fe6f-1ce6-730a-9a4c-0d2bf61290b0",
+  "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+  "version": 2,
+  "change_seq": 10,
+  "created_at": "2026-10-02T21:04:50.294201Z",
+  "updated_at": "2026-10-02T21:04:53.618633Z",
+  "deleted_at": "2026-10-02T21:04:53.615137Z",
+  "kind": "expense",
+  "name": "QA017 cat 0",
+  "icon": "tag",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+CHECK [PASS] category deleted 200 None
+DELETE /categories/01a0fe6f-1ea6-708d-acf9-814a5089ae10
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fe6f-1ea6-708d-acf9-814a5089ae10",
+  "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+  "version": 2,
+  "change_seq": 11,
+  "created_at": "2026-10-02T21:04:50.730745Z",
+  "updated_at": "2026-10-02T21:04:54.083262Z",
+  "deleted_at": "2026-10-02T21:04:54.079633Z",
+  "kind": "expense",
+  "name": "QA017 cat 1",
+  "icon": "tag",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+CHECK [PASS] category deleted 200 None
+DELETE /categories/01a0fe6f-205a-7176-9e69-80b832cca36e
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fe6f-205a-7176-9e69-80b832cca36e",
+  "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+  "version": 2,
+  "change_seq": 12,
+  "created_at": "2026-10-02T21:04:51.273425Z",
+  "updated_at": "2026-10-02T21:04:54.507368Z",
+  "deleted_at": "2026-10-02T21:04:54.503857Z",
+  "kind": "expense",
+  "name": "QA017 cat 2",
+  "icon": "tag",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+CHECK [PASS] category deleted 200 None
+DELETE /categories/01a0fe6f-2278-7224-84c6-10d95cb7ed35
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fe6f-2278-7224-84c6-10d95cb7ed35",
+  "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+  "version": 2,
+  "change_seq": 13,
+  "created_at": "2026-10-02T21:04:51.733063Z",
+  "updated_at": "2026-10-02T21:04:54.917424Z",
+  "deleted_at": "2026-10-02T21:04:54.914134Z",
+  "kind": "expense",
+  "name": "QA017 cat 3",
+  "icon": "tag",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+CHECK [PASS] category deleted 200 None
+PUT /categories/01a0fe6f-30ac-7116-a489-96265082e1c1
+> {"kind": "expense", "name": "QA017 cat late", "icon": "tag", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fe6f-30ac-7116-a489-96265082e1c1",
+  "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+  "version": 1,
+  "change_seq": 14,
+  "created_at": "2026-10-02T21:04:55.364581Z",
+  "updated_at": "2026-10-02T21:04:55.364581Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "QA017 cat late",
+  "icon": "tag",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+dev sync:purge-tombstones -> Purged 4 tombstones.
+CHECK [PASS] user purge horizon raised {"change_seq": 14, "purged_change_seq": 13}
+GET /sync/user/changes params={'limit': 1}
+< 200
+{
+ "data": [
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fe6c-2e5d-7231-ba73-0e841edeb7c3",
+    "version": 1,
+    "change_seq": 1,
+    "created_at": "2026-10-02T21:01:37.758147Z",
+    "updated_at": "2026-10-02T21:01:37.758147Z",
+    "deleted_at": null,
+    "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "display_name": "Xavier QA",
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": false,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6MSwiaCI6MTN9Mm0vWSpbIRhNHE6xXyw2Vg",
+  "has_more": true,
+  "limit": 1,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6MSwiaCI6MTN9Mm0vWSpbIRhNHE6xXyw2Vg",
+  "sync_position": 1
+ }
+}
+
+GET /sync/user/changes params={'limit': 1, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fe6c-33fa-7513-af1a-50c7e8e26c4b",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:01:40.426621Z",
+    "updated_at": "2026-10-02T21:05:04.679721Z",
+    "deleted_at": null,
+    "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T21:01:40.420522Z",
+    "last_used_at": "2026-10-02T21:05:04.678242Z",
+    "ended_at": null,
+    "current": true
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6MiwiaCI6MTN9MHJdSCLfx2K7_Z_a6BpuHg",
+  "has_more": true,
+  "limit": 1,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6MiwiaCI6MTN9MHJdSCLfx2K7_Z_a6BpuHg",
+  "sync_position": 2
+ }
+}
+
+GET /sync/user/changes params={'limit': 1, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-636a-7228-bf7a-1c539eab5f49",
+    "wallet_id": "01a0fe6c-619b-76f1-a0dd-fc4fcec8e7ee",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:01:51.339744Z",
+    "updated_at": "2026-10-02T21:01:51.339744Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "display_name": "Xavier QA",
+    "role": "owner"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6MywiaCI6MTN9paVKkSMyVj-DnDxvN5fbIw",
+  "has_more": true,
+  "limit": 1,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6MywiaCI6MTN9paVKkSMyVj-DnDxvN5fbIw",
+  "sync_position": 3
+ }
+}
+
+GET /sync/user/changes params={'limit': 1, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fe6f-2450-7495-81dd-20687b7d20e4",
+    "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "version": 1,
+    "change_seq": 8,
+    "created_at": "2026-10-02T21:04:52.215678Z",
+    "updated_at": "2026-10-02T21:04:52.215678Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "QA017 cat 4",
+    "icon": "tag",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "in_use": false
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6OCwiaCI6MTN90EpfjleP5y7PKh0EwZvnTA",
+  "has_more": true,
+  "limit": 1,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6OCwiaCI6MTN90EpfjleP5y7PKh0EwZvnTA",
+  "sync_position": 8
+ }
+}
+
+GET /sync/user/changes params={'limit': 1, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fe6f-2629-7780-9a39-34e6efea750f",
+    "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "version": 1,
+    "change_seq": 9,
+    "created_at": "2026-10-02T21:04:52.668767Z",
+    "updated_at": "2026-10-02T21:04:52.668767Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "QA017 cat 5",
+    "icon": "tag",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "in_use": false
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6OSwiaCI6MTN9xKu47bzOUNJ9o-2Tm29fiw",
+  "has_more": true,
+  "limit": 1,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6OSwiaCI6MTN9xKu47bzOUNJ9o-2Tm29fiw",
+  "sync_position": 9
+ }
+}
+
+GET /sync/user/changes params={'limit': 1, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fe6f-30ac-7116-a489-96265082e1c1",
+    "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "version": 1,
+    "change_seq": 14,
+    "created_at": "2026-10-02T21:04:55.364581Z",
+    "updated_at": "2026-10-02T21:04:55.364581Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "QA017 cat late",
+    "icon": "tag",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "in_use": false
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 1,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6MTQsImgiOjEzfaBV6GCoCykOYRJchjgvL_M",
+  "sync_position": 14
+ }
+}
+
+CHECK [PASS] user feed limit 1: from start to end with no 410 [200, 200, 200]
+CHECK [PASS] user feed limit 1: some positions below the horizon 
+CHECK [PASS] user feed limit 1: last position == users.change_seq 
+GET /sync/user/changes params={'limit': 2}
+< 200
+{
+ "data": [
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fe6c-2e5d-7231-ba73-0e841edeb7c3",
+    "version": 1,
+    "change_seq": 1,
+    "created_at": "2026-10-02T21:01:37.758147Z",
+    "updated_at": "2026-10-02T21:01:37.758147Z",
+    "deleted_at": null,
+    "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "display_name": "Xavier QA",
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": false,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  },
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fe6c-33fa-7513-af1a-50c7e8e26c4b",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:01:40.426621Z",
+    "updated_at": "2026-10-02T21:05:06.891133Z",
+    "deleted_at": null,
+    "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T21:01:40.420522Z",
+    "last_used_at": "2026-10-02T21:05:06.889460Z",
+    "ended_at": null,
+    "current": true
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6MiwiaCI6MTN9MHJdSCLfx2K7_Z_a6BpuHg",
+  "has_more": true,
+  "limit": 2,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6MiwiaCI6MTN9MHJdSCLfx2K7_Z_a6BpuHg",
+  "sync_position": 2
+ }
+}
+
+GET /sync/user/changes params={'limit': 2, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-636a-7228-bf7a-1c539eab5f49",
+    "wallet_id": "01a0fe6c-619b-76f1-a0dd-fc4fcec8e7ee",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:01:51.339744Z",
+    "updated_at": "2026-10-02T21:01:51.339744Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "display_name": "Xavier QA",
+    "role": "owner"
+   }
+  },
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fe6f-2450-7495-81dd-20687b7d20e4",
+    "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "version": 1,
+    "change_seq": 8,
+    "created_at": "2026-10-02T21:04:52.215678Z",
+    "updated_at": "2026-10-02T21:04:52.215678Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "QA017 cat 4",
+    "icon": "tag",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "in_use": false
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6OCwiaCI6MTN90EpfjleP5y7PKh0EwZvnTA",
+  "has_more": true,
+  "limit": 2,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6OCwiaCI6MTN90EpfjleP5y7PKh0EwZvnTA",
+  "sync_position": 8
+ }
+}
+
+GET /sync/user/changes params={'limit': 2, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fe6f-2629-7780-9a39-34e6efea750f",
+    "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "version": 1,
+    "change_seq": 9,
+    "created_at": "2026-10-02T21:04:52.668767Z",
+    "updated_at": "2026-10-02T21:04:52.668767Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "QA017 cat 5",
+    "icon": "tag",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "in_use": false
+   }
+  },
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fe6f-30ac-7116-a489-96265082e1c1",
+    "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "version": 1,
+    "change_seq": 14,
+    "created_at": "2026-10-02T21:04:55.364581Z",
+    "updated_at": "2026-10-02T21:04:55.364581Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "QA017 cat late",
+    "icon": "tag",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "in_use": false
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 2,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6MTQsImgiOjEzfaBV6GCoCykOYRJchjgvL_M",
+  "sync_position": 14
+ }
+}
+
+CHECK [PASS] user feed limit 2: from start to end with no 410 [200, 200, 200]
+CHECK [PASS] user feed limit 2: some positions below the horizon 
+CHECK [PASS] user feed limit 2: last position == users.change_seq 
+GET /sync/user/changes params={'limit': 3}
+< 200
+{
+ "data": [
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fe6c-2e5d-7231-ba73-0e841edeb7c3",
+    "version": 1,
+    "change_seq": 1,
+    "created_at": "2026-10-02T21:01:37.758147Z",
+    "updated_at": "2026-10-02T21:01:37.758147Z",
+    "deleted_at": null,
+    "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "display_name": "Xavier QA",
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": false,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  },
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fe6c-33fa-7513-af1a-50c7e8e26c4b",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:01:40.426621Z",
+    "updated_at": "2026-10-02T21:05:08.221590Z",
+    "deleted_at": null,
+    "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T21:01:40.420522Z",
+    "last_used_at": "2026-10-02T21:05:08.220104Z",
+    "ended_at": null,
+    "current": true
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-636a-7228-bf7a-1c539eab5f49",
+    "wallet_id": "01a0fe6c-619b-76f1-a0dd-fc4fcec8e7ee",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:01:51.339744Z",
+    "updated_at": "2026-10-02T21:01:51.339744Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "display_name": "Xavier QA",
+    "role": "owner"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6MywiaCI6MTN9paVKkSMyVj-DnDxvN5fbIw",
+  "has_more": true,
+  "limit": 3,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6MywiaCI6MTN9paVKkSMyVj-DnDxvN5fbIw",
+  "sync_position": 3
+ }
+}
+
+GET /sync/user/changes params={'limit': 3, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fe6f-2450-7495-81dd-20687b7d20e4",
+    "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "version": 1,
+    "change_seq": 8,
+    "created_at": "2026-10-02T21:04:52.215678Z",
+    "updated_at": "2026-10-02T21:04:52.215678Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "QA017 cat 4",
+    "icon": "tag",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "in_use": false
+   }
+  },
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fe6f-2629-7780-9a39-34e6efea750f",
+    "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "version": 1,
+    "change_seq": 9,
+    "created_at": "2026-10-02T21:04:52.668767Z",
+    "updated_at": "2026-10-02T21:04:52.668767Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "QA017 cat 5",
+    "icon": "tag",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "in_use": false
+   }
+  },
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fe6f-30ac-7116-a489-96265082e1c1",
+    "user_id": "01a0fe6c-2e3f-72dd-86c4-77b26ef5a844",
+    "version": 1,
+    "change_seq": 14,
+    "created_at": "2026-10-02T21:04:55.364581Z",
+    "updated_at": "2026-10-02T21:04:55.364581Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "QA017 cat late",
+    "icon": "tag",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "in_use": false
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 3,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yy0yZTNmLTcyZGQtODZjNC03N2IyNmVmNWE4NDQiLCJyIjoiMDFhMGZlNmMtMmUzZi03MmRkLTg2YzQtNzdiMjZlZjVhODQ0IiwicCI6MTQsImgiOjEzfaBV6GCoCykOYRJchjgvL_M",
+  "sync_position": 14
+ }
+}
+
+CHECK [PASS] user feed limit 3: from start to end with no 410 [200, 200]
+CHECK [PASS] user feed limit 3: some positions below the horizon 
+CHECK [PASS] user feed limit 3: last position == users.change_seq 
+GET /sync/user/changes params={'limit': 2, 'cursor': '<cursor>'}
+< 410
+{
+ "type": "http://saveme-backend.test/problems/sync-cursor-expired",
+ "title": "Sync cursor expired",
+ "status": 410,
+ "detail": "This device has been offline too long to catch up. Syncing everything again.",
+ "code": "SYNC_CURSOR_EXPIRED",
+ "request_id": "01a0fe6f-679b-72b2-981a-fad2e1ed8de5"
+}
+
+CHECK [PASS] pre-purge user cursor -> 410 SYNC_CURSOR_EXPIRED 410 SYNC_CURSOR_EXPIRED

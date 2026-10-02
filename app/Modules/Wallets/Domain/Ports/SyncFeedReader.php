@@ -71,4 +71,14 @@ interface SyncFeedReader
      * @return list<MemberRecord>
      */
     public function membershipsChangedFor(string $userId, int $after, int $limit): array;
+
+    /**
+     * The scope heads of the wallets the person actively belongs to (live
+     * wallets, archived included), ascending by wallet id after
+     * $afterWalletId, at most $limit rows (callers ask for one more to see
+     * whether a page follows).
+     *
+     * @return list<array{wallet_id: string, change_seq: int, purged_change_seq: int}>
+     */
+    public function headsFor(string $userId, ?string $afterWalletId, int $limit): array;
 }

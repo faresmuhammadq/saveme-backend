@@ -68,6 +68,8 @@ Rules:
 | [Change Row](#change-row) | — | Sync | protocol value | derived (a read of the feed) | n/a |
 | [Sync Batch](#sync-batch) | — | Sync | protocol value | request-only | n/a |
 | [Purge Horizon](#purge-horizon) | — | Sync | value on a scope row | persisted on the scope row | n/a |
+| [Scope Head](#scope-head) | — | Sync | protocol value | derived (the scope counter) | n/a |
+| [Sync Position](#sync-position) | — | Sync | protocol value | derived (a feed page's meta) | n/a |
 | [Report](#report) | — | Reporting | derived value | derived | no |
 | [Operator Notification](#operator-notification) | — | Admin | root | persisted | no |
 
@@ -93,7 +95,7 @@ Rules:
 | Activity Entry | read endpoint (`GET /wallets/{id}/activity`), paged, 90 days |
 | Operator Notification | never — operator-only |
 
-**6 never persisted** — Entitlement, Budget Period, Report (all derived), Sync Cursor (held by the client), Change Row (a read of a feed) and Sync Batch (a request that is gone once answered). The Purge Horizon is a counter on the scope row, not an entity.
+**6 never persisted** — Entitlement, Budget Period, Report (all derived), Sync Cursor (held by the client), Change Row (a read of a feed) and Sync Batch (a request that is gone once answered). The Purge Horizon is a counter on the scope row, not an entity. The Scope Head and the Sync Position are positions read off a scope or a page, not entities either.
 
 ---
 
@@ -473,6 +475,30 @@ Per scope, the highest feed position whose tombstone has been purged.
 - **States**: `single-state`, raised only, never lowered
 - **Referenced by**: Sync Cursor
 - **Notes**: raised by the daily tombstone purge in the same transaction as the removal. A cursor at a position below it is expired (`410 SYNC_CURSOR_EXPIRED`); a cursor at or above it is served, however old, so a quiet scope never forces a resync.
+
+### Scope Head
+
+Per scope, the highest feed position committed in it.
+
+- **Context**: Sync
+- **Role**: protocol value
+- **Persistence**: derived — for a wallet, the wallet's `change_seq` counter as it stands now; never stored apart from it
+- **Sync**: n/a
+- **States**: `single-state`, raised only
+- **Referenced by**: Sync Position
+- **Notes**: reported per wallet by `GET /sync/wallets/heads` (spec 017, ADR-0021) with the wallet's [Purge Horizon](#purge-horizon). A phone caught up on a wallet holds a [Sync Position](#sync-position) equal to the head; a greater head means the wallet's feed has news. Heads are positions within one scope and are never compared across scopes. There is no user-scope head on the wire.
+
+### Sync Position
+
+The integer position a feed page's `sync_cursor` resumes from.
+
+- **Context**: Sync
+- **Role**: protocol value
+- **Persistence**: derived — stated in each feed page's `meta.sync_position`; client-held beside its [Sync Cursor](#sync-cursor)
+- **Sync**: n/a
+- **States**: `single-state`
+- **Referenced by**: Scope Head
+- **Notes**: the position of the page's last row (its `change_seq` on that feed; for a transfer into a wallet, the destination's stamp), or the incoming position when the page is empty (0 from the beginning). It exists so a client can compare its place in a scope with the [Scope Head](#scope-head) without parsing the cursor, which stays opaque. It is never sent back; the cursor is.
 
 ---
 

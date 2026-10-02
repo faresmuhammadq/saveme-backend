@@ -1,0 +1,683 @@
+===== TC-004 sync_position on both feeds equals the cursor position; empty page keeps it; quiet refresh equals heads 2026-10-02T21:02:16.992702Z
+
+GET /sync/wallets/01a0fe6c-5828-704d-a9c0-e528a90aa91b/changes params={'limit': 2}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-59e1-71fe-a8f9-430e35a602c5",
+    "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:01:48.897519Z",
+    "updated_at": "2026-10-02T21:01:48.897519Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-e7d8-705e-95c0-3053b791bb7e",
+    "display_name": "Sara QA",
+    "role": "owner"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-67e3-70c1-915d-c8cea6bc3fc3",
+    "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+    "version": 1,
+    "change_seq": 6,
+    "created_at": "2026-10-02T21:01:52.483521Z",
+    "updated_at": "2026-10-02T21:01:52.483521Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "K",
+    "role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01ODI4LTcwNGQtYTljMC1lNTI4YTkwYWE5MWIiLCJyIjoiMDFhMGZlNmMtMTZjNC03MWZkLThhYWQtMWZhZmQ2YjkzNTA3IiwicCI6Nn0R4meUC1eUE9FfflDw9YMD",
+  "has_more": true,
+  "limit": 2,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01ODI4LTcwNGQtYTljMC1lNTI4YTkwYWE5MWIiLCJyIjoiMDFhMGZlNmMtMTZjNC03MWZkLThhYWQtMWZhZmQ2YjkzNTA3IiwicCI6Nn0R4meUC1eUE9FfflDw9YMD",
+  "sync_position": 6
+ }
+}
+
+GET /sync/wallets/01a0fe6c-5828-704d-a9c0-e528a90aa91b/changes params={'limit': 2, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fe6c-6397-70ed-a070-78a3a687c08c",
+    "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+    "version": 2,
+    "change_seq": 7,
+    "created_at": "2026-10-02T21:01:51.898641Z",
+    "updated_at": "2026-10-02T21:01:52.521589Z",
+    "deleted_at": "2026-10-02T21:01:52.521589Z",
+    "role": "editor",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fe6b-e7d8-705e-95c0-3053b791bb7e",
+    "status": "accepted",
+    "expires_at": "2026-10-09T21:01:51.882350Z"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-7ea2-73d5-974e-3b93599b5206",
+    "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+    "version": 1,
+    "change_seq": 11,
+    "created_at": "2026-10-02T21:01:58.307372Z",
+    "updated_at": "2026-10-02T21:01:58.307372Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6c-16c4-71fd-8aad-1fafd6b93507",
+    "display_name": "Mona QA",
+    "role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01ODI4LTcwNGQtYTljMC1lNTI4YTkwYWE5MWIiLCJyIjoiMDFhMGZlNmMtMTZjNC03MWZkLThhYWQtMWZhZmQ2YjkzNTA3IiwicCI6MTF9OVhRHlOUHbTYSbbVbvi1uw",
+  "has_more": true,
+  "limit": 2,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01ODI4LTcwNGQtYTljMC1lNTI4YTkwYWE5MWIiLCJyIjoiMDFhMGZlNmMtMTZjNC03MWZkLThhYWQtMWZhZmQ2YjkzNTA3IiwicCI6MTF9OVhRHlOUHbTYSbbVbvi1uw",
+  "sync_position": 11
+ }
+}
+
+GET /sync/wallets/01a0fe6c-5828-704d-a9c0-e528a90aa91b/changes params={'limit': 2, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fe6c-7a3d-7739-8ef2-4c66dd45c405",
+    "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+    "version": 2,
+    "change_seq": 12,
+    "created_at": "2026-10-02T21:01:57.752658Z",
+    "updated_at": "2026-10-02T21:01:58.344813Z",
+    "deleted_at": "2026-10-02T21:01:58.344813Z",
+    "role": "editor",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fe6b-e7d8-705e-95c0-3053b791bb7e",
+    "status": "accepted",
+    "expires_at": "2026-10-09T21:01:57.736886Z"
+   }
+  },
+  {
+   "type": "wallet",
+   "record": {
+    "id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+    "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+    "version": 1,
+    "change_seq": 13,
+    "created_at": "2026-10-02T21:01:48.878720Z",
+    "updated_at": "2026-10-02T21:01:48.878720Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "Home QA017",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 2,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01ODI4LTcwNGQtYTljMC1lNTI4YTkwYWE5MWIiLCJyIjoiMDFhMGZlNmMtMTZjNC03MWZkLThhYWQtMWZhZmQ2YjkzNTA3IiwicCI6MTN9ApDs6LpXaTTypjIwzKZswA",
+  "sync_position": 13
+ }
+}
+
+CHECK [PASS] 0aa91b every page carries integer sync_position [6, 11, 13]
+CHECK [PASS] 0aa91b sync_position == cursor p on every page 
+CHECK [PASS] 0aa91b next_cursor == sync_cursor while has_more 
+CHECK [PASS] 0aa91b positions strictly increase 
+GET /sync/wallets/01a0fe6c-5828-704d-a9c0-e528a90aa91b/changes params={'limit': 200, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01ODI4LTcwNGQtYTljMC1lNTI4YTkwYWE5MWIiLCJyIjoiMDFhMGZlNmMtMTZjNC03MWZkLThhYWQtMWZhZmQ2YjkzNTA3IiwicCI6MTN9ApDs6LpXaTTypjIwzKZswA",
+  "sync_position": 13
+ }
+}
+
+CHECK [PASS] 0aa91b empty page from the stored cursor keeps the position {"next_cursor": null, "has_more": false, "limit": 200, "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01ODI4LTcwNGQtYTljMC1lNTI4YTkwYWE5MWIiLCJyIjoiMDFhMGZlNmMtMTZjNC03MWZkLThhYWQtMWZhZmQ2YjkzNTA3IiwicCI6MTN9ApDs6LpXaTTypjIwzKZswA", "sync_position": 13}
+GET /sync/wallets/01a0fe6c-5a0c-7570-98a3-7065195e09c4/changes params={'limit': 2}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-5bd1-72b9-b901-2c2ad87e102e",
+    "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:01:49.393741Z",
+    "updated_at": "2026-10-02T21:01:49.393741Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-e7d8-705e-95c0-3053b791bb7e",
+    "display_name": "Sara QA",
+    "role": "owner"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-6c31-710e-a85a-12cd2aaf9e55",
+    "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+    "version": 1,
+    "change_seq": 6,
+    "created_at": "2026-10-02T21:01:53.586343Z",
+    "updated_at": "2026-10-02T21:01:53.586343Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "K",
+    "role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01YTBjLTc1NzAtOThhMy03MDY1MTk1ZTA5YzQiLCJyIjoiMDFhMGZlNmMtMTZjNC03MWZkLThhYWQtMWZhZmQ2YjkzNTA3IiwicCI6Nn0WU5LwcToon0gEAmmQF5oW",
+  "has_more": true,
+  "limit": 2,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01YTBjLTc1NzAtOThhMy03MDY1MTk1ZTA5YzQiLCJyIjoiMDFhMGZlNmMtMTZjNC03MWZkLThhYWQtMWZhZmQ2YjkzNTA3IiwicCI6Nn0WU5LwcToon0gEAmmQF5oW",
+  "sync_position": 6
+ }
+}
+
+GET /sync/wallets/01a0fe6c-5a0c-7570-98a3-7065195e09c4/changes params={'limit': 2, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fe6c-6839-73a7-9543-21ae5b01a6d4",
+    "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+    "version": 2,
+    "change_seq": 7,
+    "created_at": "2026-10-02T21:01:53.087260Z",
+    "updated_at": "2026-10-02T21:01:53.620782Z",
+    "deleted_at": "2026-10-02T21:01:53.620782Z",
+    "role": "editor",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fe6b-e7d8-705e-95c0-3053b791bb7e",
+    "status": "accepted",
+    "expires_at": "2026-10-09T21:01:53.073200Z"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-831a-7381-ab10-ccab2ffc0c4d",
+    "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+    "version": 1,
+    "change_seq": 11,
+    "created_at": "2026-10-02T21:01:59.450973Z",
+    "updated_at": "2026-10-02T21:01:59.450973Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6c-16c4-71fd-8aad-1fafd6b93507",
+    "display_name": "Mona QA",
+    "role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01YTBjLTc1NzAtOThhMy03MDY1MTk1ZTA5YzQiLCJyIjoiMDFhMGZlNmMtMTZjNC03MWZkLThhYWQtMWZhZmQ2YjkzNTA3IiwicCI6MTF9aNCkGeWSDLOfep8H23spIg",
+  "has_more": true,
+  "limit": 2,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01YTBjLTc1NzAtOThhMy03MDY1MTk1ZTA5YzQiLCJyIjoiMDFhMGZlNmMtMTZjNC03MWZkLThhYWQtMWZhZmQ2YjkzNTA3IiwicCI6MTF9aNCkGeWSDLOfep8H23spIg",
+  "sync_position": 11
+ }
+}
+
+GET /sync/wallets/01a0fe6c-5a0c-7570-98a3-7065195e09c4/changes params={'limit': 2, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fe6c-7efa-7323-91f3-d2090c2458eb",
+    "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+    "version": 2,
+    "change_seq": 12,
+    "created_at": "2026-10-02T21:01:58.878890Z",
+    "updated_at": "2026-10-02T21:01:59.485244Z",
+    "deleted_at": "2026-10-02T21:01:59.485244Z",
+    "role": "editor",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fe6b-e7d8-705e-95c0-3053b791bb7e",
+    "status": "accepted",
+    "expires_at": "2026-10-09T21:01:58.864957Z"
+   }
+  },
+  {
+   "type": "wallet",
+   "record": {
+    "id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+    "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+    "version": 1,
+    "change_seq": 13,
+    "created_at": "2026-10-02T21:01:49.375544Z",
+    "updated_at": "2026-10-02T21:01:49.375544Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "Trip QA017",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 2,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01YTBjLTc1NzAtOThhMy03MDY1MTk1ZTA5YzQiLCJyIjoiMDFhMGZlNmMtMTZjNC03MWZkLThhYWQtMWZhZmQ2YjkzNTA3IiwicCI6MTN9ous4HBwB7Y18uMkunWkruA",
+  "sync_position": 13
+ }
+}
+
+CHECK [PASS] 5e09c4 every page carries integer sync_position [6, 11, 13]
+CHECK [PASS] 5e09c4 sync_position == cursor p on every page 
+CHECK [PASS] 5e09c4 next_cursor == sync_cursor while has_more 
+CHECK [PASS] 5e09c4 positions strictly increase 
+GET /sync/wallets/01a0fe6c-5a0c-7570-98a3-7065195e09c4/changes params={'limit': 200, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01YTBjLTc1NzAtOThhMy03MDY1MTk1ZTA5YzQiLCJyIjoiMDFhMGZlNmMtMTZjNC03MWZkLThhYWQtMWZhZmQ2YjkzNTA3IiwicCI6MTN9ous4HBwB7Y18uMkunWkruA",
+  "sync_position": 13
+ }
+}
+
+CHECK [PASS] 5e09c4 empty page from the stored cursor keeps the position {"next_cursor": null, "has_more": false, "limit": 200, "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01YTBjLTc1NzAtOThhMy03MDY1MTk1ZTA5YzQiLCJyIjoiMDFhMGZlNmMtMTZjNC03MWZkLThhYWQtMWZhZmQ2YjkzNTA3IiwicCI6MTN9ous4HBwB7Y18uMkunWkruA", "sync_position": 13}
+GET /sync/wallets/01a0fe6c-5bfb-771d-88fd-cf07e8923e47/changes params={'limit': 2}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-5dab-7107-a8b5-4058df2a968d",
+    "wallet_id": "01a0fe6c-5bfb-771d-88fd-cf07e8923e47",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:01:49.867502Z",
+    "updated_at": "2026-10-02T21:01:49.867502Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-e7d8-705e-95c0-3053b791bb7e",
+    "display_name": "Sara QA",
+    "role": "owner"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-70d4-71ec-975e-00080a51fe86",
+    "wallet_id": "01a0fe6c-5bfb-771d-88fd-cf07e8923e47",
+    "version": 1,
+    "change_seq": 6,
+    "created_at": "2026-10-02T21:01:54.772513Z",
+    "updated_at": "2026-10-02T21:01:54.772513Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "K",
+    "role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01YmZiLTc3MWQtODhmZC1jZjA3ZTg5MjNlNDciLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6Nn0-fUt4QRTZnnfIO-oTe4lz",
+  "has_more": true,
+  "limit": 2,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01YmZiLTc3MWQtODhmZC1jZjA3ZTg5MjNlNDciLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6Nn0-fUt4QRTZnnfIO-oTe4lz",
+  "sync_position": 6
+ }
+}
+
+GET /sync/wallets/01a0fe6c-5bfb-771d-88fd-cf07e8923e47/changes params={'limit': 2, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fe6c-6c85-74e6-90bd-e2226d322683",
+    "wallet_id": "01a0fe6c-5bfb-771d-88fd-cf07e8923e47",
+    "version": 2,
+    "change_seq": 7,
+    "created_at": "2026-10-02T21:01:54.211905Z",
+    "updated_at": "2026-10-02T21:01:54.809166Z",
+    "deleted_at": "2026-10-02T21:01:54.809166Z",
+    "role": "editor",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fe6b-e7d8-705e-95c0-3053b791bb7e",
+    "status": "accepted",
+    "expires_at": "2026-10-09T21:01:54.195701Z"
+   }
+  },
+  {
+   "type": "wallet",
+   "record": {
+    "id": "01a0fe6c-5bfb-771d-88fd-cf07e8923e47",
+    "wallet_id": "01a0fe6c-5bfb-771d-88fd-cf07e8923e47",
+    "version": 2,
+    "change_seq": 9,
+    "created_at": "2026-10-02T21:01:49.848809Z",
+    "updated_at": "2026-10-02T21:02:02.134781Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "Archive QA017",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#2E7D32",
+    "archived_at": "2026-10-02T21:02:02.133176Z",
+    "currency_locked": false,
+    "my_role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 2,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01YmZiLTc3MWQtODhmZC1jZjA3ZTg5MjNlNDciLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6OX08B--Moi2WuTtYd8r3NmD3",
+  "sync_position": 9
+ }
+}
+
+CHECK [PASS] 923e47 every page carries integer sync_position [6, 9]
+CHECK [PASS] 923e47 sync_position == cursor p on every page 
+CHECK [PASS] 923e47 next_cursor == sync_cursor while has_more 
+CHECK [PASS] 923e47 positions strictly increase 
+GET /sync/wallets/01a0fe6c-5bfb-771d-88fd-cf07e8923e47/changes params={'limit': 200, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01YmZiLTc3MWQtODhmZC1jZjA3ZTg5MjNlNDciLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6OX08B--Moi2WuTtYd8r3NmD3",
+  "sync_position": 9
+ }
+}
+
+CHECK [PASS] 923e47 empty page from the stored cursor keeps the position {"next_cursor": null, "has_more": false, "limit": 200, "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01YmZiLTc3MWQtODhmZC1jZjA3ZTg5MjNlNDciLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6OX08B--Moi2WuTtYd8r3NmD3", "sync_position": 9}
+GET /sync/wallets/heads params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] quiet refresh: m heads == stored sync_position for W1, W2 (no wallet feed read needed) {"0aa91b": [13, 13], "5e09c4": [13, 13]}
+GET /sync/wallets/heads params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe6c-5bfb-771d-88fd-cf07e8923e47",
+   "change_seq": 9,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] k head for W3 == stored position 
+GET /sync/user/changes params={'limit': 2}
+< 200
+{
+ "data": [
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fe6b-ff4a-73c4-bb8e-095ad87a298a",
+    "version": 1,
+    "change_seq": 1,
+    "created_at": "2026-10-02T21:01:25.706613Z",
+    "updated_at": "2026-10-02T21:01:25.706613Z",
+    "deleted_at": null,
+    "user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "K",
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": false,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  },
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fe6c-0ce4-7547-bbb3-1ecaf6fd4aa8",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:01:30.377815Z",
+    "updated_at": "2026-10-02T21:02:23.613629Z",
+    "deleted_at": null,
+    "user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T21:01:30.372171Z",
+    "last_used_at": "2026-10-02T21:02:23.611967Z",
+    "ended_at": null,
+    "current": true
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yi1mZjJiLTczZjQtYjQyZC03NjQ3ZmI2MjZjNTYiLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6Mn1yFJz4WJDw5TicM-iqgSE0",
+  "has_more": true,
+  "limit": 2,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yi1mZjJiLTczZjQtYjQyZC03NjQ3ZmI2MjZjNTYiLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6Mn1yFJz4WJDw5TicM-iqgSE0",
+  "sync_position": 2
+ }
+}
+
+GET /sync/user/changes params={'limit': 2, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-67e3-70c1-915d-c8cea6bc3fc3",
+    "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+    "version": 1,
+    "change_seq": 6,
+    "created_at": "2026-10-02T21:01:52.483521Z",
+    "updated_at": "2026-10-02T21:01:52.483521Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "K",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-6c31-710e-a85a-12cd2aaf9e55",
+    "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+    "version": 1,
+    "change_seq": 6,
+    "created_at": "2026-10-02T21:01:53.586343Z",
+    "updated_at": "2026-10-02T21:01:53.586343Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "K",
+    "role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yi1mZjJiLTczZjQtYjQyZC03NjQ3ZmI2MjZjNTYiLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6NH0xS9ShISLstbUA2-ieQXrr",
+  "has_more": true,
+  "limit": 2,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yi1mZjJiLTczZjQtYjQyZC03NjQ3ZmI2MjZjNTYiLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6NH0xS9ShISLstbUA2-ieQXrr",
+  "sync_position": 4
+ }
+}
+
+GET /sync/user/changes params={'limit': 2, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-70d4-71ec-975e-00080a51fe86",
+    "wallet_id": "01a0fe6c-5bfb-771d-88fd-cf07e8923e47",
+    "version": 1,
+    "change_seq": 6,
+    "created_at": "2026-10-02T21:01:54.772513Z",
+    "updated_at": "2026-10-02T21:01:54.772513Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "K",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-79ce-7152-b082-8ba02945ad99",
+    "wallet_id": "01a0fe6c-5fad-7329-b67f-a7db0aa290a3",
+    "version": 2,
+    "change_seq": 9,
+    "created_at": "2026-10-02T21:01:57.071463Z",
+    "updated_at": "2026-10-02T21:02:00.698546Z",
+    "deleted_at": "2026-10-02T21:02:00.698546Z",
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "K",
+    "role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yi1mZjJiLTczZjQtYjQyZC03NjQ3ZmI2MjZjNTYiLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6OH2rIGovUWsfvnXBGoX2GofA",
+  "has_more": true,
+  "limit": 2,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yi1mZjJiLTczZjQtYjQyZC03NjQ3ZmI2MjZjNTYiLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6OH2rIGovUWsfvnXBGoX2GofA",
+  "sync_position": 8
+ }
+}
+
+GET /sync/user/changes params={'limit': 2, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-7537-7116-b7c0-72848d58efdb",
+    "wallet_id": "01a0fe6c-5dd5-704a-950f-d2c37c47787e",
+    "version": 2,
+    "change_seq": 10,
+    "created_at": "2026-10-02T21:01:55.896171Z",
+    "updated_at": "2026-10-02T21:02:03.249470Z",
+    "deleted_at": "2026-10-02T21:02:03.249470Z",
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "K",
+    "role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 2,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yi1mZjJiLTczZjQtYjQyZC03NjQ3ZmI2MjZjNTYiLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6OX1IM1mNLNYmY9xFIsQgQhAD",
+  "sync_position": 9
+ }
+}
+
+CHECK [PASS] user feed pages carry sync_position == cursor p [2, 4, 8, 9]
+CHECK [PASS] caught-up user feed position == users.change_seq 9 vs 9
+GET /sync/user/changes params={'limit': 200, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yi1mZjJiLTczZjQtYjQyZC03NjQ3ZmI2MjZjNTYiLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6OX1IM1mNLNYmY9xFIsQgQhAD",
+  "sync_position": 9
+ }
+}
+
+CHECK [PASS] empty user page keeps the position 
+CHECK [PASS] sync_cursor stays opaque base64url (unchanged form) 

@@ -109,4 +109,26 @@ final class EloquentSyncFeedReader implements SyncFeedReader
             ->map(fn (WalletMember $member) => EloquentMembershipRepository::record($member))
             ->all());
     }
+
+    public function headsFor(string $userId, ?string $afterWalletId, int $limit): array
+    {
+        $query = WalletMember::query()
+            ->join('wallets', 'wallets.id', '=', 'wallet_members.wallet_id')
+            ->where('wallet_members.user_id', $userId)
+            ->whereNull('wallet_members.deleted_at')
+            ->whereNull('wallets.deleted_at');
+
+        if ($afterWalletId !== null) {
+            $query->where('wallets.id', '>', $afterWalletId);
+        }
+
+        return array_values($query->orderBy('wallets.id')->limit($limit)->toBase()
+            ->get(['wallets.id', 'wallets.change_seq', 'wallets.purged_change_seq'])
+            ->map(fn (object $row): array => [
+                'wallet_id' => (string) $row->id,
+                'change_seq' => (int) $row->change_seq,
+                'purged_change_seq' => (int) $row->purged_change_seq,
+            ])
+            ->all());
+    }
 }

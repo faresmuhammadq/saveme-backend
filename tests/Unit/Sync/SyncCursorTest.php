@@ -35,6 +35,20 @@ test('a cursor round-trips for the feed, scope and reader it was issued to', fun
         ->and($this->cursor)->toMatch('/^[A-Za-z0-9_-]+$/');
 });
 
+test('the purge horizon the read began under round-trips, and a cursor without it reads as 0', function () {
+    $withHorizon = (new SyncCursor(FeedKind::Wallet, 'wallet-1', 'reader-1', 16, 29))->encode($this->signer);
+
+    expect(SyncCursor::decode($withHorizon, $this->signer, FeedKind::Wallet, 'wallet-1', 'reader-1')->horizon)->toBe(29)
+        ->and(SyncCursor::decode($this->cursor, $this->signer, FeedKind::Wallet, 'wallet-1', 'reader-1')->horizon)->toBe(0);
+});
+
+test('a malformed horizon is refused as malformed', function (mixed $horizon) {
+    $payload = (string) json_encode(['v' => 1, 'f' => 'w', 's' => 'wallet-1', 'r' => 'reader-1', 'p' => 1, 'h' => $horizon]);
+    $cursor = rtrim(strtr(base64_encode($payload.substr($this->signer->sign($payload), 0, 16)), '+/', '-_'), '=');
+
+    expect(cursorRefusalOf(fn () => SyncCursor::decode($cursor, $this->signer, FeedKind::Wallet, 'wallet-1', 'reader-1')))->toBe(CursorRefusal::Malformed);
+})->with([-1, 'x', 1.5]);
+
 test('each way a cursor can be wrong is its own refusal', function (string $reason, string $case) {
     $signer = $this->signer;
     $cursor = $this->cursor;

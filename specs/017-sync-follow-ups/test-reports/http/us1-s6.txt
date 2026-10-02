@@ -1,0 +1,584 @@
+===== us1-s6 US1-6 every feed page carries sync_position = cursor position; an empty page carries the asked position 2026-10-02T21:14:28.700203Z
+
+GET /sync/user/changes params={'limit': 3}
+< 200
+{
+ "data": [
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fe76-d156-7204-bd83-0390f073f01d",
+    "version": 1,
+    "change_seq": 1,
+    "created_at": "2026-10-02T21:13:14.839009Z",
+    "updated_at": "2026-10-02T21:13:14.839009Z",
+    "deleted_at": null,
+    "user_id": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "display_name": "Sara E2E",
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": true,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  },
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fe76-db72-7342-a27f-6d876fe2d827",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:13:18.632729Z",
+    "updated_at": "2026-10-02T21:14:28.982978Z",
+    "deleted_at": null,
+    "user_id": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T21:13:18.626550Z",
+    "last_used_at": "2026-10-02T21:14:28.981008Z",
+    "ended_at": null,
+    "current": true
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-4bdb-706a-95a7-0e36f4c4438b",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:13:46.204057Z",
+    "updated_at": "2026-10-02T21:13:46.204057Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "display_name": "Sara E2E",
+    "role": "owner"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU3Ni1kMTJhLTcxZjAtYThkMS03ZWQ5YzdhM2Y3NGIiLCJyIjoiMDFhMGZlNzYtZDEyYS03MWYwLWE4ZDEtN2VkOWM3YTNmNzRiIiwicCI6M30szvt-PF3N7jpk3TZilvW6",
+  "has_more": true,
+  "limit": 3,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU3Ni1kMTJhLTcxZjAtYThkMS03ZWQ5YzdhM2Y3NGIiLCJyIjoiMDFhMGZlNzYtZDEyYS03MWYwLWE4ZDEtN2VkOWM3YTNmNzRiIiwicCI6M30szvt-PF3N7jpk3TZilvW6",
+  "sync_position": 3
+ }
+}
+
+GET /sync/user/changes params={'limit': 3, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-4e10-70d3-b024-eeee52e091e5",
+    "wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:13:46.769272Z",
+    "updated_at": "2026-10-02T21:13:46.769272Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "display_name": "Sara E2E",
+    "role": "owner"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-502e-7017-8af5-4afe1d12879c",
+    "wallet_id": "01a0fe77-4e49-7011-a8f9-acddf5562443",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:13:47.310949Z",
+    "updated_at": "2026-10-02T21:13:47.310949Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "display_name": "Sara E2E",
+    "role": "owner"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-521e-728e-882c-438abbad97ba",
+    "wallet_id": "01a0fe77-5059-7046-80a3-a26abbffe1d7",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:13:47.806970Z",
+    "updated_at": "2026-10-02T21:13:47.806970Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "display_name": "Sara E2E",
+    "role": "owner"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU3Ni1kMTJhLTcxZjAtYThkMS03ZWQ5YzdhM2Y3NGIiLCJyIjoiMDFhMGZlNzYtZDEyYS03MWYwLWE4ZDEtN2VkOWM3YTNmNzRiIiwicCI6Nn3b5NBUMzn6SThDj7jEiR1O",
+  "has_more": true,
+  "limit": 3,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU3Ni1kMTJhLTcxZjAtYThkMS03ZWQ5YzdhM2Y3NGIiLCJyIjoiMDFhMGZlNzYtZDEyYS03MWYwLWE4ZDEtN2VkOWM3YTNmNzRiIiwicCI6Nn3b5NBUMzn6SThDj7jEiR1O",
+  "sync_position": 6
+ }
+}
+
+GET /sync/user/changes params={'limit': 3, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-545f-71e9-85d2-ac79f91a7742",
+    "wallet_id": "01a0fe77-5253-77ee-85f0-5227d9cfee5e",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:13:48.384454Z",
+    "updated_at": "2026-10-02T21:13:48.384454Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "display_name": "Sara E2E",
+    "role": "owner"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-567b-71da-8124-a43a6b2dd673",
+    "wallet_id": "01a0fe77-5496-7640-95fa-fb8aaeef8573",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:13:48.924295Z",
+    "updated_at": "2026-10-02T21:13:48.924295Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "display_name": "Sara E2E",
+    "role": "owner"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 3,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU3Ni1kMTJhLTcxZjAtYThkMS03ZWQ5YzdhM2Y3NGIiLCJyIjoiMDFhMGZlNzYtZDEyYS03MWYwLWE4ZDEtN2VkOWM3YTNmNzRiIiwicCI6OH171u0CG-SlhcVKoEOpcK63",
+  "sync_position": 8
+ }
+}
+
+CHECK [PASS] /sync/user/changes: every page [3, 6, 8]
+GET /sync/user/changes params={'limit': 200, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU3Ni1kMTJhLTcxZjAtYThkMS03ZWQ5YzdhM2Y3NGIiLCJyIjoiMDFhMGZlNzYtZDEyYS03MWYwLWE4ZDEtN2VkOWM3YTNmNzRiIiwicCI6OH171u0CG-SlhcVKoEOpcK63",
+  "sync_position": 8
+ }
+}
+
+CHECK [PASS] /sync/user/changes: empty page keeps position 
+GET /sync/wallets/01a0fe77-49a3-724e-b921-3ee52e21ac07/changes params={'limit': 3}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-4bdb-706a-95a7-0e36f4c4438b",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:13:46.204057Z",
+    "updated_at": "2026-10-02T21:13:46.204057Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "display_name": "Sara E2E",
+    "role": "owner"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-5b6f-731d-9d9e-b36f6128db9b",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 6,
+    "created_at": "2026-10-02T21:13:50.192284Z",
+    "updated_at": "2026-10-02T21:13:50.192284Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "display_name": "K",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fe77-56ae-76b8-820f-dcb293b7ea61",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 2,
+    "change_seq": 7,
+    "created_at": "2026-10-02T21:13:49.604285Z",
+    "updated_at": "2026-10-02T21:13:50.230108Z",
+    "deleted_at": "2026-10-02T21:13:50.230108Z",
+    "role": "editor",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "status": "accepted",
+    "expires_at": "2026-10-09T21:13:49.584572Z"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU3Ny00OWEzLTcyNGUtYjkyMS0zZWU1MmUyMWFjMDciLCJyIjoiMDFhMGZlNzYtZDEyYS03MWYwLWE4ZDEtN2VkOWM3YTNmNzRiIiwicCI6N32QaZzAd56m_9pRqDsf27jJ",
+  "has_more": true,
+  "limit": 3,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU3Ny00OWEzLTcyNGUtYjkyMS0zZWU1MmUyMWFjMDciLCJyIjoiMDFhMGZlNzYtZDEyYS03MWYwLWE4ZDEtN2VkOWM3YTNmNzRiIiwicCI6N32QaZzAd56m_9pRqDsf27jJ",
+  "sync_position": 7
+ }
+}
+
+GET /sync/wallets/01a0fe77-49a3-724e-b921-3ee52e21ac07/changes params={'limit': 3, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-6a01-72bf-ad48-4414be89abcd",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 11,
+    "created_at": "2026-10-02T21:13:53.921734Z",
+    "updated_at": "2026-10-02T21:13:53.921734Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe76-fd54-7298-91c2-81683f86c5c0",
+    "display_name": "Mona E2E",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fe77-6580-705b-9ed0-28d0324c633f",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 2,
+    "change_seq": 12,
+    "created_at": "2026-10-02T21:13:53.308779Z",
+    "updated_at": "2026-10-02T21:13:53.960841Z",
+    "deleted_at": "2026-10-02T21:13:53.960841Z",
+    "role": "editor",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "status": "accepted",
+    "expires_at": "2026-10-09T21:13:53.292362Z"
+   }
+  },
+  {
+   "type": "transaction",
+   "record": {
+    "id": "01a0fe77-8141-73ea-8f57-fdeaeb49e712",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 14,
+    "created_at": "2026-10-02T21:14:00.701818Z",
+    "updated_at": "2026-10-02T21:14:00.701818Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-10-01",
+    "amount_minor": 3000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA017",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "recurring_rule_id": null,
+    "occurrence_id": null
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU3Ny00OWEzLTcyNGUtYjkyMS0zZWU1MmUyMWFjMDciLCJyIjoiMDFhMGZlNzYtZDEyYS03MWYwLWE4ZDEtN2VkOWM3YTNmNzRiIiwicCI6MTR9ny4MXbFop2sU3ggVNLXmOQ",
+  "has_more": true,
+  "limit": 3,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU3Ny00OWEzLTcyNGUtYjkyMS0zZWU1MmUyMWFjMDciLCJyIjoiMDFhMGZlNzYtZDEyYS03MWYwLWE4ZDEtN2VkOWM3YTNmNzRiIiwicCI6MTR9ny4MXbFop2sU3ggVNLXmOQ",
+  "sync_position": 14
+ }
+}
+
+GET /sync/wallets/01a0fe77-49a3-724e-b921-3ee52e21ac07/changes params={'limit': 3, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fe77-96e6-75b4-a600-26f204c26b78",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 17,
+    "created_at": "2026-10-02T21:14:05.992154Z",
+    "updated_at": "2026-10-02T21:14:05.992154Z",
+    "deleted_at": null,
+    "role": "viewer",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "status": "pending",
+    "expires_at": "2026-10-09T21:14:05.968218Z"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-a2e8-701e-ba6d-e5dee9eeb41a",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 21,
+    "created_at": "2026-10-02T21:14:08.488769Z",
+    "updated_at": "2026-10-02T21:14:08.488769Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe77-155c-73a3-ab86-b7d9743831dc",
+    "display_name": "Nour E2E",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fe77-9e46-712b-8906-c62956f98985",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 2,
+    "change_seq": 22,
+    "created_at": "2026-10-02T21:14:07.865670Z",
+    "updated_at": "2026-10-02T21:14:08.525870Z",
+    "deleted_at": "2026-10-02T21:14:08.525870Z",
+    "role": "editor",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "status": "accepted",
+    "expires_at": "2026-10-09T21:14:07.845085Z"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU3Ny00OWEzLTcyNGUtYjkyMS0zZWU1MmUyMWFjMDciLCJyIjoiMDFhMGZlNzYtZDEyYS03MWYwLWE4ZDEtN2VkOWM3YTNmNzRiIiwicCI6MjJ9y75acKopzHKRD8hyAiLTFg",
+  "has_more": true,
+  "limit": 3,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU3Ny00OWEzLTcyNGUtYjkyMS0zZWU1MmUyMWFjMDciLCJyIjoiMDFhMGZlNzYtZDEyYS03MWYwLWE4ZDEtN2VkOWM3YTNmNzRiIiwicCI6MjJ9y75acKopzHKRD8hyAiLTFg",
+  "sync_position": 22
+ }
+}
+
+GET /sync/wallets/01a0fe77-49a3-724e-b921-3ee52e21ac07/changes params={'limit': 3, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "transaction",
+   "record": {
+    "id": "01a0fe77-aa1a-731a-a3b2-0522b3b3c064",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 24,
+    "created_at": "2026-10-02T21:14:10.948172Z",
+    "updated_at": "2026-10-02T21:14:10.948172Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-10-01",
+    "amount_minor": 1200,
+    "currency": "EGP",
+    "category_id": "01a0fe77-a6f1-72fe-bad6-ba9afe2e2b2b",
+    "counter_wallet_id": null,
+    "description": "QA017",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "recurring_rule_id": null,
+    "occurrence_id": null
+   }
+  },
+  {
+   "type": "category_reference",
+   "record": {
+    "id": "01a0fe77-acd9-72ae-ba7c-e53fcbbb9cca",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 25,
+    "created_at": "2026-10-02T21:14:11.033903Z",
+    "updated_at": "2026-10-02T21:14:11.033903Z",
+    "deleted_at": null,
+    "category_id": "01a0fe77-a6f1-72fe-bad6-ba9afe2e2b2b",
+    "owner_user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "kind": "expense",
+    "name": "E2E Karim cat",
+    "icon": "tag",
+    "color": "#2E7D32"
+   }
+  },
+  {
+   "type": "recurring_rule",
+   "record": {
+    "id": "01a0fe77-b063-74a1-aa9f-3e9497bd283b",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 28,
+    "created_at": "2026-10-02T21:14:12.543408Z",
+    "updated_at": "2026-10-02T21:14:12.543408Z",
+    "deleted_at": null,
+    "preset": "custom",
+    "status": "active",
+    "kind": "expense",
+    "amount_minor": 450000,
+    "amount_basis": "per_occurrence",
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "Rent E2E",
+    "memo": null,
+    "counterparty": null,
+    "auto_confirm": false,
+    "frequency": "monthly",
+    "interval": 1,
+    "anchor_day": 1,
+    "start_date": "2026-11-01",
+    "end_date": null,
+    "occurrence_count": null,
+    "payout_round": null,
+    "payout_category_id": null,
+    "timezone": "Africa/Cairo",
+    "created_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU3Ny00OWEzLTcyNGUtYjkyMS0zZWU1MmUyMWFjMDciLCJyIjoiMDFhMGZlNzYtZDEyYS03MWYwLWE4ZDEtN2VkOWM3YTNmNzRiIiwicCI6Mjh9PhsgUg7xhlsVECXIR6afJg",
+  "has_more": true,
+  "limit": 3,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU3Ny00OWEzLTcyNGUtYjkyMS0zZWU1MmUyMWFjMDciLCJyIjoiMDFhMGZlNzYtZDEyYS03MWYwLWE4ZDEtN2VkOWM3YTNmNzRiIiwicCI6Mjh9PhsgUg7xhlsVECXIR6afJg",
+  "sync_position": 28
+ }
+}
+
+GET /sync/wallets/01a0fe77-49a3-724e-b921-3ee52e21ac07/changes params={'limit': 3, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "occurrence",
+   "record": {
+    "id": "01a0fe77-b2dd-721e-a61d-1e06b7392063",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 29,
+    "created_at": "2026-10-02T21:14:12.573534Z",
+    "updated_at": "2026-10-02T21:14:12.573534Z",
+    "deleted_at": null,
+    "recurring_rule_id": "01a0fe77-b063-74a1-aa9f-3e9497bd283b",
+    "ordinal": 1,
+    "is_payout": false,
+    "scheduled_date": "2026-11-01",
+    "date": "2026-11-01",
+    "status": "scheduled",
+    "kind": "expense",
+    "amount_minor": 450000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "Rent E2E",
+    "memo": null,
+    "counterparty": null,
+    "edited": false,
+    "transaction_id": null,
+    "auto_confirm_refusal": null
+   }
+  },
+  {
+   "type": "transaction",
+   "record": {
+    "id": "01a0fe77-ba51-73c9-92f4-6bdbb14fe341",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 31,
+    "created_at": "2026-10-02T21:14:15.013778Z",
+    "updated_at": "2026-10-02T21:14:15.013778Z",
+    "deleted_at": null,
+    "kind": "transfer",
+    "date": "2026-10-01",
+    "amount_minor": 777,
+    "currency": "EGP",
+    "category_id": null,
+    "counter_wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+    "description": "QA017",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "recurring_rule_id": null,
+    "occurrence_id": null
+   }
+  },
+  {
+   "type": "wallet",
+   "record": {
+    "id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 2,
+    "change_seq": 32,
+    "created_at": "2026-10-02T21:13:46.184499Z",
+    "updated_at": "2026-10-02T21:14:04.148696Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "Home E2E",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": -4977,
+    "icon": "wallet",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 3,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU3Ny00OWEzLTcyNGUtYjkyMS0zZWU1MmUyMWFjMDciLCJyIjoiMDFhMGZlNzYtZDEyYS03MWYwLWE4ZDEtN2VkOWM3YTNmNzRiIiwicCI6MzJ9GDgSBZJfAAwFSRcvkh727A",
+  "sync_position": 32
+ }
+}
+
+CHECK [PASS] /sync/wallets/01a0fe77-49a3-724e-b921-3ee52e21ac07/changes: every page [7, 14, 22, 28, 32]
+GET /sync/wallets/01a0fe77-49a3-724e-b921-3ee52e21ac07/changes params={'limit': 200, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU3Ny00OWEzLTcyNGUtYjkyMS0zZWU1MmUyMWFjMDciLCJyIjoiMDFhMGZlNzYtZDEyYS03MWYwLWE4ZDEtN2VkOWM3YTNmNzRiIiwicCI6MzJ9GDgSBZJfAAwFSRcvkh727A",
+  "sync_position": 32
+ }
+}
+
+CHECK [PASS] /sync/wallets/01a0fe77-49a3-724e-b921-3ee52e21ac07/changes: empty page keeps position 

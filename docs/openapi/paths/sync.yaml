@@ -11,6 +11,11 @@
 #
 # Postings never appear (P-04 rule 6). The server never merges (P-07): a
 # stale batch item is refused whole with the current record.
+#
+# v1.10 (spec 017, B14a), additive only: `GET /sync/wallets/heads`, the
+# integer `meta.sync_position` on every feed page, a member's rename
+# re-sending their memberships on each wallet feed, and the written
+# restore + upsert batch pair (ADR-0021).
 
 /sync/user/changes:
   get:
@@ -42,6 +47,8 @@
       keep reading while `has_more` is true. `sync_cursor` is never null, so
       the last page still gives a position to resume from. A cursor is valid
       only for this endpoint and this account.
+      From v1.10 every page also states `meta.sync_position`, the integer
+      position `sync_cursor` resumes from (see ChangeFeedMeta).
 
       Refusals: a cursor that is unparseable, issued for another feed or
       account, or ahead of the scope is 400 INVALID_CURSOR; a cursor behind
@@ -122,6 +129,7 @@
                     has_more: false
                     limit: 50
                     sync_cursor: eyJ2IjoxLCJmIjoidSIsInMiOiIwMTkyZjcwMCIsInAiOjU5fQ.c2lnbmF0dXJlMTZi
+                    sync_position: 59
       '400':
         $ref: '../components/responses.yaml#/components/responses/BadRequest'
       '401':
@@ -159,6 +167,10 @@
 
       A `wallet_member` tombstone on this feed means that member left or was
       removed; the person themselves learns it from their own user feed.
+      From v1.10 (spec 017) a live `wallet_member` row is also re-sent, at a
+      new `change_seq` and the same `version`, when that member changes
+      their display name; `display_name` is always as of the read. Apply it
+      like any row of an equal version.
 
       The wallet record is re-sent whenever anything in the wallet changes
       (its `change_seq` is the scope counter); a `change_seq` move alone is
@@ -172,6 +184,11 @@
       Paging, cursor storage, INVALID_CURSOR and 410 SYNC_CURSOR_EXPIRED work
       exactly as on the user feed, for this wallet's scope only: one wallet
       expiring says nothing about the user feed or other wallets.
+
+      From v1.10 every page also states `meta.sync_position`, the integer
+      position its `sync_cursor` resumes from. Store it beside the cursor
+      and compare it with this wallet's entry in `GET /sync/wallets/heads`
+      to skip the read when nothing changed.
     x-filterable: []
     x-sortable: []
     parameters:
@@ -239,6 +256,7 @@
                     has_more: true
                     limit: 2
                     sync_cursor: eyJ2IjoxLCJmIjoidyIsInMiOiIwMTkyZjc5ZSIsInAiOjEzM30.c2lnbmF0dXJlMTZi
+                    sync_position: 133
       '400':
         $ref: '../components/responses.yaml#/components/responses/BadRequest'
       '401':
@@ -251,6 +269,103 @@
         $ref: '../components/responses.yaml#/components/responses/Gone'
       '422':
         $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/sync/wallets/heads:
+  get:
+    operationId: listWalletHeads
+    tags: [Sync]
+    summary: Each wallet the caller belongs to, with its scope head and purge horizon.
+    description: |
+      New in v1.10 (spec 017, ADR-0021). One cheap read that tells a phone
+      which wallet feeds have news, so a refresh reads only the wallets that
+      moved instead of every wallet it follows.
+
+      One entry per non-deleted wallet in which the caller has an active
+      membership (archived wallets included), ordered by `wallet_id`
+      ascending. Nothing else is listed and nothing is refused per wallet;
+      a wallet the caller does not belong to is simply absent. An entry
+      carries only identifiers and positions, never record content.
+
+      - `change_seq` is the wallet's **scope head**: the highest position
+        committed in its scope (the wallet record's own `change_seq` as it
+        stands now).
+      - `purged_change_seq` is the wallet's **purge horizon**.
+
+      How to use it: for each wallet the phone follows, compare the entry
+      with the `meta.sync_position` stored from that wallet's last feed
+      page (read until `has_more` was false).
+
+      - `change_seq` equal to the stored position: nothing new; skip the
+        wallet's feed.
+      - `change_seq` greater: read the wallet's feed from the stored cursor.
+      - `purged_change_seq` greater than the stored position: the stored
+        cursor is expired (the feed would answer 410 SYNC_CURSOR_EXPIRED);
+        resync that wallet from no cursor.
+      - A listed wallet with no stored position: read its feed from the
+        beginning.
+      - A followed wallet that is not listed: not a removal signal. Read its
+        feed as before (404 means access is gone) and rely on the user
+        feed's tombstoned membership.
+
+      A head is read as committed at the time of the request: a write that
+      commits a moment later is reported by the next read, never lost.
+      Heads are positions within one wallet's scope; never compare them
+      across wallets or with the user feed.
+
+      Paged like every collection (`cursor`, `limit` 1–200 clamped, default
+      50); filters and sorts are refused, never ignored. Requires a
+      signed-in caller only: no verified address, no plan capability.
+    x-filterable: []
+    x-sortable: []
+    parameters:
+      - *cursor
+      - *limit
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: 'A page of wallet heads. A caller in no wallet gets `data: []`.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/WalletHead'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+            examples:
+              twoWallets:
+                summary: Two wallets, the first with a purged horizon
+                value:
+                  data:
+                    - wallet_id: 0192f79e-0000-7000-8000-000000000001
+                      change_seq: 812
+                      purged_change_seq: 140
+                    - wallet_id: 0192f79e-0000-7000-8000-000000000002
+                      change_seq: 133
+                      purged_change_seq: 0
+                  meta:
+                    next_cursor: null
+                    has_more: false
+                    limit: 50
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
       '426':
         $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
       '500':
@@ -286,6 +401,15 @@
 
       `data` is that write's body, verbatim. Archive, ownership transfer and
       partial (PATCH) edits are not batch operations; use their endpoints.
+
+      **Restore with an edit (v1.10, written promise).** An applied
+      `restore` answers the transaction at the sent `version` + 1; a restore
+      of a live transaction answers it unchanged. So a restore at version n
+      followed, in the same batch, by an `upsert` of the same transaction at
+      version n + 1 restores and edits in one request. If the restore did
+      not apply, the upsert meets the tombstone or a newer version and is
+      refused whole (409 VERSION_CONFLICT with `current`); it never applies
+      to a state the phone did not see. There is no combined operation.
 
       Semantics (frozen):
 
@@ -593,6 +717,38 @@ components:
         sync_cursor:
           type: string
           description: Opaque position to resume from. Never parsed, compared or constructed by a client, and valid only for the feed and account that issued it.
+        sync_position:
+          type: integer
+          minimum: 0
+          description: |
+            From v1.10 (spec 017): the integer position `sync_cursor` resumes
+            from — the feed position of this page's last row, or the incoming
+            position when the page is empty (0 from the beginning). Always
+            sent; declared optional so pages recorded before v1.10 stay valid.
+            Compare it only with the same scope's head in
+            `GET /sync/wallets/heads`; it is not a cursor and is never sent
+            back.
+
+    WalletHead:
+      type: object
+      description: |
+        One wallet's positions for `GET /sync/wallets/heads` (v1.10). Only
+        identifiers and positions; never record content.
+      required: [wallet_id, change_seq, purged_change_seq]
+      additionalProperties: false
+      properties:
+        wallet_id:
+          type: string
+          format: uuid
+          description: A wallet in which the caller has an active membership.
+        change_seq:
+          type: integer
+          minimum: 0
+          description: The scope head — the highest position committed in the wallet's scope.
+        purged_change_seq:
+          type: integer
+          minimum: 0
+          description: The purge horizon — a stored position below it is expired (410 SYNC_CURSOR_EXPIRED on the feed).
 
     SyncBatch:
       type: object

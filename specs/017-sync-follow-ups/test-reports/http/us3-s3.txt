@@ -1,0 +1,626 @@
+===== us3-s3 US3-3 a refused restore (stale, wallet gone, not permitted) refuses the upsert whole 2026-10-02T21:17:22.430784Z
+
+PUT /wallets/01a0fe77-4c21-74f5-8ef5-f9728f4395ae/transactions/01a0fe7a-987f-715d-bbb4-eec608358e88
+> {"kind": "expense", "date": "2026-10-01", "amount_minor": 2500, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA017", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fe7a-987f-715d-bbb4-eec608358e88",
+  "wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+  "version": 1,
+  "change_seq": 50,
+  "created_at": "2026-10-02T21:17:22.932001Z",
+  "updated_at": "2026-10-02T21:17:22.932001Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-10-01",
+  "amount_minor": 2500,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA017",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fe76-fd54-7298-91c2-81683f86c5c0",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+DELETE /wallets/01a0fe77-4c21-74f5-8ef5-f9728f4395ae/transactions/01a0fe7a-987f-715d-bbb4-eec608358e88
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fe7a-987f-715d-bbb4-eec608358e88",
+  "wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+  "version": 2,
+  "change_seq": 52,
+  "created_at": "2026-10-02T21:17:22.932001Z",
+  "updated_at": "2026-10-02T21:17:23.465601Z",
+  "deleted_at": "2026-10-02T21:17:23.464619Z",
+  "kind": "expense",
+  "date": "2026-10-01",
+  "amount_minor": 2500,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA017",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fe76-fd54-7298-91c2-81683f86c5c0",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "restore", "id": "01a0fe7a-987f-715d-bbb4-eec608358e88", "wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae", "data": {"deleted_at": null, "version": 1}}, {"type": "transaction", "op": "upsert", "id": "01a0fe7a-987f-715d-bbb4-eec608358e88", "wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae", "data": {"kind": "expense", "date": "2026-10-01", "amount_minor": 8800, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 2}}]}
+< 200
+{
+ "data": [
+  {
+   "type": "transaction",
+   "id": "01a0fe7a-987f-715d-bbb4-eec608358e88",
+   "outcome": "conflict",
+   "status": 409,
+   "record": null,
+   "problem": {
+    "type": "http://saveme-backend.test/problems/version-conflict",
+    "title": "Version conflict",
+    "status": 409,
+    "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+    "code": "VERSION_CONFLICT",
+    "request_id": "01a0fe7a-9d75-7048-94d7-fb252ecb250a",
+    "current": {
+     "id": "01a0fe7a-987f-715d-bbb4-eec608358e88",
+     "wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+     "version": 2,
+     "change_seq": 52,
+     "created_at": "2026-10-02T21:17:22.932001Z",
+     "updated_at": "2026-10-02T21:17:23.465601Z",
+     "deleted_at": "2026-10-02T21:17:23.464619Z",
+     "kind": "expense",
+     "date": "2026-10-01",
+     "amount_minor": 2500,
+     "currency": "EGP",
+     "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+     "counter_wallet_id": null,
+     "description": "QA017",
+     "memo": null,
+     "counterparty": null,
+     "cleared": false,
+     "created_by": "01a0fe76-fd54-7298-91c2-81683f86c5c0",
+     "recurring_rule_id": null,
+     "occurrence_id": null
+    }
+   }
+  },
+  {
+   "type": "transaction",
+   "id": "01a0fe7a-987f-715d-bbb4-eec608358e88",
+   "outcome": "conflict",
+   "status": 409,
+   "record": null,
+   "problem": {
+    "type": "http://saveme-backend.test/problems/version-conflict",
+    "title": "Version conflict",
+    "status": 409,
+    "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+    "code": "VERSION_CONFLICT",
+    "request_id": "01a0fe7a-9d75-7048-94d7-fb252ecb250a",
+    "current": {
+     "id": "01a0fe7a-987f-715d-bbb4-eec608358e88",
+     "wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+     "version": 2,
+     "change_seq": 52,
+     "created_at": "2026-10-02T21:17:22.932001Z",
+     "updated_at": "2026-10-02T21:17:23.465601Z",
+     "deleted_at": "2026-10-02T21:17:23.464619Z",
+     "kind": "expense",
+     "date": "2026-10-01",
+     "amount_minor": 2500,
+     "currency": "EGP",
+     "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+     "counter_wallet_id": null,
+     "description": "QA017",
+     "memo": null,
+     "counterparty": null,
+     "cleared": false,
+     "created_by": "01a0fe76-fd54-7298-91c2-81683f86c5c0",
+     "recurring_rule_id": null,
+     "occurrence_id": null
+    }
+   }
+  }
+ ],
+ "meta": {}
+}
+
+CHECK [PASS] stale: both conflict VERSION_CONFLICT, current is the tombstone 
+GET /sync/wallets/01a0fe77-49a3-724e-b921-3ee52e21ac07/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-4bdb-706a-95a7-0e36f4c4438b",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:13:46.204057Z",
+    "updated_at": "2026-10-02T21:13:46.204057Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "display_name": "Sara E2E",
+    "role": "owner"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fe77-56ae-76b8-820f-dcb293b7ea61",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 2,
+    "change_seq": 7,
+    "created_at": "2026-10-02T21:13:49.604285Z",
+    "updated_at": "2026-10-02T21:13:50.230108Z",
+    "deleted_at": "2026-10-02T21:13:50.230108Z",
+    "role": "editor",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "status": "accepted",
+    "expires_at": "2026-10-09T21:13:49.584572Z"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-6a01-72bf-ad48-4414be89abcd",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 11,
+    "created_at": "2026-10-02T21:13:53.921734Z",
+    "updated_at": "2026-10-02T21:13:53.921734Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe76-fd54-7298-91c2-81683f86c5c0",
+    "display_name": "Mona E2E",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fe77-6580-705b-9ed0-28d0324c633f",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 2,
+    "change_seq": 12,
+    "created_at": "2026-10-02T21:13:53.308779Z",
+    "updated_at": "2026-10-02T21:13:53.960841Z",
+    "deleted_at": "2026-10-02T21:13:53.960841Z",
+    "role": "editor",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "status": "accepted",
+    "expires_at": "2026-10-09T21:13:53.292362Z"
+   }
+  },
+  {
+   "type": "transaction",
+   "record": {
+    "id": "01a0fe77-8141-73ea-8f57-fdeaeb49e712",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 14,
+    "created_at": "2026-10-02T21:14:00.701818Z",
+    "updated_at": "2026-10-02T21:14:00.701818Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-10-01",
+    "amount_minor": 3000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA017",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "recurring_rule_id": null,
+    "occurrence_id": null
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fe77-96e6-75b4-a600-26f204c26b78",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 17,
+    "created_at": "2026-10-02T21:14:05.992154Z",
+    "updated_at": "2026-10-02T21:14:05.992154Z",
+    "deleted_at": null,
+    "role": "viewer",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "status": "pending",
+    "expires_at": "2026-10-09T21:14:05.968218Z"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-a2e8-701e-ba6d-e5dee9eeb41a",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 21,
+    "created_at": "2026-10-02T21:14:08.488769Z",
+    "updated_at": "2026-10-02T21:14:08.488769Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe77-155c-73a3-ab86-b7d9743831dc",
+    "display_name": "Nour E2E",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "invitation",
+   "record": {
+    "id": "01a0fe77-9e46-712b-8906-c62956f98985",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 2,
+    "change_seq": 22,
+    "created_at": "2026-10-02T21:14:07.865670Z",
+    "updated_at": "2026-10-02T21:14:08.525870Z",
+    "deleted_at": "2026-10-02T21:14:08.525870Z",
+    "role": "editor",
+    "channel": "link",
+    "invitee_email": null,
+    "invited_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "status": "accepted",
+    "expires_at": "2026-10-09T21:14:07.845085Z"
+   }
+  },
+  {
+   "type": "transaction",
+   "record": {
+    "id": "01a0fe77-aa1a-731a-a3b2-0522b3b3c064",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 24,
+    "created_at": "2026-10-02T21:14:10.948172Z",
+    "updated_at": "2026-10-02T21:14:10.948172Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-10-01",
+    "amount_minor": 1200,
+    "currency": "EGP",
+    "category_id": "01a0fe77-a6f1-72fe-bad6-ba9afe2e2b2b",
+    "counter_wallet_id": null,
+    "description": "QA017",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "recurring_rule_id": null,
+    "occurrence_id": null
+   }
+  },
+  {
+   "type": "category_reference",
+   "record": {
+    "id": "01a0fe77-acd9-72ae-ba7c-e53fcbbb9cca",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 25,
+    "created_at": "2026-10-02T21:14:11.033903Z",
+    "updated_at": "2026-10-02T21:14:11.033903Z",
+    "deleted_at": null,
+    "category_id": "01a0fe77-a6f1-72fe-bad6-ba9afe2e2b2b",
+    "owner_user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "kind": "expense",
+    "name": "E2E Karim cat",
+    "icon": "tag",
+    "color": "#2E7D32"
+   }
+  },
+  {
+   "type": "recurring_rule",
+   "record": {
+    "id": "01a0fe77-b063-74a1-aa9f-3e9497bd283b",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 28,
+    "created_at": "2026-10-02T21:14:12.543408Z",
+    "updated_at": "2026-10-02T21:14:12.543408Z",
+    "deleted_at": null,
+    "preset": "custom",
+    "status": "active",
+    "kind": "expense",
+    "amount_minor": 450000,
+    "amount_basis": "per_occurrence",
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "Rent E2E",
+    "memo": null,
+    "counterparty": null,
+    "auto_confirm": false,
+    "frequency": "monthly",
+    "interval": 1,
+    "anchor_day": 1,
+    "start_date": "2026-11-01",
+    "end_date": null,
+    "occurrence_count": null,
+    "payout_round": null,
+    "payout_category_id": null,
+    "timezone": "Africa/Cairo",
+    "created_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b"
+   }
+  },
+  {
+   "type": "occurrence",
+   "record": {
+    "id": "01a0fe77-b2dd-721e-a61d-1e06b7392063",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 29,
+    "created_at": "2026-10-02T21:14:12.573534Z",
+    "updated_at": "2026-10-02T21:14:12.573534Z",
+    "deleted_at": null,
+    "recurring_rule_id": "01a0fe77-b063-74a1-aa9f-3e9497bd283b",
+    "ordinal": 1,
+    "is_payout": false,
+    "scheduled_date": "2026-11-01",
+    "date": "2026-11-01",
+    "status": "scheduled",
+    "kind": "expense",
+    "amount_minor": 450000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "Rent E2E",
+    "memo": null,
+    "counterparty": null,
+    "edited": false,
+    "transaction_id": null,
+    "auto_confirm_refusal": null
+   }
+  },
+  {
+   "type": "transaction",
+   "record": {
+    "id": "01a0fe77-ba51-73c9-92f4-6bdbb14fe341",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 31,
+    "created_at": "2026-10-02T21:14:15.013778Z",
+    "updated_at": "2026-10-02T21:14:15.013778Z",
+    "deleted_at": null,
+    "kind": "transfer",
+    "date": "2026-10-01",
+    "amount_minor": 777,
+    "currency": "EGP",
+    "category_id": null,
+    "counter_wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+    "description": "QA017",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+    "recurring_rule_id": null,
+    "occurrence_id": null
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe77-5b6f-731d-9d9e-b36f6128db9b",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 1,
+    "change_seq": 47,
+    "created_at": "2026-10-02T21:13:50.192284Z",
+    "updated_at": "2026-10-02T21:13:50.192284Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+    "display_name": "Karim Batch",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet",
+   "record": {
+    "id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+    "version": 2,
+    "change_seq": 48,
+    "created_at": "2026-10-02T21:13:46.184499Z",
+    "updated_at": "2026-10-02T21:14:04.148696Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "Home E2E",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": -4977,
+    "icon": "wallet",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU3Ny00OWEzLTcyNGUtYjkyMS0zZWU1MmUyMWFjMDciLCJyIjoiMDFhMGZlNzYtZDEyYS03MWYwLWE4ZDEtN2VkOWM3YTNmNzRiIiwicCI6NDh9PhcwOMZ9YtX4yY2pqgSolw",
+  "sync_position": 48
+ }
+}
+
+PATCH /wallets/01a0fe77-49a3-724e-b921-3ee52e21ac07/members/01a0fe77-155c-73a3-ab86-b7d9743831dc
+> {"role": "viewer", "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fe77-a2e8-701e-ba6d-e5dee9eeb41a",
+  "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+  "version": 2,
+  "change_seq": 49,
+  "created_at": "2026-10-02T21:14:08.488769Z",
+  "updated_at": "2026-10-02T21:17:24.965561Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fe77-155c-73a3-ab86-b7d9743831dc",
+  "display_name": "Nour E2E",
+  "role": "viewer"
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fe77-49a3-724e-b921-3ee52e21ac07/transactions/01a0fe7a-a2ac-76bd-862a-ff3285448bcc
+> {"kind": "expense", "date": "2026-10-01", "amount_minor": 2500, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA017", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fe7a-a2ac-76bd-862a-ff3285448bcc",
+  "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+  "version": 1,
+  "change_seq": 51,
+  "created_at": "2026-10-02T21:17:25.494401Z",
+  "updated_at": "2026-10-02T21:17:25.494401Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-10-01",
+  "amount_minor": 2500,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA017",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+DELETE /wallets/01a0fe77-49a3-724e-b921-3ee52e21ac07/transactions/01a0fe7a-a2ac-76bd-862a-ff3285448bcc
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fe7a-a2ac-76bd-862a-ff3285448bcc",
+  "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+  "version": 2,
+  "change_seq": 53,
+  "created_at": "2026-10-02T21:17:25.494401Z",
+  "updated_at": "2026-10-02T21:17:26.025918Z",
+  "deleted_at": "2026-10-02T21:17:26.024790Z",
+  "kind": "expense",
+  "date": "2026-10-01",
+  "amount_minor": 2500,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA017",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "restore", "id": "01a0fe7a-a2ac-76bd-862a-ff3285448bcc", "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07", "data": {"deleted_at": null, "version": 2}}, {"type": "transaction", "op": "upsert", "id": "01a0fe7a-a2ac-76bd-862a-ff3285448bcc", "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07", "data": {"kind": "expense", "date": "2026-10-01", "amount_minor": 8800, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 3}}]}
+< 200
+{
+ "data": [
+  {
+   "type": "transaction",
+   "id": "01a0fe7a-a2ac-76bd-862a-ff3285448bcc",
+   "outcome": "rejected",
+   "status": 403,
+   "record": null,
+   "problem": {
+    "type": "http://saveme-backend.test/problems/forbidden",
+    "title": "Forbidden",
+    "status": 403,
+    "detail": "Your role in this wallet does not allow this.",
+    "code": "FORBIDDEN",
+    "request_id": "01a0fe7a-a795-70b8-bf85-e43c7f85d353"
+   }
+  },
+  {
+   "type": "transaction",
+   "id": "01a0fe7a-a2ac-76bd-862a-ff3285448bcc",
+   "outcome": "rejected",
+   "status": 403,
+   "record": null,
+   "problem": {
+    "type": "http://saveme-backend.test/problems/forbidden",
+    "title": "Forbidden",
+    "status": 403,
+    "detail": "Your role in this wallet does not allow this.",
+    "code": "FORBIDDEN",
+    "request_id": "01a0fe7a-a795-70b8-bf85-e43c7f85d353"
+   }
+  }
+ ],
+ "meta": {}
+}
+
+CHECK [PASS] viewer: both refused (not applied) [["rejected", "FORBIDDEN"], ["rejected", "FORBIDDEN"]]
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "restore", "id": "01a0fe7a-a2ac-76bd-862a-ff3285448bcc", "wallet_id": "01a0fe77-5059-7046-80a3-a26abbffe1d7", "data": {"deleted_at": null, "version": 2}}, {"type": "transaction", "op": "upsert", "id": "01a0fe7a-a2ac-76bd-862a-ff3285448bcc", "wallet_id": "01a0fe77-5059-7046-80a3-a26abbffe1d7", "data": {"kind": "expense", "date": "2026-10-01", "amount_minor": 8800, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 3}}]}
+< 200
+{
+ "data": [
+  {
+   "type": "transaction",
+   "id": "01a0fe7a-a2ac-76bd-862a-ff3285448bcc",
+   "outcome": "rejected",
+   "status": 404,
+   "record": null,
+   "problem": {
+    "type": "http://saveme-backend.test/problems/not-found",
+    "title": "Not found",
+    "status": 404,
+    "detail": "We could not find that.",
+    "code": "NOT_FOUND",
+    "request_id": "01a0fe7a-a9c4-71a0-8e42-a0cc4a1e06c9"
+   }
+  },
+  {
+   "type": "transaction",
+   "id": "01a0fe7a-a2ac-76bd-862a-ff3285448bcc",
+   "outcome": "rejected",
+   "status": 404,
+   "record": null,
+   "problem": {
+    "type": "http://saveme-backend.test/problems/not-found",
+    "title": "Not found",
+    "status": 404,
+    "detail": "We could not find that.",
+    "code": "NOT_FOUND",
+    "request_id": "01a0fe7a-a9c4-71a0-8e42-a0cc4a1e06c9"
+   }
+  }
+ ],
+ "meta": {}
+}
+
+CHECK [PASS] wallet gone: both refused [["rejected", "NOT_FOUND"], ["rejected", "NOT_FOUND"]]
+CHECK [PASS] stored transactions unchanged [{"version": 2, "amount_minor": 2500, "deleted_at": "2026-10-02 21:17:23.464619+00"}, {"version": 2, "amount_minor": 2500, "deleted_at": "2026-10-02 21:17:26.02479+00"}]

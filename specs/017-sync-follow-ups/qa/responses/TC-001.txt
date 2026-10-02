@@ -1,0 +1,223 @@
+===== TC-001 Heads: refusals (401 unauthenticated, client version, sort, filter, bad limit, bad cursor) 2026-10-02T21:02:03.388658Z
+
+GET /sync/wallets/heads (no credential)
+< 401
+{"type":"http:\/\/saveme-backend.test\/problems\/unauthenticated","title":"Unauthenticated","status":401,"detail":"Please sign in again.","code":"UNAUTHENTICATED","request_id":"01a0fe6c-933e-7207-9cbc-dbbff3631adc"}
+
+CHECK [PASS] no credential -> 401 401
+GET /sync/wallets/heads (no client headers)
+< 400
+{"type":"http:\/\/saveme-backend.test\/problems\/client-version-required","title":"Client version required","status":400,"detail":"The app did not say which version it is.","code":"CLIENT_VERSION_REQUIRED","request_id":"01a0fe6c-93fd-73fc-90c9-853b3ae21ea1"}
+
+CHECK [PASS] no client version -> 400 CLIENT_VERSION_REQUIRED 400
+GET /sync/wallets/heads (old client)
+< 426
+{"type":"http:\/\/saveme-backend.test\/problems\/client-version-unsupported","title":"Client version unsupported","status":426,"detail":"Please update the app to continue.","code":"CLIENT_VERSION_UNSUPPORTED","request_id":"01a0fe6c-94bb-719a-932f-c5e9d0243ad8","minimum_version":"1.0.0"}
+
+CHECK [PASS] outdated client -> 426 426 (only if a minimum version is configured)
+GET /sync/wallets/heads params={'sort': 'wallet_id'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/sort-field-not-supported",
+ "title": "Sort field not supported",
+ "status": 400,
+ "detail": "This list cannot be sorted by that field.",
+ "code": "SORT_FIELD_NOT_SUPPORTED",
+ "request_id": "01a0fe6c-9588-7358-a862-62ecd8928960"
+}
+
+CHECK [PASS] {'sort': 'wallet_id'} -> 400 SORT_FIELD_NOT_SUPPORTED 400 SORT_FIELD_NOT_SUPPORTED
+GET /sync/wallets/heads params={'sort': '-wallet_id'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/sort-field-not-supported",
+ "title": "Sort field not supported",
+ "status": 400,
+ "detail": "This list cannot be sorted by that field.",
+ "code": "SORT_FIELD_NOT_SUPPORTED",
+ "request_id": "01a0fe6c-96d6-73f6-922d-0b2f8bd1d07d"
+}
+
+CHECK [PASS] {'sort': '-wallet_id'} -> 400 SORT_FIELD_NOT_SUPPORTED 400 SORT_FIELD_NOT_SUPPORTED
+GET /sync/wallets/heads params={'filter[wallet_id]': '01a0fe6c-5828-704d-a9c0-e528a90aa91b'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/filter-field-not-supported",
+ "title": "Filter field not supported",
+ "status": 400,
+ "detail": "This list cannot be filtered by that field.",
+ "code": "FILTER_FIELD_NOT_SUPPORTED",
+ "request_id": "01a0fe6c-980a-7261-a0da-4de2ecad7345"
+}
+
+CHECK [PASS] {'filter[wallet_id]': '01a0fe6c-5828-704d-a9c0-e528a90aa91b'} -> 400 FILTER_FIELD_NOT_SUPPORTED 400 FILTER_FIELD_NOT_SUPPORTED
+GET /sync/wallets/heads params={'limit': 0}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a0fe6c-995a-7374-99bf-876d76d67a93"
+}
+
+CHECK [PASS] {'limit': 0} -> 400 INVALID_QUERY_PARAMETER 400 INVALID_QUERY_PARAMETER
+GET /sync/wallets/heads params={'limit': 'abc'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a0fe6c-9a9f-7105-b7fc-41103a505912"
+}
+
+CHECK [PASS] {'limit': 'abc'} -> 400 INVALID_QUERY_PARAMETER 400 INVALID_QUERY_PARAMETER
+GET /sync/wallets/heads params={'cursor': 'garbage!!'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-cursor",
+ "title": "Invalid cursor",
+ "status": 400,
+ "detail": "The page cursor is not valid. Start again from the first page.",
+ "code": "INVALID_CURSOR",
+ "request_id": "01a0fe6c-9bf8-72ae-bb4c-02598c1c38c5"
+}
+
+CHECK [PASS] {'cursor': 'garbage!!'} -> 400 INVALID_CURSOR 400 INVALID_CURSOR
+GET /sync/wallets/heads params={'cursor': 'eyJ3YWxsZXRfaWQiOiJ4In0'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-cursor",
+ "title": "Invalid cursor",
+ "status": 400,
+ "detail": "The page cursor is not valid. Start again from the first page.",
+ "code": "INVALID_CURSOR",
+ "request_id": "01a0fe6c-9d55-73b2-a719-b32ff498084b"
+}
+
+CHECK [PASS] {'cursor': 'eyJ3YWxsZXRfaWQiOiJ4In0'} -> 400 INVALID_CURSOR 400 INVALID_CURSOR
+GET /sync/wallets/01a0fe6c-5828-704d-a9c0-e528a90aa91b/changes params={'limit': 1}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-59e1-71fe-a8f9-430e35a602c5",
+    "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:01:48.897519Z",
+    "updated_at": "2026-10-02T21:01:48.897519Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-e7d8-705e-95c0-3053b791bb7e",
+    "display_name": "Sara QA",
+    "role": "owner"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01ODI4LTcwNGQtYTljMC1lNTI4YTkwYWE5MWIiLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6Mn0ayVMbhP_suD59d-vmfwHB",
+  "has_more": true,
+  "limit": 1,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01ODI4LTcwNGQtYTljMC1lNTI4YTkwYWE5MWIiLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6Mn0ayVMbhP_suD59d-vmfwHB",
+  "sync_position": 2
+ }
+}
+
+GET /sync/wallets/heads params={'cursor': '<cursor>'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-cursor",
+ "title": "Invalid cursor",
+ "status": 400,
+ "detail": "The page cursor is not valid. Start again from the first page.",
+ "code": "INVALID_CURSOR",
+ "request_id": "01a0fe6c-a080-7132-ba07-27ae86e9b963"
+}
+
+CHECK [PASS] a feed cursor on heads -> 400 INVALID_CURSOR 400 INVALID_CURSOR
+GET /sync/wallets/heads params={'limit': 500}
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe6c-5bfb-771d-88fd-cf07e8923e47",
+   "change_seq": 9,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] limit 500 clamped to 200 200 {'next_cursor': None, 'has_more': False, 'limit': 200}
+GET /sync/wallets/heads
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] unverified caller -> 200 (no verification gate) 200 None
+CHECK [PASS] caller in no wallet sees only their own (an unverified registrant has none or their default) []
+GET /sync/wallets/heads
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe6c-5bfb-771d-88fd-cf07e8923e47",
+   "change_seq": 9,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] no Idempotency-Key needed (and one sent is harmless) 200
+POST /sync/wallets/heads
+< 405 Allow: GET, HEAD
+{
+ "type": "http://saveme-backend.test/problems/method-not-allowed",
+ "title": "Method not allowed",
+ "status": 405,
+ "detail": "This action is not available here.",
+ "code": "METHOD_NOT_ALLOWED",
+ "request_id": "01a0fe6c-a5b3-7170-8e0b-dec48590b01e"
+}
+
+CHECK [PASS] POST heads -> 405 405

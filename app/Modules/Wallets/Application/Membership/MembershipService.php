@@ -22,6 +22,7 @@ use App\Modules\Wallets\Domain\Membership\Role;
 use App\Modules\Wallets\Domain\Ports\MembershipRepository;
 use App\Modules\Wallets\Domain\Refusals\WalletActionForbidden;
 use App\Modules\Wallets\Domain\Refusals\WalletNotFound;
+use Illuminate\Support\Facades\Log;
 use RuntimeException;
 
 /**
@@ -166,6 +167,52 @@ final class MembershipService
 
             return $beyond;
         });
+    }
+
+    /**
+     * Re-sends the person's live memberships on their wallets' feeds after a
+     * display-name change (ADR-0021): each takes the wallet's next
+     * `change_seq` and nothing else moves. One wallet lock per unit of work,
+     * no user row, wallets in ascending id, at most $batch wallets. Nothing
+     * is audited, recorded or published. A membership that ended, or a
+     * wallet that was deleted, since the listing is skipped.
+     *
+     * @return string|null the last wallet handled when more follow, else null
+     */
+    public function restampNames(string $userId, string $afterWalletId, int $batch = 50): ?string
+    {
+        $walletIds = $this->members->liveWalletIdsOf($userId, $afterWalletId, $batch + 1);
+        $more = count($walletIds) > $batch;
+        $handled = array_slice($walletIds, 0, $batch);
+        $restamped = 0;
+
+        foreach ($handled as $walletId) {
+            try {
+                $done = $this->scopes->within($walletId, function (ScopeWrite $scope) use ($walletId, $userId): bool {
+                    $member = $this->members->activeFor($walletId, $userId);
+
+                    if ($member === null || $scope->wallet->isTombstone()) {
+                        return false;
+                    }
+
+                    $this->members->restamp($member->id, $scope->nextChangeSeq());
+
+                    return true;
+                });
+            } catch (WalletNotFound) {
+                $done = false;
+            }
+
+            $restamped += $done ? 1 : 0;
+        }
+
+        Log::info('member_names_restamped', [
+            'wallets_restamped' => $restamped,
+            'wallets_skipped' => count($handled) - $restamped,
+            'continued' => $more,
+        ]);
+
+        return $more && $handled !== [] ? $handled[array_key_last($handled)] : null;
     }
 
     private function end(string $walletId, string $actorId, string $memberUserId, string $reason, ActivityAction $action): MemberRecord

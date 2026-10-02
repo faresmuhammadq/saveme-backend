@@ -1,0 +1,81 @@
+===== TC-002 Heads: lists each accessible wallet once (archived in, deleted out, left out, others out), ordered, only 3 fields 2026-10-02T21:02:08.367736Z
+
+GET /sync/wallets/heads params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe6c-5bfb-771d-88fd-cf07e8923e47",
+   "change_seq": 9,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] k heads 200 
+CHECK [PASS] W1, W2 listed 
+CHECK [PASS] W3 (archived) listed 
+CHECK [PASS] W4 (deleted) absent 
+CHECK [PASS] W5 (left) absent 
+CHECK [PASS] WX (other person) absent 
+CHECK [PASS] exactly the active memberships in non-deleted wallets (DB) ['01a0fe6c-5828-704d-a9c0-e528a90aa91b', '01a0fe6c-5a0c-7570-98a3-7065195e09c4', '01a0fe6c-5bfb-771d-88fd-cf07e8923e47'] vs ['01a0fe6c-5828-704d-a9c0-e528a90aa91b', '01a0fe6c-5a0c-7570-98a3-7065195e09c4', '01a0fe6c-5bfb-771d-88fd-cf07e8923e47']
+CHECK [PASS] ordered by wallet_id ascending 
+CHECK [PASS] each once 
+CHECK [PASS] each entry has exactly wallet_id, change_seq, purged_change_seq [{"wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b", "change_seq": 13, "purged_change_seq": 0}]
+CHECK [PASS] values equal wallets.change_seq / purged_change_seq [{"id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b", "change_seq": 13, "purged_change_seq": 0}, {"id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4", "change_seq": 13, "purged_change_seq": 0}, {"id": "01a0fe6c-5bfb-771d-88fd-cf07e8923e47", "change_seq": 9, "purged_change_seq": 0}]
+GET /sync/wallets/heads params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe6c-619b-76f1-a0dd-fc4fcec8e7ee",
+   "change_seq": 3,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] x sees only WX (none of the shared wallets) ['01a0fe6c-619b-76f1-a0dd-fc4fcec8e7ee']
+GET /sync/wallets/heads params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] m sees W1, W2 only ['01a0fe6c-5828-704d-a9c0-e528a90aa91b', '01a0fe6c-5a0c-7570-98a3-7065195e09c4']

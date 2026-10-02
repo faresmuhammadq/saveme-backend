@@ -1,0 +1,507 @@
+===== setup Register Sara, Karim, Mona, Nour; verify; Plus for Sara and Karim; six wallets for Sara 2026-10-02T21:13:13.471437Z
+
+POST /auth/register
+> {"email": "qs017e-s-1790975593@example.test", "password": "[redacted]", "display_name": "Sara E2E", "timezone": "Africa/Cairo"}
+< 202
+{
+ "data": {
+  "status": "accepted"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] register s 202 None
+CHECK [PASS] verify mail s 1
+POST /auth/verify-email
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "email_verified": true
+ },
+ "meta": {}
+}
+
+CHECK [PASS] verify s 200 None
+POST /auth/login
+> {"email": "qs017e-s-1790975593@example.test", "password": "[redacted]", "device": {"session_id": "01a0fe76-db72-7342-a27f-6d876fe2d827", "device_id": "qs017e-s-1790975593", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login s 200 None
+POST /auth/register
+> {"email": "qs017e-k-1790975593@example.test", "password": "[redacted]", "display_name": "K", "timezone": "Africa/Cairo"}
+< 202
+{
+ "data": {
+  "status": "accepted"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] register k 202 None
+CHECK [PASS] verify mail k 1
+POST /auth/verify-email
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "email_verified": true
+ },
+ "meta": {}
+}
+
+CHECK [PASS] verify k 200 None
+POST /auth/login
+> {"email": "qs017e-k-1790975593@example.test", "password": "[redacted]", "device": {"session_id": "01a0fe76-f34c-7369-9dfd-6ae080c2ad5e", "device_id": "qs017e-k-1790975593", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login k 200 None
+POST /auth/register
+> {"email": "qs017e-m-1790975593@example.test", "password": "[redacted]", "display_name": "Mona E2E", "timezone": "Africa/Cairo"}
+< 202
+{
+ "data": {
+  "status": "accepted"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] register m 202 None
+CHECK [PASS] verify mail m 1
+POST /auth/verify-email
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "email_verified": true
+ },
+ "meta": {}
+}
+
+CHECK [PASS] verify m 200 None
+POST /auth/login
+> {"email": "qs017e-m-1790975593@example.test", "password": "[redacted]", "device": {"session_id": "01a0fe77-0b28-70f1-b5a2-903335738b5b", "device_id": "qs017e-m-1790975593", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login m 200 None
+POST /auth/register
+> {"email": "qs017e-n-1790975593@example.test", "password": "[redacted]", "display_name": "Nour E2E", "timezone": "Africa/Cairo"}
+< 202
+{
+ "data": {
+  "status": "accepted"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] register n 202 None
+CHECK [PASS] verify mail n 1
+POST /auth/verify-email
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "email_verified": true
+ },
+ "meta": {}
+}
+
+CHECK [PASS] verify n 200 None
+POST /auth/login
+> {"email": "qs017e-n-1790975593@example.test", "password": "[redacted]", "device": {"session_id": "01a0fe77-232d-73ca-bb44-e95245db698f", "device_id": "qs017e-n-1790975593", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login n 200 None
+CHECK [PASS] Plus s 
+CHECK [PASS] Plus k 
+PUT /wallets/01a0fe77-49a3-724e-b921-3ee52e21ac07
+> {"type": "cash", "name": "Sara E2E 0", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+  "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T21:13:46.184499Z",
+  "updated_at": "2026-10-02T21:13:46.184499Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "Sara E2E 0",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] wallet Sara E2E 0 by s 201 None
+PUT /wallets/01a0fe77-4c21-74f5-8ef5-f9728f4395ae
+> {"type": "cash", "name": "Sara E2E 1", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+  "wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T21:13:46.740476Z",
+  "updated_at": "2026-10-02T21:13:46.740476Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "Sara E2E 1",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] wallet Sara E2E 1 by s 201 None
+PUT /wallets/01a0fe77-4e49-7011-a8f9-acddf5562443
+> {"type": "cash", "name": "Sara E2E 2", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fe77-4e49-7011-a8f9-acddf5562443",
+  "wallet_id": "01a0fe77-4e49-7011-a8f9-acddf5562443",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T21:13:47.290222Z",
+  "updated_at": "2026-10-02T21:13:47.290222Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "Sara E2E 2",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] wallet Sara E2E 2 by s 201 None
+PUT /wallets/01a0fe77-5059-7046-80a3-a26abbffe1d7
+> {"type": "cash", "name": "Sara E2E 3", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fe77-5059-7046-80a3-a26abbffe1d7",
+  "wallet_id": "01a0fe77-5059-7046-80a3-a26abbffe1d7",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T21:13:47.786896Z",
+  "updated_at": "2026-10-02T21:13:47.786896Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "Sara E2E 3",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] wallet Sara E2E 3 by s 201 None
+PUT /wallets/01a0fe77-5253-77ee-85f0-5227d9cfee5e
+> {"type": "cash", "name": "Sara E2E 4", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fe77-5253-77ee-85f0-5227d9cfee5e",
+  "wallet_id": "01a0fe77-5253-77ee-85f0-5227d9cfee5e",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T21:13:48.361974Z",
+  "updated_at": "2026-10-02T21:13:48.361974Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "Sara E2E 4",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] wallet Sara E2E 4 by s 201 None
+PUT /wallets/01a0fe77-5496-7640-95fa-fb8aaeef8573
+> {"type": "cash", "name": "Sara E2E 5", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fe77-5496-7640-95fa-fb8aaeef8573",
+  "wallet_id": "01a0fe77-5496-7640-95fa-fb8aaeef8573",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T21:13:48.900850Z",
+  "updated_at": "2026-10-02T21:13:48.900850Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "Sara E2E 5",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] wallet Sara E2E 5 by s 201 None
+PUT /wallets/01a0fe77-49a3-724e-b921-3ee52e21ac07/invitations/01a0fe77-56ae-76b8-820f-dcb293b7ea61
+> {"role": "editor", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a0fe77-56ae-76b8-820f-dcb293b7ea61",
+  "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T21:13:49.604285Z",
+  "updated_at": "2026-10-02T21:13:49.604285Z",
+  "deleted_at": null,
+  "role": "editor",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+  "status": "pending",
+  "expires_at": "2026-10-09T21:13:49.584572Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=[redacted]"
+ }
+}
+
+CHECK [PASS] invite link 21ac07 for k 201 None
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "id": "01a0fe77-5b6f-731d-9d9e-b36f6128db9b",
+  "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-02T21:13:50.192284Z",
+  "updated_at": "2026-10-02T21:13:50.192284Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+  "display_name": "K",
+  "role": "editor"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] k accepts 21ac07 200 None
+PUT /wallets/01a0fe77-4c21-74f5-8ef5-f9728f4395ae/invitations/01a0fe77-5bdb-7463-b32a-b0e612f6c605
+> {"role": "editor", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a0fe77-5bdb-7463-b32a-b0e612f6c605",
+  "wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T21:13:50.873535Z",
+  "updated_at": "2026-10-02T21:13:50.873535Z",
+  "deleted_at": null,
+  "role": "editor",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+  "status": "pending",
+  "expires_at": "2026-10-09T21:13:50.853749Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=[redacted]"
+ }
+}
+
+CHECK [PASS] invite link 4395ae for k 201 None
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "id": "01a0fe77-6056-707f-a1dd-09fd6f9cdae8",
+  "wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-02T21:13:51.446856Z",
+  "updated_at": "2026-10-02T21:13:51.446856Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+  "display_name": "K",
+  "role": "editor"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] k accepts 4395ae 200 None
+PUT /wallets/01a0fe77-4e49-7011-a8f9-acddf5562443/invitations/01a0fe77-60af-73d3-aa7e-8e29b6916cca
+> {"role": "editor", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a0fe77-60af-73d3-aa7e-8e29b6916cca",
+  "wallet_id": "01a0fe77-4e49-7011-a8f9-acddf5562443",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T21:13:52.137380Z",
+  "updated_at": "2026-10-02T21:13:52.137380Z",
+  "deleted_at": null,
+  "role": "editor",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+  "status": "pending",
+  "expires_at": "2026-10-09T21:13:52.116671Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=[redacted]"
+ }
+}
+
+CHECK [PASS] invite link 562443 for k 201 None
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "id": "01a0fe77-6527-72f0-8a6a-fa787585691d",
+  "wallet_id": "01a0fe77-4e49-7011-a8f9-acddf5562443",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-02T21:13:52.679689Z",
+  "updated_at": "2026-10-02T21:13:52.679689Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fe76-e56b-73aa-bd52-d5967a8deebe",
+  "display_name": "K",
+  "role": "editor"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] k accepts 562443 200 None
+PUT /wallets/01a0fe77-49a3-724e-b921-3ee52e21ac07/invitations/01a0fe77-6580-705b-9ed0-28d0324c633f
+> {"role": "editor", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a0fe77-6580-705b-9ed0-28d0324c633f",
+  "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+  "version": 1,
+  "change_seq": 9,
+  "created_at": "2026-10-02T21:13:53.308779Z",
+  "updated_at": "2026-10-02T21:13:53.308779Z",
+  "deleted_at": null,
+  "role": "editor",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+  "status": "pending",
+  "expires_at": "2026-10-09T21:13:53.292362Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=[redacted]"
+ }
+}
+
+CHECK [PASS] invite link 21ac07 for m 201 None
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "id": "01a0fe77-6a01-72bf-ad48-4414be89abcd",
+  "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+  "version": 1,
+  "change_seq": 11,
+  "created_at": "2026-10-02T21:13:53.921734Z",
+  "updated_at": "2026-10-02T21:13:53.921734Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fe76-fd54-7298-91c2-81683f86c5c0",
+  "display_name": "Mona E2E",
+  "role": "editor"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] m accepts 21ac07 200 None
+PUT /wallets/01a0fe77-4c21-74f5-8ef5-f9728f4395ae/invitations/01a0fe77-6a59-77a6-b22a-bf95d965232b
+> {"role": "editor", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a0fe77-6a59-77a6-b22a-bf95d965232b",
+  "wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+  "version": 1,
+  "change_seq": 9,
+  "created_at": "2026-10-02T21:13:54.575882Z",
+  "updated_at": "2026-10-02T21:13:54.575882Z",
+  "deleted_at": null,
+  "role": "editor",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a0fe76-d12a-71f0-a8d1-7ed9c7a3f74b",
+  "status": "pending",
+  "expires_at": "2026-10-09T21:13:54.553569Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=[redacted]"
+ }
+}
+
+CHECK [PASS] invite link 4395ae for m 201 None
+POST /invitations/accept
+> {"token": "[redacted]"}
+< 200
+{
+ "data": {
+  "id": "01a0fe77-6ee0-7340-a314-801f00006c1f",
+  "wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+  "version": 1,
+  "change_seq": 11,
+  "created_at": "2026-10-02T21:13:55.169650Z",
+  "updated_at": "2026-10-02T21:13:55.169650Z",
+  "deleted_at": null,
+  "member_user_id": "01a0fe76-fd54-7298-91c2-81683f86c5c0",
+  "display_name": "Mona E2E",
+  "role": "editor"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] m accepts 4395ae 200 None

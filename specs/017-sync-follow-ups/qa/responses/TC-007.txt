@@ -1,0 +1,788 @@
+===== TC-007 No re-stamp: timezone-only save, identical save, trimmed-equal name; clear name re-sends null 2026-10-02T21:03:06.932238Z
+
+GET /sync/wallets/heads params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+   "change_seq": 21,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+   "change_seq": 17,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+GET /sync/user/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fe6c-0ce4-7547-bbb3-1ecaf6fd4aa8",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:01:30.377815Z",
+    "updated_at": "2026-10-02T21:03:10.203197Z",
+    "deleted_at": null,
+    "user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T21:01:30.372171Z",
+    "last_used_at": "2026-10-02T21:03:10.201676Z",
+    "ended_at": null,
+    "current": true
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-67e3-70c1-915d-c8cea6bc3fc3",
+    "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+    "version": 1,
+    "change_seq": 20,
+    "created_at": "2026-10-02T21:01:52.483521Z",
+    "updated_at": "2026-10-02T21:01:52.483521Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-6c31-710e-a85a-12cd2aaf9e55",
+    "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+    "version": 1,
+    "change_seq": 16,
+    "created_at": "2026-10-02T21:01:53.586343Z",
+    "updated_at": "2026-10-02T21:01:53.586343Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-70d4-71ec-975e-00080a51fe86",
+    "wallet_id": "01a0fe6c-5bfb-771d-88fd-cf07e8923e47",
+    "version": 1,
+    "change_seq": 10,
+    "created_at": "2026-10-02T21:01:54.772513Z",
+    "updated_at": "2026-10-02T21:01:54.772513Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-79ce-7152-b082-8ba02945ad99",
+    "wallet_id": "01a0fe6c-5fad-7329-b67f-a7db0aa290a3",
+    "version": 2,
+    "change_seq": 9,
+    "created_at": "2026-10-02T21:01:57.071463Z",
+    "updated_at": "2026-10-02T21:02:00.698546Z",
+    "deleted_at": "2026-10-02T21:02:00.698546Z",
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-7537-7116-b7c0-72848d58efdb",
+    "wallet_id": "01a0fe6c-5dd5-704a-950f-d2c37c47787e",
+    "version": 2,
+    "change_seq": 10,
+    "created_at": "2026-10-02T21:01:55.896171Z",
+    "updated_at": "2026-10-02T21:02:03.249470Z",
+    "deleted_at": "2026-10-02T21:02:03.249470Z",
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fe6b-ff4a-73c4-bb8e-095ad87a298a",
+    "version": 2,
+    "change_seq": 10,
+    "created_at": "2026-10-02T21:01:25.706613Z",
+    "updated_at": "2026-10-02T21:02:44.047068Z",
+    "deleted_at": null,
+    "user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": true,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yi1mZjJiLTczZjQtYjQyZC03NjQ3ZmI2MjZjNTYiLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6MTB9B2Efy-bcIwQ6cNCN93Nmcg",
+  "sync_position": 10
+ }
+}
+
+PUT /me/profile
+> {"display_name": "Karim QA", "locale": "en", "timezone": "Asia/Tokyo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 2}
+< 200
+{
+ "data": {
+  "id": "01a0fe6b-ff4a-73c4-bb8e-095ad87a298a",
+  "version": 3,
+  "change_seq": 11,
+  "created_at": "2026-10-02T21:01:25.706613Z",
+  "updated_at": "2026-10-02T21:03:10.656516Z",
+  "deleted_at": null,
+  "user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+  "display_name": "Karim QA",
+  "locale": "en",
+  "timezone": "Asia/Tokyo",
+  "default_currency": "EGP",
+  "default_currency_locked": true,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] timezone save 200 
+GET /sync/user/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fe6c-0ce4-7547-bbb3-1ecaf6fd4aa8",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:01:30.377815Z",
+    "updated_at": "2026-10-02T21:03:11.053885Z",
+    "deleted_at": null,
+    "user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T21:01:30.372171Z",
+    "last_used_at": "2026-10-02T21:03:11.052402Z",
+    "ended_at": null,
+    "current": true
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-67e3-70c1-915d-c8cea6bc3fc3",
+    "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+    "version": 1,
+    "change_seq": 20,
+    "created_at": "2026-10-02T21:01:52.483521Z",
+    "updated_at": "2026-10-02T21:01:52.483521Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-6c31-710e-a85a-12cd2aaf9e55",
+    "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+    "version": 1,
+    "change_seq": 16,
+    "created_at": "2026-10-02T21:01:53.586343Z",
+    "updated_at": "2026-10-02T21:01:53.586343Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-70d4-71ec-975e-00080a51fe86",
+    "wallet_id": "01a0fe6c-5bfb-771d-88fd-cf07e8923e47",
+    "version": 1,
+    "change_seq": 10,
+    "created_at": "2026-10-02T21:01:54.772513Z",
+    "updated_at": "2026-10-02T21:01:54.772513Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-79ce-7152-b082-8ba02945ad99",
+    "wallet_id": "01a0fe6c-5fad-7329-b67f-a7db0aa290a3",
+    "version": 2,
+    "change_seq": 9,
+    "created_at": "2026-10-02T21:01:57.071463Z",
+    "updated_at": "2026-10-02T21:02:00.698546Z",
+    "deleted_at": "2026-10-02T21:02:00.698546Z",
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-7537-7116-b7c0-72848d58efdb",
+    "wallet_id": "01a0fe6c-5dd5-704a-950f-d2c37c47787e",
+    "version": 2,
+    "change_seq": 10,
+    "created_at": "2026-10-02T21:01:55.896171Z",
+    "updated_at": "2026-10-02T21:02:03.249470Z",
+    "deleted_at": "2026-10-02T21:02:03.249470Z",
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fe6b-ff4a-73c4-bb8e-095ad87a298a",
+    "version": 3,
+    "change_seq": 11,
+    "created_at": "2026-10-02T21:01:25.706613Z",
+    "updated_at": "2026-10-02T21:03:10.656516Z",
+    "deleted_at": null,
+    "user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "locale": "en",
+    "timezone": "Asia/Tokyo",
+    "default_currency": "EGP",
+    "default_currency_locked": true,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yi1mZjJiLTczZjQtYjQyZC03NjQ3ZmI2MjZjNTYiLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6MTF9J3tqY9GsxK_z2aLFmF0-1Q",
+  "sync_position": 11
+ }
+}
+
+PUT /me/profile
+> {"display_name": "Karim QA", "locale": "en", "timezone": "Asia/Tokyo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 3}
+< 200
+{
+ "data": {
+  "id": "01a0fe6b-ff4a-73c4-bb8e-095ad87a298a",
+  "version": 3,
+  "change_seq": 11,
+  "created_at": "2026-10-02T21:01:25.706613Z",
+  "updated_at": "2026-10-02T21:03:10.656516Z",
+  "deleted_at": null,
+  "user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+  "display_name": "Karim QA",
+  "locale": "en",
+  "timezone": "Asia/Tokyo",
+  "default_currency": "EGP",
+  "default_currency_locked": true,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] identical save 200 
+GET /sync/user/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fe6c-0ce4-7547-bbb3-1ecaf6fd4aa8",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:01:30.377815Z",
+    "updated_at": "2026-10-02T21:03:11.813609Z",
+    "deleted_at": null,
+    "user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T21:01:30.372171Z",
+    "last_used_at": "2026-10-02T21:03:11.812124Z",
+    "ended_at": null,
+    "current": true
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-67e3-70c1-915d-c8cea6bc3fc3",
+    "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+    "version": 1,
+    "change_seq": 20,
+    "created_at": "2026-10-02T21:01:52.483521Z",
+    "updated_at": "2026-10-02T21:01:52.483521Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-6c31-710e-a85a-12cd2aaf9e55",
+    "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+    "version": 1,
+    "change_seq": 16,
+    "created_at": "2026-10-02T21:01:53.586343Z",
+    "updated_at": "2026-10-02T21:01:53.586343Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-70d4-71ec-975e-00080a51fe86",
+    "wallet_id": "01a0fe6c-5bfb-771d-88fd-cf07e8923e47",
+    "version": 1,
+    "change_seq": 10,
+    "created_at": "2026-10-02T21:01:54.772513Z",
+    "updated_at": "2026-10-02T21:01:54.772513Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-79ce-7152-b082-8ba02945ad99",
+    "wallet_id": "01a0fe6c-5fad-7329-b67f-a7db0aa290a3",
+    "version": 2,
+    "change_seq": 9,
+    "created_at": "2026-10-02T21:01:57.071463Z",
+    "updated_at": "2026-10-02T21:02:00.698546Z",
+    "deleted_at": "2026-10-02T21:02:00.698546Z",
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-7537-7116-b7c0-72848d58efdb",
+    "wallet_id": "01a0fe6c-5dd5-704a-950f-d2c37c47787e",
+    "version": 2,
+    "change_seq": 10,
+    "created_at": "2026-10-02T21:01:55.896171Z",
+    "updated_at": "2026-10-02T21:02:03.249470Z",
+    "deleted_at": "2026-10-02T21:02:03.249470Z",
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fe6b-ff4a-73c4-bb8e-095ad87a298a",
+    "version": 3,
+    "change_seq": 11,
+    "created_at": "2026-10-02T21:01:25.706613Z",
+    "updated_at": "2026-10-02T21:03:10.656516Z",
+    "deleted_at": null,
+    "user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "locale": "en",
+    "timezone": "Asia/Tokyo",
+    "default_currency": "EGP",
+    "default_currency_locked": true,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yi1mZjJiLTczZjQtYjQyZC03NjQ3ZmI2MjZjNTYiLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6MTF9J3tqY9GsxK_z2aLFmF0-1Q",
+  "sync_position": 11
+ }
+}
+
+PUT /me/profile
+> {"display_name": "  Karim QA  ", "locale": "en", "timezone": "Asia/Tokyo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 3}
+< 200
+{
+ "data": {
+  "id": "01a0fe6b-ff4a-73c4-bb8e-095ad87a298a",
+  "version": 3,
+  "change_seq": 11,
+  "created_at": "2026-10-02T21:01:25.706613Z",
+  "updated_at": "2026-10-02T21:03:10.656516Z",
+  "deleted_at": null,
+  "user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+  "display_name": "Karim QA",
+  "locale": "en",
+  "timezone": "Asia/Tokyo",
+  "default_currency": "EGP",
+  "default_currency_locked": true,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] trimmed-equal name save 200 200 None
+GET /sync/wallets/heads params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+   "change_seq": 21,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+   "change_seq": 17,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] W1, W2 heads unchanged {"0aa91b": [21, 21], "5e09c4": [17, 17]}
+GET /sync/user/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fe6c-0ce4-7547-bbb3-1ecaf6fd4aa8",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T21:01:30.377815Z",
+    "updated_at": "2026-10-02T21:03:20.683518Z",
+    "deleted_at": null,
+    "user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T21:01:30.372171Z",
+    "last_used_at": "2026-10-02T21:03:20.681996Z",
+    "ended_at": null,
+    "current": true
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-67e3-70c1-915d-c8cea6bc3fc3",
+    "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+    "version": 1,
+    "change_seq": 20,
+    "created_at": "2026-10-02T21:01:52.483521Z",
+    "updated_at": "2026-10-02T21:01:52.483521Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-6c31-710e-a85a-12cd2aaf9e55",
+    "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+    "version": 1,
+    "change_seq": 16,
+    "created_at": "2026-10-02T21:01:53.586343Z",
+    "updated_at": "2026-10-02T21:01:53.586343Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-70d4-71ec-975e-00080a51fe86",
+    "wallet_id": "01a0fe6c-5bfb-771d-88fd-cf07e8923e47",
+    "version": 1,
+    "change_seq": 10,
+    "created_at": "2026-10-02T21:01:54.772513Z",
+    "updated_at": "2026-10-02T21:01:54.772513Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-79ce-7152-b082-8ba02945ad99",
+    "wallet_id": "01a0fe6c-5fad-7329-b67f-a7db0aa290a3",
+    "version": 2,
+    "change_seq": 9,
+    "created_at": "2026-10-02T21:01:57.071463Z",
+    "updated_at": "2026-10-02T21:02:00.698546Z",
+    "deleted_at": "2026-10-02T21:02:00.698546Z",
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-7537-7116-b7c0-72848d58efdb",
+    "wallet_id": "01a0fe6c-5dd5-704a-950f-d2c37c47787e",
+    "version": 2,
+    "change_seq": 10,
+    "created_at": "2026-10-02T21:01:55.896171Z",
+    "updated_at": "2026-10-02T21:02:03.249470Z",
+    "deleted_at": "2026-10-02T21:02:03.249470Z",
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "role": "editor"
+   }
+  },
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fe6b-ff4a-73c4-bb8e-095ad87a298a",
+    "version": 3,
+    "change_seq": 11,
+    "created_at": "2026-10-02T21:01:25.706613Z",
+    "updated_at": "2026-10-02T21:03:10.656516Z",
+    "deleted_at": null,
+    "user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": "Karim QA",
+    "locale": "en",
+    "timezone": "Asia/Tokyo",
+    "default_currency": "EGP",
+    "default_currency_locked": true,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmU2Yi1mZjJiLTczZjQtYjQyZC03NjQ3ZmI2MjZjNTYiLCJyIjoiMDFhMGZlNmItZmYyYi03M2Y0LWI0MmQtNzY0N2ZiNjI2YzU2IiwicCI6MTF9J3tqY9GsxK_z2aLFmF0-1Q",
+  "sync_position": 11
+ }
+}
+
+PUT /me/profile
+> {"display_name": null, "locale": "en", "timezone": "Asia/Tokyo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 3}
+< 200
+{
+ "data": {
+  "id": "01a0fe6b-ff4a-73c4-bb8e-095ad87a298a",
+  "version": 4,
+  "change_seq": 12,
+  "created_at": "2026-10-02T21:01:25.706613Z",
+  "updated_at": "2026-10-02T21:03:21.267307Z",
+  "deleted_at": null,
+  "user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+  "display_name": null,
+  "locale": "en",
+  "timezone": "Asia/Tokyo",
+  "default_currency": "EGP",
+  "default_currency_locked": true,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] clear name 200 200 None
+GET /sync/wallets/01a0fe6c-5828-704d-a9c0-e528a90aa91b/changes params={'limit': 200, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01ODI4LTcwNGQtYTljMC1lNTI4YTkwYWE5MWIiLCJyIjoiMDFhMGZlNmMtMTZjNC03MWZkLThhYWQtMWZhZmQ2YjkzNTA3IiwicCI6MjF9Avj3gKLQzVbCT114BdTR1g",
+  "sync_position": 21
+ }
+}
+
+GET /sync/wallets/01a0fe6c-5828-704d-a9c0-e528a90aa91b/changes params={'limit': 200, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01ODI4LTcwNGQtYTljMC1lNTI4YTkwYWE5MWIiLCJyIjoiMDFhMGZlNmMtMTZjNC03MWZkLThhYWQtMWZhZmQ2YjkzNTA3IiwicCI6MjF9Avj3gKLQzVbCT114BdTR1g",
+  "sync_position": 21
+ }
+}
+
+GET /sync/wallets/01a0fe6c-5828-704d-a9c0-e528a90aa91b/changes params={'limit': 200, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-67e3-70c1-915d-c8cea6bc3fc3",
+    "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+    "version": 1,
+    "change_seq": 22,
+    "created_at": "2026-10-02T21:01:52.483521Z",
+    "updated_at": "2026-10-02T21:01:52.483521Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": null,
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet",
+   "record": {
+    "id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+    "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+    "version": 1,
+    "change_seq": 23,
+    "created_at": "2026-10-02T21:01:48.878720Z",
+    "updated_at": "2026-10-02T21:01:48.878720Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "Home QA017",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": -5200,
+    "icon": "wallet",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01ODI4LTcwNGQtYTljMC1lNTI4YTkwYWE5MWIiLCJyIjoiMDFhMGZlNmMtMTZjNC03MWZkLThhYWQtMWZhZmQ2YjkzNTA3IiwicCI6MjN9h-yrSBNDKOkXNZSSN8Q6vw",
+  "sync_position": 23
+ }
+}
+
+CHECK [PASS] cleared name re-sent as display_name null 
+GET /sync/wallets/01a0fe6c-5a0c-7570-98a3-7065195e09c4/changes params={'limit': 200, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fe6c-6c31-710e-a85a-12cd2aaf9e55",
+    "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+    "version": 1,
+    "change_seq": 18,
+    "created_at": "2026-10-02T21:01:53.586343Z",
+    "updated_at": "2026-10-02T21:01:53.586343Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fe6b-ff2b-73f4-b42d-7647fb626c56",
+    "display_name": null,
+    "role": "editor"
+   }
+  },
+  {
+   "type": "wallet",
+   "record": {
+    "id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+    "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+    "version": 1,
+    "change_seq": 19,
+    "created_at": "2026-10-02T21:01:49.375544Z",
+    "updated_at": "2026-10-02T21:01:49.375544Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "Trip QA017",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 1000,
+    "icon": "wallet",
+    "color": "#2E7D32",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "editor"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmU2Yy01YTBjLTc1NzAtOThhMy03MDY1MTk1ZTA5YzQiLCJyIjoiMDFhMGZlNmMtMTZjNC03MWZkLThhYWQtMWZhZmQ2YjkzNTA3IiwicCI6MTl9BXmNi7V0wTVnl-xmly-gsA",
+  "sync_position": 19
+ }
+}
+

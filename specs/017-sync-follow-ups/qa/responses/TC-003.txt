@@ -1,0 +1,121 @@
+===== TC-003 Heads: paging with limit 1 walks every wallet once; meta is CollectionMeta 2026-10-02T21:02:14.691017Z
+
+GET /sync/wallets/heads params={'limit': 1}
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJrIjoiZDI1ZmUwZjU3YWQ4ZmJlMiIsInAiOnsid2FsbGV0X2lkIjoiMDFhMGZlNmMtNTgyOC03MDRkLWE5YzAtZTUyOGE5MGFhOTFiIn19",
+  "has_more": true,
+  "limit": 1
+ }
+}
+
+GET /sync/wallets/heads params={'limit': 1, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJrIjoiZDI1ZmUwZjU3YWQ4ZmJlMiIsInAiOnsid2FsbGV0X2lkIjoiMDFhMGZlNmMtNWEwYy03NTcwLTk4YTMtNzA2NTE5NWUwOWM0In19",
+  "has_more": true,
+  "limit": 1
+ }
+}
+
+GET /sync/wallets/heads params={'limit': 1, 'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe6c-5bfb-771d-88fd-cf07e8923e47",
+   "change_seq": 9,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 1
+ }
+}
+
+CHECK [PASS] paged result equals one-page result ['01a0fe6c-5828-704d-a9c0-e528a90aa91b', '01a0fe6c-5a0c-7570-98a3-7065195e09c4', '01a0fe6c-5bfb-771d-88fd-cf07e8923e47'] vs ['01a0fe6c-5828-704d-a9c0-e528a90aa91b', '01a0fe6c-5a0c-7570-98a3-7065195e09c4', '01a0fe6c-5bfb-771d-88fd-cf07e8923e47']
+CHECK [PASS] has_more true exactly when next_cursor set 
+CHECK [PASS] meta keys are next_cursor, has_more, limit {"next_cursor": null, "has_more": false, "limit": 1}
+CHECK [PASS] limit 1 reported 
+GET /sync/wallets/heads
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe6c-5bfb-771d-88fd-cf07e8923e47",
+   "change_seq": 9,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] default limit 50 {"next_cursor": null, "has_more": false, "limit": 50}
+GET /sync/wallets/heads params={'limit': 1}
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe6c-5828-704d-a9c0-e528a90aa91b",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJrIjoiZDI1ZmUwZjU3YWQ4ZmJlMiIsInAiOnsid2FsbGV0X2lkIjoiMDFhMGZlNmMtNTgyOC03MDRkLWE5YzAtZTUyOGE5MGFhOTFiIn19",
+  "has_more": true,
+  "limit": 1
+ }
+}
+
+GET /sync/wallets/heads params={'cursor': '<cursor>'}
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe6c-5a0c-7570-98a3-7065195e09c4",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+note: heads cursor of k replayed by m -> 200
+CHECK [PASS] another person replaying a heads cursor never sees k-only wallets 200

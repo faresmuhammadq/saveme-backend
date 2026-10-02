@@ -17,7 +17,7 @@ info:
     The conventions every endpoint obeys are documented in `docs/api-conventions.md`.
     A feature adds one file under `paths/` and references the shared components
     rather than restating them.
-  version: v1.9
+  version: v1.10
   contact:
     name: Backend maintainers
   license:
@@ -174,6 +174,8 @@ paths:
     $ref: './paths/sync.yaml#/~1sync~1user~1changes'
   /sync/wallets/{id}/changes:
     $ref: './paths/sync.yaml#/~1sync~1wallets~1{id}~1changes'
+  /sync/wallets/heads:
+    $ref: './paths/sync.yaml#/~1sync~1wallets~1heads'
   /sync/batch:
     $ref: './paths/sync.yaml#/~1sync~1batch'
   /wallets/{id}/invitations:

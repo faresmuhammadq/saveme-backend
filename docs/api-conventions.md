@@ -256,7 +256,20 @@ The two kinds of collection guarantee different things, and the difference matte
 - at-least-once — a row may arrive twice, and none is skipped;
 - replays are idempotent;
 - `meta.sync_cursor` is always present and never null: it is the position after the page (or the incoming one when the page is empty), the value to store and send back as `cursor`. The two feeds are `GET /sync/user/changes` and `GET /sync/wallets/{id}/changes`;
+- `meta.sync_position` (v1.10) is the same position as an integer, always sent, never sent back: store it per followed scope and compare it only with that same scope's head (`change_seq` in `GET /sync/wallets/heads`). Never compare cursors, and never compare it with a record's `change_seq`;
 - **no ordering across scopes.** A row on the user feed and a row on a wallet feed have no defined relative order. A client needing a cross-scope invariant resolves it locally.
+
+**Which wallets moved (v1.10).** `GET /sync/wallets/heads` lists, for each wallet the caller actively belongs to, its `change_seq` (the scope head) and `purged_change_seq` (the purge horizon), keyset-paged by `wallet_id` with no filter and no sort. A refresh reads the user feed and the heads (two requests), then reads only the wallets that moved. For a followed wallet with stored position `p`:
+
+| Heads entry | Action |
+|---|---|
+| `change_seq == p` | skip the wallet's feed |
+| `change_seq > p` | read the feed from the stored cursor |
+| `purged_change_seq > p` | the stored cursor is expired; read from no cursor |
+| listed, no stored position | read from the beginning |
+| not listed | not a removal signal; read the feed (404 = access gone) and follow the user feed |
+
+A display-name change re-sends the person's live `wallet_member` rows on their wallets' feeds shortly after the save (a queued job): a new `change_seq`, the same `version`, the name as of the read.
 
 **Ordinary collections**, keyset paged on the sort key plus `id`:
 

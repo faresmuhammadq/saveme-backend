@@ -87,4 +87,18 @@ interface MembershipRepository
      * @return list<string>
      */
     public function activeAmong(string $walletId, array $userIds): array;
+
+    /**
+     * Ids of the live wallets (archived included) where the person has a live
+     * membership, ascending after $afterWalletId, at most $limit.
+     *
+     * @return list<string>
+     */
+    public function liveWalletIdsOf(string $userId, string $afterWalletId, int $limit): array;
+
+    /**
+     * Gives the membership a new `change_seq` and nothing else: `version`,
+     * `updated_at` and `member_change_seq` stay (ADR-0021).
+     */
+    public function restamp(string $memberId, int $changeSeq): void;
 }

@@ -22,6 +22,7 @@ final class FeedResponse
                 'has_more' => $result->hasMore,
                 'limit' => $result->limit,
                 'sync_cursor' => $result->syncCursor,
+                'sync_position' => $result->syncPosition,
             ],
         );
     }

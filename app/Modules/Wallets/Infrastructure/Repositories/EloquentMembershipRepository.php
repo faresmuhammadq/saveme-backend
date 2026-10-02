@@ -171,6 +171,28 @@ final class EloquentMembershipRepository implements MembershipRepository
             ->all());
     }
 
+    public function liveWalletIdsOf(string $userId, string $afterWalletId, int $limit): array
+    {
+        $query = WalletMember::query()
+            ->join('wallets', 'wallets.id', '=', 'wallet_members.wallet_id')
+            ->where('wallet_members.user_id', $userId)
+            ->whereNull('wallet_members.deleted_at')
+            ->whereNull('wallets.deleted_at');
+
+        if ($afterWalletId !== '') {
+            $query->where('wallets.id', '>', $afterWalletId);
+        }
+
+        return array_values($query->orderBy('wallets.id')->limit($limit)->pluck('wallets.id')
+            ->map(fn (mixed $id): string => (string) $id)
+            ->all());
+    }
+
+    public function restamp(string $memberId, int $changeSeq): void
+    {
+        WalletMember::query()->whereKey($memberId)->toBase()->update(['change_seq' => $changeSeq]);
+    }
+
     private static function instant(DateTimeImmutable $at): string
     {
         return $at->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s.uP');

@@ -58,3 +58,7 @@ The brief predates decisions ratified since. These collide with it; the ratified
 - **A deleted inviter's pending invitations become unreadable and must be revoked.** The invited address is sealed under the inviter's data key (destroying the key makes it unreadable), but the invitation row and its token stay live; account deletion must close the person's pending invitations (as `revoked`, through Sharing's application layer) before the key goes.
 - **The departing member's activity actor name goes null.** Activity entries (`wallet_activity`) keep `actor_user_id` only as an identifier; `actor_display_name` is filled only while the actor is an active member, so it goes null as soon as they leave. Entries are removed after 90 days; the export does not need them.
 - Membership removal and leaving are tombstones of the membership (glossary state `revoked`), exported as tombstones.
+
+## Inherited from B14a (spec 017)
+
+- **Any path that changes or erases a display name must publish `ProfileUpdated` with `display_name` in `changedFields`.** Wallets listens to it and re-sends the person's live memberships on every wallet feed (a queued job, ADR-0021), so partners see the new name, or none after an erasure. An erasure that clears the name without the event would leave the old name on partners' phones.

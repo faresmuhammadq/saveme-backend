@@ -1,6 +1,10 @@
 <!--
 Sync Impact Report (latest first)
 
+v1.3.9 → 1.3.10 — 2026-10-02
+- PATCH: P-07, P-08 and P-11 list ADR-0021, introduced by spec 017; no rule changes.
+- Reason: spec 017 (B14a, Sync Follow-ups); ADR-0021 extends ADR-0008 and ADR-0017.
+
 v1.3.8 → 1.3.9 — 2026-10-02
 - PATCH: the Sharing row lists two events introduced by spec 016 (`InvitationSent`, `MemberRoleChanged`); no rule changes.
 - Reason: spec 016 (B9, Sharing & Invitations).
@@ -111,7 +115,7 @@ v1.0.0 — 2026-09-19 (ratified)
 
 <!-- "Save Me" is a working codename used as display text only; see P-13. -->
 
-**Version**: 1.3.9 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-02
+**Version**: 1.3.10 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-02
 
 ## Purpose & Precedence
 
@@ -196,7 +200,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-07 Sync and concurrency
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0008](../../docs/adr/0008-sync-changes-feed.md), [ADR-0015](../../docs/adr/0015-transfers-on-two-wallet-feeds.md) (extends ADR-0008), [ADR-0016](../../docs/adr/0016-batch-upload-beside-per-record-writes.md) (supersedes ADR-0008 rule 7), [ADR-0017](../../docs/adr/0017-membership-on-the-members-user-feed.md) (extends ADR-0008), [ADR-0018](../../docs/adr/0018-occurrences-materialised-by-the-server.md) (extends ADR-0008 and ADR-0011)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0008](../../docs/adr/0008-sync-changes-feed.md), [ADR-0015](../../docs/adr/0015-transfers-on-two-wallet-feeds.md) (extends ADR-0008), [ADR-0016](../../docs/adr/0016-batch-upload-beside-per-record-writes.md) (supersedes ADR-0008 rule 7), [ADR-0017](../../docs/adr/0017-membership-on-the-members-user-feed.md) (extends ADR-0008), [ADR-0018](../../docs/adr/0018-occurrences-materialised-by-the-server.md) (extends ADR-0008 and ADR-0011), [ADR-0021](../../docs/adr/0021-scope-heads-and-member-name-restamps.md) (extends ADR-0008 and ADR-0017)
 
 1. Every syncable entity MUST carry `version`, `updated_at`, `deleted_at` and `change_seq`.
 2. Every write MUST carry the client's last-seen `version`.
@@ -208,7 +212,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-08 Authorization
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0006](../../docs/adr/0006-wallet-scoped-authorization.md), [ADR-0017](../../docs/adr/0017-membership-on-the-members-user-feed.md)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0006](../../docs/adr/0006-wallet-scoped-authorization.md), [ADR-0017](../../docs/adr/0017-membership-on-the-members-user-feed.md), [ADR-0021](../../docs/adr/0021-scope-heads-and-member-name-restamps.md) (extends ADR-0008 and ADR-0017)
 
 1. Authorization MUST be wallet-scoped: the caller's `wallet_members.role` combined with entitlement checks.
 2. A write MUST be authorized against every wallet it touches.
@@ -243,7 +247,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-11 Events
 
-**Status**: Active | **Non-negotiable**: no | **ADRs**: [ADR-0009](../../docs/adr/0009-domain-events-after-commit.md)
+**Status**: Active | **Non-negotiable**: no | **ADRs**: [ADR-0009](../../docs/adr/0009-domain-events-after-commit.md), [ADR-0021](../../docs/adr/0021-scope-heads-and-member-name-restamps.md) (extends ADR-0008 and ADR-0017)
 
 1. Domain events MUST be dispatched only after the database transaction commits.
 2. Cross-module listeners MUST be queued and MUST be idempotent.
@@ -383,7 +387,7 @@ Every `plan.md` includes this section, filled in before Phase 0 and again after 
 ```markdown
 ## Constitution Check
 
-*Constitution v1.3.9. GATE: before Phase 0 and again after Phase 1.*
+*Constitution v1.3.10. GATE: before Phase 0 and again after Phase 1.*
 
 | Principle | Result | Evidence / justification |
 |---|---|---|
@@ -421,4 +425,4 @@ Every amendment updates the footer's **Last Amended** date and the Sync Impact R
 
 **Consistency** — run `/speckit-analyze` before implementing each feature. Contradictions between this constitution, the ADRs and a feature's spec are defects to resolve before code.
 
-**Version**: 1.3.9 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-02
+**Version**: 1.3.10 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-02

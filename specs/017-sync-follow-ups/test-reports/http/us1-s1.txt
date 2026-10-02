@@ -1,0 +1,75 @@
+===== us1-s1 US1-1 heads list each active-membership wallet once, ordered, nothing else 2026-10-02T21:13:55.272373Z
+
+GET /sync/wallets/heads params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe77-4e49-7011-a8f9-acddf5562443",
+   "change_seq": 8,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe77-5059-7046-80a3-a26abbffe1d7",
+   "change_seq": 3,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe77-5253-77ee-85f0-5227d9cfee5e",
+   "change_seq": 3,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe77-5496-7640-95fa-fb8aaeef8573",
+   "change_seq": 3,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] the six wallets appear once each 6
+CHECK [PASS] ordered by wallet id 
+CHECK [PASS] each has head and horizon only 
+GET /sync/wallets/heads params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "wallet_id": "01a0fe77-49a3-724e-b921-3ee52e21ac07",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe77-4c21-74f5-8ef5-f9728f4395ae",
+   "change_seq": 13,
+   "purged_change_seq": 0
+  },
+  {
+   "wallet_id": "01a0fe77-4e49-7011-a8f9-acddf5562443",
+   "change_seq": 8,
+   "purged_change_seq": 0
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] Karim sees exactly his three ['01a0fe77-49a3-724e-b921-3ee52e21ac07', '01a0fe77-4c21-74f5-8ef5-f9728f4395ae', '01a0fe77-4e49-7011-a8f9-acddf5562443']

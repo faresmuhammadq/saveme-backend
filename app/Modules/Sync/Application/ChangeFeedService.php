@@ -49,7 +49,7 @@ final class ChangeFeedService
     public function userPage(string $readerId, string $readerSessionId, ?string $cursor, int $limit): FeedResult
     {
         $scope = $this->identityFeed->scope($readerId);
-        $after = $this->positionOf($cursor, FeedKind::User, $readerId, $readerId, $scope);
+        [$after, $horizon] = $this->positionOf($cursor, FeedKind::User, $readerId, $readerId, $scope);
 
         $sources = [
             array_map(fn (IdentityRecord $row): FeedRow => new FeedRow($row->type, $row->position, $row->record), $this->identityFeed->page($readerId, $readerSessionId, $after, $limit)),
@@ -57,7 +57,7 @@ final class ChangeFeedService
             array_map(fn (BudgetingRecord $row): FeedRow => new FeedRow($row->type, $row->position, $row->record), $this->budgetingUserFeed->page($readerId, $after, $limit)),
         ];
 
-        return $this->result(FeedKind::User, $readerId, $readerId, $sources, $after, $limit, $scope['counter'], $cursor === null);
+        return $this->result(FeedKind::User, $readerId, $readerId, $sources, $after, $horizon, $limit, $scope['counter'], $cursor === null);
     }
 
     /**
@@ -70,42 +70,50 @@ final class ChangeFeedService
     public function walletPage(string $readerId, string $walletId, ?string $cursor, int $limit): FeedResult
     {
         $scope = $this->walletFeed->scope($readerId, $walletId);
-        $after = $this->positionOf($cursor, FeedKind::Wallet, $walletId, $readerId, $scope);
+        [$after, $horizon] = $this->positionOf($cursor, FeedKind::Wallet, $walletId, $readerId, $scope);
 
         $sources = [
             array_map(fn (WalletsRecord $row): FeedRow => new FeedRow($row->type, $row->position, $row->record), $this->walletFeed->page($readerId, $walletId, $after, $limit)),
             array_map(fn (SharingRecord $row): FeedRow => new FeedRow($row->type, $row->position, $row->record), $this->sharingWalletFeed->page($readerId, $walletId, $after, $limit)),
         ];
 
-        return $this->result(FeedKind::Wallet, $walletId, $readerId, $sources, $after, $limit, $scope['counter'], $cursor === null);
+        return $this->result(FeedKind::Wallet, $walletId, $readerId, $sources, $after, $horizon, $limit, $scope['counter'], $cursor === null);
     }
 
     /**
+     * The position to read after and the purge horizon the read began under:
+     * the scope's own when there is no cursor, else the one the cursor
+     * carries. A cursor is expired only when the horizon moved past both its
+     * position and that starting horizon, so a read begun after a purge pages
+     * through the horizon (spec 017, FR-022).
+     *
      * @param  array{counter: int, purged: int}  $scope
+     * @return array{int, int}
      */
-    private function positionOf(?string $cursor, FeedKind $feed, string $scopeId, string $readerId, array $scope): int
+    private function positionOf(?string $cursor, FeedKind $feed, string $scopeId, string $readerId, array $scope): array
     {
         if ($cursor === null) {
-            return 0;
+            return [0, $scope['purged']];
         }
 
-        $position = SyncCursor::decode($cursor, $this->signer, $feed, $scopeId, $readerId)->position;
+        $decoded = SyncCursor::decode($cursor, $this->signer, $feed, $scopeId, $readerId);
+        $position = $decoded->position;
 
         if ($position > $scope['counter']) {
             throw new CursorInvalid(CursorRefusal::AheadOfScope);
         }
 
-        if ($position < $scope['purged']) {
+        if ($scope['purged'] > max($position, $decoded->horizon)) {
             throw new CursorExpired;
         }
 
-        return $position;
+        return [$position, $decoded->horizon];
     }
 
     /**
      * @param  list<list<FeedRow>>  $sources
      */
-    private function result(FeedKind $feed, string $scopeId, string $readerId, array $sources, int $after, int $limit, int $counter, bool $cursorAbsent): FeedResult
+    private function result(FeedKind $feed, string $scopeId, string $readerId, array $sources, int $after, int $horizon, int $limit, int $counter, bool $cursorAbsent): FeedResult
     {
         $page = FeedMerge::merge($sources, $after, $limit, $counter);
 
@@ -120,7 +128,8 @@ final class ChangeFeedService
             $page->rows,
             $page->hasMore,
             $limit,
-            (new SyncCursor($feed, $scopeId, $readerId, $page->nextPosition))->encode($this->signer),
+            (new SyncCursor($feed, $scopeId, $readerId, $page->nextPosition, $horizon))->encode($this->signer),
+            $page->nextPosition,
         );
     }
 }

@@ -7,6 +7,7 @@ use App\Modules\Shared\Domain\Errors\ErrorCode;
 use App\Modules\Shared\Domain\Errors\FieldError;
 use App\Modules\Wallets\Application\Authorization\WalletAuthorizer;
 use App\Modules\Wallets\Application\Categories\CategoryReferences;
+use App\Modules\Wallets\Application\Categories\WalletCategoryUses;
 use App\Modules\Wallets\Application\Transactions\Dto\SavedTransaction;
 use App\Modules\Wallets\Application\Transactions\Dto\TransactionView;
 use App\Modules\Wallets\Domain\Categories\Ports\CategoryRepository;
@@ -33,6 +34,7 @@ use DateTimeImmutable;
 use DateTimeZone;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
+use LogicException;
 use RuntimeException;
 
 /**
@@ -64,6 +66,7 @@ final class TransactionService
         private readonly ScopeSequence $sequence,
         private readonly PostingTotals $totals,
         private readonly WalletAuthorizer $authorizer,
+        private readonly WalletCategoryUses $categoryUses,
     ) {}
 
     /**
@@ -125,6 +128,96 @@ final class TransactionService
 
             return $this->update($actorId, $walletId, $stored, $values, $wallets);
         });
+    }
+
+    /**
+     * Records the transaction a confirmed occurrence produces (spec 014, R-6,
+     * ADR-0018 rule 4). It runs inside the caller's unit of work, which
+     * already holds the locks in the documented order (categories, wallets
+     * ascending, the rule, its occurrences): the locks are taken again here,
+     * in the same order, which Postgres grants at once, and there is no
+     * drift-restart loop because the caller holds them and the id is new.
+     *
+     * `$actorId` is who is authorised: T-02 in the wallet and in a transfer's
+     * destination (a refusal is `WalletActionForbidden`, or not-found when
+     * they are not a member). `$authorId` is the rule's author and becomes
+     * `created_by`. Category ownership was settled when the rule or
+     * occurrence was written, so only that the category is live and of the
+     * right kind is checked again; so are the destination and the currency.
+     * The state rules refuse with `TransactionStateInvalid`, `/transaction_id`
+     * when the id turned out taken.
+     *
+     * @param  Values  $values  `cleared` false
+     *
+     * @throws LogicException when no database transaction is open
+     * @throws TransactionNotFound when the wallet is not live
+     * @throws WalletActionForbidden when the actor may not write in the wallet or a transfer's destination
+     * @throws TransactionStateInvalid when a state rule refuses the transaction
+     */
+    public function recordForOccurrence(string $actorId, string $authorId, string $walletId, string $transactionId, array $values, string $ruleId, string $occurrenceId): TransactionView
+    {
+        if (DB::transactionLevel() < 1) {
+            throw new LogicException('An occurrence is confirmed inside its own unit of work.');
+        }
+
+        if ($values['category_id'] !== null) {
+            $this->categories->findForShare($values['category_id']) ?? $this->categories->findPlatformForShare($values['category_id']);
+        }
+
+        $walletIds = [$walletId];
+
+        if ($values['counter_wallet_id'] !== null && $this->members->activeFor($values['counter_wallet_id'], $actorId) !== null) {
+            $walletIds[] = $values['counter_wallet_id'];
+        }
+
+        sort($walletIds, SORT_STRING);
+
+        $wallets = [];
+        foreach ($walletIds as $id) {
+            $wallets[$id] = $this->wallets->findForUpdate($id);
+        }
+
+        $wallet = $wallets[$walletId] ?? null;
+
+        if ($wallet === null || $wallet->isTombstone()) {
+            throw new TransactionNotFound;
+        }
+
+        $this->authorizer->authorize($actorId, $walletId, Permission::T02WriteTransactions);
+
+        $other = $this->authorizeOther($actorId, $walletId, null, $values['counter_wallet_id'], $wallets);
+        $this->assertStateRules($actorId, null, $values, $other, $wallet, $wallets, categoryOwnershipSettled: true);
+
+        $counterId = $values['counter_wallet_id'];
+
+        try {
+            // A savepoint, so a lost id race does not abort the caller's transaction.
+            DB::transaction(fn () => $this->transactions->insert(
+                $transactionId,
+                $walletId,
+                $values,
+                $authorId,
+                $this->sequence->nextFor($walletId),
+                $counterId === null ? null : $this->sequence->nextFor($counterId),
+                $ruleId,
+                $occurrenceId,
+            ));
+        } catch (UniqueConstraintViolationException) {
+            throw new TransactionStateInvalid([new FieldError('/transaction_id', ErrorCode::InvalidEnumValue)]);
+        }
+
+        $saved = $this->reload($transactionId);
+        $this->postings->replaceFor($saved->id, PostingDerivation::for($saved));
+
+        if ($saved->categoryId !== null) {
+            $this->references->publish($walletId, $saved->categoryId);
+        }
+
+        $this->settle($saved->walletIds(), $wallets);
+
+        event(new TransactionPosted(...Events::stamp(), transactionId: $saved->id, walletId: $saved->walletId, counterWalletId: $saved->counterWalletId, kind: $saved->kind->value, date: $saved->date, previousDate: null, categoryId: $saved->categoryId, previousCategoryId: null, actorUserId: $actorId, change: 'recorded'));
+
+        return new TransactionView($saved);
     }
 
     /**
@@ -379,8 +472,9 @@ final class TransactionService
 
     /**
      * Publishes the reference to the new category, and withdraws the old
-     * one's when no other transaction, live or tombstoned, in the wallet
-     * still uses it (spec 012, R-8).
+     * one's when nothing in the wallet, live or tombstoned, still uses it: no
+     * other transaction, and no recurring rule or occurrence (spec 012, R-8,
+     * spec 014, R-7).
      */
     private function moveReference(TransactionRecord $before, TransactionRecord $after): void
     {
@@ -388,7 +482,7 @@ final class TransactionService
             $this->references->publish($after->walletId, $after->categoryId);
         }
 
-        if ($before->categoryId !== null && ! $this->transactions->anyInWalletUsing($before->walletId, $before->categoryId, $before->id)) {
+        if ($before->categoryId !== null && ! $this->categoryUses->usedIn($before->walletId, $before->categoryId, $before->id)) {
             $this->references->withdrawIfUnused($before->walletId, $before->categoryId);
         }
     }
@@ -461,7 +555,7 @@ final class TransactionService
      * @param  Values  $values
      * @param  array<string, ?WalletRecord>  $wallets
      */
-    private function assertStateRules(string $actorId, ?TransactionRecord $stored, array $values, ?WalletRecord $other, ?WalletRecord $source, array $wallets): void
+    private function assertStateRules(string $actorId, ?TransactionRecord $stored, array $values, ?WalletRecord $other, ?WalletRecord $source, array $wallets, bool $categoryOwnershipSettled = false): void
     {
         $source ?? throw new TransactionNotFound;
 
@@ -475,7 +569,7 @@ final class TransactionService
             $errors[] = new FieldError('/counter_wallet_id', ErrorCode::InvalidEnumValue);
         }
 
-        $categoryError = $this->categoryError($actorId, $stored, $values);
+        $categoryError = $this->categoryError($actorId, $stored, $values, $categoryOwnershipSettled);
 
         if ($categoryError !== null) {
             $errors[] = $categoryError;
@@ -494,11 +588,13 @@ final class TransactionService
     /**
      * Income and expense need a category the caller may use: their own or a
      * platform one, live, of the same kind. One that is already on the
-     * transaction stays, whoever's it is (spec 010 T-02, spec 011).
+     * transaction stays, whoever's it is (spec 010 T-02, spec 011). With
+     * `$ownershipSettled` (a confirmed occurrence, spec 014 A-24) whoever's it
+     * is is accepted, and it must still be live and of the same kind.
      *
      * @param  Values  $values
      */
-    private function categoryError(string $actorId, ?TransactionRecord $stored, array $values): ?FieldError
+    private function categoryError(string $actorId, ?TransactionRecord $stored, array $values, bool $ownershipSettled = false): ?FieldError
     {
         $categoryId = $values['category_id'];
 
@@ -514,7 +610,7 @@ final class TransactionService
 
         $own = $this->categories->findForShare($categoryId);
 
-        if ($own !== null && $own->ownerId === $actorId && ! $own->isTombstone() && $own->kind->value === $values['kind']) {
+        if ($own !== null && ($ownershipSettled || $own->ownerId === $actorId) && ! $own->isTombstone() && $own->kind->value === $values['kind']) {
             return null;
         }
 

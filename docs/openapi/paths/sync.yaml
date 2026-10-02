@@ -144,7 +144,11 @@
       the identical record on both of its wallets' feeds (ADR-0015); its
       `change_seq` is the source wallet's and must never be compared across
       feeds. Later features (recurring rules, occurrences, invitations) add
-      their types inside v1; skip any `type` you do not know.
+      their types inside v1; skip any `type` you do not know. From v1.7 the
+      wallet feed also carries `recurring_rule` and `occurrence` rows (spec
+      014): a rule and its occurrences ride their wallet's feed only (a
+      transfer rule's source), whether a member or the server wrote them; the
+      transactions they produce ride both wallets' feeds like any transfer.
 
       The wallet record is re-sent whenever anything in the wallet changes
       (its `change_seq` is the scope counter); a `change_seq` move alone is
@@ -264,6 +268,9 @@
       | `transaction` | `delete` | `DELETE /wallets/{wallet_id}/transactions/{id}` |
       | `transaction` | `restore` | `PATCH /wallets/{wallet_id}/transactions/{id}` with `{"deleted_at": null, "version": n}` |
       | `profile` | `upsert` | `PUT /me/profile` (`id` must be the caller's profile id, else the item is 404) |
+      | `recurring_rule` | `upsert` | `PUT /wallets/{wallet_id}/recurring-rules/{id}` (v1.7) |
+      | `recurring_rule` | `delete` | `DELETE /wallets/{wallet_id}/recurring-rules/{id}` (v1.7) |
+      | `occurrence` | `upsert` | `PUT /wallets/{wallet_id}/occurrences/{id}` — confirm, skip or edit one; never creates (v1.7) |
 
       `data` is that write's body, verbatim. Archive, ownership transfer and
       partial (PATCH) edits are not batch operations; use their endpoints.
@@ -298,7 +305,8 @@
       (unusable envelope: `items` missing, not an array or out of range; an
       item not an object; a member missing or unknown; a `type` or `op` not
       in the table; an `id` or `wallet_id` not a UUIDv7, field code INVALID_ID;
-      `wallet_id` missing on a transaction or present on anything else),
+      `wallet_id` missing on a transaction, recurring rule or occurrence, or
+      present on anything else),
       MALFORMED_JSON, UNSUPPORTED_MEDIA_TYPE.
     parameters:
       - *acceptLanguage
@@ -530,8 +538,9 @@ components:
           description: |
             User feed: `profile`, `device_session`, `category`,
             `wallet_member` (the caller's own memberships). Wallet feed:
-            `wallet`, `wallet_member`, `category_reference`, `transaction`.
-          enum: [profile, device_session, category, wallet_member, wallet, category_reference, transaction]
+            `wallet`, `wallet_member`, `category_reference`, `transaction`,
+            and from v1.7 `recurring_rule`, `occurrence`.
+          enum: [profile, device_session, category, wallet_member, wallet, category_reference, transaction, recurring_rule, occurrence]
         record:
           anyOf:
             - $ref: './identity.yaml#/components/schemas/Profile'
@@ -541,6 +550,8 @@ components:
             - $ref: './wallets.yaml#/components/schemas/Wallet'
             - $ref: './categories.yaml#/components/schemas/CategoryReference'
             - $ref: './transactions.yaml#/components/schemas/Transaction'
+            - $ref: './recurring.yaml#/components/schemas/RecurringRule'
+            - $ref: './recurring.yaml#/components/schemas/Occurrence'
 
     ChangeFeedMeta:
       type: object
@@ -591,11 +602,11 @@ components:
       properties:
         type:
           type: string
-          enum: [wallet, category, transaction, profile]
+          enum: [wallet, category, transaction, profile, recurring_rule, occurrence]
         op:
           type: string
           enum: [upsert, delete, restore]
-          description: '`restore` is for `transaction` only; `delete` for `wallet`, `category` and `transaction`; `profile` takes only `upsert`.'
+          description: '`restore` is for `transaction` only; `delete` for `wallet`, `category`, `transaction` and `recurring_rule`; `profile` and `occurrence` take only `upsert`.'
         id:
           type: string
           format: uuid
@@ -603,7 +614,7 @@ components:
         wallet_id:
           type: string
           format: uuid
-          description: Required for `transaction` and refused on every other type — the wallet path of its single write (either wallet of a transfer).
+          description: Required for `transaction`, `recurring_rule` and `occurrence`, and refused on every other type — the wallet path of its single write (either wallet of a transfer; a rule's or occurrence's own wallet).
         data:
           description: The single write's body.
           anyOf:
@@ -613,6 +624,9 @@ components:
             - $ref: './identity.yaml#/components/schemas/ProfileWrite'
             - $ref: './transactions.yaml#/components/schemas/VersionOnly'
             - $ref: './transactions.yaml#/components/schemas/TransactionRestore'
+            - $ref: './recurring.yaml#/components/schemas/RecurringRuleWrite'
+            - $ref: './recurring.yaml#/components/schemas/RuleVersionOnly'
+            - $ref: './recurring.yaml#/components/schemas/OccurrenceWrite'
 
     BatchItemResult:
       type: object
@@ -624,7 +638,7 @@ components:
       properties:
         type:
           type: string
-          enum: [wallet, category, transaction, profile]
+          enum: [wallet, category, transaction, profile, recurring_rule, occurrence]
         id:
           type: string
           format: uuid
@@ -645,6 +659,8 @@ components:
             - $ref: './categories.yaml#/components/schemas/Category'
             - $ref: './transactions.yaml#/components/schemas/Transaction'
             - $ref: './identity.yaml#/components/schemas/Profile'
+            - $ref: './recurring.yaml#/components/schemas/RecurringRule'
+            - $ref: './recurring.yaml#/components/schemas/Occurrence'
         problem:
           description: The single write's problem body when `conflict` or `rejected`; otherwise null. Pointers are rooted at the item's `data`.
           anyOf:

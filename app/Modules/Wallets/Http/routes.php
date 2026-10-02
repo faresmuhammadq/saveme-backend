@@ -3,6 +3,8 @@
 use App\Modules\Wallets\Http\Controllers\CategoryController;
 use App\Modules\Wallets\Http\Controllers\CategoryReferenceController;
 use App\Modules\Wallets\Http\Controllers\PlatformCategoryController;
+use App\Modules\Wallets\Http\Controllers\Recurring\OccurrenceController;
+use App\Modules\Wallets\Http\Controllers\Recurring\RecurringRuleController;
 use App\Modules\Wallets\Http\Controllers\TransactionController;
 use App\Modules\Wallets\Http\Controllers\WalletController;
 use App\Modules\Wallets\Http\Controllers\WalletMembersController;
@@ -64,5 +66,25 @@ Route::name('transactions.')->middleware('auth:api')->group(function (): void {
         Route::put('wallets/{id}/transactions/{tid}', [TransactionController::class, 'upsert'])->name('upsert');
         Route::patch('wallets/{id}/transactions/{tid}', [TransactionController::class, 'patch'])->name('patch');
         Route::delete('wallets/{id}/transactions/{tid}', [TransactionController::class, 'destroy'])->name('destroy');
+    });
+});
+
+/*
+| Recurring rules and their occurrences (spec 014). Reads need a signed-in
+| caller; every write is also behind the verification gate. The contract is
+| docs/openapi/paths/recurring.yaml.
+*/
+
+Route::name('recurring.')->middleware('auth:api')->group(function (): void {
+    Route::get('wallets/{id}/recurring-rules', [RecurringRuleController::class, 'index'])->name('rules.index');
+    Route::get('wallets/{id}/recurring-rules/{rid}', [RecurringRuleController::class, 'show'])->name('rules.show');
+    Route::get('wallets/{id}/occurrences', [OccurrenceController::class, 'index'])->name('occurrences.index');
+    Route::get('wallets/{id}/occurrences/{oid}', [OccurrenceController::class, 'show'])->name('occurrences.show');
+
+    Route::middleware('address.verified')->group(function (): void {
+        Route::put('wallets/{id}/recurring-rules/{rid}', [RecurringRuleController::class, 'upsert'])->name('rules.upsert');
+        Route::delete('wallets/{id}/recurring-rules/{rid}', [RecurringRuleController::class, 'destroy'])->name('rules.destroy');
+        Route::post('wallets/{id}/recurring-rules/{rid}/materialise', [RecurringRuleController::class, 'materialise'])->name('rules.materialise');
+        Route::put('wallets/{id}/occurrences/{oid}', [OccurrenceController::class, 'save'])->name('occurrences.save');
     });
 });

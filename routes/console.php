@@ -19,3 +19,6 @@ Schedule::command('wallets:verify-balances')->daily();
 
 // Purges tombstones past the 90-day horizon and raises purge horizons (ADR-0008 rule 12, spec 013).
 Schedule::command('sync:purge-tombstones')->daily();
+
+// Materialises recurring occurrences and confirms the due ones of automatic rules; hourly so each rule's local midnight is met within the hour (spec 014, R-12).
+Schedule::command('wallets:materialise-occurrences')->hourly()->withoutOverlapping();

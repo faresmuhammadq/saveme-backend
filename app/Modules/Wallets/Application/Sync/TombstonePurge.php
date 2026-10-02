@@ -20,8 +20,10 @@ use Illuminate\Support\Facades\DB;
  * (source by `change_seq`, destination by `counter_change_seq`); a membership
  * raises its wallet's and its member's user scope's.
  *
- * Kept, not purged: a tombstoned wallet any transaction, posting, reference
- * or membership still refers to (a live transfer can still post to a deleted
+ * Kept, not purged: a tombstoned rule while any occurrence, live or
+ * tombstoned, exists, an occurrence while a transaction names it (spec 014,
+ * FR-025), a tombstoned wallet any transaction, posting, reference,
+ * membership, rule or occurrence still refers to (a live transfer can still post to a deleted
  * wallet, ADR-0015 rule 5), and a person's tombstoned category anything still
  * refers to. Both go on a later run once unreferenced.
  */
@@ -39,6 +41,8 @@ final class TombstonePurge
     {
         return [
             'transactions' => $this->purgeTransactions($before, $batchSize),
+            'occurrences' => $this->purgeOccurrences($before, $batchSize),
+            'recurring_rules' => $this->purgeRules($before, $batchSize),
             'category_references' => $this->purgeReferences($before, $batchSize),
             'wallet_members' => $this->purgeMembers($before, $batchSize),
             'categories' => $this->purgeCategories($before, $batchSize),
@@ -72,6 +76,56 @@ final class TombstonePurge
                     if ($row['counter_wallet_id'] !== null && $row['counter_change_seq'] !== null) {
                         $horizons[$row['counter_wallet_id']] = max($horizons[$row['counter_wallet_id']] ?? 0, $row['counter_change_seq']);
                     }
+                }
+
+                $this->raiseWallets($horizons);
+
+                return count($deleted);
+            });
+        }
+
+        return $removed;
+    }
+
+    private function purgeOccurrences(DateTimeImmutable $before, int $batchSize): int
+    {
+        return $this->purgeWalletRows(
+            fn (string $afterId): array => $this->store->nextExpiredOccurrences($before, $afterId, $batchSize),
+            fn (array $ids): array => $this->store->deleteOccurrences($ids, $before),
+        );
+    }
+
+    private function purgeRules(DateTimeImmutable $before, int $batchSize): int
+    {
+        return $this->purgeWalletRows(
+            fn (string $afterId): array => $this->store->nextExpiredRules($before, $afterId, $batchSize),
+            fn (array $ids): array => $this->store->deleteRules($ids, $before),
+        );
+    }
+
+    /**
+     * Pages tombstones that raise one wallet's horizon each by `change_seq`
+     * (an occurrence or a rule), removes what is removable in batches under
+     * the wallet locks, and raises the horizons in the same transaction.
+     *
+     * @param  \Closure(string): list<array{id: string, wallet_id: string}>  $next
+     * @param  \Closure(list<string>): list<array{wallet_id: string, change_seq: int}>  $delete
+     */
+    private function purgeWalletRows(\Closure $next, \Closure $delete): int
+    {
+        $removed = 0;
+        $afterId = '';
+
+        while (($batch = $next($afterId)) !== []) {
+            $afterId = $batch[array_key_last($batch)]['id'];
+
+            $removed += DB::transaction(function () use ($batch, $delete): int {
+                $this->store->lockWallets(self::ascending(array_column($batch, 'wallet_id')));
+                $deleted = $delete(array_column($batch, 'id'));
+
+                $horizons = [];
+                foreach ($deleted as $row) {
+                    $horizons[$row['wallet_id']] = max($horizons[$row['wallet_id']] ?? 0, $row['change_seq']);
                 }
 
                 $this->raiseWallets($horizons);

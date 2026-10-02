@@ -1,0 +1,186 @@
+===== TC-014 2026-10-02T11:08:25.020850Z
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73
+< 200
+{
+ "data": {
+  "id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 1,
+  "change_seq": 233,
+  "created_at": "2026-10-02T11:04:50.490514Z",
+  "updated_at": "2026-10-02T11:04:50.490514Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "QA014 W1",
+  "currency": "EGP",
+  "opening_balance_minor": 100000,
+  "balance_minor": 38800,
+  "icon": "wallet",
+  "color": "#112233",
+  "archived_at": null,
+  "currency_locked": true,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/occurrences/01a0fc4c-689b-707a-a77f-140e392e7b5f
+> {"status": "confirmed", "date": "2026-09-01", "amount_minor": 50000, "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "description": "Electricity (new)", "memo": null, "counterparty": null, "transaction_id": "01a0fc4d-15f0-75e1-a1fe-593a612d1736", "version": 2}
+< 200
+{
+ "data": {
+  "id": "01a0fc4c-689b-707a-a77f-140e392e7b5f",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 3,
+  "change_seq": 234,
+  "created_at": "2026-10-02T11:07:41.083568Z",
+  "updated_at": "2026-10-02T11:08:26.077947Z",
+  "deleted_at": null,
+  "recurring_rule_id": "01a0fc4c-650d-73ab-a8c7-b273ed93335a",
+  "ordinal": 1,
+  "is_payout": false,
+  "scheduled_date": "2026-09-01",
+  "date": "2026-09-01",
+  "status": "confirmed",
+  "kind": "expense",
+  "amount_minor": 50000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "Electricity (new)",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": "01a0fc4d-15f0-75e1-a1fe-593a612d1736",
+  "auto_confirm_refusal": null
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/occurrences/01a0fc4c-689b-707a-a77f-140e392e7b5f
+> {"status": "confirmed", "date": "2026-09-01", "amount_minor": 50000, "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "description": "Electricity (new)", "memo": null, "counterparty": null, "transaction_id": "01a0fc4d-15f8-7c26-9d94-6188eb8a7b54", "version": 2}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fc4d-1a0b-7053-92a4-76bb720da17b",
+ "current": {
+  "id": "01a0fc4c-689b-707a-a77f-140e392e7b5f",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 3,
+  "change_seq": 234,
+  "created_at": "2026-10-02T11:07:41.083568Z",
+  "updated_at": "2026-10-02T11:08:26.077947Z",
+  "deleted_at": null,
+  "recurring_rule_id": "01a0fc4c-650d-73ab-a8c7-b273ed93335a",
+  "ordinal": 1,
+  "is_payout": false,
+  "scheduled_date": "2026-09-01",
+  "date": "2026-09-01",
+  "status": "confirmed",
+  "kind": "expense",
+  "amount_minor": 50000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "Electricity (new)",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": "01a0fc4d-15f0-75e1-a1fe-593a612d1736",
+  "auto_confirm_refusal": null
+ }
+}
+# PASS TC-014 concurrent confirms: one 200 one 409 
+# PASS TC-014 loser's 409 carries the confirmed occurrence 
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/transactions?filter[date]=eq:2026-09-01
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fc4d-15f0-75e1-a1fe-593a612d1736",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 1,
+   "change_seq": 235,
+   "created_at": "2026-10-02T11:08:26.141711Z",
+   "updated_at": "2026-10-02T11:08:26.141711Z",
+   "deleted_at": null,
+   "kind": "expense",
+   "date": "2026-09-01",
+   "amount_minor": 50000,
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "Electricity (new)",
+   "memo": null,
+   "counterparty": null,
+   "cleared": false,
+   "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e",
+   "recurring_rule_id": "01a0fc4c-650d-73ab-a8c7-b273ed93335a",
+   "occurrence_id": "01a0fc4c-689b-707a-a77f-140e392e7b5f"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+# PASS TC-014 exactly one transaction for the occurrence 
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73
+< 200
+{
+ "data": {
+  "id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 1,
+  "change_seq": 237,
+  "created_at": "2026-10-02T11:04:50.490514Z",
+  "updated_at": "2026-10-02T11:04:50.490514Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "QA014 W1",
+  "currency": "EGP",
+  "opening_balance_minor": 100000,
+  "balance_minor": -11200,
+  "icon": "wallet",
+  "color": "#112233",
+  "archived_at": null,
+  "currency_locked": true,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73
+< 200
+{
+ "data": {
+  "id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 1,
+  "change_seq": 237,
+  "created_at": "2026-10-02T11:04:50.490514Z",
+  "updated_at": "2026-10-02T11:04:50.490514Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "QA014 W1",
+  "currency": "EGP",
+  "opening_balance_minor": 100000,
+  "balance_minor": -11200,
+  "icon": "wallet",
+  "color": "#112233",
+  "archived_at": null,
+  "currency_locked": true,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+# PASS TC-014 balance moved once (-50000) 
+# PASS TC-014 txn created_by = rule author A whoever confirmed 

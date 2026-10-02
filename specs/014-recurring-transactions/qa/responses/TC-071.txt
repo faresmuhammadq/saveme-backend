@@ -1,0 +1,18 @@
+===== TC-071 2026-10-02T11:15:06.670795Z
+
+$ dev tinker: echo DB::table('recurring_rules')->where('wallet_id','01a0fc52-03f2-7a77-9678-6da7fd98d5ef')->whereNotNull('deleted_at')->orderBy('created_at')->value('id');
+01a0fc52-0a54-7e94-8b8a-c6b4de633741
+# purge rule 01a0fc52-0a54-7e94-8b8a-c6b4de633741
+
+$ dev tinker: DB::table('occurrences')->where('recurring_rule_id','01a0fc52-0a54-7e94-8b8a-c6b4de633741')->update(['deleted_at'=>now()->subDays(91)]); DB::table('recurring_rules')->where('id','01a0fc52-0a54-7e94-8b8a-c6b4de633741')->update(['deleted_at'=>now()->subDays(91)]); echo 'ok';
+ok
+
+$ dev sync:purge-tombstones
+Purged 2 tombstones.
+# Purged 2 tombstones.
+
+$ dev tinker: echo json_encode(DB::table('occurrences')->where('recurring_rule_id','01a0fc52-0a54-7e94-8b8a-c6b4de633741')->pluck('transaction_id')); echo '|'; echo DB::table('recurring_rules')->where('id','01a0fc52-0a54-7e94-8b8a-c6b4de633741')->count();
+["01a0fc52-0fb6-7090-92b5-8b2914553d76"]|1
+# left: ["01a0fc52-0fb6-7090-92b5-8b2914553d76"]|1
+# PASS TC-071 purge removed unreferenced occurrence tombstones, kept the one with a transaction 
+# PASS TC-071 purge kept the rule while an occurrence remains 

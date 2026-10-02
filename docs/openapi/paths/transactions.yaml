@@ -10,7 +10,8 @@
 #
 # Postings are never part of any request or response (P-04 rule 6).
 #
-# Field code CURRENCY_MISMATCH is new in v1.5.
+# Field code CURRENCY_MISMATCH is new in v1.5. The read-only links
+# `recurring_rule_id` and `occurrence_id` are new in v1.7 (spec 014).
 
 /wallets/{id}/transactions:
   get:
@@ -450,7 +451,7 @@ components:
         - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
         - $ref: '../components/schemas.yaml#/components/schemas/WalletScoped'
         - type: object
-          required: [kind, date, amount_minor, currency, category_id, counter_wallet_id, description, memo, counterparty, cleared, created_by]
+          required: [kind, date, amount_minor, currency, category_id, counter_wallet_id, description, memo, counterparty, cleared, created_by, recurring_rule_id, occurrence_id]
           properties:
             kind:
               $ref: '#/components/schemas/TransactionKind'
@@ -484,15 +485,27 @@ components:
             created_by:
               type: string
               format: uuid
-              description: Read-only. The person who first recorded it.
+              description: Read-only. The person who first recorded it (for a confirmed occurrence, the recurring rule's author).
+            recurring_rule_id:
+              type: [string, 'null']
+              format: uuid
+              readOnly: true
+              description: Read-only, v1.7. The recurring rule whose occurrence produced it; null for a transaction recorded by hand. Never changes.
+            occurrence_id:
+              type: [string, 'null']
+              format: uuid
+              readOnly: true
+              description: Read-only, v1.7. The occurrence it confirms (one transaction per occurrence); null for a transaction recorded by hand. Never changes.
 
     TransactionWrite:
       type: object
       description: |
         The whole writable transaction plus the last-seen version. `id` comes
         from the path, `wallet_id` from the path at creation. `postings`,
-        `wallet_id`, `created_by`, `deleted_at`, `change_seq`, `created_at`
-        and `updated_at` are refused with UNKNOWN_FIELD.
+        `wallet_id`, `created_by`, `recurring_rule_id`, `occurrence_id`,
+        `deleted_at`, `change_seq`, `created_at` and `updated_at` are
+        refused with UNKNOWN_FIELD. A transaction written here is never
+        linked to an occurrence; confirm the occurrence instead (ADR-0018).
       required: [kind, date, amount_minor, currency, category_id, counter_wallet_id, description, memo, counterparty, cleared]
       additionalProperties: false
       properties:

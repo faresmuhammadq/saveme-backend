@@ -1,0 +1,1208 @@
+# Recurring transactions (spec 014, brief B7). Every operation sits under
+# /api/v1, inherits the root's bearer scheme and runs through the shared
+# runtime, so each also documents the shared refusals it can produce.
+#
+# Frozen for the C7 client. Authorization follows the permission matrix in
+# specs/010-wallets-membership/spec.md §6 (rows R-01, R-02; T-02 in a
+# transfer rule's destination) — the only copy of it (P-08 rule 5). A caller
+# who is not an active member of the path wallet gets 404 NOT_FOUND, never
+# 403. Every write sits behind the verification gate (403 EMAIL_NOT_VERIFIED).
+#
+# Occurrences are created only by the server (ADR-0018): a write to an
+# occurrence id the server never materialised is 404. An occurrence has no
+# postings and never counts in a balance; confirming it records one ordinary
+# transaction (transactions.yaml) carrying `occurrence_id`.
+#
+# New in v1.7. No new error code.
+
+/wallets/{id}/recurring-rules:
+  get:
+    operationId: listRecurringRules
+    tags: [Wallets & Ledger]
+    summary: List the wallet's live recurring rules, every status.
+    description: |
+      Any active member may read it (row R-01). Returns the live rules whose
+      `wallet_id` is this wallet — active, paused and ended. A transfer
+      rule is listed under its source wallet only. Tombstones are not listed
+      (read one by id, or through the wallet feed).
+
+      Sorted by `created_at` unless `sort` says otherwise; `start_date` is
+      the other sortable field. Every sort is stabilised by `id`.
+
+      Filters (anything else is refused, never ignored):
+
+      - `status`: eq, in (`active`, `paused`, `ended`).
+
+      A cursor is valid only with the same filters and sort.
+    x-filterable: [status]
+    x-sortable: [created_at, start_date]
+    parameters:
+      - &walletId
+        $ref: '../components/parameters.yaml#/components/parameters/ResourceId'
+      - &cursor
+        $ref: '../components/parameters.yaml#/components/parameters/Cursor'
+      - &limit
+        $ref: '../components/parameters.yaml#/components/parameters/Limit'
+      - &filter
+        $ref: '../components/parameters.yaml#/components/parameters/Filter'
+      - &sort
+        $ref: '../components/parameters.yaml#/components/parameters/Sort'
+      - &acceptLanguage
+        $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - &correlationId
+        $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - &clientPlatform
+        $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - &clientVersion
+        $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'A page of rules. None is 200 with `data: []`, never 404.'
+        headers: &successHeaders
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/RecurringRule'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+            examples:
+              rentAndGameya:
+                summary: A monthly rent rule and a gam'eya
+                value:
+                  data:
+                    - &rentRule
+                      id: 0192f7d0-0000-7000-8000-0000000000a1
+                      wallet_id: 0192f79e-0000-7000-8000-000000000001
+                      version: 1
+                      change_seq: 901
+                      created_at: '2026-10-02T09:00:00.000000Z'
+                      updated_at: '2026-10-02T09:00:00.000000Z'
+                      deleted_at: null
+                      preset: custom
+                      status: active
+                      kind: expense
+                      amount_minor: 450000
+                      amount_basis: per_occurrence
+                      currency: EGP
+                      category_id: 0192f7a1-0000-7000-8000-0000000000c5
+                      counter_wallet_id: null
+                      description: Rent
+                      memo: null
+                      counterparty: null
+                      auto_confirm: true
+                      frequency: monthly
+                      interval: 1
+                      anchor_day: 1
+                      start_date: '2026-11-01'
+                      end_date: null
+                      occurrence_count: null
+                      payout_round: null
+                      payout_category_id: null
+                      timezone: Africa/Cairo
+                      created_by: 0192f700-0000-7000-8000-000000000001
+                    - &gameyaRule
+                      id: 0192f7d0-0000-7000-8000-0000000000a2
+                      wallet_id: 0192f79e-0000-7000-8000-000000000001
+                      version: 1
+                      change_seq: 905
+                      created_at: '2026-10-02T09:05:00.000000Z'
+                      updated_at: '2026-10-02T09:05:00.000000Z'
+                      deleted_at: null
+                      preset: gameya
+                      status: active
+                      kind: expense
+                      amount_minor: 100000
+                      amount_basis: per_occurrence
+                      currency: EGP
+                      category_id: 0192f7a1-0000-7000-8000-0000000000c6
+                      counter_wallet_id: null
+                      description: Gam'eya with Mona's group
+                      memo: null
+                      counterparty: Mona
+                      auto_confirm: false
+                      frequency: monthly
+                      interval: 1
+                      anchor_day: 5
+                      start_date: '2026-10-05'
+                      end_date: null
+                      occurrence_count: 10
+                      payout_round: 4
+                      payout_category_id: 0192f7a1-0000-7000-8000-0000000000c7
+                      timezone: Africa/Cairo
+                      created_by: 0192f700-0000-7000-8000-000000000001
+                  meta:
+                    next_cursor: null
+                    has_more: false
+                    limit: 50
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/wallets/{id}/recurring-rules/{rid}:
+  get:
+    operationId: getRecurringRule
+    tags: [Wallets & Ledger]
+    summary: Read one recurring rule, live or tombstoned.
+    description: |
+      Any active member of the rule's wallet may read it (row R-01). A
+      tombstone is returned with `deleted_at` set. A rule of another wallet
+      (a transfer rule through its destination included), another kind of
+      record, an unknown id, a non-member, or a deleted path wallet is 404
+      NOT_FOUND.
+    parameters:
+      - *walletId
+      - &ruleId
+        $ref: '#/components/parameters/RuleId'
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: The rule.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: &ruleEnvelope
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/RecurringRule'
+            examples:
+              rent:
+                summary: A monthly rent rule
+                value:
+                  data: *rentRule
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  put:
+    operationId: upsertRecurringRule
+    tags: [Wallets & Ledger]
+    summary: Create or save the whole recurring rule, addressed by the client-generated identifier.
+    description: |
+      A create, not a POST: the client generates `rid` offline and the same
+      write may arrive twice. `version` is omitted or 0 to create, and
+      carries the client's last-seen value to save. A new rule belongs to the
+      path wallet (`wallet_id`); for a transfer that is the source. The
+      server records `timezone` (the author's profile timezone, never
+      changes) and `created_by`.
+
+      In the same unit of work the server materialises the rule's
+      occurrences (status `scheduled`) from max(`start_date`, creation day −
+      90 days) through the rule's today + 35 days, and at least the next one
+      — never auto-confirming anything; that is the hourly job's and
+      `materialise`'s. "Today" is the date in the rule's `timezone`.
+
+      **Schedule**: daily — `start_date` + k·`interval` days; weekly — every
+      `interval` weeks on `start_date`'s weekday; monthly — every `interval`
+      months from `start_date`'s month on `anchor_day`, clamped to the
+      month's last day; yearly — every `interval` years in `start_date`'s
+      month on `anchor_day`, clamped. Each date is computed from the origin,
+      never from the previous one. Dates before `start_date` are dropped;
+      rounds are numbered from 1. At most one of `end_date` and
+      `occurrence_count`; both null is open-ended. Every round counts toward
+      `occurrence_count`, skipped or not.
+
+      **Amounts**: `amount_basis: per_occurrence` — each round is
+      `amount_minor`; `total` (needs `occurrence_count`) — `amount_minor` is
+      split over the rounds evenly, the remainder going one minor unit at a
+      time to the earliest rounds; the parts sum exactly to the total. A
+      total must be at least `occurrence_count` minor units.
+
+      **Presets**: `gameya` — monthly, interval 1, kind expense,
+      `occurrence_count` 2–120, `end_date` null, `payout_round` (1 to the
+      count) and `payout_category_id` (an income category) required; one
+      extra payout occurrence (`is_payout: true`, kind income) on the payout
+      round's date worth the sum of every round's scheduled amount.
+      `installment` — monthly, interval 1, expense or transfer,
+      `occurrence_count` 2–120, `end_date` null. `custom` and `installment`
+      take null payout members.
+
+      **Editing**: a saved template change (amount, category, texts,
+      `auto_confirm`) is applied to every occurrence still `scheduled` and
+      not `edited`. Once any occurrence is confirmed or skipped, `frequency`,
+      `interval`, `anchor_day`, `start_date`, `amount_basis` and
+      `payout_round` are frozen, `end_date` / `occurrence_count` cannot
+      cut off a resolved occurrence, and for a gam'eya or a `total` rule
+      `occurrence_count` and `amount_minor` are frozen too (they fix every
+      share and the payout). Before that, a schedule change
+      recomputes the pending, unedited occurrences. To change the series
+      from date D: set `end_date` to D − 1 here, then create a new rule
+      starting D. `status`: create as `active` or `paused`; `active` ⇄
+      `paused`; either → `ended` (pending occurrences dated after the rule's
+      today are tombstoned). An ended rule refuses any change; delete it
+      instead. Resuming, or switching `auto_confirm` on, never auto-confirms
+      occurrences dated before that day.
+
+      Outcomes, in this order of precedence:
+
+      - not verified → 403 EMAIL_NOT_VERIFIED;
+      - malformed id → 422 INVALID_ID; malformed body → 422 VALIDATION_FAILED;
+      - caller not an active member of the path wallet, path wallet deleted,
+        `rid` held by a rule of another wallet or by any other kind of
+        record, or a version above 0 for an unknown `rid` → 404 NOT_FOUND;
+      - caller is a viewer (row R-02) → 403 FORBIDDEN;
+      - the rule is tombstoned → 409 VERSION_CONFLICT with the tombstone in
+        `current`, even for an identical body;
+      - body identical to the stored rule → 200, nothing changed;
+      - stale version → 409 VERSION_CONFLICT with the stored rule in
+        `current`; nothing merged;
+      - transfer rule and the caller lacks T-02 in the destination → 403
+        FORBIDDEN;
+      - state rules → 422 VALIDATION_FAILED, one entry each:
+        - `preset`, `kind`, `currency`, `counter_wallet_id` changed; a
+          frozen schedule member changed; any change to an ended rule →
+          IMMUTABLE_FIELD at that member;
+        - on create, `currency` not the wallet's → CURRENCY_MISMATCH at
+          `/currency` (never re-checked later; a wallet whose currency changes
+          afterwards refuses the rule's confirmations instead);
+          a transfer between wallets of different currencies →
+          CURRENCY_MISMATCH at `/counter_wallet_id`;
+        - category or payout category not the caller's own or a platform
+          one (unless unchanged), deleted, unknown or of the wrong kind; a
+          category on a transfer → INVALID_ENUM_VALUE at that member;
+        - destination not a live wallet the caller is a member of, the
+          source itself, or set on an income or expense →
+          INVALID_ENUM_VALUE at `/counter_wallet_id`;
+        - a member outside its preset's shape, `ended` on create,
+          `anchor_day` on a daily or weekly rule, both `end_date` and
+          `occurrence_count`, `amount_basis: total` without a count →
+          INVALID_ENUM_VALUE at that member;
+        - a missing required member (category on income/expense, destination
+          on a transfer, `anchor_day` on monthly/yearly, payout members on a
+          gam'eya) → REQUIRED at it;
+        - amount, interval (1–365), anchor day (1–31), count (1–1000; 2–120
+          for presets), payout round, a date outside 1900–2999, `end_date`
+          before `start_date`, a gam'eya payout above 2^53 − 1, a `total`
+          below `occurrence_count` minor units, a count below `payout_round`,
+          an end that cuts off a resolved occurrence → OUT_OF_RANGE at that
+          member;
+      - otherwise 201 (created) or 200 (saved), version + 1.
+    parameters:
+      - *walletId
+      - *ruleId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RecurringRuleWrite'
+          examples:
+            createRent:
+              summary: Create an automatic monthly rent rule
+              value:
+                preset: custom
+                status: active
+                kind: expense
+                amount_minor: 450000
+                amount_basis: per_occurrence
+                currency: EGP
+                category_id: 0192f7a1-0000-7000-8000-0000000000c5
+                counter_wallet_id: null
+                description: Rent
+                memo: null
+                counterparty: null
+                auto_confirm: true
+                frequency: monthly
+                interval: 1
+                anchor_day: 1
+                start_date: '2026-11-01'
+                end_date: null
+                occurrence_count: null
+                payout_round: null
+                payout_category_id: null
+                version: 0
+            createInstallment:
+              summary: A fridge, 10,000 EGP over 12 monthly installments, split by the server
+              value:
+                preset: installment
+                status: active
+                kind: expense
+                amount_minor: 1000000
+                amount_basis: total
+                currency: EGP
+                category_id: 0192f7a1-0000-7000-8000-0000000000c8
+                counter_wallet_id: null
+                description: Fridge
+                memo: null
+                counterparty: B.TECH
+                auto_confirm: true
+                frequency: monthly
+                interval: 1
+                anchor_day: 25
+                start_date: '2026-10-25'
+                end_date: null
+                occurrence_count: 12
+                payout_round: null
+                payout_category_id: null
+                version: 0
+            endBeforeRaise:
+              summary: Series edit from 1 January — step 1, end the old rule on 31 December
+              value:
+                preset: custom
+                status: active
+                kind: expense
+                amount_minor: 450000
+                amount_basis: per_occurrence
+                currency: EGP
+                category_id: 0192f7a1-0000-7000-8000-0000000000c5
+                counter_wallet_id: null
+                description: Rent
+                memo: null
+                counterparty: null
+                auto_confirm: true
+                frequency: monthly
+                interval: 1
+                anchor_day: 1
+                start_date: '2026-11-01'
+                end_date: '2026-12-31'
+                occurrence_count: null
+                payout_round: null
+                payout_category_id: null
+                version: 1
+    responses:
+      '200':
+        description: Saved, or an identical replay returning the rule unchanged.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *ruleEnvelope
+      '201':
+        description: Created; its occurrences are materialised.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *ruleEnvelope
+            examples:
+              created:
+                summary: The rent rule, created
+                value:
+                  data: *rentRule
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  delete:
+    operationId: deleteRecurringRule
+    tags: [Wallets & Ledger]
+    summary: Delete the rule and its occurrences. Tombstones, never removals; final.
+    description: |
+      Tombstones the rule and every one of its occurrences in one unit of
+      work (row R-02). The transactions it already produced are untouched.
+      Returns the rule's tombstone. Deleting an already deleted rule returns
+      its tombstone with nothing changed, whatever version is sent. A stale
+      version on a live rule is 409 VERSION_CONFLICT. There is no restore:
+      a deleted rule is final (end a rule to keep its history).
+    parameters:
+      - *walletId
+      - *ruleId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RuleVersionOnly'
+          examples:
+            delete:
+              value:
+                version: 2
+    responses:
+      '200':
+        description: The tombstone.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *ruleEnvelope
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/wallets/{id}/recurring-rules/{rid}/materialise:
+  post:
+    operationId: materialiseRecurringRule
+    tags: [Wallets & Ledger]
+    summary: Catch the rule up now — extend its occurrences and auto-confirm what is due.
+    description: |
+      Does for this one rule exactly what the hourly job does (row R-02):
+      materialises its occurrences through the horizon and, for an active
+      rule with `auto_confirm`, confirms every `scheduled` occurrence dated
+      on or before the rule's today and on or after the day automatic
+      confirmation took effect, recording each transaction as the rule's
+      author. Idempotent: a second request changes nothing. A paused or
+      ended rule is returned unchanged. Takes no request body; returns the
+      rule. Pull the wallet feed afterwards for the occurrences and
+      transactions.
+
+      An automatic confirmation that is refused (the author lacks T-02, a
+      transfer's destination is deleted or no longer theirs, currencies
+      differ) leaves the occurrence `scheduled` with
+      `auto_confirm_refusal` set; it is not attempted again.
+
+      Outcomes: not verified → 403 EMAIL_NOT_VERIFIED; malformed id → 422
+      INVALID_ID; non-member, unknown rule, a rule of another wallet → 404
+      NOT_FOUND; viewer → 403 FORBIDDEN; tombstoned rule → 409
+      VERSION_CONFLICT with the tombstone in `current`; otherwise 200.
+    parameters:
+      - *walletId
+      - *ruleId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: The rule, after catching up.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *ruleEnvelope
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/wallets/{id}/occurrences:
+  get:
+    operationId: listOccurrences
+    tags: [Wallets & Ledger]
+    summary: List the wallet's live occurrences, earliest date first.
+    description: |
+      Any active member may read it (row R-01). Returns the live occurrences
+      of the wallet's rules. Tombstones are not listed.
+
+      Sorted by `date` ascending unless `sort` says otherwise; `created_at`
+      is the other sortable field. Every sort is stabilised by `id`.
+
+      Filters (anything else is refused, never ignored):
+
+      - `recurring_rule_id`: eq, in (at most 50 values);
+      - `status`: eq, in (`scheduled`, `confirmed`, `skipped`);
+      - `date`: eq, gt, gte, lt, lte, with `YYYY-MM-DD` values.
+
+      "Due" and "missed" are not statuses: compute them from `date` and the
+      rule's `timezone` (due: `scheduled` and dated on or before the rule's
+      today; missed: due while a later non-payout occurrence of the same
+      rule is also due). A cursor is valid only with the same filters and
+      sort.
+    x-filterable: [recurring_rule_id, status, date]
+    x-sortable: [date, created_at]
+    parameters:
+      - *walletId
+      - *cursor
+      - *limit
+      - *filter
+      - *sort
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: 'A page of occurrences. None is 200 with `data: []`, never 404.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Occurrence'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+            examples:
+              upcoming:
+                summary: The next rent and a gam'eya payout round
+                value:
+                  data:
+                    - &rentOccurrence
+                      id: 0192f7d1-0000-7000-8000-0000000000b1
+                      wallet_id: 0192f79e-0000-7000-8000-000000000001
+                      version: 1
+                      change_seq: 902
+                      created_at: '2026-10-02T09:00:00.000000Z'
+                      updated_at: '2026-10-02T09:00:00.000000Z'
+                      deleted_at: null
+                      recurring_rule_id: 0192f7d0-0000-7000-8000-0000000000a1
+                      ordinal: 1
+                      is_payout: false
+                      scheduled_date: '2026-11-01'
+                      date: '2026-11-01'
+                      status: scheduled
+                      kind: expense
+                      amount_minor: 450000
+                      currency: EGP
+                      category_id: 0192f7a1-0000-7000-8000-0000000000c5
+                      counter_wallet_id: null
+                      description: Rent
+                      memo: null
+                      counterparty: null
+                      edited: false
+                      transaction_id: null
+                      auto_confirm_refusal: null
+                    - id: 0192f7d1-0000-7000-8000-0000000000b9
+                      wallet_id: 0192f79e-0000-7000-8000-000000000001
+                      version: 1
+                      change_seq: 906
+                      created_at: '2026-10-02T09:05:00.000000Z'
+                      updated_at: '2026-10-02T09:05:00.000000Z'
+                      deleted_at: null
+                      recurring_rule_id: 0192f7d0-0000-7000-8000-0000000000a2
+                      ordinal: 4
+                      is_payout: true
+                      scheduled_date: '2027-01-05'
+                      date: '2027-01-05'
+                      status: scheduled
+                      kind: income
+                      amount_minor: 1000000
+                      currency: EGP
+                      category_id: 0192f7a1-0000-7000-8000-0000000000c7
+                      counter_wallet_id: null
+                      description: Gam'eya with Mona's group
+                      memo: null
+                      counterparty: Mona
+                      edited: false
+                      transaction_id: null
+                      auto_confirm_refusal: null
+                  meta:
+                    next_cursor: null
+                    has_more: false
+                    limit: 50
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/wallets/{id}/occurrences/{oid}:
+  get:
+    operationId: getOccurrence
+    tags: [Wallets & Ledger]
+    summary: Read one occurrence, live or tombstoned.
+    description: |
+      Any active member of its wallet may read it (row R-01). A tombstone is
+      returned with `deleted_at` set. An occurrence of another wallet,
+      another kind of record, an unknown id, a non-member, or a deleted path
+      wallet is 404 NOT_FOUND.
+    parameters:
+      - *walletId
+      - &occurrenceId
+        $ref: '#/components/parameters/OccurrenceId'
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: The occurrence.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: &occurrenceEnvelope
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Occurrence'
+            examples:
+              scheduled:
+                summary: The next rent, upcoming
+                value:
+                  data: *rentOccurrence
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  put:
+    operationId: saveOccurrence
+    tags: [Wallets & Ledger]
+    summary: Confirm, skip or edit one occurrence. Never creates.
+    description: |
+      The whole writable occurrence plus its last-seen `version` (≥ 1). The
+      server alone creates occurrences (ADR-0018): an unknown `oid` is 404.
+
+      - **Edit one**: change `date` (any calendar date 1900–2999),
+        `amount_minor`, `category_id`, `description`, `memo` or
+        `counterparty`. The occurrence becomes `edited` and later rule edits
+        no longer change it; sending the rule-derived values back clears
+        `edited`. `scheduled_date`, `ordinal` and the occurrence key never
+        change.
+      - **Confirm**: `status: confirmed` with a new client-generated UUIDv7
+        in `transaction_id`. In the same unit of work one transaction with
+        that id is recorded through the ledger with the occurrence's values
+        as sent in this write (`cleared: false`, `created_by` the rule's
+        author, `occurrence_id` and `recurring_rule_id` set); balances move.
+        An identical replay is 200 with nothing changed. If the server or
+        another member confirmed it first, this write is 409
+        VERSION_CONFLICT with the confirmed occurrence in `current` — drop
+        the local transaction, never resend under a new id.
+      - **Skip** / **un-skip**: `status: skipped`, or back to `scheduled`.
+        `transaction_id` null.
+
+      Transitions: `scheduled` → `confirmed` | `skipped`; `skipped` →
+      `scheduled` | `confirmed`; a confirmed occurrence never changes
+      (correct its transaction through the transaction endpoints). A save
+      that changes the occurrence clears `auto_confirm_refusal`, making it
+      eligible for automatic confirmation again. An edited `category_id`
+      must be of the occurrence's kind and the caller's own or a platform
+      one (unless unchanged).
+
+      Outcomes, in this order of precedence:
+
+      - not verified → 403 EMAIL_NOT_VERIFIED;
+      - malformed id → 422 INVALID_ID; malformed body → 422 VALIDATION_FAILED;
+      - caller not an active member of the path wallet, path wallet deleted,
+        `oid` unknown, of another wallet or held by another kind of record
+        → 404 NOT_FOUND;
+      - caller is a viewer (row R-02) → 403 FORBIDDEN;
+      - the occurrence is tombstoned → 409 VERSION_CONFLICT with the
+        tombstone in `current`;
+      - body identical to the stored occurrence → 200, nothing changed;
+      - stale version → 409 VERSION_CONFLICT with the stored occurrence in
+        `current`; nothing merged;
+      - confirming a transfer and the caller lacks T-02 in the destination
+        → 403 FORBIDDEN;
+      - state rules → 422 VALIDATION_FAILED, one entry each:
+        - any change to a confirmed occurrence → IMMUTABLE_FIELD at that
+          member;
+        - `transaction_id` missing on a confirm → REQUIRED; set outside a
+          confirm, or already held by another record → INVALID_ENUM_VALUE
+          at `/transaction_id`;
+        - category not the caller's own or a platform one (unless
+          unchanged), deleted, unknown or of the wrong kind; a category on a
+          transfer → INVALID_ENUM_VALUE at `/category_id`;
+        - the confirmation itself refused: destination deleted or not a
+          membership any more → INVALID_ENUM_VALUE at `/status`; currencies
+          no longer match → CURRENCY_MISMATCH at `/status`;
+        - amount, date or text out of bounds → OUT_OF_RANGE at that member;
+      - otherwise 200, version + 1.
+    parameters:
+      - *walletId
+      - *occurrenceId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OccurrenceWrite'
+          examples:
+            confirmWithActualAmount:
+              summary: Confirm the electricity bill at the amount actually paid, on the day paid
+              value:
+                status: confirmed
+                date: '2026-11-03'
+                amount_minor: 61200
+                category_id: 0192f7a1-0000-7000-8000-0000000000c9
+                description: Electricity
+                memo: null
+                counterparty: null
+                transaction_id: 0192f7e0-0000-7000-8000-0000000000f1
+                version: 1
+            skip:
+              summary: Skip August
+              value:
+                status: skipped
+                date: '2026-08-01'
+                amount_minor: 450000
+                category_id: 0192f7a1-0000-7000-8000-0000000000c5
+                description: Rent
+                memo: null
+                counterparty: null
+                transaction_id: null
+                version: 1
+    responses:
+      '200':
+        description: Saved, or an identical replay returning the occurrence unchanged. Never 201.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *occurrenceEnvelope
+            examples:
+              confirmed:
+                summary: Confirmed; its transaction exists with the same id
+                value:
+                  data:
+                    id: 0192f7d1-0000-7000-8000-0000000000b3
+                    wallet_id: 0192f79e-0000-7000-8000-000000000001
+                    version: 2
+                    change_seq: 951
+                    created_at: '2026-10-02T09:10:00.000000Z'
+                    updated_at: '2026-11-03T18:00:00.000000Z'
+                    deleted_at: null
+                    recurring_rule_id: 0192f7d0-0000-7000-8000-0000000000a3
+                    ordinal: 2
+                    is_payout: false
+                    scheduled_date: '2026-11-01'
+                    date: '2026-11-03'
+                    status: confirmed
+                    kind: expense
+                    amount_minor: 61200
+                    currency: EGP
+                    category_id: 0192f7a1-0000-7000-8000-0000000000c9
+                    counter_wallet_id: null
+                    description: Electricity
+                    memo: null
+                    counterparty: null
+                    edited: true
+                    transaction_id: 0192f7e0-0000-7000-8000-0000000000f1
+                    auto_confirm_refusal: null
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+components:
+  parameters:
+    RuleId:
+      name: rid
+      in: path
+      required: true
+      description: |
+        The recurring rule identifier, generated by the client so a rule can
+        be created offline and the write retried safely. Lowercase hyphenated
+        UUIDv7; anything else is 422 INVALID_ID.
+      schema:
+        type: string
+        format: uuid
+        pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+
+    OccurrenceId:
+      name: oid
+      in: path
+      required: true
+      description: |
+        The occurrence identifier, minted by the server when it materialised
+        the occurrence (never by a client). Lowercase hyphenated UUIDv7;
+        anything else is 422 INVALID_ID.
+      schema:
+        type: string
+        format: uuid
+        pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+
+  schemas:
+    Preset:
+      type: string
+      description: '`gameya` (جمعية) and `installment` (قسط) constrain the shape (see upsertRecurringRule); `custom` is any rule. Never changes.'
+      enum: [custom, gameya, installment]
+
+    RuleStatus:
+      type: string
+      description: '`active` ⇄ `paused`; either → `ended` (final; the rule then accepts only deletion).'
+      enum: [active, paused, ended]
+
+    AmountBasis:
+      type: string
+      description: '`per_occurrence`: each round is `amount_minor`. `total`: `amount_minor` is split over `occurrence_count` rounds, the remainder to the earliest rounds.'
+      enum: [per_occurrence, total]
+
+    Frequency:
+      type: string
+      enum: [daily, weekly, monthly, yearly]
+
+    OccurrenceStatus:
+      type: string
+      description: |
+        Stored states only. "Due" and "missed" are derived from `date` and the
+        rule's `timezone`, never sent.
+      enum: [scheduled, confirmed, skipped]
+
+    AutoConfirmRefusal:
+      type: [string, 'null']
+      description: Why the server could not confirm this occurrence automatically; it will not try again. Null when nothing was refused, and cleared by any manual save.
+      enum: [not_permitted, counter_wallet_unavailable, currency_mismatch, null]
+
+    RecurringRule:
+      description: |
+        A repeating money movement set up once. Wallet-scoped and syncable;
+        this is also the `recurring_rule` row of the wallet feed. A transfer
+        rule lives in its source wallet's scope only.
+      allOf:
+        - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
+        - $ref: '../components/schemas.yaml#/components/schemas/WalletScoped'
+        - type: object
+          required: [preset, status, kind, amount_minor, amount_basis, currency, category_id, counter_wallet_id, description, memo, counterparty, auto_confirm, frequency, interval, anchor_day, start_date, end_date, occurrence_count, payout_round, payout_category_id, timezone, created_by]
+          properties:
+            preset:
+              $ref: '#/components/schemas/Preset'
+            status:
+              $ref: '#/components/schemas/RuleStatus'
+            kind:
+              $ref: './transactions.yaml#/components/schemas/TransactionKind'
+            amount_minor:
+              $ref: './transactions.yaml#/components/schemas/PositiveMinorUnits'
+            amount_basis:
+              $ref: '#/components/schemas/AmountBasis'
+            currency:
+              $ref: './transactions.yaml#/components/schemas/Currency'
+            category_id:
+              type: [string, 'null']
+              format: uuid
+              description: Income or expense rule's category; null for a transfer.
+            counter_wallet_id:
+              type: [string, 'null']
+              format: uuid
+              description: Transfer only — the destination wallet. Never changes.
+            description:
+              $ref: './transactions.yaml#/components/schemas/Description'
+            memo:
+              $ref: './transactions.yaml#/components/schemas/Memo'
+            counterparty:
+              $ref: './transactions.yaml#/components/schemas/Counterparty'
+            auto_confirm:
+              type: boolean
+              description: When true the server confirms each occurrence on its date (in `timezone`), as the rule's author. Never back-posts dates before the day this took effect.
+            frequency:
+              $ref: '#/components/schemas/Frequency'
+            interval:
+              type: integer
+              minimum: 1
+              maximum: 365
+              description: Every `interval` days, weeks, months or years.
+            anchor_day:
+              type: [integer, 'null']
+              minimum: 1
+              maximum: 31
+              description: Monthly and yearly only — the day of the month, clamped to the month's last day. Null for daily and weekly.
+            start_date:
+              $ref: './transactions.yaml#/components/schemas/CalendarDate'
+            end_date:
+              type: [string, 'null']
+              format: date
+              description: Last date the schedule may produce. At most one of `end_date` and `occurrence_count`.
+            occurrence_count:
+              type: [integer, 'null']
+              minimum: 1
+              maximum: 1000
+              description: Number of rounds (skipped ones count). 2–120 for presets.
+            payout_round:
+              type: [integer, 'null']
+              minimum: 1
+              description: Gam'eya only — the round whose date carries the payout.
+            payout_category_id:
+              type: [string, 'null']
+              format: uuid
+              description: Gam'eya only — the income category of the payout.
+            timezone:
+              type: string
+              readOnly: true
+              description: Read-only. The IANA timezone captured from the author's profile at creation; "today" for this rule. Never changes.
+              examples: ['Africa/Cairo']
+            created_by:
+              type: string
+              format: uuid
+              readOnly: true
+              description: Read-only. The rule's author; every transaction it produces is recorded as theirs.
+
+    RecurringRuleWrite:
+      type: object
+      description: |
+        The whole writable rule plus the last-seen version. `id` comes from
+        the path, `wallet_id` from the path at creation. `timezone`,
+        `created_by`, `wallet_id`, `deleted_at`, `change_seq`, `created_at`
+        and `updated_at` are refused with UNKNOWN_FIELD.
+      required: [preset, status, kind, amount_minor, amount_basis, currency, category_id, counter_wallet_id, description, memo, counterparty, auto_confirm, frequency, interval, anchor_day, start_date, end_date, occurrence_count, payout_round, payout_category_id]
+      additionalProperties: false
+      properties:
+        preset:
+          $ref: '#/components/schemas/Preset'
+        status:
+          $ref: '#/components/schemas/RuleStatus'
+        kind:
+          $ref: './transactions.yaml#/components/schemas/TransactionKind'
+        amount_minor:
+          $ref: './transactions.yaml#/components/schemas/PositiveMinorUnits'
+        amount_basis:
+          $ref: '#/components/schemas/AmountBasis'
+        currency:
+          $ref: './transactions.yaml#/components/schemas/Currency'
+        category_id:
+          type: [string, 'null']
+          format: uuid
+        counter_wallet_id:
+          type: [string, 'null']
+          format: uuid
+        description:
+          $ref: './transactions.yaml#/components/schemas/Description'
+        memo:
+          $ref: './transactions.yaml#/components/schemas/Memo'
+        counterparty:
+          $ref: './transactions.yaml#/components/schemas/Counterparty'
+        auto_confirm:
+          type: boolean
+        frequency:
+          $ref: '#/components/schemas/Frequency'
+        interval:
+          type: integer
+          minimum: 1
+          maximum: 365
+        anchor_day:
+          type: [integer, 'null']
+          minimum: 1
+          maximum: 31
+        start_date:
+          $ref: './transactions.yaml#/components/schemas/CalendarDate'
+        end_date:
+          type: [string, 'null']
+          format: date
+        occurrence_count:
+          type: [integer, 'null']
+          minimum: 1
+          maximum: 1000
+        payout_round:
+          type: [integer, 'null']
+          minimum: 1
+        payout_category_id:
+          type: [string, 'null']
+          format: uuid
+        version:
+          type: integer
+          minimum: 0
+          description: The client's last-seen version. Omitted or 0 means create.
+
+    RuleVersionOnly:
+      type: object
+      required: [version]
+      additionalProperties: false
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          description: The client's last-seen version of the rule.
+
+    Occurrence:
+      description: |
+        One dated instance materialised by the server from a rule. Wallet-
+        scoped and syncable; also the `occurrence` row of the wallet feed.
+        Never in a balance; a confirmed occurrence points at the one
+        transaction it produced. Its occurrence key is (`recurring_rule_id`,
+        `scheduled_date`, `is_payout`).
+      allOf:
+        - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
+        - $ref: '../components/schemas.yaml#/components/schemas/WalletScoped'
+        - type: object
+          required: [recurring_rule_id, ordinal, is_payout, scheduled_date, date, status, kind, amount_minor, currency, category_id, counter_wallet_id, description, memo, counterparty, edited, transaction_id, auto_confirm_refusal]
+          properties:
+            recurring_rule_id:
+              type: string
+              format: uuid
+              description: The rule that produced it, in the same wallet.
+            ordinal:
+              type: integer
+              minimum: 1
+              description: The round number in the rule's schedule (the payout carries its round's number).
+            is_payout:
+              type: boolean
+              description: True only for a gam'eya rule's payout occurrence.
+            scheduled_date:
+              type: string
+              format: date
+              description: The date the schedule gave it. Never changes; part of the occurrence key.
+            date:
+              type: string
+              format: date
+              description: The effective date; equals `scheduled_date` unless edited.
+            status:
+              $ref: '#/components/schemas/OccurrenceStatus'
+            kind:
+              $ref: './transactions.yaml#/components/schemas/TransactionKind'
+            amount_minor:
+              $ref: './transactions.yaml#/components/schemas/PositiveMinorUnits'
+            currency:
+              $ref: './transactions.yaml#/components/schemas/Currency'
+            category_id:
+              type: [string, 'null']
+              format: uuid
+            counter_wallet_id:
+              type: [string, 'null']
+              format: uuid
+            description:
+              $ref: './transactions.yaml#/components/schemas/Description'
+            memo:
+              $ref: './transactions.yaml#/components/schemas/Memo'
+            counterparty:
+              $ref: './transactions.yaml#/components/schemas/Counterparty'
+            edited:
+              type: boolean
+              description: True when its values differ from what the rule gives; rule edits then leave it alone.
+            transaction_id:
+              type: [string, 'null']
+              format: uuid
+              description: Set exactly when `status` is `confirmed` — the transaction it produced (which may since have been deleted).
+            auto_confirm_refusal:
+              $ref: '#/components/schemas/AutoConfirmRefusal'
+
+    OccurrenceWrite:
+      type: object
+      description: |
+        The whole writable occurrence plus the last-seen version. Everything
+        else (`kind`, `currency`, `counter_wallet_id`, `scheduled_date`,
+        `ordinal`, `is_payout`, `recurring_rule_id`, `edited`,
+        `auto_confirm_refusal`, the syncable members) is refused with
+        UNKNOWN_FIELD.
+      required: [status, date, amount_minor, category_id, description, memo, counterparty, transaction_id, version]
+      additionalProperties: false
+      properties:
+        status:
+          $ref: '#/components/schemas/OccurrenceStatus'
+        date:
+          $ref: './transactions.yaml#/components/schemas/CalendarDate'
+        amount_minor:
+          $ref: './transactions.yaml#/components/schemas/PositiveMinorUnits'
+        category_id:
+          type: [string, 'null']
+          format: uuid
+        description:
+          $ref: './transactions.yaml#/components/schemas/Description'
+        memo:
+          $ref: './transactions.yaml#/components/schemas/Memo'
+        counterparty:
+          $ref: './transactions.yaml#/components/schemas/Counterparty'
+        transaction_id:
+          type: [string, 'null']
+          format: uuid
+          description: A new client-generated UUIDv7 when `status` becomes `confirmed` (the id of the transaction recorded); null otherwise.
+        version:
+          type: integer
+          minimum: 1
+          description: The client's last-seen version. An occurrence is never created by a client.

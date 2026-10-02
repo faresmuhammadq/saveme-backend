@@ -12,7 +12,7 @@ interface TransactionRepository
     public function find(string $transactionId): ?TransactionRecord;
 
     /**
-     * Whether a transaction, live or tombstoned, has the identifier: a wallet
+     * Whether a transaction, a recurring rule or an occurrence, live or tombstoned, has the identifier: a wallet
      * or a category may not be created under it (P-06 rule 3, spec 012 R-10).
      */
     public function exists(string $transactionId): bool;
@@ -32,11 +32,12 @@ interface TransactionRepository
     public function isHeldByOther(string $transactionId, string $pathWalletId): bool;
 
     /**
-     * Inserts version 1.
+     * Inserts version 1. The links name the recurring rule and occurrence a
+     * confirmation produced it for (spec 014); both null otherwise.
      *
      * @param  array{kind: string, date: string, amount_minor: int, currency: string, category_id: ?string, counter_wallet_id: ?string, description: ?string, memo: ?string, counterparty: ?string, cleared: bool}  $values
      */
-    public function insert(string $transactionId, string $walletId, array $values, string $createdBy, int $changeSeq, ?int $counterChangeSeq): void;
+    public function insert(string $transactionId, string $walletId, array $values, string $createdBy, int $changeSeq, ?int $counterChangeSeq, ?string $recurringRuleId = null, ?string $occurrenceId = null): void;
 
     /**
      * Applies $columns, moves version to $expectedVersion + 1, stamps

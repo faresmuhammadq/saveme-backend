@@ -5,6 +5,8 @@ namespace App\Modules\Wallets\Domain\Ports;
 use App\Modules\Wallets\Domain\Categories\CategoryRecord;
 use App\Modules\Wallets\Domain\Categories\CategoryReferenceRecord;
 use App\Modules\Wallets\Domain\Membership\MemberRecord;
+use App\Modules\Wallets\Domain\Recurring\OccurrenceRecord;
+use App\Modules\Wallets\Domain\Recurring\RecurringRuleRecord;
 use App\Modules\Wallets\Domain\Transactions\TransactionRecord;
 
 /**
@@ -40,6 +42,21 @@ interface SyncFeedReader
      * @return list<array{position: int, transaction: TransactionRecord}>
      */
     public function transactionsChangedIn(string $walletId, int $after, int $limit): array;
+
+    /**
+     * The wallet's recurring rules by `change_seq`, tombstones included. A
+     * transfer rule rides its source wallet's feed only (spec 014, FR-023).
+     *
+     * @return list<RecurringRuleRecord>
+     */
+    public function rulesChangedIn(string $walletId, int $after, int $limit): array;
+
+    /**
+     * The wallet's occurrences by `change_seq`, tombstones included.
+     *
+     * @return list<OccurrenceRecord>
+     */
+    public function occurrencesChangedIn(string $walletId, int $after, int $limit): array;
 
     /**
      * The person's own categories (never platform rows) by `change_seq`.

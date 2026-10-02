@@ -8,7 +8,8 @@ use DateTimeImmutable;
  * A Transaction as the application sees it: every column, no framework type.
  * For a transfer `walletId` is the source and `counterWalletId` the
  * destination (ADR-0015); `counterChangeSeq` is the destination scope's
- * stamp and never goes on the wire.
+ * stamp and never goes on the wire. `recurringRuleId` and `occurrenceId` are
+ * read-only links to the occurrence this transaction confirmed (spec 014).
  */
 final readonly class TransactionRecord
 {
@@ -32,6 +33,8 @@ final readonly class TransactionRecord
         public DateTimeImmutable $createdAt,
         public DateTimeImmutable $updatedAt,
         public ?DateTimeImmutable $deletedAt,
+        public ?string $recurringRuleId = null,
+        public ?string $occurrenceId = null,
     ) {}
 
     public function isTombstone(): bool

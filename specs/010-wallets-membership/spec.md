@@ -285,7 +285,7 @@ Under `/api/v1`, in `docs/openapi/paths/wallets.yaml`, tag `Wallets & Ledger`. *
 | T-02 | Create, edit, delete, restore a transaction (any author's), including choosing one's own category for it | yes | yes | — | — | B6 |
 | T-03 | A transfer between two wallets: T-02 must hold in **both** wallets | yes | yes | — | — | B6 |
 | R-01 | Read recurring rules and their occurrences | yes | yes | yes | — | B7 |
-| R-02 | Create, edit, pause, end a recurring rule; confirm or skip an occurrence | yes | yes | — | — | B7 |
+| R-02 | Create, edit, pause, end, delete a recurring rule and request its catch-up; confirm, skip or edit one of its occurrences. A recurring transfer rule also needs T-02 in its destination (as T-03) | yes | yes | — | — | B7 |
 | S-01 | See the wallet's pending invitations | yes | yes | yes | — | B9 |
 | S-02 | Send or revoke an invitation | yes | — | — | `sharing.enabled`, and `sharing.max_members_per_wallet` not exceeded | B9 |
 | S-03 | Change another member's role (never to `owner`; that is W-05) | yes | — | — | — | B9 |

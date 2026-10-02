@@ -1,0 +1,304 @@
+===== TC-024 2026-10-02T11:09:33.055671Z
+
+DELETE /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4d-f831-79b8-80f4-c9a8d87edd9a
+> {"version": 4}
+< 200
+{
+ "data": {
+  "id": "01a0fc4d-f831-79b8-80f4-c9a8d87edd9a",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 5,
+  "change_seq": 377,
+  "created_at": "2026-10-02T11:09:24.268206Z",
+  "updated_at": "2026-10-02T11:09:33.674078Z",
+  "deleted_at": "2026-10-02T11:09:33.610345Z",
+  "preset": "custom",
+  "status": "ended",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "daily",
+  "interval": 1,
+  "anchor_day": null,
+  "start_date": "2026-09-28",
+  "end_date": null,
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+# PASS TC-024 delete -> 200 tombstone v+1 
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/occurrences/01a0fc4d-fbe8-7183-9afa-558cbec5b57a
+< 200
+{
+ "data": {
+  "id": "01a0fc4d-fbe8-7183-9afa-558cbec5b57a",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 3,
+  "change_seq": 372,
+  "created_at": "2026-10-02T11:09:24.328779Z",
+  "updated_at": "2026-10-02T11:09:33.658199Z",
+  "deleted_at": "2026-10-02T11:09:33.610345Z",
+  "recurring_rule_id": "01a0fc4d-f831-79b8-80f4-c9a8d87edd9a",
+  "ordinal": 1,
+  "is_payout": false,
+  "scheduled_date": "2026-09-28",
+  "date": "2026-09-28",
+  "status": "confirmed",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": "01a0fc4e-1a86-72d5-a69f-035af4f69763",
+  "auto_confirm_refusal": null
+ },
+ "meta": {}
+}
+# PASS TC-024 occurrences tombstoned 
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/occurrences?filter[recurring_rule_id]=eq:01a0fc4d-f831-79b8-80f4-c9a8d87edd9a&limit=200
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+# PASS TC-024 occurrences hidden from list 
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/transactions/01a0fc4e-1a86-72d5-a69f-035af4f69763
+< 200
+{
+ "data": {
+  "id": "01a0fc4e-1a86-72d5-a69f-035af4f69763",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 1,
+  "change_seq": 369,
+  "created_at": "2026-10-02T11:09:32.947475Z",
+  "updated_at": "2026-10-02T11:09:32.947475Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-09-28",
+  "amount_minor": 10000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e",
+  "recurring_rule_id": "01a0fc4d-f831-79b8-80f4-c9a8d87edd9a",
+  "occurrence_id": "01a0fc4d-fbe8-7183-9afa-558cbec5b57a"
+ },
+ "meta": {}
+}
+# PASS TC-024 produced transaction untouched 
+
+DELETE /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4d-f831-79b8-80f4-c9a8d87edd9a
+> {"version": 4}
+< 200
+{
+ "data": {
+  "id": "01a0fc4d-f831-79b8-80f4-c9a8d87edd9a",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 5,
+  "change_seq": 377,
+  "created_at": "2026-10-02T11:09:24.268206Z",
+  "updated_at": "2026-10-02T11:09:33.674078Z",
+  "deleted_at": "2026-10-02T11:09:33.610345Z",
+  "preset": "custom",
+  "status": "ended",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "daily",
+  "interval": 1,
+  "anchor_day": null,
+  "start_date": "2026-09-28",
+  "end_date": null,
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+# PASS TC-024 delete again returns tombstone 200 
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4d-f831-79b8-80f4-c9a8d87edd9a
+> {"preset": "custom", "status": "ended", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "daily", "interval": 1, "anchor_day": null, "start_date": "2026-09-28", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 5}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fc4e-2ba7-72fd-8c7e-1b4b5d088b15",
+ "current": {
+  "id": "01a0fc4d-f831-79b8-80f4-c9a8d87edd9a",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 5,
+  "change_seq": 377,
+  "created_at": "2026-10-02T11:09:24.268206Z",
+  "updated_at": "2026-10-02T11:09:33.674078Z",
+  "deleted_at": "2026-10-02T11:09:33.610345Z",
+  "preset": "custom",
+  "status": "ended",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "daily",
+  "interval": 1,
+  "anchor_day": null,
+  "start_date": "2026-09-28",
+  "end_date": null,
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ }
+}
+# PASS TC-024 PUT tombstone -> 409 with tombstone 
+
+POST /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4d-f831-79b8-80f4-c9a8d87edd9a/materialise
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fc4e-2f83-727e-a8ef-6a9ae28aa34b",
+ "current": {
+  "id": "01a0fc4d-f831-79b8-80f4-c9a8d87edd9a",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 5,
+  "change_seq": 377,
+  "created_at": "2026-10-02T11:09:24.268206Z",
+  "updated_at": "2026-10-02T11:09:33.674078Z",
+  "deleted_at": "2026-10-02T11:09:33.610345Z",
+  "preset": "custom",
+  "status": "ended",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "daily",
+  "interval": 1,
+  "anchor_day": null,
+  "start_date": "2026-09-28",
+  "end_date": null,
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ }
+}
+# PASS TC-024 materialise tombstone -> 409 
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/occurrences/01a0fc4d-fbe9-7192-ae8d-ac756f0386c4
+> {"status": "skipped", "date": "2026-09-29", "amount_minor": 10000, "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "description": "QA", "memo": null, "counterparty": null, "transaction_id": null, "version": 1}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fc4e-3291-7189-b5f6-b69d302b7dec",
+ "current": {
+  "id": "01a0fc4d-fbe9-7192-ae8d-ac756f0386c4",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 2,
+  "change_seq": 373,
+  "created_at": "2026-10-02T11:09:24.328779Z",
+  "updated_at": "2026-10-02T11:09:33.658199Z",
+  "deleted_at": "2026-10-02T11:09:33.610345Z",
+  "recurring_rule_id": "01a0fc4d-f831-79b8-80f4-c9a8d87edd9a",
+  "ordinal": 2,
+  "is_payout": false,
+  "scheduled_date": "2026-09-29",
+  "date": "2026-09-29",
+  "status": "scheduled",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": null,
+  "auto_confirm_refusal": null
+ }
+}
+# PASS TC-024 occurrence write of deleted rule -> 409 
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules?filter[status]=eq:ended
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+# PASS TC-024 list filter status works, tombstones not listed 
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules?filter[kind]=eq:expense
+< 400
+{
+ "type": "http://saveme-backend.test/problems/filter-field-not-supported",
+ "title": "Filter field not supported",
+ "status": 400,
+ "detail": "This list cannot be filtered by that field.",
+ "code": "FILTER_FIELD_NOT_SUPPORTED",
+ "request_id": "01a0fc4e-3749-7052-a500-590030a382f2"
+}
+# PASS TC-024 unsupported filter refused 
+# unsupported filter -> 400 FILTER_FIELD_NOT_SUPPORTED

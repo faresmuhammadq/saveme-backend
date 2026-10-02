@@ -2,14 +2,16 @@
 
 namespace App\Modules\Shared\Domain\Money;
 
+use InvalidArgumentException;
 use OverflowException;
 
 /**
  * An amount of money: a signed integer count of minor units and its
  * currency (P-03 rule 1, ADR-0003 rules 1 and 5). Immutable. There is no
  * division, no rounding and no allocation: the ledger only adds, subtracts
- * and negates whole minor units (B7 adds allocation when it needs it).
- * Arithmetic across currencies throws CurrencyMismatch.
+ * and negates whole minor units, and allocates a total over equal parts
+ * (P-03 rule 4). There is no division and no rounding. Arithmetic across
+ * currencies throws CurrencyMismatch.
  */
 final readonly class Money
 {
@@ -52,6 +54,36 @@ final readonly class Money
     public function negate(): self
     {
         return new self(-$this->amountMinor, $this->currency);
+    }
+
+    /**
+     * Splits the amount into $parts equal shares that sum exactly to it
+     * (P-03 rule 4): every share is the whole-unit quotient and the
+     * remainder goes one minor unit at a time to the first shares. A negative
+     * amount splits symmetrically, its shares as negative as the positive's
+     * are positive.
+     *
+     * @return list<self>
+     *
+     * @throws InvalidArgumentException when $parts is below 1
+     */
+    public function allocate(int $parts): array
+    {
+        if ($parts < 1) {
+            throw new InvalidArgumentException('An amount is split into at least one part.');
+        }
+
+        $sign = $this->amountMinor < 0 ? -1 : 1;
+        $magnitude = abs($this->amountMinor);
+        $share = intdiv($magnitude, $parts);
+        $remainder = $magnitude % $parts;
+
+        $shares = [];
+        for ($index = 0; $index < $parts; $index++) {
+            $shares[] = new self($sign * ($share + ($index < $remainder ? 1 : 0)), $this->currency);
+        }
+
+        return $shares;
     }
 
     public function isZero(): bool

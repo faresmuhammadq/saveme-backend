@@ -45,6 +45,7 @@ final class FieldErrors
         'afterorequal' => ErrorCode::OutOfRange,
         'beforeorequal' => ErrorCode::OutOfRange,
         'calendardate' => ErrorCode::DateNotCalendarDate,
+        'uuidv7' => ErrorCode::InvalidId,
     ];
 
     /**

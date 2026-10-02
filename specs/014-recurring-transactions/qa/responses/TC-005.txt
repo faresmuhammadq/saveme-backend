@@ -1,0 +1,480 @@
+===== TC-005 2026-10-02T11:06:51.916826Z
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-a88c-7409-ad4e-a5ce64de759e
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/forbidden",
+ "title": "Forbidden",
+ "status": 403,
+ "detail": "Your role in this wallet does not allow this.",
+ "code": "FORBIDDEN",
+ "request_id": "01a0fc4b-a99f-71c0-a9fe-0d38ea644b08"
+}
+# PASS TC-005 viewer create -> 403 FORBIDDEN 
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-aca0-7545-824c-e8b30a64edbf
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fc4b-ae97-737e-b7c5-6f5ada241653"
+}
+# PASS TC-005 non-member -> 404 
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-b095-7cd4-8d2c-c094857730b1
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/email-not-verified",
+ "title": "Address not verified",
+ "status": 403,
+ "detail": "Verify your email address first. We can send the link again.",
+ "code": "EMAIL_NOT_VERIFIED",
+ "request_id": "01a0fc4b-b18d-724e-b727-4ac0856a7e19"
+}
+# PASS TC-005 unverified -> 403 EMAIL_NOT_VERIFIED 
+
+DELETE /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-46fa-714f-97c6-ef0e26b8c44e
+> {"version": 1}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/email-not-verified",
+ "title": "Address not verified",
+ "status": 403,
+ "detail": "Verify your email address first. We can send the link again.",
+ "code": "EMAIL_NOT_VERIFIED",
+ "request_id": "01a0fc4b-b3a4-7005-bcd9-37fc31c3dfd7"
+}
+# PASS TC-005 unverified delete -> EMAIL_NOT_VERIFIED 
+
+POST /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-46fa-714f-97c6-ef0e26b8c44e/materialise
+< 403
+{
+ "type": "http://saveme-backend.test/problems/email-not-verified",
+ "title": "Address not verified",
+ "status": 403,
+ "detail": "Verify your email address first. We can send the link again.",
+ "code": "EMAIL_NOT_VERIFIED",
+ "request_id": "01a0fc4b-b5e4-711c-a6e9-874e99d05d90"
+}
+# PASS TC-005 unverified materialise -> EMAIL_NOT_VERIFIED 
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/occurrences?filter[recurring_rule_id]=eq:01a0fc4b-46fa-714f-97c6-ef0e26b8c44e&limit=200
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fc4b-4a42-7354-b364-8bdcd60a6531",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 1,
+   "change_seq": 8,
+   "created_at": "2026-10-02T11:06:27.778857Z",
+   "updated_at": "2026-10-02T11:06:27.778857Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc4b-46fa-714f-97c6-ef0e26b8c44e",
+   "ordinal": 1,
+   "is_payout": false,
+   "scheduled_date": "2026-11-01",
+   "date": "2026-11-01",
+   "status": "scheduled",
+   "kind": "expense",
+   "amount_minor": 450000,
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "Rent",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/occurrences/01a0fc4b-4a42-7354-b364-8bdcd60a6531
+> {"status": "skipped", "date": "2026-11-01", "amount_minor": 450000, "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "description": "Rent", "memo": null, "counterparty": null, "transaction_id": null, "version": 1}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/email-not-verified",
+ "title": "Address not verified",
+ "status": 403,
+ "detail": "Verify your email address first. We can send the link again.",
+ "code": "EMAIL_NOT_VERIFIED",
+ "request_id": "01a0fc4b-bad8-7222-bb59-98800a6b252c"
+}
+# PASS TC-005 unverified occurrence write -> EMAIL_NOT_VERIFIED 
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fc4b-46fa-714f-97c6-ef0e26b8c44e",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 1,
+   "change_seq": 7,
+   "created_at": "2026-10-02T11:06:27.726589Z",
+   "updated_at": "2026-10-02T11:06:27.726589Z",
+   "deleted_at": null,
+   "preset": "custom",
+   "status": "active",
+   "kind": "expense",
+   "amount_minor": 450000,
+   "amount_basis": "per_occurrence",
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "Rent",
+   "memo": null,
+   "counterparty": null,
+   "auto_confirm": true,
+   "frequency": "monthly",
+   "interval": 1,
+   "anchor_day": 1,
+   "start_date": "2026-11-01",
+   "end_date": null,
+   "occurrence_count": null,
+   "payout_round": null,
+   "payout_category_id": null,
+   "timezone": "Africa/Cairo",
+   "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+  },
+  {
+   "id": "01a0fc4b-5695-7afa-bce8-b2a6160bb0f6",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 1,
+   "change_seq": 10,
+   "created_at": "2026-10-02T11:06:31.792841Z",
+   "updated_at": "2026-10-02T11:06:31.792841Z",
+   "deleted_at": null,
+   "preset": "custom",
+   "status": "active",
+   "kind": "expense",
+   "amount_minor": 10000,
+   "amount_basis": "per_occurrence",
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "auto_confirm": false,
+   "frequency": "daily",
+   "interval": 1,
+   "anchor_day": null,
+   "start_date": "2026-10-02",
+   "end_date": null,
+   "occurrence_count": null,
+   "payout_round": null,
+   "payout_category_id": null,
+   "timezone": "Africa/Cairo",
+   "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+  },
+  {
+   "id": "01a0fc4b-5caf-79d3-b27d-d91911a424f7",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 1,
+   "change_seq": 48,
+   "created_at": "2026-10-02T11:06:33.154944Z",
+   "updated_at": "2026-10-02T11:06:33.154944Z",
+   "deleted_at": null,
+   "preset": "custom",
+   "status": "active",
+   "kind": "expense",
+   "amount_minor": 10000,
+   "amount_basis": "per_occurrence",
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "auto_confirm": false,
+   "frequency": "weekly",
+   "interval": 2,
+   "anchor_day": null,
+   "start_date": "2026-10-02",
+   "end_date": null,
+   "occurrence_count": null,
+   "payout_round": null,
+   "payout_category_id": null,
+   "timezone": "Africa/Cairo",
+   "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+  },
+  {
+   "id": "01a0fc4b-6429-78c3-a5f2-4ee4813d56be",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 1,
+   "change_seq": 53,
+   "created_at": "2026-10-02T11:06:35.112302Z",
+   "updated_at": "2026-10-02T11:06:35.112302Z",
+   "deleted_at": null,
+   "preset": "custom",
+   "status": "active",
+   "kind": "expense",
+   "amount_minor": 10000,
+   "amount_basis": "per_occurrence",
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "auto_confirm": false,
+   "frequency": "monthly",
+   "interval": 1,
+   "anchor_day": 31,
+   "start_date": "2026-07-31",
+   "end_date": null,
+   "occurrence_count": null,
+   "payout_round": null,
+   "payout_category_id": null,
+   "timezone": "Africa/Cairo",
+   "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+  },
+  {
+   "id": "01a0fc4b-697d-733e-8a84-4a8c61cac5fd",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 1,
+   "change_seq": 59,
+   "created_at": "2026-10-02T11:06:36.745632Z",
+   "updated_at": "2026-10-02T11:06:36.745632Z",
+   "deleted_at": null,
+   "preset": "custom",
+   "status": "active",
+   "kind": "expense",
+   "amount_minor": 10000,
+   "amount_basis": "per_occurrence",
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "auto_confirm": false,
+   "frequency": "yearly",
+   "interval": 1,
+   "anchor_day": 29,
+   "start_date": "2024-02-29",
+   "end_date": null,
+   "occurrence_count": null,
+   "payout_round": null,
+   "payout_category_id": null,
+   "timezone": "Africa/Cairo",
+   "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+  },
+  {
+   "id": "01a0fc4b-7090-78ad-a9f3-121312a3efdf",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 1,
+   "change_seq": 62,
+   "created_at": "2026-10-02T11:06:38.392247Z",
+   "updated_at": "2026-10-02T11:06:38.392247Z",
+   "deleted_at": null,
+   "preset": "custom",
+   "status": "active",
+   "kind": "expense",
+   "amount_minor": 10000,
+   "amount_basis": "per_occurrence",
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "auto_confirm": false,
+   "frequency": "yearly",
+   "interval": 1,
+   "anchor_day": 15,
+   "start_date": "2026-03-15",
+   "end_date": null,
+   "occurrence_count": null,
+   "payout_round": null,
+   "payout_category_id": null,
+   "timezone": "Africa/Cairo",
+   "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+  },
+  {
+   "id": "01a0fc4b-7693-7b4a-a326-ec1dc13c202e",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 1,
+   "change_seq": 65,
+   "created_at": "2026-10-02T11:06:39.886219Z",
+   "updated_at": "2026-10-02T11:06:39.886219Z",
+   "deleted_at": null,
+   "preset": "custom",
+   "status": "active",
+   "kind": "expense",
+   "amount_minor": 10000,
+   "amount_basis": "per_occurrence",
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "auto_confirm": false,
+   "frequency": "monthly"
+# PASS TC-005 unverified read allowed 200 
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-46fa-714f-97c6-ef0e26b8c44e
+< 200
+{
+ "data": {
+  "id": "01a0fc4b-46fa-714f-97c6-ef0e26b8c44e",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 1,
+  "change_seq": 7,
+  "created_at": "2026-10-02T11:06:27.726589Z",
+  "updated_at": "2026-10-02T11:06:27.726589Z",
+  "deleted_at": null,
+  "preset": "custom",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 450000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "Rent",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": true,
+  "frequency": "monthly",
+  "interval": 1,
+  "anchor_day": 1,
+  "start_date": "2026-11-01",
+  "end_date": null,
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+# PASS TC-005 viewer read 200 
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-46fa-714f-97c6-ef0e26b8c44e
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fc4b-c20b-73a1-81c8-1f3568439100"
+}
+# PASS TC-005 non-member read 404 
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/occurrences/01a0fc4b-4a42-7354-b364-8bdcd60a6531
+> {"status": "skipped", "date": "2026-11-01", "amount_minor": 450000, "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "description": "Rent", "memo": null, "counterparty": null, "transaction_id": null, "version": 1}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/forbidden",
+ "title": "Forbidden",
+ "status": 403,
+ "detail": "Your role in this wallet does not allow this.",
+ "code": "FORBIDDEN",
+ "request_id": "01a0fc4b-c507-71e9-8f95-c94a377746fb"
+}
+# PASS TC-005 viewer occurrence write 403 
+
+POST /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-46fa-714f-97c6-ef0e26b8c44e/materialise
+< 403
+{
+ "type": "http://saveme-backend.test/problems/forbidden",
+ "title": "Forbidden",
+ "status": 403,
+ "detail": "Your role in this wallet does not allow this.",
+ "code": "FORBIDDEN",
+ "request_id": "01a0fc4b-c7fd-714b-aa3e-87a7c2d6f364"
+}
+# PASS TC-005 viewer materialise 403 
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/occurrences/01a0fc4b-ca1c-70e3-aa07-409b6007af9d
+> {"status": "scheduled", "date": "2026-11-01", "amount_minor": 450000, "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "description": "Rent", "memo": null, "counterparty": null, "transaction_id": null, "version": 1}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fc4b-cb7f-7305-a828-8ca27e099841"
+}
+# PASS TC-005 PUT unknown occurrence -> 404 
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/not-a-uuid
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/invalid-id",
+ "title": "Invalid identifier",
+ "status": 422,
+ "detail": "The identifier is not valid.",
+ "code": "INVALID_ID",
+ "request_id": "01a0fc4b-cef6-70d5-a698-a561b1f46a27"
+}
+# PASS TC-005 bad id -> 422 INVALID_ID 
+
+DELETE /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/occurrences/01a0fc4b-4a42-7354-b364-8bdcd60a6531
+< 405
+{
+ "type": "http://saveme-backend.test/problems/method-not-allowed",
+ "title": "Method not allowed",
+ "status": 405,
+ "detail": "This action is not available here.",
+ "code": "METHOD_NOT_ALLOWED",
+ "request_id": "01a0fc4b-d1ee-70f4-a248-83028f916fb1"
+}
+# PASS TC-005 DELETE occurrence -> 405 
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-46fa-714f-97c6-ef0e26b8c44e
+< 200
+{
+ "data": {
+  "id": "01a0fc4b-46fa-714f-97c6-ef0e26b8c44e",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 1,
+  "change_seq": 7,
+  "created_at": "2026-10-02T11:06:27.726589Z",
+  "updated_at": "2026-10-02T11:06:27.726589Z",
+  "deleted_at": null,
+  "preset": "custom",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 450000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "Rent",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": true,
+  "frequency": "monthly",
+  "interval": 1,
+  "anchor_day": 1,
+  "start_date": "2026-11-01",
+  "end_date": null,
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+# PASS TC-005 single read meta {} 

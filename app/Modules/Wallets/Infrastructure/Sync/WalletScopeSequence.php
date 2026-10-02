@@ -3,6 +3,7 @@
 namespace App\Modules\Wallets\Infrastructure\Sync;
 
 use App\Modules\Wallets\Domain\Ports\ScopeSequence;
+use App\Modules\Wallets\Domain\Recurring\Ports\StampBlock;
 use Illuminate\Support\Facades\DB;
 use RuntimeException;
 
@@ -12,7 +13,7 @@ use RuntimeException;
  * value twice; the application takes the lock first so the value order is
  * the commit order.
  */
-final class WalletScopeSequence implements ScopeSequence
+final class WalletScopeSequence implements ScopeSequence, StampBlock
 {
     public function nextFor(string $walletId): int
     {
@@ -23,5 +24,16 @@ final class WalletScopeSequence implements ScopeSequence
         }
 
         return (int) $row->change_seq;
+    }
+
+    public function reserve(string $walletId, int $count): int
+    {
+        $row = DB::selectOne('UPDATE wallets SET change_seq = change_seq + ? WHERE id = ? RETURNING change_seq', [$count, $walletId]);
+
+        if ($row === null) {
+            throw new RuntimeException('No wallet to count changes for.');
+        }
+
+        return (int) $row->change_seq - $count + 1;
     }
 }

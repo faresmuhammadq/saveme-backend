@@ -215,7 +215,7 @@ A money-movement event — what the user actually records.
 - **Persistence**: persisted
 - **Sync**: yes — wallet scope
 - **States**: `live` → `live (v+1)` on edit → `tombstoned` on delete → `live` again on an explicit undelete
-- **Referenced by**: Posting, Occurrence (which one it confirmed into), Report
+- **Referenced by**: Posting, Occurrence (which one it confirmed into; the transaction carries read-only `occurrence_id` and `recurring_rule_id`), Report
 - **Notes**:
   - Carries a calendar `date` (`YYYY-MM-DD`, no timezone), a positive `amount_minor` with its `currency`, an **optional** `description` (≤ 100 characters), an optional `memo` (≤ 1000), an optional **counterparty** (a free-text person name, for debts, ≤ 100), a `cleared` flag and `created_by` (never changes). `kind` is immutable.
   - A **transfer** is a Transaction whose two postings both reference wallets: money out of `wallet_id` into `counter_wallet_id`. It is one record, listed in both wallets and carried on both wallet feeds ([ADR-0015](adr/0015-transfers-on-two-wallet-feeds.md)).
@@ -244,21 +244,31 @@ A repeating money movement the user set up once — including the gam'eya (جم�
 - **Role**: aggregate root
 - **Persistence**: persisted
 - **Sync**: yes — wallet scope
-- **States**: `active` → `paused` → `active`; `active` | `paused` → `ended`
-- **Referenced by**: Occurrence
-- **Notes**: the rule stores the IANA timezone captured at creation, so its schedule does not shift when a member in another timezone views it (ADR-0011). جمعية and قسط are **presets of this rule**, not separate entities — creating `Gameya` or `Installment` entities would fragment the recurring engine.
+- **States**: `active` ⇄ `paused`; `active` | `paused` → `ended` (final); any → `tombstoned` (final, no restore)
+- **Referenced by**: Occurrence, Transaction (read-only `recurring_rule_id`)
+- **Notes**:
+  - The rule stores the IANA timezone captured from its author's profile at creation, so its schedule does not shift when a member in another timezone views it (ADR-0011). It never changes; "today" for the rule is the date in that timezone.
+  - Carries the template (`kind`, `amount_minor` with `amount_basis`, `currency`, `category_id` or `counter_wallet_id`, texts, `auto_confirm`), the schedule (`frequency`, `interval`, `anchor_day`, `start_date`, and at most one of `end_date` and `occurrence_count`) and, for the gam'eya preset, `payout_round` and `payout_category_id`. `created_by` is the author and never changes.
+  - جمعية and قسط are **presets of this rule** (`gameya`, `installment`; `custom` is any rule), not separate entities — creating `Gameya` or `Installment` entities would fragment the recurring engine. A preset constrains the shape of the rule; nothing is seeded.
+  - A recurring transfer rule lives in its source wallet's scope only; the transactions it produces ride both wallets' feeds like any transfer (ADR-0015).
 
 ### Occurrence
 
-One dated instance produced by a recurring rule, which the user confirms, skips or misses.
+One dated instance of a recurring rule, which a member confirms, skips or adjusts, or which the server confirms for an automatic rule.
 
 - **Context**: Wallets & Ledger
 - **Role**: child of Recurring Rule
-- **Persistence**: persisted — **materialised ahead of time**, not computed on read
+- **Persistence**: persisted — **materialised ahead of time by the server only** ([ADR-0018](adr/0018-occurrences-materialised-by-the-server.md)), not computed on read and never created by a client
 - **Sync**: yes — wallet scope
-- **States**: `scheduled` → `confirmed` (producing a Transaction); `scheduled` → `skipped`; `scheduled` → `due` → `missed`
-- **Referenced by**: Transaction (the one it produced)
-- **Notes**: materialised so the client can list and confirm upcoming items **offline**, and so per-occurrence state (paid, skipped) has somewhere to live — a gam'eya round needs exactly that.
+- **States**: `scheduled` → `confirmed` (producing one Transaction) | `skipped`; `skipped` → `scheduled` | `confirmed`; `confirmed` is final; any → `tombstoned`. **Due** (scheduled and dated on or before the rule's today) and **missed** (due while a later non-payout occurrence of the same rule is also due) are derived by readers and never stored.
+- **Referenced by**: Transaction (the one it produced, read-only `occurrence_id`)
+- **Notes**: materialised so the client can list and confirm upcoming items **offline**, and so per-occurrence state (confirmed, skipped, edited) has somewhere to live — a gam'eya round needs exactly that. An occurrence has no postings and never counts in a balance (P-05); only the Transaction it produces posts.
+  - **Occurrence key** — (`recurring_rule_id`, `scheduled_date`, `is_payout`); unique among a rule's occurrences, live or tombstoned. It is what makes materialising idempotent.
+  - **Materialise** — the server creating the occurrences of a rule's schedule up to its horizon (on a rule write, on the hourly job, on request); never done by a client.
+  - **Horizon** — how far ahead occurrences are materialised: through the rule's today + 35 days, and at least the next one.
+  - **Auto-confirm** — the server confirming a due occurrence of a rule with `auto_confirm: true`, as the rule's author, never before the day automatic confirmation took effect.
+  - **Payout** (gam'eya) — the one income occurrence (`is_payout: true`) of a gam'eya rule, on the payout round's date, worth the sum of the scheduled rounds.
+  - **Anchor day** — the day of month a monthly or yearly rule falls on, clamped to the month's last day; every date is computed from the rule's origin, never from the previous occurrence.
 
 ---
 

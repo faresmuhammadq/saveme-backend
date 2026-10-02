@@ -7,6 +7,8 @@ use App\Modules\Wallets\Domain\Transactions\TransactionKind;
 use App\Modules\Wallets\Domain\Transactions\TransactionRecord;
 use App\Modules\Wallets\Infrastructure\Models\Category;
 use App\Modules\Wallets\Infrastructure\Models\CategoryReference;
+use App\Modules\Wallets\Infrastructure\Models\Occurrence;
+use App\Modules\Wallets\Infrastructure\Models\RecurringRule;
 use App\Modules\Wallets\Infrastructure\Models\Transaction;
 use App\Modules\Wallets\Infrastructure\Models\Wallet;
 use App\Modules\Wallets\Infrastructure\Models\WalletMember;
@@ -23,7 +25,9 @@ final class EloquentTransactionRepository implements TransactionRepository
 
     public function exists(string $transactionId): bool
     {
-        return Transaction::query()->whereKey($transactionId)->exists();
+        return Transaction::query()->whereKey($transactionId)->exists()
+            || RecurringRule::query()->whereKey($transactionId)->exists()
+            || Occurrence::query()->whereKey($transactionId)->exists();
     }
 
     public function findForUpdate(string $transactionId): ?TransactionRecord
@@ -37,6 +41,8 @@ final class EloquentTransactionRepository implements TransactionRepository
             || Category::query()->whereKey($transactionId)->exists()
             || CategoryReference::query()->whereKey($transactionId)->exists()
             || WalletMember::query()->whereKey($transactionId)->exists()
+            || RecurringRule::query()->whereKey($transactionId)->exists()
+            || Occurrence::query()->whereKey($transactionId)->exists()
             || Transaction::query()
                 ->whereKey($transactionId)
                 ->where('wallet_id', '<>', $pathWalletId)
@@ -44,7 +50,7 @@ final class EloquentTransactionRepository implements TransactionRepository
                 ->exists();
     }
 
-    public function insert(string $transactionId, string $walletId, array $values, string $createdBy, int $changeSeq, ?int $counterChangeSeq): void
+    public function insert(string $transactionId, string $walletId, array $values, string $createdBy, int $changeSeq, ?int $counterChangeSeq, ?string $recurringRuleId = null, ?string $occurrenceId = null): void
     {
         Transaction::query()->forceCreate([
             'id' => $transactionId,
@@ -54,6 +60,8 @@ final class EloquentTransactionRepository implements TransactionRepository
             'version' => 1,
             'change_seq' => $changeSeq,
             'counter_change_seq' => $counterChangeSeq,
+            'recurring_rule_id' => $recurringRuleId,
+            'occurrence_id' => $occurrenceId,
         ]);
     }
 
@@ -183,7 +191,7 @@ final class EloquentTransactionRepository implements TransactionRepository
      * A record from a plain row: a page of 50 skips Eloquent's per-row
      * hydration and casting (SC-007).
      *
-     * @param  object{id: string, wallet_id: string, kind: string, date: string, amount_minor: int|string, currency: string, category_id: ?string, counter_wallet_id: ?string, description: ?string, memo: ?string, counterparty: ?string, cleared: bool|int|string, created_by: string, version: int|string, change_seq: int|string, counter_change_seq: int|string|null, created_at: string, updated_at: string, deleted_at: ?string}  $row
+     * @param  object{id: string, wallet_id: string, kind: string, date: string, amount_minor: int|string, currency: string, category_id: ?string, counter_wallet_id: ?string, description: ?string, memo: ?string, counterparty: ?string, cleared: bool|int|string, created_by: string, version: int|string, change_seq: int|string, counter_change_seq: int|string|null, created_at: string, updated_at: string, deleted_at: ?string, recurring_rule_id?: ?string, occurrence_id?: ?string}  $row
      */
     public static function rawRecord(object $row): TransactionRecord
     {
@@ -207,6 +215,8 @@ final class EloquentTransactionRepository implements TransactionRepository
             createdAt: new DateTimeImmutable($row->created_at),
             updatedAt: new DateTimeImmutable($row->updated_at),
             deletedAt: $row->deleted_at === null ? null : new DateTimeImmutable($row->deleted_at),
+            recurringRuleId: $row->recurring_rule_id ?? null,
+            occurrenceId: $row->occurrence_id ?? null,
         );
     }
 }

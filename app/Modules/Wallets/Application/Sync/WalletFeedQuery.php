@@ -6,6 +6,8 @@ use App\Modules\Identity\Application\Profiles\DisplayNames;
 use App\Modules\Wallets\Application\Authorization\WalletAuthorizer;
 use App\Modules\Wallets\Application\Dto\MemberView;
 use App\Modules\Wallets\Application\Dto\WalletView;
+use App\Modules\Wallets\Application\Recurring\Dto\OccurrenceView;
+use App\Modules\Wallets\Application\Recurring\Dto\RuleView;
 use App\Modules\Wallets\Application\Transactions\Dto\TransactionView;
 use App\Modules\Wallets\Domain\Membership\Permission;
 use App\Modules\Wallets\Domain\Ports\PostingTotals;
@@ -72,6 +74,14 @@ final class WalletFeedQuery
 
         foreach ($this->feed->transactionsChangedIn($walletId, $after, $limit + 1) as $entry) {
             $rows[] = new FeedRecord('transaction', $entry['position'], $this->presenter->transaction(new TransactionView($entry['transaction'])));
+        }
+
+        foreach ($this->feed->rulesChangedIn($walletId, $after, $limit + 1) as $rule) {
+            $rows[] = new FeedRecord('recurring_rule', $rule->changeSeq, $this->presenter->recurringRule(new RuleView($rule)));
+        }
+
+        foreach ($this->feed->occurrencesChangedIn($walletId, $after, $limit + 1) as $occurrence) {
+            $rows[] = new FeedRecord('occurrence', $occurrence->changeSeq, $this->presenter->occurrence(new OccurrenceView($occurrence)));
         }
 
         usort($rows, fn (FeedRecord $a, FeedRecord $b): int => $a->position <=> $b->position);

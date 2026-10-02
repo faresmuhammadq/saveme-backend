@@ -39,3 +39,10 @@ The brief predates decisions ratified since. These collide with it; the ratified
 
 - **Budgets join the user feed** (`GET /sync/user/changes`, user scope) and may join the batch type map. Stamp `change_seq` from `UserScopeCounter::next($userId)` (Identity's Application service): it increments `users.change_seq` under the person's row lock, so **take it last** in the write, after any category or wallet lock (lock order categories, wallets ascending, users ascending; ADR-0017 rule 5).
 - A budget is a person's category's referrer: report it through `CategoryUsage` so a used category is never deleted, and have the tombstone purge keep a category a budget refers to.
+
+## Inherited from B7 (spec 014)
+
+- **A confirmed occurrence is an ordinary transaction.** It is recorded through `TransactionService::recordForOccurrence`, announces `TransactionPosted` (`change: recorded`) like any other, and carries read-only `recurring_rule_id` and `occurrence_id`. A budget needs no recurring special case; it listens to the same events.
+- **Attribution follows `created_by`, which is the recurring rule's author** for every transaction a rule produces, whoever confirmed it or whether the server did. A budget that attributes a shared wallet's spending by `created_by` therefore counts a rule's transactions to its author (spec 014 A-23).
+- **Scheduled occurrences are not spending.** They have no postings and never enter a total; do not count `scheduled` occurrences in a budget's spent figure. A "planned" forecast, if wanted, is B13's.
+- Report **recurring rules and occurrences through `CategoryUsage`** (done, spec 014 `RecurringCategoryUsage`); a budget's own use is registered the same way beside it.

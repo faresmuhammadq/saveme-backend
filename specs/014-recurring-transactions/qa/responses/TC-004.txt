@@ -1,0 +1,211 @@
+===== TC-004 2026-10-02T11:06:44.088214Z
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-89f8-7e14-86c6-973f47a95347
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": "2027-01-01", "occurrence_count": 3, "payout_round": null, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc4b-8acf-7158-ad72-b0695a820755",
+ "errors": [
+  {
+   "pointer": "/occurrence_count",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+# PASS TC-004 refused: both end_date and count 
+# both end_date and count: 422 [["/occurrence_count", "INVALID_ENUM_VALUE"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-8cc9-7c00-889c-39ddc1296d96
+> {"preset": "custom", "status": "ended", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc4b-8e09-7282-bc30-07072e91b564",
+ "errors": [
+  {
+   "pointer": "/status",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+# PASS TC-004 refused: ended on create 
+# ended on create: 422 [["/status", "INVALID_ENUM_VALUE"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-90a6-7e1e-b5f1-57ec5f91834d
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 0, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc4b-9217-724a-bf3d-0d494d04ab07",
+ "errors": [
+  {
+   "pointer": "/amount_minor",
+   "code": "OUT_OF_RANGE",
+   "detail": "This value is too short, too long, or outside the allowed range."
+  }
+ ]
+}
+# PASS TC-004 refused: amount 0 
+# amount 0: 422 [["/amount_minor", "OUT_OF_RANGE"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-937a-7767-a72c-385224bcdac2
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "USD", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc4b-94f3-708d-943f-7ab39f614aff",
+ "errors": [
+  {
+   "pointer": "/currency",
+   "code": "CURRENCY_MISMATCH",
+   "detail": "The currency must match the wallet's. Cross-currency transactions are not supported."
+  }
+ ]
+}
+# PASS TC-004 refused: wrong currency 
+# wrong currency: 422 [["/currency", "CURRENCY_MISMATCH"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-977c-7ec4-906e-4cdf056dcc11
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 0, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc4b-98ad-7003-919a-737e34a1c21e",
+ "errors": [
+  {
+   "pointer": "/interval",
+   "code": "OUT_OF_RANGE",
+   "detail": "This value is too short, too long, or outside the allowed range."
+  }
+ ]
+}
+# PASS TC-004 refused: interval 0 
+# interval 0: 422 [["/interval", "OUT_OF_RANGE"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-9a20-7132-b8a7-b44a1ec6aa6f
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": null, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc4b-9b27-70fd-a027-dfcce3123ec9",
+ "errors": [
+  {
+   "pointer": "/anchor_day",
+   "code": "REQUIRED",
+   "detail": "This field is required."
+  }
+ ]
+}
+# PASS TC-004 refused: anchor null on monthly 
+# anchor null on monthly: 422 [["/anchor_day", "REQUIRED"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-9d88-7bb5-a681-ac579e3b2c57
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c344-7014-a053-5688a2879949", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc4b-9e8f-7350-9c0f-25c9469c0c8a",
+ "errors": [
+  {
+   "pointer": "/category_id",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+# PASS TC-004 refused: income category on expense 
+# income category on expense: 422 [["/category_id", "INVALID_ENUM_VALUE"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-a0aa-7a7b-8729-2394675236a1
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0, "timezone": "UTC"}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc4b-a1a7-70b1-942f-6528ce77f2c4",
+ "errors": [
+  {
+   "pointer": "/timezone",
+   "code": "UNKNOWN_FIELD",
+   "detail": "This field is not accepted here."
+  }
+ ]
+}
+# PASS TC-004 refused: unknown field timezone 
+# unknown field timezone: 422 [["/timezone", "UNKNOWN_FIELD"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-a2ac-7443-b5a4-44c3cd8762c0
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-02-30", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc4b-a3bb-70d4-8d38-9ac83cab1dce",
+ "errors": [
+  {
+   "pointer": "/start_date",
+   "code": "DATE_NOT_CALENDAR_DATE",
+   "detail": "Use a date in the form YYYY-MM-DD, with no time."
+  }
+ ]
+}
+# PASS TC-004 refused: bad date 
+# bad date: 422 [["/start_date", "DATE_NOT_CALENDAR_DATE"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4b-a52b-75ec-97e9-a491c2f38f35
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": 1, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc4b-a681-71b7-8f09-de2f43bf43b1",
+ "errors": [
+  {
+   "pointer": "/payout_round",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+# PASS TC-004 refused: payout on custom 
+# payout on custom: 422 [["/payout_round", "INVALID_ENUM_VALUE"]]

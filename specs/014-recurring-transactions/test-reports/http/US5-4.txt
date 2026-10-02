@@ -1,0 +1,152 @@
+===== US5-4 2026-10-02T11:20:42.628729Z
+
+GET /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/recurring-rules/01a0fc55-f586-7bf4-902e-91d2a04628ed
+< 200
+{
+ "data": {
+  "id": "01a0fc55-f586-7bf4-902e-91d2a04628ed",
+  "wallet_id": "01a0fc55-daaf-7350-92d8-28f5907b795f",
+  "version": 1,
+  "change_seq": 7,
+  "created_at": "2026-10-02T11:18:07.593283Z",
+  "updated_at": "2026-10-02T11:18:07.593283Z",
+  "deleted_at": null,
+  "preset": "custom",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 450000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "Rent",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": true,
+  "frequency": "monthly",
+  "interval": 1,
+  "anchor_day": 1,
+  "start_date": "2026-11-01",
+  "end_date": null,
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/recurring-rules/01a0fc55-f586-7bf4-902e-91d2a04628ed
+< 200
+{
+ "data": {
+  "id": "01a0fc55-f586-7bf4-902e-91d2a04628ed",
+  "wallet_id": "01a0fc55-daaf-7350-92d8-28f5907b795f",
+  "version": 1,
+  "change_seq": 7,
+  "created_at": "2026-10-02T11:18:07.593283Z",
+  "updated_at": "2026-10-02T11:18:07.593283Z",
+  "deleted_at": null,
+  "preset": "custom",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 450000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "Rent",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": true,
+  "frequency": "monthly",
+  "interval": 1,
+  "anchor_day": 1,
+  "start_date": "2026-11-01",
+  "end_date": null,
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/occurrences?filter[recurring_rule_id]=eq:01a0fc55-f586-7bf4-902e-91d2a04628ed&limit=200
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fc55-f817-71b5-8b37-d56eb494f0cc",
+   "wallet_id": "01a0fc55-daaf-7350-92d8-28f5907b795f",
+   "version": 1,
+   "change_seq": 8,
+   "created_at": "2026-10-02T11:18:07.639302Z",
+   "updated_at": "2026-10-02T11:18:07.639302Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc55-f586-7bf4-902e-91d2a04628ed",
+   "ordinal": 1,
+   "is_payout": false,
+   "scheduled_date": "2026-11-01",
+   "date": "2026-11-01",
+   "status": "scheduled",
+   "kind": "expense",
+   "amount_minor": 450000,
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "Rent",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+GET /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/occurrences?filter[recurring_rule_id]=eq:01a0fc55-f586-7bf4-902e-91d2a04628ed&limit=200
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fc55-f817-71b5-8b37-d56eb494f0cc",
+   "wallet_id": "01a0fc55-daaf-7350-92d8-28f5907b795f",
+   "version": 1,
+   "change_seq": 8,
+   "created_at": "2026-10-02T11:18:07.639302Z",
+   "updated_at": "2026-10-02T11:18:07.639302Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc55-f586-7bf4-902e-91d2a04628ed",
+   "ordinal": 1,
+   "is_payout": false,
+   "scheduled_date": "2026-11-01",
+   "date": "2026-11-01",
+   "status": "scheduled",
+   "kind": "expense",
+   "amount_minor": 450000,
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "Rent",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+# PASS E2E Cairo and Dubai members see same rule, dates, timezone 

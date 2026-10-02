@@ -5,6 +5,8 @@ namespace App\Modules\Wallets\Infrastructure\Repositories;
 use App\Modules\Wallets\Domain\Ports\SyncFeedReader;
 use App\Modules\Wallets\Infrastructure\Models\Category;
 use App\Modules\Wallets\Infrastructure\Models\CategoryReference;
+use App\Modules\Wallets\Infrastructure\Models\Occurrence;
+use App\Modules\Wallets\Infrastructure\Models\RecurringRule;
 use App\Modules\Wallets\Infrastructure\Models\Wallet;
 use App\Modules\Wallets\Infrastructure\Models\WalletMember;
 use Illuminate\Support\Facades\DB;
@@ -57,6 +59,30 @@ final class EloquentSyncFeedReader implements SyncFeedReader
             'position' => (int) $row['feed_position'],
             'transaction' => EloquentTransactionRepository::rawRecord((object) $row), // @phpstan-ignore argument.type
         ], $rows));
+    }
+
+    public function rulesChangedIn(string $walletId, int $after, int $limit): array
+    {
+        return array_values(RecurringRule::query()
+            ->where('wallet_id', $walletId)
+            ->where('change_seq', '>', $after)
+            ->orderBy('change_seq')
+            ->limit($limit)
+            ->get()
+            ->map(fn (RecurringRule $rule) => $rule->toRecord())
+            ->all());
+    }
+
+    public function occurrencesChangedIn(string $walletId, int $after, int $limit): array
+    {
+        return array_values(Occurrence::query()
+            ->where('wallet_id', $walletId)
+            ->where('change_seq', '>', $after)
+            ->orderBy('change_seq')
+            ->limit($limit)
+            ->get()
+            ->map(fn (Occurrence $occurrence) => $occurrence->toRecord())
+            ->all());
     }
 
     public function categoriesChangedFor(string $userId, int $after, int $limit): array

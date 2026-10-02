@@ -24,6 +24,16 @@ interface TombstoneStore
     /**
      * @return list<array{id: string, wallet_id: string}>
      */
+    public function nextExpiredOccurrences(DateTimeImmutable $before, string $afterId, int $limit): array;
+
+    /**
+     * @return list<array{id: string, wallet_id: string}>
+     */
+    public function nextExpiredRules(DateTimeImmutable $before, string $afterId, int $limit): array;
+
+    /**
+     * @return list<array{id: string, wallet_id: string}>
+     */
     public function nextExpiredReferences(DateTimeImmutable $before, string $afterId, int $limit): array;
 
     /**
@@ -64,6 +74,24 @@ interface TombstoneStore
     public function deleteTransactions(array $ids, DateTimeImmutable $before): array;
 
     /**
+     * Removes the occurrences still tombstoned past the cut that no
+     * transaction refers to (spec 014, FR-025).
+     *
+     * @param  list<string>  $ids
+     * @return list<array{wallet_id: string, change_seq: int}>
+     */
+    public function deleteOccurrences(array $ids, DateTimeImmutable $before): array;
+
+    /**
+     * Removes the recurring rules still tombstoned past the cut that no
+     * occurrence, live or tombstoned, and no transaction refers to.
+     *
+     * @param  list<string>  $ids
+     * @return list<array{wallet_id: string, change_seq: int}>
+     */
+    public function deleteRules(array $ids, DateTimeImmutable $before): array;
+
+    /**
      * @param  list<string>  $ids
      * @return list<array{wallet_id: string, change_seq: int}>
      */
@@ -77,7 +105,7 @@ interface TombstoneStore
 
     /**
      * Removes the categories still tombstoned past the cut that no transaction,
-     * posting or category reference refers to.
+     * posting, category reference, recurring rule or occurrence refers to.
      *
      * @param  list<string>  $ids
      * @return list<array{user_id: string, change_seq: int}>
@@ -86,7 +114,8 @@ interface TombstoneStore
 
     /**
      * Removes the wallets still tombstoned past the cut that no transaction,
-     * posting, category reference or membership refers to.
+     * posting, category reference, membership, recurring rule or occurrence
+     * refers to.
      *
      * @param  list<string>  $ids
      */

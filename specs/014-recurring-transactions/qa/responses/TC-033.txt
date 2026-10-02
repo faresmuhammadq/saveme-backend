@@ -1,0 +1,498 @@
+===== TC-033 2026-10-02T11:10:59.828529Z
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4f-70f4-79c0-b60a-652422352bf2
+> {"preset": "custom", "status": "active", "kind": "transfer", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": null, "counter_wallet_id": "01a0fc49-d22f-7e51-bc0f-cd870be1a393", "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/forbidden",
+ "title": "Forbidden",
+ "status": 403,
+ "detail": "Your role in this wallet does not allow this.",
+ "code": "FORBIDDEN",
+ "request_id": "01a0fc4f-71c3-7373-9c79-845923ce8c7a"
+}
+# PASS TC-033 transfer to wallet where writer is only viewer -> 403 FORBIDDEN 
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4f-7624-70d2-89a9-4652768e8259
+> {"preset": "custom", "status": "active", "kind": "transfer", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": null, "counter_wallet_id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d", "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc4f-77b4-7208-8126-f707cae9d63b",
+ "errors": [
+  {
+   "pointer": "/counter_wallet_id",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+# PASS TC-033 transfer to wallet writer not member of -> refused (B6 code) 
+# B->W2 non-member destination: 422 VALIDATION_FAILED [{'pointer': '/counter_wallet_id', 'code': 'INVALID_ENUM_VALUE', 'detail': 'This value is not one of the allowed options.'}]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4f-7b2d-7090-8956-4a2c626b5a8a
+> {"preset": "custom", "status": "active", "kind": "transfer", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": null, "counter_wallet_id": "01a0fc49-d59a-75b2-8eae-212106acc6bd", "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc4f-7d4d-72eb-a5b4-ffc9a584d8c0",
+ "errors": [
+  {
+   "pointer": "/counter_wallet_id",
+   "code": "CURRENCY_MISMATCH",
+   "detail": "The currency must match the wallet's. Cross-currency transactions are not supported."
+  }
+ ]
+}
+# PASS TC-033 transfer to USD wallet -> CURRENCY_MISMATCH /counter_wallet_id 
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4f-7f63-70af-bd40-4f2ff1c76fa5
+> {"preset": "custom", "status": "active", "kind": "transfer", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d", "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc4f-8288-7100-ad70-95d0973cf496",
+ "errors": [
+  {
+   "pointer": "/category_id",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+# PASS TC-033 transfer with category refused 
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc4f-8463-710e-9dcb-aebf6db03faa
+> {"preset": "custom", "status": "active", "kind": "transfer", "amount_minor": 300, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": null, "counter_wallet_id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d", "description": "QA", "memo": null, "counterparty": null, "auto_confirm": true, "frequency": "daily", "interval": 1, "anchor_day": null, "start_date": "2026-10-02", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fc4f-8463-710e-9dcb-aebf6db03faa",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 1,
+  "change_seq": 513,
+  "created_at": "2026-10-02T11:11:05.906279Z",
+  "updated_at": "2026-10-02T11:11:05.906279Z",
+  "deleted_at": null,
+  "preset": "custom",
+  "status": "active",
+  "kind": "transfer",
+  "amount_minor": 300,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": null,
+  "counter_wallet_id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d",
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": true,
+  "frequency": "daily",
+  "interval": 1,
+  "anchor_day": null,
+  "start_date": "2026-10-02",
+  "end_date": null,
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+# PASS TC-033 transfer rule with T-02 in destination -> 201 
+
+GET /wallets/01a0fc49-cea2-79ef-adaf-5fd583d7e74d
+< 200
+{
+ "data": {
+  "id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d",
+  "wallet_id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T11:04:51.382627Z",
+  "updated_at": "2026-10-02T11:04:51.382627Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "QA014 W2 dest",
+  "currency": "EGP",
+  "opening_balance_minor": 100000,
+  "balance_minor": 100000,
+  "icon": "wallet",
+  "color": "#112233",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73
+< 200
+{
+ "data": {
+  "id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 1,
+  "change_seq": 550,
+  "created_at": "2026-10-02T11:04:50.490514Z",
+  "updated_at": "2026-10-02T11:04:50.490514Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "QA014 W1",
+  "currency": "EGP",
+  "opening_balance_minor": 100000,
+  "balance_minor": -46900,
+  "icon": "wallet",
+  "color": "#112233",
+  "archived_at": null,
+  "currency_locked": true,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+$ dev wallets:materialise-occurrences
+Processed 16 rules: 0 occurrences materialised, 1 confirmed, 0 refused, 0 failed.
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/occurrences?filter[recurring_rule_id]=eq:01a0fc4f-8463-710e-9dcb-aebf6db03faa&limit=200
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fc4f-88d2-709b-aa16-2de986c3f77b",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 2,
+   "change_seq": 551,
+   "created_at": "2026-10-02T11:11:05.938201Z",
+   "updated_at": "2026-10-02T11:11:10.514292Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc4f-8463-710e-9dcb-aebf6db03faa",
+   "ordinal": 1,
+   "is_payout": false,
+   "scheduled_date": "2026-10-02",
+   "date": "2026-10-02",
+   "status": "confirmed",
+   "kind": "transfer",
+   "amount_minor": 300,
+   "currency": "EGP",
+   "category_id": null,
+   "counter_wallet_id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d",
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": "01a0fc4f-9aa9-7041-81e7-e6af540644d6",
+   "auto_confirm_refusal": null
+  },
+  {
+   "id": "01a0fc4f-88d2-709b-aa16-2de9878bf40d",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 1,
+   "change_seq": 515,
+   "created_at": "2026-10-02T11:11:05.938201Z",
+   "updated_at": "2026-10-02T11:11:05.938201Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc4f-8463-710e-9dcb-aebf6db03faa",
+   "ordinal": 2,
+   "is_payout": false,
+   "scheduled_date": "2026-10-03",
+   "date": "2026-10-03",
+   "status": "scheduled",
+   "kind": "transfer",
+   "amount_minor": 300,
+   "currency": "EGP",
+   "category_id": null,
+   "counter_wallet_id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d",
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  },
+  {
+   "id": "01a0fc4f-88d2-709b-aa16-2de987e85870",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 1,
+   "change_seq": 516,
+   "created_at": "2026-10-02T11:11:05.938201Z",
+   "updated_at": "2026-10-02T11:11:05.938201Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc4f-8463-710e-9dcb-aebf6db03faa",
+   "ordinal": 3,
+   "is_payout": false,
+   "scheduled_date": "2026-10-04",
+   "date": "2026-10-04",
+   "status": "scheduled",
+   "kind": "transfer",
+   "amount_minor": 300,
+   "currency": "EGP",
+   "category_id": null,
+   "counter_wallet_id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d",
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  },
+  {
+   "id": "01a0fc4f-88d2-709b-aa16-2de988218bbf",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 1,
+   "change_seq": 517,
+   "created_at": "2026-10-02T11:11:05.938201Z",
+   "updated_at": "2026-10-02T11:11:05.938201Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc4f-8463-710e-9dcb-aebf6db03faa",
+   "ordinal": 4,
+   "is_payout": false,
+   "scheduled_date": "2026-10-05",
+   "date": "2026-10-05",
+   "status": "scheduled",
+   "kind": "transfer",
+   "amount_minor": 300,
+   "currency": "EGP",
+   "category_id": null,
+   "counter_wallet_id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d",
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  },
+  {
+   "id": "01a0fc4f-88d3-72b8-a78a-02a63186b99f",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 1,
+   "change_seq": 518,
+   "created_at": "2026-10-02T11:11:05.938201Z",
+   "updated_at": "2026-10-02T11:11:05.938201Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc4f-8463-710e-9dcb-aebf6db03faa",
+   "ordinal": 5,
+   "is_payout": false,
+   "scheduled_date": "2026-10-06",
+   "date": "2026-10-06",
+   "status": "scheduled",
+   "kind": "transfer",
+   "amount_minor": 300,
+   "currency": "EGP",
+   "category_id": null,
+   "counter_wallet_id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d",
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  },
+  {
+   "id": "01a0fc4f-88d3-72b8-a78a-02a6319443cc",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 1,
+   "change_seq": 519,
+   "created_at": "2026-10-02T11:11:05.938201Z",
+   "updated_at": "2026-10-02T11:11:05.938201Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc4f-8463-710e-9dcb-aebf6db03faa",
+   "ordinal": 6,
+   "is_payout": false,
+   "scheduled_date": "2026-10-07",
+   "date": "2026-10-07",
+   "status": "scheduled",
+   "kind": "transfer",
+   "amount_minor": 300,
+   "currency": "EGP",
+   "category_id": null,
+   "counter_wallet_id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d",
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  },
+  {
+   "id": "01a0fc4f-88d3-72b8-a78a-02a631d02cc5",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 1,
+   "change_seq": 520,
+   "created_at": "2026-10-02T11:11:05.938201Z",
+   "updated_at": "2026-10-02T11:11:05.938201Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc4f-8463-710e-9dcb-aebf6db03faa",
+   "ordinal": 7,
+   "is_payout": false,
+   "scheduled_date": "2026-10-08",
+   "date": "2026-10-08",
+   "status": "scheduled",
+   "kind": "transfer",
+   "amount_minor": 300,
+   "currency": "EGP",
+   "category_id": null,
+   "counter_wallet_id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d",
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  },
+  {
+   "id": "01a0fc4f-88d3-72b8-a78a-02a63204538e",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 1,
+   "change_seq": 521,
+   "created_at": "2026-10-02T11:11:05.938201Z",
+   "updated_at": "2026-10-02T11:11:05.938201Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc4f-8463-710e-9dcb-aebf6db03faa",
+   "ordinal": 8,
+   "is_payout": false,
+   "scheduled_date": "2026-10-09",
+   "date": "2026-10-09",
+   "status": "scheduled",
+   "kind": "transfer",
+   "amount_minor": 300,
+   "currency": "EGP",
+   "category_id": null,
+   "counter_wallet_id": "01a0fc49-cea2-79ef-adaf-5fd583
+
+GET /wallets/01a0fc49-cea2-79ef-adaf-5fd583d7e74d
+< 200
+{
+ "data": {
+  "id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d",
+  "wallet_id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d",
+  "version": 1,
+  "change_seq": 5,
+  "created_at": "2026-10-02T11:04:51.382627Z",
+  "updated_at": "2026-10-02T11:04:51.382627Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "QA014 W2 dest",
+  "currency": "EGP",
+  "opening_balance_minor": 100000,
+  "balance_minor": 100300,
+  "icon": "wallet",
+  "color": "#112233",
+  "archived_at": null,
+  "currency_locked": true,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73
+< 200
+{
+ "data": {
+  "id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 1,
+  "change_seq": 554,
+  "created_at": "2026-10-02T11:04:50.490514Z",
+  "updated_at": "2026-10-02T11:04:50.490514Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "QA014 W1",
+  "currency": "EGP",
+  "opening_balance_minor": 100000,
+  "balance_minor": -47200,
+  "icon": "wallet",
+  "color": "#112233",
+  "archived_at": null,
+  "currency_locked": true,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73
+< 200
+{
+ "data": {
+  "id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 1,
+  "change_seq": 554,
+  "created_at": "2026-10-02T11:04:50.490514Z",
+  "updated_at": "2026-10-02T11:04:50.490514Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "QA014 W1",
+  "currency": "EGP",
+  "opening_balance_minor": 100000,
+  "balance_minor": -47200,
+  "icon": "wallet",
+  "color": "#112233",
+  "archived_at": null,
+  "currency_locked": true,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fc49-cea2-79ef-adaf-5fd583d7e74d
+< 200
+{
+ "data": {
+  "id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d",
+  "wallet_id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d",
+  "version": 1,
+  "change_seq": 5,
+  "created_at": "2026-10-02T11:04:51.382627Z",
+  "updated_at": "2026-10-02T11:04:51.382627Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "QA014 W2 dest",
+  "currency": "EGP",
+  "opening_balance_minor": 100000,
+  "balance_minor": 100300,
+  "icon": "wallet",
+  "color": "#112233",
+  "archived_at": null,
+  "currency_locked": true,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+# PASS TC-033 auto-confirmed transfer moved both wallets 
+
+GET /wallets/01a0fc49-cea2-79ef-adaf-5fd583d7e74d/recurring-rules
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+# PASS TC-033 transfer rule not listed under destination 
+
+GET /wallets/01a0fc49-cea2-79ef-adaf-5fd583d7e74d/recurring-rules/01a0fc4f-8463-710e-9dcb-aebf6db03faa
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fc4f-a7aa-7155-a81a-c2622f292599"
+}
+# PASS TC-033 transfer rule via destination path -> 404 

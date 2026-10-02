@@ -1,0 +1,99 @@
+===== US4-2 2026-10-02T11:20:23.418667Z
+
+PUT /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/recurring-rules/01a0fc58-0a7a-7572-8b80-1cafe647cd45
+> {"preset": "installment", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": 12, "payout_round": null, "payout_category_id": null, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fc58-0a7a-7572-8b80-1cafe647cd45",
+  "wallet_id": "01a0fc55-daaf-7350-92d8-28f5907b795f",
+  "version": 1,
+  "change_seq": 414,
+  "created_at": "2026-10-02T11:20:24.130168Z",
+  "updated_at": "2026-10-02T11:20:24.130168Z",
+  "deleted_at": null,
+  "preset": "installment",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "monthly",
+  "interval": 1,
+  "anchor_day": 1,
+  "start_date": "2026-11-01",
+  "end_date": null,
+  "occurrence_count": 12,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+# PASS E2E installment expense ok 
+
+PUT /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/recurring-rules/01a0fc58-0d8f-7919-8a8a-fda1629b2c59
+> {"preset": "installment", "status": "active", "kind": "transfer", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": null, "counter_wallet_id": "01a0fc55-f380-7f02-9c7a-d1ca826de3b1", "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": 6, "payout_round": null, "payout_category_id": null, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fc58-0d8f-7919-8a8a-fda1629b2c59",
+  "wallet_id": "01a0fc55-daaf-7350-92d8-28f5907b795f",
+  "version": 1,
+  "change_seq": 417,
+  "created_at": "2026-10-02T11:20:24.841407Z",
+  "updated_at": "2026-10-02T11:20:24.841407Z",
+  "deleted_at": null,
+  "preset": "installment",
+  "status": "active",
+  "kind": "transfer",
+  "amount_minor": 10000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": null,
+  "counter_wallet_id": "01a0fc55-f380-7f02-9c7a-d1ca826de3b1",
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "monthly",
+  "interval": 1,
+  "anchor_day": 1,
+  "start_date": "2026-11-01",
+  "end_date": null,
+  "occurrence_count": 6,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+# PASS E2E installment transfer ok 
+
+PUT /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/recurring-rules/01a0fc58-1049-714c-802e-3d5ba853183e
+> {"preset": "installment", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": 121, "payout_round": null, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc58-1131-7105-8e5e-51e873bb79e5",
+ "errors": [
+  {
+   "pointer": "/occurrence_count",
+   "code": "OUT_OF_RANGE",
+   "detail": "This value is too short, too long, or outside the allowed range."
+  }
+ ]
+}
+# PASS E2E count 121 refused 

@@ -8,6 +8,8 @@ use App\Modules\Wallets\Application\Transactions\Dto\TransactionView;
  * A Transaction on the wire (spec 012, section 5): the syncable envelope, the
  * wallet scope key (the source, for a transfer), and the writable members.
  * Never the postings and never `counter_change_seq` (P-04 rule 6, ADR-0015).
+ * `recurring_rule_id` and `occurrence_id` are the read-only links of a
+ * transaction an occurrence produced, null otherwise (spec 014, FR-024).
  */
 final class TransactionResource
 {
@@ -37,6 +39,8 @@ final class TransactionResource
             'counterparty' => $transaction->counterparty,
             'cleared' => $transaction->cleared,
             'created_by' => $transaction->createdBy,
+            'recurring_rule_id' => $transaction->recurringRuleId,
+            'occurrence_id' => $transaction->occurrenceId,
         ];
     }
 }

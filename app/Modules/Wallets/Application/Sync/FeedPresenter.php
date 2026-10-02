@@ -5,6 +5,8 @@ namespace App\Modules\Wallets\Application\Sync;
 use App\Modules\Wallets\Application\Categories\Dto\CategoryView;
 use App\Modules\Wallets\Application\Dto\MemberView;
 use App\Modules\Wallets\Application\Dto\WalletView;
+use App\Modules\Wallets\Application\Recurring\Dto\OccurrenceView;
+use App\Modules\Wallets\Application\Recurring\Dto\RuleView;
 use App\Modules\Wallets\Application\Transactions\Dto\TransactionView;
 use App\Modules\Wallets\Domain\Categories\CategoryReferenceRecord;
 
@@ -39,4 +41,14 @@ interface FeedPresenter
      * @return array<string, mixed>
      */
     public function category(CategoryView $view): array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function recurringRule(RuleView $view): array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function occurrence(OccurrenceView $view): array;
 }

@@ -17,7 +17,7 @@ info:
     The conventions every endpoint obeys are documented in `docs/api-conventions.md`.
     A feature adds one file under `paths/` and references the shared components
     rather than restating them.
-  version: v1.6
+  version: v1.7
   contact:
     name: Backend maintainers
   license:
@@ -150,6 +150,16 @@ paths:
     $ref: './paths/transactions.yaml#/~1wallets~1{id}~1transactions'
   /wallets/{id}/transactions/{tid}:
     $ref: './paths/transactions.yaml#/~1wallets~1{id}~1transactions~1{tid}'
+  /wallets/{id}/recurring-rules:
+    $ref: './paths/recurring.yaml#/~1wallets~1{id}~1recurring-rules'
+  /wallets/{id}/recurring-rules/{rid}:
+    $ref: './paths/recurring.yaml#/~1wallets~1{id}~1recurring-rules~1{rid}'
+  /wallets/{id}/recurring-rules/{rid}/materialise:
+    $ref: './paths/recurring.yaml#/~1wallets~1{id}~1recurring-rules~1{rid}~1materialise'
+  /wallets/{id}/occurrences:
+    $ref: './paths/recurring.yaml#/~1wallets~1{id}~1occurrences'
+  /wallets/{id}/occurrences/{oid}:
+    $ref: './paths/recurring.yaml#/~1wallets~1{id}~1occurrences~1{oid}'
   /sync/user/changes:
     $ref: './paths/sync.yaml#/~1sync~1user~1changes'
   /sync/wallets/{id}/changes:

@@ -1,0 +1,99 @@
+===== TC-091 2026-10-02T11:29:02.562524Z
+
+GET /wallets/01a0fc50-88a9-7e5e-8be6-596c3aaa0d53/recurring-rules
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fc50-8bf7-78fc-9eb9-ca261d28ca80",
+   "wallet_id": "01a0fc50-88a9-7e5e-8be6-596c3aaa0d53",
+   "version": 2,
+   "change_seq": 45,
+   "created_at": "2026-10-02T11:12:13.104493Z",
+   "updated_at": "2026-10-02T11:12:20.288185Z",
+   "deleted_at": null,
+   "preset": "custom",
+   "status": "paused",
+   "kind": "expense",
+   "amount_minor": 333,
+   "amount_basis": "per_occurrence",
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "auto_confirm": true,
+   "frequency": "daily",
+   "interval": 1,
+   "anchor_day": null,
+   "start_date": "2026-10-02",
+   "end_date": null,
+   "occurrence_count": null,
+   "payout_round": null,
+   "payout_category_id": null,
+   "timezone": "Africa/Cairo",
+   "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+GET /wallets/01a0fc50-88a9-7e5e-8be6-596c3aaa0d53
+< 200
+{
+ "data": {
+  "id": "01a0fc50-88a9-7e5e-8be6-596c3aaa0d53",
+  "wallet_id": "01a0fc50-88a9-7e5e-8be6-596c3aaa0d53",
+  "version": 2,
+  "change_seq": 46,
+  "created_at": "2026-10-02T11:12:12.189009Z",
+  "updated_at": "2026-10-02T11:12:13.751954Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "QA014 W6 cur",
+  "currency": "USD",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#112233",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+DELETE /wallets/01a0fc50-88a9-7e5e-8be6-596c3aaa0d53
+> {"version": 2}
+< 200
+{
+ "data": {
+  "id": "01a0fc50-88a9-7e5e-8be6-596c3aaa0d53",
+  "wallet_id": "01a0fc50-88a9-7e5e-8be6-596c3aaa0d53",
+  "version": 3,
+  "change_seq": 85,
+  "created_at": "2026-10-02T11:12:12.189009Z",
+  "updated_at": "2026-10-02T11:29:05.544849Z",
+  "deleted_at": "2026-10-02T11:29:05.018872Z",
+  "type": "cash",
+  "name": "QA014 W6 cur",
+  "currency": "USD",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#112233",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+$ dev tinker: echo DB::table('recurring_rules')->where('wallet_id','01a0fc50-88a9-7e5e-8be6-596c3aaa0d53')->whereNull('deleted_at')->count().'|'.DB::table('occurrences')->where('wallet_id','01a0fc50-88a9-7e5e-8be6-596c3aaa0d53')->whereNull('deleted_at')->count().'|'.DB::table('recurring_rules')->where('wallet_id','01a0fc50-88a9-7e5e-8be6-596c3aaa0d53')->count();
+0|0|1
+# PASS TC-091 wallet deletion tombstones its rules and occurrences 

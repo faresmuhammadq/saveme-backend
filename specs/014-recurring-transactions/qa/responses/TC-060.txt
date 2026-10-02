@@ -1,0 +1,1706 @@
+===== TC-060 2026-10-02T11:13:48.530544Z
+
+PUT /wallets/01a0fc52-03f2-7a77-9678-6da7fd98d5ef
+> {"type": "cash", "name": "QA014 W7 feed", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#112233"}
+< 201
+{
+ "data": {
+  "id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+  "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T11:13:49.232310Z",
+  "updated_at": "2026-10-02T11:13:49.232310Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "QA014 W7 feed",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#112233",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+GET /sync/wallets/01a0fc52-03f2-7a77-9678-6da7fd98d5ef/changes
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fc52-06d3-7110-9515-30abd8318a46",
+    "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T11:13:49.268497Z",
+    "updated_at": "2026-10-02T11:13:49.268497Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e",
+    "display_name": null,
+    "role": "owner"
+   }
+  },
+  {
+   "type": "wallet",
+   "record": {
+    "id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T11:13:49.232310Z",
+    "updated_at": "2026-10-02T11:13:49.232310Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA014 W7 feed",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#112233",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmM1Mi0wM2YyLTdhNzctOTY3OC02ZGE3ZmQ5OGQ1ZWYiLCJyIjoiMDFhMGZjNDktMjE3OC03MGJhLWJkZTAtMWMxMWMyYjU3ZTFlIiwicCI6M30Uu4Kwosm903UBTqpgArJD"
+ }
+}
+# feed meta keys: ['next_cursor', 'has_more', 'limit', 'sync_cursor'] row keys: ['type', 'record']
+
+PUT /wallets/01a0fc52-03f2-7a77-9678-6da7fd98d5ef/recurring-rules/01a0fc52-0a54-7e94-8b8a-c6b4de633741
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "daily", "interval": 1, "anchor_day": null, "start_date": "2026-10-02", "end_date": "2026-10-04", "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+  "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T11:13:50.876233Z",
+  "updated_at": "2026-10-02T11:13:50.876233Z",
+  "deleted_at": null,
+  "preset": "custom",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "daily",
+  "interval": 1,
+  "anchor_day": null,
+  "start_date": "2026-10-02",
+  "end_date": "2026-10-04",
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fc52-03f2-7a77-9678-6da7fd98d5ef/occurrences?filter[recurring_rule_id]=eq:01a0fc52-0a54-7e94-8b8a-c6b4de633741&limit=200
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fc52-0d4b-73b3-9342-ea6572e0db47",
+   "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+   "version": 1,
+   "change_seq": 5,
+   "created_at": "2026-10-02T11:13:50.923697Z",
+   "updated_at": "2026-10-02T11:13:50.923697Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+   "ordinal": 1,
+   "is_payout": false,
+   "scheduled_date": "2026-10-02",
+   "date": "2026-10-02",
+   "status": "scheduled",
+   "kind": "expense",
+   "amount_minor": 10000,
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  },
+  {
+   "id": "01a0fc52-0d4c-715a-bbbd-2fbb99e754c7",
+   "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+   "version": 1,
+   "change_seq": 6,
+   "created_at": "2026-10-02T11:13:50.923697Z",
+   "updated_at": "2026-10-02T11:13:50.923697Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+   "ordinal": 2,
+   "is_payout": false,
+   "scheduled_date": "2026-10-03",
+   "date": "2026-10-03",
+   "status": "scheduled",
+   "kind": "expense",
+   "amount_minor": 10000,
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  },
+  {
+   "id": "01a0fc52-0d4c-715a-bbbd-2fbb9a22c910",
+   "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+   "version": 1,
+   "change_seq": 7,
+   "created_at": "2026-10-02T11:13:50.923697Z",
+   "updated_at": "2026-10-02T11:13:50.923697Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+   "ordinal": 3,
+   "is_payout": false,
+   "scheduled_date": "2026-10-04",
+   "date": "2026-10-04",
+   "status": "scheduled",
+   "kind": "expense",
+   "amount_minor": 10000,
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+PUT /wallets/01a0fc52-03f2-7a77-9678-6da7fd98d5ef/occurrences/01a0fc52-0d4b-73b3-9342-ea6572e0db47
+> {"status": "confirmed", "date": "2026-10-02", "amount_minor": 10000, "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "description": "QA", "memo": null, "counterparty": null, "transaction_id": "01a0fc52-0fb6-7090-92b5-8b2914553d76", "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fc52-0d4b-73b3-9342-ea6572e0db47",
+  "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+  "version": 2,
+  "change_seq": 9,
+  "created_at": "2026-10-02T11:13:50.923697Z",
+  "updated_at": "2026-10-02T11:13:52.152152Z",
+  "deleted_at": null,
+  "recurring_rule_id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+  "ordinal": 1,
+  "is_payout": false,
+  "scheduled_date": "2026-10-02",
+  "date": "2026-10-02",
+  "status": "confirmed",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": "01a0fc52-0fb6-7090-92b5-8b2914553d76",
+  "auto_confirm_refusal": null
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fc52-03f2-7a77-9678-6da7fd98d5ef/occurrences/01a0fc52-0d4c-715a-bbbd-2fbb99e754c7
+> {"status": "skipped", "date": "2026-10-03", "amount_minor": 10000, "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "description": "QA", "memo": null, "counterparty": null, "transaction_id": null, "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fc52-0d4c-715a-bbbd-2fbb99e754c7",
+  "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+  "version": 2,
+  "change_seq": 13,
+  "created_at": "2026-10-02T11:13:50.923697Z",
+  "updated_at": "2026-10-02T11:13:53.074787Z",
+  "deleted_at": null,
+  "recurring_rule_id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+  "ordinal": 2,
+  "is_payout": false,
+  "scheduled_date": "2026-10-03",
+  "date": "2026-10-03",
+  "status": "skipped",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": null,
+  "auto_confirm_refusal": null
+ },
+ "meta": {}
+}
+
+GET /sync/wallets/01a0fc52-03f2-7a77-9678-6da7fd98d5ef/changes?limit=200
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fc52-06d3-7110-9515-30abd8318a46",
+    "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T11:13:49.268497Z",
+    "updated_at": "2026-10-02T11:13:49.268497Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e",
+    "display_name": null,
+    "role": "owner"
+   }
+  },
+  {
+   "type": "recurring_rule",
+   "record": {
+    "id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+    "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "version": 1,
+    "change_seq": 4,
+    "created_at": "2026-10-02T11:13:50.876233Z",
+    "updated_at": "2026-10-02T11:13:50.876233Z",
+    "deleted_at": null,
+    "preset": "custom",
+    "status": "active",
+    "kind": "expense",
+    "amount_minor": 10000,
+    "amount_basis": "per_occurrence",
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "auto_confirm": false,
+    "frequency": "daily",
+    "interval": 1,
+    "anchor_day": null,
+    "start_date": "2026-10-02",
+    "end_date": "2026-10-04",
+    "occurrence_count": null,
+    "payout_round": null,
+    "payout_category_id": null,
+    "timezone": "Africa/Cairo",
+    "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+   }
+  },
+  {
+   "type": "occurrence",
+   "record": {
+    "id": "01a0fc52-0d4c-715a-bbbd-2fbb9a22c910",
+    "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "version": 1,
+    "change_seq": 7,
+    "created_at": "2026-10-02T11:13:50.923697Z",
+    "updated_at": "2026-10-02T11:13:50.923697Z",
+    "deleted_at": null,
+    "recurring_rule_id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+    "ordinal": 3,
+    "is_payout": false,
+    "scheduled_date": "2026-10-04",
+    "date": "2026-10-04",
+    "status": "scheduled",
+    "kind": "expense",
+    "amount_minor": 10000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "edited": false,
+    "transaction_id": null,
+    "auto_confirm_refusal": null
+   }
+  },
+  {
+   "type": "occurrence",
+   "record": {
+    "id": "01a0fc52-0d4b-73b3-9342-ea6572e0db47",
+    "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "version": 2,
+    "change_seq": 9,
+    "created_at": "2026-10-02T11:13:50.923697Z",
+    "updated_at": "2026-10-02T11:13:52.152152Z",
+    "deleted_at": null,
+    "recurring_rule_id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+    "ordinal": 1,
+    "is_payout": false,
+    "scheduled_date": "2026-10-02",
+    "date": "2026-10-02",
+    "status": "confirmed",
+    "kind": "expense",
+    "amount_minor": 10000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "edited": false,
+    "transaction_id": "01a0fc52-0fb6-7090-92b5-8b2914553d76",
+    "auto_confirm_refusal": null
+   }
+  },
+  {
+   "type": "transaction",
+   "record": {
+    "id": "01a0fc52-0fb6-7090-92b5-8b2914553d76",
+    "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "version": 1,
+    "change_seq": 10,
+    "created_at": "2026-10-02T11:13:52.200700Z",
+    "updated_at": "2026-10-02T11:13:52.200700Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-10-02",
+    "amount_minor": 10000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e",
+    "recurring_rule_id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+    "occurrence_id": "01a0fc52-0d4b-73b3-9342-ea6572e0db47"
+   }
+  },
+  {
+   "type": "occurrence",
+   "record": {
+    "id": "01a0fc52-0d4c-715a-bbbd-2fbb99e754c7",
+    "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "version": 2,
+    "change_seq": 13,
+    "created_at": "2026-10-02T11:13:50.923697Z",
+    "updated_at": "2026-10-02T11:13:53.074787Z",
+    "deleted_at": null,
+    "recurring_rule_id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+    "ordinal": 2,
+    "is_payout": false,
+    "scheduled_date": "2026-10-03",
+    "date": "2026-10-03",
+    "status": "skipped",
+    "kind": "expense",
+    "amount_minor": 10000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "edited": false,
+    "transaction_id": null,
+    "auto_confirm_refusal": null
+   }
+  },
+  {
+   "type": "wallet",
+   "record": {
+    "id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "version": 1,
+    "change_seq": 14,
+    "created_at": "2026-10-02T11:13:49.232310Z",
+    "updated_at": "2026-10-02T11:13:49.232310Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA014 W7 feed",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": -10000,
+    "icon": "wallet",
+    "color": "#112233",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmM1Mi0wM2YyLTdhNzctOTY3OC02ZGE3ZmQ5OGQ1ZWYiLCJyIjoiMDFhMGZjNDktMjE3OC03MGJhLWJkZTAtMWMxMWMyYjU3ZTFlIiwicCI6MTR9HWyU6NdqVd3wOhEu1iQktQ"
+ }
+}
+# [{"type": "wallet_member", "record": {"id": "01a0fc52-06d3-7110-9515-30abd8318a46", "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef", "version": 1, "change_seq": 2, "created_at": "2026-10-02T11:13:49.268497Z", "updated_at": "2026-10-02T11:13:49.268497Z", "deleted_at": null, "member_user_id": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e", "display_name": null, "role": "owner"}}, {"type": "recurring_rule", "record": {"id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741", "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef", "version": 1, "change_seq": 4, "created_at": "2026-10-02T11:13:50.876233Z", "updated_at": "2026-10-02T11:13:50.876233Z", "deleted_at": null, "preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "daily", "interval": 1, "anchor_day": null, "start_date": "2026-10-02", "end_date": "2026-10-04", "occurrence_count": null, "payout_round": null, "payout_category_id": null, "timezone": "Africa/Cairo", "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"}}]
+# PASS TC-060 feed has recurring_rule, occurrence, transaction rows 
+
+GET /wallets/01a0fc52-03f2-7a77-9678-6da7fd98d5ef/recurring-rules/01a0fc52-0a54-7e94-8b8a-c6b4de633741
+< 200
+{
+ "data": {
+  "id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+  "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T11:13:50.876233Z",
+  "updated_at": "2026-10-02T11:13:50.876233Z",
+  "deleted_at": null,
+  "preset": "custom",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "daily",
+  "interval": 1,
+  "anchor_day": null,
+  "start_date": "2026-10-02",
+  "end_date": "2026-10-04",
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+# PASS TC-060 recurring_rule row equals its read 
+
+GET /wallets/01a0fc52-03f2-7a77-9678-6da7fd98d5ef/occurrences/01a0fc52-0d4b-73b3-9342-ea6572e0db47
+< 200
+{
+ "data": {
+  "id": "01a0fc52-0d4b-73b3-9342-ea6572e0db47",
+  "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+  "version": 2,
+  "change_seq": 9,
+  "created_at": "2026-10-02T11:13:50.923697Z",
+  "updated_at": "2026-10-02T11:13:52.152152Z",
+  "deleted_at": null,
+  "recurring_rule_id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+  "ordinal": 1,
+  "is_payout": false,
+  "scheduled_date": "2026-10-02",
+  "date": "2026-10-02",
+  "status": "confirmed",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": "01a0fc52-0fb6-7090-92b5-8b2914553d76",
+  "auto_confirm_refusal": null
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fc52-03f2-7a77-9678-6da7fd98d5ef/occurrences/01a0fc52-0d4c-715a-bbbd-2fbb99e754c7
+< 200
+{
+ "data": {
+  "id": "01a0fc52-0d4c-715a-bbbd-2fbb99e754c7",
+  "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+  "version": 2,
+  "change_seq": 13,
+  "created_at": "2026-10-02T11:13:50.923697Z",
+  "updated_at": "2026-10-02T11:13:53.074787Z",
+  "deleted_at": null,
+  "recurring_rule_id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+  "ordinal": 2,
+  "is_payout": false,
+  "scheduled_date": "2026-10-03",
+  "date": "2026-10-03",
+  "status": "skipped",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": null,
+  "auto_confirm_refusal": null
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fc52-03f2-7a77-9678-6da7fd98d5ef/occurrences/01a0fc52-0d4c-715a-bbbd-2fbb9a22c910
+< 200
+{
+ "data": {
+  "id": "01a0fc52-0d4c-715a-bbbd-2fbb9a22c910",
+  "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+  "version": 1,
+  "change_seq": 7,
+  "created_at": "2026-10-02T11:13:50.923697Z",
+  "updated_at": "2026-10-02T11:13:50.923697Z",
+  "deleted_at": null,
+  "recurring_rule_id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+  "ordinal": 3,
+  "is_payout": false,
+  "scheduled_date": "2026-10-04",
+  "date": "2026-10-04",
+  "status": "scheduled",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": null,
+  "auto_confirm_refusal": null
+ },
+ "meta": {}
+}
+# PASS TC-060 occurrence rows equal their reads (confirmed/skipped/scheduled) 
+# PASS TC-060 rows ordered by change_seq ascending 
+
+DELETE /wallets/01a0fc52-03f2-7a77-9678-6da7fd98d5ef/recurring-rules/01a0fc52-0a54-7e94-8b8a-c6b4de633741
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+  "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+  "version": 2,
+  "change_seq": 18,
+  "created_at": "2026-10-02T11:13:50.876233Z",
+  "updated_at": "2026-10-02T11:13:56.573159Z",
+  "deleted_at": "2026-10-02T11:13:56.521323Z",
+  "preset": "custom",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "daily",
+  "interval": 1,
+  "anchor_day": null,
+  "start_date": "2026-10-02",
+  "end_date": "2026-10-04",
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+
+GET /sync/wallets/01a0fc52-03f2-7a77-9678-6da7fd98d5ef/changes?limit=200
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fc52-06d3-7110-9515-30abd8318a46",
+    "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T11:13:49.268497Z",
+    "updated_at": "2026-10-02T11:13:49.268497Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e",
+    "display_name": null,
+    "role": "owner"
+   }
+  },
+  {
+   "type": "transaction",
+   "record": {
+    "id": "01a0fc52-0fb6-7090-92b5-8b2914553d76",
+    "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "version": 1,
+    "change_seq": 10,
+    "created_at": "2026-10-02T11:13:52.200700Z",
+    "updated_at": "2026-10-02T11:13:52.200700Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-10-02",
+    "amount_minor": 10000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e",
+    "recurring_rule_id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+    "occurrence_id": "01a0fc52-0d4b-73b3-9342-ea6572e0db47"
+   }
+  },
+  {
+   "type": "occurrence",
+   "record": {
+    "id": "01a0fc52-0d4b-73b3-9342-ea6572e0db47",
+    "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "version": 3,
+    "change_seq": 15,
+    "created_at": "2026-10-02T11:13:50.923697Z",
+    "updated_at": "2026-10-02T11:13:56.560767Z",
+    "deleted_at": "2026-10-02T11:13:56.521323Z",
+    "recurring_rule_id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+    "ordinal": 1,
+    "is_payout": false,
+    "scheduled_date": "2026-10-02",
+    "date": "2026-10-02",
+    "status": "confirmed",
+    "kind": "expense",
+    "amount_minor": 10000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "edited": false,
+    "transaction_id": "01a0fc52-0fb6-7090-92b5-8b2914553d76",
+    "auto_confirm_refusal": null
+   }
+  },
+  {
+   "type": "occurrence",
+   "record": {
+    "id": "01a0fc52-0d4c-715a-bbbd-2fbb99e754c7",
+    "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "version": 3,
+    "change_seq": 16,
+    "created_at": "2026-10-02T11:13:50.923697Z",
+    "updated_at": "2026-10-02T11:13:56.560767Z",
+    "deleted_at": "2026-10-02T11:13:56.521323Z",
+    "recurring_rule_id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+    "ordinal": 2,
+    "is_payout": false,
+    "scheduled_date": "2026-10-03",
+    "date": "2026-10-03",
+    "status": "skipped",
+    "kind": "expense",
+    "amount_minor": 10000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "edited": false,
+    "transaction_id": null,
+    "auto_confirm_refusal": null
+   }
+  },
+  {
+   "type": "occurrence",
+   "record": {
+    "id": "01a0fc52-0d4c-715a-bbbd-2fbb9a22c910",
+    "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "version": 2,
+    "change_seq": 17,
+    "created_at": "2026-10-02T11:13:50.923697Z",
+    "updated_at": "2026-10-02T11:13:56.560767Z",
+    "deleted_at": "2026-10-02T11:13:56.521323Z",
+    "recurring_rule_id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+    "ordinal": 3,
+    "is_payout": false,
+    "scheduled_date": "2026-10-04",
+    "date": "2026-10-04",
+    "status": "scheduled",
+    "kind": "expense",
+    "amount_minor": 10000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "edited": false,
+    "transaction_id": null,
+    "auto_confirm_refusal": null
+   }
+  },
+  {
+   "type": "recurring_rule",
+   "record": {
+    "id": "01a0fc52-0a54-7e94-8b8a-c6b4de633741",
+    "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "version": 2,
+    "change_seq": 18,
+    "created_at": "2026-10-02T11:13:50.876233Z",
+    "updated_at": "2026-10-02T11:13:56.573159Z",
+    "deleted_at": "2026-10-02T11:13:56.521323Z",
+    "preset": "custom",
+    "status": "active",
+    "kind": "expense",
+    "amount_minor": 10000,
+    "amount_basis": "per_occurrence",
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "auto_confirm": false,
+    "frequency": "daily",
+    "interval": 1,
+    "anchor_day": null,
+    "start_date": "2026-10-02",
+    "end_date": "2026-10-04",
+    "occurrence_count": null,
+    "payout_round": null,
+    "payout_category_id": null,
+    "timezone": "Africa/Cairo",
+    "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+   }
+  },
+  {
+   "type": "wallet",
+   "record": {
+    "id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "wallet_id": "01a0fc52-03f2-7a77-9678-6da7fd98d5ef",
+    "version": 1,
+    "change_seq": 19,
+    "created_at": "2026-10-02T11:13:49.232310Z",
+    "updated_at": "2026-10-02T11:13:49.232310Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA014 W7 feed",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": -10000,
+    "icon": "wallet",
+    "color": "#112233",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmM1Mi0wM2YyLTdhNzctOTY3OC02ZGE3ZmQ5OGQ1ZWYiLCJyIjoiMDFhMGZjNDktMjE3OC03MGJhLWJkZTAtMWMxMWMyYjU3ZTFlIiwicCI6MTl9cny5KtIPsSyy_gBOkHZg9g"
+ }
+}
+# PASS TC-060 tombstones ride the feed (rule + occurrences) 
+
+GET /sync/wallets/01a0fc52-03f2-7a77-9678-6da7fd98d5ef/changes
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fc52-2752-7083-8222-c59fd7ed4426"
+}
+# PASS TC-060 non-member feed 404 
+===== TC-060 2026-10-02T11:14:12.853538Z
+
+PUT /wallets/01a0fc52-62f5-715f-a403-2112cf7bd30b
+> {"type": "cash", "name": "QA014 W7b feed", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#112233"}
+< 201
+{
+ "data": {
+  "id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+  "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T11:14:13.418380Z",
+  "updated_at": "2026-10-02T11:14:13.418380Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "QA014 W7b feed",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#112233",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+GET /sync/wallets/01a0fc52-62f5-715f-a403-2112cf7bd30b/changes
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fc52-653f-73ae-834f-0d41d8efe3c7",
+    "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T11:14:13.439866Z",
+    "updated_at": "2026-10-02T11:14:13.439866Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e",
+    "display_name": null,
+    "role": "owner"
+   }
+  },
+  {
+   "type": "wallet",
+   "record": {
+    "id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T11:14:13.418380Z",
+    "updated_at": "2026-10-02T11:14:13.418380Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA014 W7b feed",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#112233",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmM1Mi02MmY1LTcxNWYtYTQwMy0yMTEyY2Y3YmQzMGIiLCJyIjoiMDFhMGZjNDktMjE3OC03MGJhLWJkZTAtMWMxMWMyYjU3ZTFlIiwicCI6M30PrNYerXissKneFZ8O16yP"
+ }
+}
+# feed meta keys: ['next_cursor', 'has_more', 'limit', 'sync_cursor'] row keys: ['type', 'record']
+
+PUT /wallets/01a0fc52-62f5-715f-a403-2112cf7bd30b/recurring-rules/01a0fc52-67ba-75a9-9c71-2910a7df5dbf
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "daily", "interval": 1, "anchor_day": null, "start_date": "2026-10-02", "end_date": "2026-10-04", "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+  "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T11:14:14.749231Z",
+  "updated_at": "2026-10-02T11:14:14.749231Z",
+  "deleted_at": null,
+  "preset": "custom",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "daily",
+  "interval": 1,
+  "anchor_day": null,
+  "start_date": "2026-10-02",
+  "end_date": "2026-10-04",
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fc52-62f5-715f-a403-2112cf7bd30b/occurrences?filter[recurring_rule_id]=eq:01a0fc52-67ba-75a9-9c71-2910a7df5dbf&limit=200
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fc52-6a83-7230-af93-ed995ee4167d",
+   "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+   "version": 1,
+   "change_seq": 5,
+   "created_at": "2026-10-02T11:14:14.786884Z",
+   "updated_at": "2026-10-02T11:14:14.786884Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+   "ordinal": 1,
+   "is_payout": false,
+   "scheduled_date": "2026-10-02",
+   "date": "2026-10-02",
+   "status": "scheduled",
+   "kind": "expense",
+   "amount_minor": 10000,
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  },
+  {
+   "id": "01a0fc52-6a83-7230-af93-ed995ee6e627",
+   "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+   "version": 1,
+   "change_seq": 6,
+   "created_at": "2026-10-02T11:14:14.786884Z",
+   "updated_at": "2026-10-02T11:14:14.786884Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+   "ordinal": 2,
+   "is_payout": false,
+   "scheduled_date": "2026-10-03",
+   "date": "2026-10-03",
+   "status": "scheduled",
+   "kind": "expense",
+   "amount_minor": 10000,
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  },
+  {
+   "id": "01a0fc52-6a83-7230-af93-ed995f5e6daf",
+   "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+   "version": 1,
+   "change_seq": 7,
+   "created_at": "2026-10-02T11:14:14.786884Z",
+   "updated_at": "2026-10-02T11:14:14.786884Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+   "ordinal": 3,
+   "is_payout": false,
+   "scheduled_date": "2026-10-04",
+   "date": "2026-10-04",
+   "status": "scheduled",
+   "kind": "expense",
+   "amount_minor": 10000,
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+PUT /wallets/01a0fc52-62f5-715f-a403-2112cf7bd30b/occurrences/01a0fc52-6a83-7230-af93-ed995ee4167d
+> {"status": "confirmed", "date": "2026-10-02", "amount_minor": 10000, "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "description": "QA", "memo": null, "counterparty": null, "transaction_id": "01a0fc52-6ccf-7fba-83a9-f034de78e7a5", "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fc52-6a83-7230-af93-ed995ee4167d",
+  "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+  "version": 2,
+  "change_seq": 9,
+  "created_at": "2026-10-02T11:14:14.786884Z",
+  "updated_at": "2026-10-02T11:14:16.180164Z",
+  "deleted_at": null,
+  "recurring_rule_id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+  "ordinal": 1,
+  "is_payout": false,
+  "scheduled_date": "2026-10-02",
+  "date": "2026-10-02",
+  "status": "confirmed",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": "01a0fc52-6ccf-7fba-83a9-f034de78e7a5",
+  "auto_confirm_refusal": null
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fc52-62f5-715f-a403-2112cf7bd30b/occurrences/01a0fc52-6a83-7230-af93-ed995ee6e627
+> {"status": "skipped", "date": "2026-10-03", "amount_minor": 10000, "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "description": "QA", "memo": null, "counterparty": null, "transaction_id": null, "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fc52-6a83-7230-af93-ed995ee6e627",
+  "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+  "version": 2,
+  "change_seq": 13,
+  "created_at": "2026-10-02T11:14:14.786884Z",
+  "updated_at": "2026-10-02T11:14:16.993421Z",
+  "deleted_at": null,
+  "recurring_rule_id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+  "ordinal": 2,
+  "is_payout": false,
+  "scheduled_date": "2026-10-03",
+  "date": "2026-10-03",
+  "status": "skipped",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": null,
+  "auto_confirm_refusal": null
+ },
+ "meta": {}
+}
+
+GET /sync/wallets/01a0fc52-62f5-715f-a403-2112cf7bd30b/changes?limit=200
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fc52-653f-73ae-834f-0d41d8efe3c7",
+    "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T11:14:13.439866Z",
+    "updated_at": "2026-10-02T11:14:13.439866Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e",
+    "display_name": null,
+    "role": "owner"
+   }
+  },
+  {
+   "type": "recurring_rule",
+   "record": {
+    "id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+    "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "version": 1,
+    "change_seq": 4,
+    "created_at": "2026-10-02T11:14:14.749231Z",
+    "updated_at": "2026-10-02T11:14:14.749231Z",
+    "deleted_at": null,
+    "preset": "custom",
+    "status": "active",
+    "kind": "expense",
+    "amount_minor": 10000,
+    "amount_basis": "per_occurrence",
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "auto_confirm": false,
+    "frequency": "daily",
+    "interval": 1,
+    "anchor_day": null,
+    "start_date": "2026-10-02",
+    "end_date": "2026-10-04",
+    "occurrence_count": null,
+    "payout_round": null,
+    "payout_category_id": null,
+    "timezone": "Africa/Cairo",
+    "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+   }
+  },
+  {
+   "type": "occurrence",
+   "record": {
+    "id": "01a0fc52-6a83-7230-af93-ed995f5e6daf",
+    "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "version": 1,
+    "change_seq": 7,
+    "created_at": "2026-10-02T11:14:14.786884Z",
+    "updated_at": "2026-10-02T11:14:14.786884Z",
+    "deleted_at": null,
+    "recurring_rule_id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+    "ordinal": 3,
+    "is_payout": false,
+    "scheduled_date": "2026-10-04",
+    "date": "2026-10-04",
+    "status": "scheduled",
+    "kind": "expense",
+    "amount_minor": 10000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "edited": false,
+    "transaction_id": null,
+    "auto_confirm_refusal": null
+   }
+  },
+  {
+   "type": "occurrence",
+   "record": {
+    "id": "01a0fc52-6a83-7230-af93-ed995ee4167d",
+    "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "version": 2,
+    "change_seq": 9,
+    "created_at": "2026-10-02T11:14:14.786884Z",
+    "updated_at": "2026-10-02T11:14:16.180164Z",
+    "deleted_at": null,
+    "recurring_rule_id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+    "ordinal": 1,
+    "is_payout": false,
+    "scheduled_date": "2026-10-02",
+    "date": "2026-10-02",
+    "status": "confirmed",
+    "kind": "expense",
+    "amount_minor": 10000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "edited": false,
+    "transaction_id": "01a0fc52-6ccf-7fba-83a9-f034de78e7a5",
+    "auto_confirm_refusal": null
+   }
+  },
+  {
+   "type": "transaction",
+   "record": {
+    "id": "01a0fc52-6ccf-7fba-83a9-f034de78e7a5",
+    "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "version": 1,
+    "change_seq": 10,
+    "created_at": "2026-10-02T11:14:16.237498Z",
+    "updated_at": "2026-10-02T11:14:16.237498Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-10-02",
+    "amount_minor": 10000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e",
+    "recurring_rule_id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+    "occurrence_id": "01a0fc52-6a83-7230-af93-ed995ee4167d"
+   }
+  },
+  {
+   "type": "occurrence",
+   "record": {
+    "id": "01a0fc52-6a83-7230-af93-ed995ee6e627",
+    "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "version": 2,
+    "change_seq": 13,
+    "created_at": "2026-10-02T11:14:14.786884Z",
+    "updated_at": "2026-10-02T11:14:16.993421Z",
+    "deleted_at": null,
+    "recurring_rule_id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+    "ordinal": 2,
+    "is_payout": false,
+    "scheduled_date": "2026-10-03",
+    "date": "2026-10-03",
+    "status": "skipped",
+    "kind": "expense",
+    "amount_minor": 10000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "edited": false,
+    "transaction_id": null,
+    "auto_confirm_refusal": null
+   }
+  },
+  {
+   "type": "wallet",
+   "record": {
+    "id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "version": 1,
+    "change_seq": 14,
+    "created_at": "2026-10-02T11:14:13.418380Z",
+    "updated_at": "2026-10-02T11:14:13.418380Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA014 W7b feed",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": -10000,
+    "icon": "wallet",
+    "color": "#112233",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmM1Mi02MmY1LTcxNWYtYTQwMy0yMTEyY2Y3YmQzMGIiLCJyIjoiMDFhMGZjNDktMjE3OC03MGJhLWJkZTAtMWMxMWMyYjU3ZTFlIiwicCI6MTR9wimv9A_x5jk5I_HI9yVxew"
+ }
+}
+# [{"type": "wallet_member", "record": {"id": "01a0fc52-653f-73ae-834f-0d41d8efe3c7", "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b", "version": 1, "change_seq": 2, "created_at": "2026-10-02T11:14:13.439866Z", "updated_at": "2026-10-02T11:14:13.439866Z", "deleted_at": null, "member_user_id": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e", "display_name": null, "role": "owner"}}, {"type": "recurring_rule", "record": {"id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf", "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b", "version": 1, "change_seq": 4, "created_at": "2026-10-02T11:14:14.749231Z", "updated_at": "2026-10-02T11:14:14.749231Z", "deleted_at": null, "preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "daily", "interval": 1, "anchor_day": null, "start_date": "2026-10-02", "end_date": "2026-10-04", "occurrence_count": null, "payout_round": null, "payout_category_id": null, "timezone": "Africa/Cairo", "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"}}]
+# PASS TC-060 feed has recurring_rule, occurrence, transaction rows 
+
+GET /wallets/01a0fc52-62f5-715f-a403-2112cf7bd30b/recurring-rules/01a0fc52-67ba-75a9-9c71-2910a7df5dbf
+< 200
+{
+ "data": {
+  "id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+  "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T11:14:14.749231Z",
+  "updated_at": "2026-10-02T11:14:14.749231Z",
+  "deleted_at": null,
+  "preset": "custom",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "daily",
+  "interval": 1,
+  "anchor_day": null,
+  "start_date": "2026-10-02",
+  "end_date": "2026-10-04",
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+# PASS TC-060 recurring_rule row equals its read 
+
+GET /wallets/01a0fc52-62f5-715f-a403-2112cf7bd30b/occurrences/01a0fc52-6a83-7230-af93-ed995ee4167d
+< 200
+{
+ "data": {
+  "id": "01a0fc52-6a83-7230-af93-ed995ee4167d",
+  "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+  "version": 2,
+  "change_seq": 9,
+  "created_at": "2026-10-02T11:14:14.786884Z",
+  "updated_at": "2026-10-02T11:14:16.180164Z",
+  "deleted_at": null,
+  "recurring_rule_id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+  "ordinal": 1,
+  "is_payout": false,
+  "scheduled_date": "2026-10-02",
+  "date": "2026-10-02",
+  "status": "confirmed",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": "01a0fc52-6ccf-7fba-83a9-f034de78e7a5",
+  "auto_confirm_refusal": null
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fc52-62f5-715f-a403-2112cf7bd30b/occurrences/01a0fc52-6a83-7230-af93-ed995ee6e627
+< 200
+{
+ "data": {
+  "id": "01a0fc52-6a83-7230-af93-ed995ee6e627",
+  "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+  "version": 2,
+  "change_seq": 13,
+  "created_at": "2026-10-02T11:14:14.786884Z",
+  "updated_at": "2026-10-02T11:14:16.993421Z",
+  "deleted_at": null,
+  "recurring_rule_id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+  "ordinal": 2,
+  "is_payout": false,
+  "scheduled_date": "2026-10-03",
+  "date": "2026-10-03",
+  "status": "skipped",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": null,
+  "auto_confirm_refusal": null
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fc52-62f5-715f-a403-2112cf7bd30b/occurrences/01a0fc52-6a83-7230-af93-ed995f5e6daf
+< 200
+{
+ "data": {
+  "id": "01a0fc52-6a83-7230-af93-ed995f5e6daf",
+  "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+  "version": 1,
+  "change_seq": 7,
+  "created_at": "2026-10-02T11:14:14.786884Z",
+  "updated_at": "2026-10-02T11:14:14.786884Z",
+  "deleted_at": null,
+  "recurring_rule_id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+  "ordinal": 3,
+  "is_payout": false,
+  "scheduled_date": "2026-10-04",
+  "date": "2026-10-04",
+  "status": "scheduled",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": null,
+  "auto_confirm_refusal": null
+ },
+ "meta": {}
+}
+# PASS TC-060 occurrence rows equal their reads (confirmed/skipped/scheduled) 
+# PASS TC-060 rows ordered by change_seq ascending 
+
+DELETE /wallets/01a0fc52-62f5-715f-a403-2112cf7bd30b/recurring-rules/01a0fc52-67ba-75a9-9c71-2910a7df5dbf
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+  "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+  "version": 2,
+  "change_seq": 18,
+  "created_at": "2026-10-02T11:14:14.749231Z",
+  "updated_at": "2026-10-02T11:14:21.003895Z",
+  "deleted_at": "2026-10-02T11:14:20.922836Z",
+  "preset": "custom",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 10000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "daily",
+  "interval": 1,
+  "anchor_day": null,
+  "start_date": "2026-10-02",
+  "end_date": "2026-10-04",
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+
+GET /sync/wallets/01a0fc52-62f5-715f-a403-2112cf7bd30b/changes?limit=200
+< 200
+{
+ "data": [
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fc52-653f-73ae-834f-0d41d8efe3c7",
+    "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T11:14:13.439866Z",
+    "updated_at": "2026-10-02T11:14:13.439866Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e",
+    "display_name": null,
+    "role": "owner"
+   }
+  },
+  {
+   "type": "transaction",
+   "record": {
+    "id": "01a0fc52-6ccf-7fba-83a9-f034de78e7a5",
+    "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "version": 1,
+    "change_seq": 10,
+    "created_at": "2026-10-02T11:14:16.237498Z",
+    "updated_at": "2026-10-02T11:14:16.237498Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-10-02",
+    "amount_minor": 10000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e",
+    "recurring_rule_id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+    "occurrence_id": "01a0fc52-6a83-7230-af93-ed995ee4167d"
+   }
+  },
+  {
+   "type": "occurrence",
+   "record": {
+    "id": "01a0fc52-6a83-7230-af93-ed995ee4167d",
+    "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "version": 3,
+    "change_seq": 15,
+    "created_at": "2026-10-02T11:14:14.786884Z",
+    "updated_at": "2026-10-02T11:14:20.990171Z",
+    "deleted_at": "2026-10-02T11:14:20.922836Z",
+    "recurring_rule_id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+    "ordinal": 1,
+    "is_payout": false,
+    "scheduled_date": "2026-10-02",
+    "date": "2026-10-02",
+    "status": "confirmed",
+    "kind": "expense",
+    "amount_minor": 10000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "edited": false,
+    "transaction_id": "01a0fc52-6ccf-7fba-83a9-f034de78e7a5",
+    "auto_confirm_refusal": null
+   }
+  },
+  {
+   "type": "occurrence",
+   "record": {
+    "id": "01a0fc52-6a83-7230-af93-ed995ee6e627",
+    "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "version": 3,
+    "change_seq": 16,
+    "created_at": "2026-10-02T11:14:14.786884Z",
+    "updated_at": "2026-10-02T11:14:20.990171Z",
+    "deleted_at": "2026-10-02T11:14:20.922836Z",
+    "recurring_rule_id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+    "ordinal": 2,
+    "is_payout": false,
+    "scheduled_date": "2026-10-03",
+    "date": "2026-10-03",
+    "status": "skipped",
+    "kind": "expense",
+    "amount_minor": 10000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "edited": false,
+    "transaction_id": null,
+    "auto_confirm_refusal": null
+   }
+  },
+  {
+   "type": "occurrence",
+   "record": {
+    "id": "01a0fc52-6a83-7230-af93-ed995f5e6daf",
+    "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "version": 2,
+    "change_seq": 17,
+    "created_at": "2026-10-02T11:14:14.786884Z",
+    "updated_at": "2026-10-02T11:14:20.990171Z",
+    "deleted_at": "2026-10-02T11:14:20.922836Z",
+    "recurring_rule_id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+    "ordinal": 3,
+    "is_payout": false,
+    "scheduled_date": "2026-10-04",
+    "date": "2026-10-04",
+    "status": "scheduled",
+    "kind": "expense",
+    "amount_minor": 10000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "edited": false,
+    "transaction_id": null,
+    "auto_confirm_refusal": null
+   }
+  },
+  {
+   "type": "recurring_rule",
+   "record": {
+    "id": "01a0fc52-67ba-75a9-9c71-2910a7df5dbf",
+    "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "version": 2,
+    "change_seq": 18,
+    "created_at": "2026-10-02T11:14:14.749231Z",
+    "updated_at": "2026-10-02T11:14:21.003895Z",
+    "deleted_at": "2026-10-02T11:14:20.922836Z",
+    "preset": "custom",
+    "status": "active",
+    "kind": "expense",
+    "amount_minor": 10000,
+    "amount_basis": "per_occurrence",
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "QA",
+    "memo": null,
+    "counterparty": null,
+    "auto_confirm": false,
+    "frequency": "daily",
+    "interval": 1,
+    "anchor_day": null,
+    "start_date": "2026-10-02",
+    "end_date": "2026-10-04",
+    "occurrence_count": null,
+    "payout_round": null,
+    "payout_category_id": null,
+    "timezone": "Africa/Cairo",
+    "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+   }
+  },
+  {
+   "type": "wallet",
+   "record": {
+    "id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "wallet_id": "01a0fc52-62f5-715f-a403-2112cf7bd30b",
+    "version": 1,
+    "change_seq": 19,
+    "created_at": "2026-10-02T11:14:13.418380Z",
+    "updated_at": "2026-10-02T11:14:13.418380Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA014 W7b feed",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": -10000,
+    "icon": "wallet",
+    "color": "#112233",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmM1Mi02MmY1LTcxNWYtYTQwMy0yMTEyY2Y3YmQzMGIiLCJyIjoiMDFhMGZjNDktMjE3OC03MGJhLWJkZTAtMWMxMWMyYjU3ZTFlIiwicCI6MTl96sA9xg3RgjRHInVcEwC7sg"
+ }
+}
+# PASS TC-060 tombstones ride the feed (rule + occurrences) 
+
+GET /sync/wallets/01a0fc52-62f5-715f-a403-2112cf7bd30b/changes
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fc52-87be-7261-bf61-0a3bf7a5e1d3"
+}
+# PASS TC-060 non-member feed 404 

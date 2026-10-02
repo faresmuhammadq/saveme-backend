@@ -1,0 +1,646 @@
+===== TC-000-setup 2026-10-02T11:04:41.013409Z
+
+POST /auth/login
+> {"email": "qa014-a-1790939046@example.test", "password": "[redacted]", "device": {"session_id": "01a0fc49-a935-7bf0-9986-e4f73fbc5486", "device_id": "qa014-8c5a8279", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+{
+ "data": {
+  "credential": "[redacted]",
+  "session": {
+   "id": "01a0fc49-a935-7bf0-9986-e4f73fbc5486",
+   "version": 1,
+   "change_seq": 2,
+   "created_at": "2026-10-02T11:04:42.704938Z",
+   "updated_at": "2026-10-02T11:04:42.704938Z",
+   "deleted_at": null,
+   "user_id": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e",
+   "device_name": "QA",
+   "platform": "android",
+   "app_version": "1.0.0",
+   "state": "active",
+   "end_reason": null,
+   "signed_in_at": "2026-10-02T11:04:42.696404Z",
+   "last_used_at": null,
+   "ended_at": null,
+   "current": true
+  },
+  "account": {
+   "id": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e",
+   "email": "qa014-a-1790939046@example.test",
+   "email_verified": true,
+   "state": "active",
+   "deletion_scheduled_for": null
+  },
+  "entitlements": {
+   "plan": {
+    "id": "01a0e69a-962e-7239-9101-0671bf5529d6",
+    "name": "Free"
+   },
+   "features": {
+    "sharing.enabled": false,
+    "sharing.max_members_per_wallet": 1,
+    "export.enabled": true,
+    "reports.advanced": true,
+    "wallets.max": null
+   }
+  },
+  "deletion_cancelled": false
+ },
+ "meta": {}
+}
+
+POST /auth/login
+> {"email": "qa014-b-1790939046@example.test", "password": "[redacted]", "device": {"session_id": "01a0fc49-b05a-7a30-b06d-a87f9e245d34", "device_id": "qa014-a65b7c3f", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+{
+ "data": {
+  "credential": "[redacted]",
+  "session": {
+   "id": "01a0fc49-b05a-7a30-b06d-a87f9e245d34",
+   "version": 1,
+   "change_seq": 2,
+   "created_at": "2026-10-02T11:04:44.188622Z",
+   "updated_at": "2026-10-02T11:04:44.188622Z",
+   "deleted_at": null,
+   "user_id": "01a0fc49-25fc-7361-9d05-7f18b59825d2",
+   "device_name": "QA",
+   "platform": "android",
+   "app_version": "1.0.0",
+   "state": "active",
+   "end_reason": null,
+   "signed_in_at": "2026-10-02T11:04:44.182334Z",
+   "last_used_at": null,
+   "ended_at": null,
+   "current": true
+  },
+  "account": {
+   "id": "01a0fc49-25fc-7361-9d05-7f18b59825d2",
+   "email": "qa014-b-1790939046@example.test",
+   "email_verified": true,
+   "state": "active",
+   "deletion_scheduled_for": null
+  },
+  "entitlements": {
+   "plan": {
+    "id": "01a0e69a-962e-7239-9101-0671bf5529d6",
+    "name": "Free"
+   },
+   "features": {
+    "sharing.enabled": false,
+    "sharing.max_members_per_wallet": 1,
+    "export.enabled": true,
+    "reports.advanced": true,
+    "wallets.max": null
+   }
+  },
+  "deletion_cancelled": false
+ },
+ "meta": {}
+}
+
+POST /auth/login
+> {"email": "qa014-v-1790939046@example.test", "password": "[redacted]", "device": {"session_id": "01a0fc49-b5fb-7402-9e9d-eece8d1ea569", "device_id": "qa014-f1d4423e", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+{
+ "data": {
+  "credential": "[redacted]",
+  "session": {
+   "id": "01a0fc49-b5fb-7402-9e9d-eece8d1ea569",
+   "version": 1,
+   "change_seq": 2,
+   "created_at": "2026-10-02T11:04:46.023017Z",
+   "updated_at": "2026-10-02T11:04:46.023017Z",
+   "deleted_at": null,
+   "user_id": "01a0fc49-2631-7351-ae0f-32766779738d",
+   "device_name": "QA",
+   "platform": "android",
+   "app_version": "1.0.0",
+   "state": "active",
+   "end_reason": null,
+   "signed_in_at": "2026-10-02T11:04:46.013748Z",
+   "last_used_at": null,
+   "ended_at": null,
+   "current": true
+  },
+  "account": {
+   "id": "01a0fc49-2631-7351-ae0f-32766779738d",
+   "email": "qa014-v-1790939046@example.test",
+   "email_verified": true,
+   "state": "active",
+   "deletion_scheduled_for": null
+  },
+  "entitlements": {
+   "plan": {
+    "id": "01a0e69a-962e-7239-9101-0671bf5529d6",
+    "name": "Free"
+   },
+   "features": {
+    "sharing.enabled": false,
+    "sharing.max_members_per_wallet": 1,
+    "export.enabled": true,
+    "reports.advanced": true,
+    "wallets.max": null
+   }
+  },
+  "deletion_cancelled": false
+ },
+ "meta": {}
+}
+
+POST /auth/login
+> {"email": "qa014-n-1790939046@example.test", "password": "[redacted]", "device": {"session_id": "01a0fc49-bd67-7f81-a623-9ac6158e968d", "device_id": "qa014-f3071cd4", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+{
+ "data": {
+  "credential": "[redacted]",
+  "session": {
+   "id": "01a0fc49-bd67-7f81-a623-9ac6158e968d",
+   "version": 1,
+   "change_seq": 2,
+   "created_at": "2026-10-02T11:04:47.857795Z",
+   "updated_at": "2026-10-02T11:04:47.857795Z",
+   "deleted_at": null,
+   "user_id": "01a0fc49-2666-71b6-96c3-daa3a0533797",
+   "device_name": "QA",
+   "platform": "android",
+   "app_version": "1.0.0",
+   "state": "active",
+   "end_reason": null,
+   "signed_in_at": "2026-10-02T11:04:47.847672Z",
+   "last_used_at": null,
+   "ended_at": null,
+   "current": true
+  },
+  "account": {
+   "id": "01a0fc49-2666-71b6-96c3-daa3a0533797",
+   "email": "qa014-n-1790939046@example.test",
+   "email_verified": true,
+   "state": "active",
+   "deletion_scheduled_for": null
+  },
+  "entitlements": {
+   "plan": {
+    "id": "01a0e69a-962e-7239-9101-0671bf5529d6",
+    "name": "Free"
+   },
+   "features": {
+    "sharing.enabled": false,
+    "sharing.max_members_per_wallet": 1,
+    "export.enabled": true,
+    "reports.advanced": true,
+    "wallets.max": null
+   }
+  },
+  "deletion_cancelled": false
+ },
+ "meta": {}
+}
+
+POST /auth/login
+> {"email": "qa014-u-1790939046@example.test", "password": "[redacted]", "device": {"session_id": "01a0fc49-c49d-7057-8104-0a3298055092", "device_id": "qa014-dc6a47c5", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+{
+ "data": {
+  "credential": "[redacted]",
+  "session": {
+   "id": "01a0fc49-c49d-7057-8104-0a3298055092",
+   "version": 1,
+   "change_seq": 2,
+   "created_at": "2026-10-02T11:04:49.620178Z",
+   "updated_at": "2026-10-02T11:04:49.620178Z",
+   "deleted_at": null,
+   "user_id": "01a0fc49-2695-7184-9d66-7954e0962395",
+   "device_name": "QA",
+   "platform": "android",
+   "app_version": "1.0.0",
+   "state": "active",
+   "end_reason": null,
+   "signed_in_at": "2026-10-02T11:04:49.610066Z",
+   "last_used_at": null,
+   "ended_at": null,
+   "current": true
+  },
+  "account": {
+   "id": "01a0fc49-2695-7184-9d66-7954e0962395",
+   "email": "qa014-u-1790939046@example.test",
+   "email_verified": false,
+   "state": "active",
+   "deletion_scheduled_for": null
+  },
+  "entitlements": {
+   "plan": {
+    "id": "01a0e69a-962e-7239-9101-0671bf5529d6",
+    "name": "Free"
+   },
+   "features": {
+    "sharing.enabled": false,
+    "sharing.max_members_per_wallet": 1,
+    "export.enabled": true,
+    "reports.advanced": true,
+    "wallets.max": null
+   }
+  },
+  "deletion_cancelled": false
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73
+> {"type": "cash", "name": "QA014 W1", "currency": "EGP", "opening_balance_minor": 100000, "icon": "wallet", "color": "#112233"}
+< 201
+{
+ "data": {
+  "id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T11:04:50.490514Z",
+  "updated_at": "2026-10-02T11:04:50.490514Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "QA014 W1",
+  "currency": "EGP",
+  "opening_balance_minor": 100000,
+  "balance_minor": 100000,
+  "icon": "wallet",
+  "color": "#112233",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fc49-cea2-79ef-adaf-5fd583d7e74d
+> {"type": "cash", "name": "QA014 W2 dest", "currency": "EGP", "opening_balance_minor": 100000, "icon": "wallet", "color": "#112233"}
+< 201
+{
+ "data": {
+  "id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d",
+  "wallet_id": "01a0fc49-cea2-79ef-adaf-5fd583d7e74d",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T11:04:51.382627Z",
+  "updated_at": "2026-10-02T11:04:51.382627Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "QA014 W2 dest",
+  "currency": "EGP",
+  "opening_balance_minor": 100000,
+  "balance_minor": 100000,
+  "icon": "wallet",
+  "color": "#112233",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fc49-d22f-7e51-bc0f-cd870be1a393
+> {"type": "cash", "name": "QA014 W3 B-owned", "currency": "EGP", "opening_balance_minor": 100000, "icon": "wallet", "color": "#112233"}
+< 201
+{
+ "data": {
+  "id": "01a0fc49-d22f-7e51-bc0f-cd870be1a393",
+  "wallet_id": "01a0fc49-d22f-7e51-bc0f-cd870be1a393",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T11:04:52.272298Z",
+  "updated_at": "2026-10-02T11:04:52.272298Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "QA014 W3 B-owned",
+  "currency": "EGP",
+  "opening_balance_minor": 100000,
+  "balance_minor": 100000,
+  "icon": "wallet",
+  "color": "#112233",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fc49-d59a-75b2-8eae-212106acc6bd
+> {"type": "cash", "name": "QA014 W4 USD", "currency": "USD", "opening_balance_minor": 100000, "icon": "wallet", "color": "#112233"}
+< 201
+{
+ "data": {
+  "id": "01a0fc49-d59a-75b2-8eae-212106acc6bd",
+  "wallet_id": "01a0fc49-d59a-75b2-8eae-212106acc6bd",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T11:04:53.227704Z",
+  "updated_at": "2026-10-02T11:04:53.227704Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "QA014 W4 USD",
+  "currency": "USD",
+  "opening_balance_minor": 100000,
+  "balance_minor": 100000,
+  "icon": "wallet",
+  "color": "#112233",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+$ dev tinker: use App\Modules\Wallets\Infrastructure\Models\WalletMember; use App\Modules\Wallets\Domain\Ports\ScopeSequence; $s=app(ScopeSequence::class);WalletMember::factory()->editor()->create(['wallet_id'=>'01a0fc49-cb5e-7b32-92ad-c508ad9bcd73','user_id'=>'01a0fc49-25fc-7361-9d05-7f18b59825d2','change_seq'=>$s->nextFor('01a0fc49-cb5e-7b32-92ad-c508ad9bcd73')]);WalletMember::factory()->viewer()->create(['wallet_id'=>'01a0fc49-cb5e-7b32-92ad-c508ad9bcd73','user_id'=>'01a0fc49-2631-7351-ae0f-32766779738d','change_seq'=>$s->nextFor('01a0fc49-cb5e-7b32-92ad-c508ad9bcd73')]);WalletMember::factory()->editor()->create(['wallet_id'=>'01a0fc49-cb5e-7b32-92ad-c508ad9bcd73','user_id'=>'01a0fc49-2695-7184-9d66-7954e0962395','change_seq'=>$s->nextFor('01a0fc49-cb5e-7b32-92ad-c508ad9bcd73')]);WalletMember::factory()->viewer()->create(['wallet_id'=>'01a0fc49-d22f-7e51-bc0f-cd870be1a393','user_id'=>'01a0fc49-2178-70ba-bde0-1c11c2b57e1e','change_seq'=>$s->nextFor('01a0fc49-d22f-7e51-bc0f-cd870be1a393')]);echo 'members ok';
+members ok
+
+GET /platform-categories
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "system_key": "groceries",
+   "kind": "expense",
+   "names": {
+    "ar": "\u0628\u0642\u0627\u0644\u0629",
+    "en": "Groceries"
+   },
+   "icon": "cart",
+   "color": "#2E7D32",
+   "position": 1,
+   "archived_at": null,
+   "updated_at": "2026-10-02T00:31:16.637157Z"
+  },
+  {
+   "id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+   "system_key": "dining_out",
+   "kind": "expense",
+   "names": {
+    "ar": "\u0645\u0637\u0627\u0639\u0645 \u0648\u0643\u0627\u0641\u064a\u0647\u0627\u062a",
+    "en": "Dining out"
+   },
+   "icon": "restaurant",
+   "color": "#EF6C00",
+   "position": 2,
+   "archived_at": null,
+   "updated_at": "2026-10-02T00:31:16.656848Z"
+  },
+  {
+   "id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0",
+   "system_key": "transport",
+   "kind": "expense",
+   "names": {
+    "ar": "\u0645\u0648\u0627\u0635\u0644\u0627\u062a",
+    "en": "Transport"
+   },
+   "icon": "bus",
+   "color": "#1565C0",
+   "position": 3,
+   "archived_at": null,
+   "updated_at": "2026-10-02T00:31:16.666781Z"
+  },
+  {
+   "id": "01a0fa05-c2c1-709c-8e2d-de56c4bb5e71",
+   "system_key": "fuel",
+   "kind": "expense",
+   "names": {
+    "ar": "\u0628\u0646\u0632\u064a\u0646",
+    "en": "Fuel"
+   },
+   "icon": "fuel",
+   "color": "#455A64",
+   "position": 4,
+   "archived_at": null,
+   "updated_at": "2026-10-02T00:31:16.677901Z"
+  },
+  {
+   "id": "01a0fa05-c2cb-710d-96f0-ea5caccafcf6",
+   "system_key": "rent",
+   "kind": "expense",
+   "names": {
+    "ar": "\u0625\u064a\u062c\u0627\u0631",
+    "en": "Rent"
+   },
+   "icon": "home",
+   "color": "#6D4C41",
+   "position": 5,
+   "archived_at": null,
+   "updated_at": "2026-10-02T00:31:16.685325Z"
+  },
+  {
+   "id": "01a0fa05-c2d2-70bc-b5d5-b22d1d5e4739",
+   "system_key": "utilities",
+   "kind": "expense",
+   "names": {
+    "ar": "\u0643\u0647\u0631\u0628\u0627\u0621 \u0648\u0645\u064a\u0627\u0647 \u0648\u063a\u0627\u0632",
+    "en": "Utilities"
+   },
+   "icon": "bolt",
+   "color": "#F9A825",
+   "position": 6,
+   "archived_at": null,
+   "updated_at": "2026-10-02T00:31:16.692414Z"
+  },
+  {
+   "id": "01a0fa05-c2d9-7376-acaf-fe38caece282",
+   "system_key": "phone_internet",
+   "kind": "expense",
+   "names": {
+    "ar": "\u0645\u0648\u0628\u0627\u064a\u0644 \u0648\u0625\u0646\u062a\u0631\u0646\u062a",
+    "en": "Phone & internet"
+   },
+   "icon": "phone",
+   "color": "#00838F",
+   "position": 7,
+   "archived_at": null,
+   "updated_at": "2026-10-02T00:31:16.699813Z"
+  },
+  {
+   "id": "01a0fa05-c2e1-723c-bd31-6252fb6ff86b",
+   "system_key": "health",
+   "kind": "expense",
+   "names": {
+    "ar": "\u0635\u062d\u0629 \u0648\u0639\u0644\u0627\u062c",
+    "en": "Health"
+   },
+   "icon": "health",
+   "color": "#C62828",
+   "position": 8,
+   "archived_at": null,
+   "updated_at": "2026-10-02T00:31:16.708551Z"
+  },
+  {
+   "id": "01a0fa05-c2ea-7206-a9f6-d9fd756df7eb",
+   "system_key": "education",
+   "kind": "expense",
+   "names": {
+    "ar": "\u062a\u0639\u0644\u064a\u0645",
+    "en": "Education"
+   },
+   "icon": "school",
+   "color": "#283593",
+   "position": 9,
+   "archived_at": null,
+   "updated_at": "2026-10-02T00:31:16.716987Z"
+  },
+  {
+   "id": "01a0fa05-c2f1-70b9-8fcc-a2076011d1bb",
+   "system_key": "clothing",
+   "kind": "expense",
+   "names": {
+    "ar": "\u0645\u0644\u0627\u0628\u0633",
+    "en": "Clothing"
+   },
+   "icon": "shirt",
+   "color": "#AD1457",
+   "position": 10,
+   "archived_at": null,
+   "updated_at": "2026-10-02T00:31:16.724286Z"
+  },
+  {
+   "id": "01a0fa05-c2f9-7134-badf-5471f862ae59",
+   "system_key": "household",
+   "kind": "expense",
+   "names": {
+    "ar": "\u0645\u0633\u062a\u0644\u0632\u0645\u0627\u062a \u0627\u0644\u0628\u064a\u062a",
+    "en": "Household"
+   },
+   "icon": "sofa",
+   "color": "#5D4037",
+   "position": 11,
+   "archived_at": null,
+   "updated_at": "2026-10-02T00:31:16.731260Z"
+  },
+  {
+   "id": "01a0fa05-c300-70d7-92ef-4d8522e3b1bf",
+   "system_key": "personal_care",
+   "kind": "expense",
+   "names": {
+    "ar": "\u0639\u0646\u0627\u064a\u0629 \u0634\u062e\u0635\u064a\u0629",
+    "en": "Personal care"
+   },
+   "icon": "care",
+   "color": "#8E24AA",
+   "position": 12,
+   "archived_at": null,
+   "updated_at": "2026-10-02T00:31:16.738580Z"
+  },
+  {
+   "id": "01a0fa05-c307-72ad-83ca-0c800e1f7722",
+   "system_key": "entertainment",
+   "kind": "expense",
+   "names": {
+    "ar": "\u062a\u0631\u0641\u064a\u0647",
+    "en": "Entertainment"
+   },
+   "icon": "ticket",
+   "color": "#7B1FA2",
+   "position": 13,
+   "archived_at": null,
+   "updated_at": "2026-10-02T00:31:16.745495Z"
+  },
+  {
+   "id": "01a0fa05-c30e-73d5-a4a3-dfab12e63d66",
+   "system_key": "subscriptions",
+   "kind": "expense",
+   "names": {
+    "ar": "\u0627\u0634\u062a\u0631\u0627\u0643\u0627\u062a",
+    "en": "Subscriptions"
+   },
+   "icon": "repeat",
+   "color": "#3949AB",
+   "position": 14,
+   "archived_at": null,
+   "updated_at": "2026-10-02T00:31:16.752816Z"
+  },
+  {
+   "id": "01a0fa05-c315-70fe-a413-55d9b08476e4",
+   "system_key": "travel",
+   "kind": "expense",
+   "names": {
+    "ar": "\u0633\u0641\u0631",
+    "en": "Travel"
+   },
+   "icon": "plane",
+   "color": "#0277BD",
+   "position": 15,
+   "archived_at": null,
+   "updated_at": "2026-10-02T00:31:16.759645Z"
+  },
+  {
+   "id": "01a0fa05-c31c-7359-80f2-1c7a2edbea64",
+   "system_key": "kids",
+   "kind": "expense",
+   "names": {
+    "ar": "\u0623\u0637\u0641\u0627\u0644",
+    "en": "Kids"
+   },
+   "icon": "child",
+   "color": "#F06292",
+   "position": 16,
+   "archived_at": null,
+   "updated_at": "2026-10-02T00:31:16.766552Z"
+  },
+  {
+   "id": "01a0fa05-c324-718a-9445-67643da8d573",
+   "system_key": "gifts_given",
+   "kind": "expense",
+   "names": {
+    "ar": "\u0647\u062f\u0627\u064a\u0627",
+    "en": "Gifts"
+   },
+   "icon": "gift",
+   "color": "#D81B60",
+   "position": 17,
+   "archived_at": null,
+   "updated_at": "2026-10-02T00:31:16.775669Z"
+  },
+  {
+   "id": "01a0fa05-c32e-703d-8d19-6843891aea7d",
+   "system_key": "charity",
+   "kind": "expense",
+   "names": {
+    "ar": "\u0632
+
+PUT /categories/01a0fc49-effc-7045-ba4b-1a6025b06850
+> {"kind": "expense", "name": "QA014 expense", "icon": "tag", "color": "#445566"}
+< 201
+{
+ "data": {
+  "id": "01a0fc49-effc-7045-ba4b-1a6025b06850",
+  "user_id": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e",
+  "version": 1,
+  "change_seq": 7,
+  "created_at": "2026-10-02T11:04:59.661377Z",
+  "updated_at": "2026-10-02T11:04:59.661377Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "QA014 expense",
+  "icon": "tag",
+  "color": "#445566",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+PUT /categories/01a0fc49-f24b-798a-9ff7-97de3e0e61eb
+> {"kind": "income", "name": "QA014 income", "icon": "tag", "color": "#445566"}
+< 201
+{
+ "data": {
+  "id": "01a0fc49-f24b-798a-9ff7-97de3e0e61eb",
+  "user_id": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e",
+  "version": 1,
+  "change_seq": 8,
+  "created_at": "2026-10-02T11:05:01.174148Z",
+  "updated_at": "2026-10-02T11:05:01.174148Z",
+  "deleted_at": null,
+  "kind": "income",
+  "name": "QA014 income",
+  "icon": "tag",
+  "color": "#445566",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}

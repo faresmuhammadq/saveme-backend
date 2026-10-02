@@ -3,6 +3,7 @@
 namespace App\Modules\Wallets\Http;
 
 use App\Modules\Wallets\Application\Sync\FeedPresenter;
+use App\Modules\Wallets\Http\Console\MaterialiseOccurrences;
 use App\Modules\Wallets\Http\Console\VerifyBalances;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -24,7 +25,7 @@ class WalletsHttpServiceProvider extends ServiceProvider
         Route::middleware('api')->prefix('api/v1')->group(__DIR__.'/routes.php');
 
         if ($this->app->runningInConsole()) {
-            $this->commands([VerifyBalances::class]);
+            $this->commands([VerifyBalances::class, MaterialiseOccurrences::class]);
         }
     }
 }

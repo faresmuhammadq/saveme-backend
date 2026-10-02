@@ -29,6 +29,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property CarbonImmutable $created_at
  * @property CarbonImmutable $updated_at
  * @property CarbonImmutable|null $deleted_at
+ * @property string|null $recurring_rule_id
+ * @property string|null $occurrence_id
  */
 class Transaction extends Model
 {
@@ -91,6 +93,8 @@ class Transaction extends Model
             createdAt: $this->created_at->toDateTimeImmutable(),
             updatedAt: $this->updated_at->toDateTimeImmutable(),
             deletedAt: $this->deleted_at?->toDateTimeImmutable(),
+            recurringRuleId: $this->recurring_rule_id,
+            occurrenceId: $this->occurrence_id,
         );
     }
 }

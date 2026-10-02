@@ -1,6 +1,10 @@
 <!--
 Sync Impact Report (latest first)
 
+v1.3.6 → 1.3.7 — 2026-10-05
+- PATCH: P-05, P-06, P-07, P-12 list ADR-0018, introduced by spec 014; no rule changes.
+- Reason: spec 014 (B7, Recurring Transactions); ADR-0018 extends ADR-0008 and ADR-0011.
+
 v1.3.5 → 1.3.6 — 2026-10-04
 - PATCH: P-07 and P-08 list ADR-0016 and ADR-0017, introduced by spec 013; no rule changes.
 - Reason: spec 013 (B14, Sync Protocol); ADR-0016 supersedes ADR-0008 rule 7 only; ADR-0017 extends ADR-0008 and ADR-0014.
@@ -99,7 +103,7 @@ v1.0.0 — 2026-09-19 (ratified)
 
 <!-- "Save Me" is a working codename used as display text only; see P-13. -->
 
-**Version**: 1.3.6 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-04
+**Version**: 1.3.7 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-05
 
 ## Purpose & Precedence
 
@@ -162,7 +166,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-05 Derived balances
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0005](../../docs/adr/0005-derived-balance-with-cache.md)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0005](../../docs/adr/0005-derived-balance-with-cache.md), [ADR-0018](../../docs/adr/0018-occurrences-materialised-by-the-server.md) (extends ADR-0008 and ADR-0011)
 
 1. A wallet's balance MUST be derived as opening balance + Σ postings.
 2. The cached balance column MUST be recomputed within the same database transaction that changes postings.
@@ -173,7 +177,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-06 Identifiers
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0002](../../docs/adr/0002-identifiers-uuidv7.md)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0002](../../docs/adr/0002-identifiers-uuidv7.md), [ADR-0018](../../docs/adr/0018-occurrences-materialised-by-the-server.md) (extends ADR-0008 and ADR-0011)
 
 1. Primary keys MUST be UUIDv7.
 2. Syncable entities MUST accept a client-generated ID, so create is an idempotent `PUT /…/{id}` upsert.
@@ -184,7 +188,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-07 Sync and concurrency
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0008](../../docs/adr/0008-sync-changes-feed.md), [ADR-0015](../../docs/adr/0015-transfers-on-two-wallet-feeds.md) (extends ADR-0008), [ADR-0016](../../docs/adr/0016-batch-upload-beside-per-record-writes.md) (supersedes ADR-0008 rule 7), [ADR-0017](../../docs/adr/0017-membership-on-the-members-user-feed.md) (extends ADR-0008)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0008](../../docs/adr/0008-sync-changes-feed.md), [ADR-0015](../../docs/adr/0015-transfers-on-two-wallet-feeds.md) (extends ADR-0008), [ADR-0016](../../docs/adr/0016-batch-upload-beside-per-record-writes.md) (supersedes ADR-0008 rule 7), [ADR-0017](../../docs/adr/0017-membership-on-the-members-user-feed.md) (extends ADR-0008), [ADR-0018](../../docs/adr/0018-occurrences-materialised-by-the-server.md) (extends ADR-0008 and ADR-0011)
 
 1. Every syncable entity MUST carry `version`, `updated_at`, `deleted_at` and `change_seq`.
 2. Every write MUST carry the client's last-seen `version`.
@@ -241,7 +245,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-12 Time
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0011](../../docs/adr/0011-time-and-timezones.md)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0011](../../docs/adr/0011-time-and-timezones.md), [ADR-0018](../../docs/adr/0018-occurrences-materialised-by-the-server.md) (extends ADR-0008 and ADR-0011)
 
 1. Instants MUST be stored in UTC.
 2. Calendar dates (transaction date, period start, recurring anchor) MUST be stored as `YYYY-MM-DD` with no timezone.
@@ -371,7 +375,7 @@ Every `plan.md` includes this section, filled in before Phase 0 and again after 
 ```markdown
 ## Constitution Check
 
-*Constitution v1.3.6. GATE: before Phase 0 and again after Phase 1.*
+*Constitution v1.3.7. GATE: before Phase 0 and again after Phase 1.*
 
 | Principle | Result | Evidence / justification |
 |---|---|---|
@@ -409,4 +413,4 @@ Every amendment updates the footer's **Last Amended** date and the Sync Impact R
 
 **Consistency** — run `/speckit-analyze` before implementing each feature. Contradictions between this constitution, the ADRs and a feature's spec are defects to resolve before code.
 
-**Version**: 1.3.6 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-04
+**Version**: 1.3.7 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-05

@@ -161,7 +161,7 @@ Four surfaces can be used to ask "does this address have an account here". Three
 | Read anything they were invited to | allowed |
 | Manage their own profile | allowed |
 | Manage their own sessions | allowed |
-| **Any write to any wallet** | **refused** |
+| **Any write to any wallet** — including a recurring rule or one of its occurrences, and a rule's catch-up request | **refused** |
 | **Any write to their own categories** | **refused** |
 
 The refusal is `403 EMAIL_NOT_VERIFIED` — its own code, so the app offers to send the verification again rather than showing a denial the person cannot act on.

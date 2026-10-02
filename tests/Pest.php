@@ -10,15 +10,23 @@ use App\Modules\Wallets\Application\Categories\CategoryUsage;
 use App\Modules\Wallets\Application\Categories\CategoryUsageQuery;
 use App\Modules\Wallets\Application\Categories\Dto\CategoryView;
 use App\Modules\Wallets\Application\Dto\WalletView;
+use App\Modules\Wallets\Application\Recurring\Dto\OccurrenceView;
+use App\Modules\Wallets\Application\Recurring\Dto\RuleView;
+use App\Modules\Wallets\Application\Recurring\OccurrenceService;
+use App\Modules\Wallets\Application\Recurring\RecurringPass;
+use App\Modules\Wallets\Application\Recurring\RecurringRuleService;
 use App\Modules\Wallets\Application\Transactions\Dto\TransactionView;
 use App\Modules\Wallets\Application\Transactions\TransactionService;
 use App\Modules\Wallets\Domain\Ports\PostingTotals;
 use App\Modules\Wallets\Domain\Ports\ScopeSequence;
 use App\Modules\Wallets\Http\Resources\CategoryResource;
+use App\Modules\Wallets\Http\Resources\OccurrenceResource;
+use App\Modules\Wallets\Http\Resources\RecurringRuleResource;
 use App\Modules\Wallets\Http\Resources\TransactionResource;
 use App\Modules\Wallets\Http\Resources\WalletResource;
 use App\Modules\Wallets\Infrastructure\Models\Category;
 use App\Modules\Wallets\Infrastructure\Models\CategoryReference;
+use App\Modules\Wallets\Infrastructure\Models\Occurrence;
 use App\Modules\Wallets\Infrastructure\Models\Posting;
 use App\Modules\Wallets\Infrastructure\Models\Transaction;
 use App\Modules\Wallets\Infrastructure\Models\Wallet;
@@ -26,6 +34,8 @@ use App\Modules\Wallets\Infrastructure\Models\WalletMember;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\RouteCollection;
+use Illuminate\Support\Carbon as ClockInstant;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use Tests\Contract\Api\Support\ProbeRequest;
@@ -812,4 +822,219 @@ function postBatch(string $credential, array $items): TestResponse
 function syncItem(string $type, string $op, string $id, array $data, ?string $walletId = null): array
 {
     return ['type' => $type, 'op' => $op, 'id' => $id, ...($walletId === null ? [] : ['wallet_id' => $walletId]), 'data' => $data];
+}
+
+/*
+|--------------------------------------------------------------------------
+| Recurring transactions (spec 014)
+|--------------------------------------------------------------------------
+*/
+
+pest()->afterEach(function () {
+    ClockInstant::setTestNow();
+})->in('Feature', 'Contract');
+
+/**
+ * Freezes the clock at a UTC instant, e.g. `2026-10-05 10:00:00`.
+ */
+function freezeClock(string $utc = '2026-10-05 10:00:00'): void
+{
+    ClockInstant::setTestNow(ClockInstant::parse($utc, 'UTC'));
+}
+
+/**
+ * A full monthly rent rule write body (a platform category) with the given changes.
+ *
+ * @param  array<string, mixed>  $changes
+ * @return array<string, mixed>
+ */
+function recurringRuleBody(array $changes = [], int $version = 0): array
+{
+    return [
+        'preset' => 'custom',
+        'status' => 'active',
+        'kind' => 'expense',
+        'amount_minor' => 450000,
+        'amount_basis' => 'per_occurrence',
+        'currency' => 'EGP',
+        'category_id' => platformCategoryId(),
+        'counter_wallet_id' => null,
+        'description' => 'Rent',
+        'memo' => null,
+        'counterparty' => null,
+        'auto_confirm' => false,
+        'frequency' => 'monthly',
+        'interval' => 1,
+        'anchor_day' => 1,
+        'start_date' => '2026-11-01',
+        'end_date' => null,
+        'occurrence_count' => null,
+        'payout_round' => null,
+        'payout_category_id' => null,
+        'version' => $version,
+        ...$changes,
+    ];
+}
+
+/**
+ * The values a rule save takes, as the service receives them.
+ *
+ * @param  array<string, mixed>  $body
+ * @return array<string, mixed>
+ */
+function recurringRuleValues(array $body): array
+{
+    unset($body['version']);
+
+    return $body;
+}
+
+/**
+ * How a read renders the rule, as the service's `present` closure.
+ *
+ * @return Closure(RuleView): array<string, mixed>
+ */
+function presentRule(): Closure
+{
+    return RecurringRuleResource::toArray(...);
+}
+
+/**
+ * How a read renders the occurrence, as the service's `present` closure.
+ *
+ * @return Closure(OccurrenceView): array<string, mixed>
+ */
+function presentOccurrence(): Closure
+{
+    return OccurrenceResource::toArray(...);
+}
+
+/**
+ * Saves a rule through the service.
+ *
+ * @param  array<string, mixed>  $body  a write body, `version` included
+ */
+function saveRecurringRule(string $userId, string $walletId, string $ruleId, array $body): RuleView
+{
+    return app(RecurringRuleService::class)->save($userId, $walletId, $ruleId, recurringRuleValues($body), (int) ($body['version'] ?? 0), presentRule())->view;
+}
+
+/**
+ * Creates a new rule (the rent rule unless the body says otherwise) through the service.
+ *
+ * @param  array<string, mixed>  $body
+ */
+function createRecurringRule(string $userId, string $walletId, array $body = []): RuleView
+{
+    return saveRecurringRule($userId, $walletId, (string) Str::uuid7(), $body === [] ? recurringRuleBody() : $body);
+}
+
+/**
+ * Saves an occurrence through the service from the body's writable members.
+ *
+ * @param  array<string, mixed>  $body  a write body, `version` included
+ */
+function saveRecurringOccurrence(string $userId, string $walletId, string $occurrenceId, array $body): OccurrenceView
+{
+    $version = (int) $body['version'];
+    unset($body['version']);
+
+    return app(OccurrenceService::class)->save($userId, $walletId, $occurrenceId, $body, $version, presentOccurrence());
+}
+
+/**
+ * The occurrence write body that leaves the stored occurrence as it is, with the changes.
+ *
+ * @param  array<string, mixed>  $changes
+ * @return array<string, mixed>
+ */
+function occurrenceBody(Occurrence|string $occurrence, array $changes = []): array
+{
+    $occurrence = $occurrence instanceof Occurrence ? $occurrence->fresh() : Occurrence::query()->findOrFail($occurrence);
+
+    return [
+        'status' => $occurrence->status,
+        'date' => $occurrence->date,
+        'amount_minor' => $occurrence->amount_minor,
+        'category_id' => $occurrence->category_id,
+        'description' => $occurrence->description,
+        'memo' => $occurrence->memo,
+        'counterparty' => $occurrence->counterparty,
+        'transaction_id' => $occurrence->transaction_id,
+        'version' => $occurrence->version,
+        ...$changes,
+    ];
+}
+
+/**
+ * The occurrence write body that confirms it with a new transaction id.
+ *
+ * @param  array<string, mixed>  $changes
+ * @return array<string, mixed>
+ */
+function confirmBody(Occurrence|string $occurrence, array $changes = []): array
+{
+    return occurrenceBody($occurrence, ['status' => 'confirmed', 'transaction_id' => (string) Str::uuid7(), ...$changes]);
+}
+
+/**
+ * A rule call with a credential, forgetting the guard afterwards.
+ *
+ * @param  array<string, mixed>  $body
+ */
+function recurringRuleCall(string $method, string $credential, string $walletId, string $ruleId, array $body = [], string $suffix = ''): TestResponse
+{
+    return walletCall($method, $credential, '/wallets/'.$walletId.'/recurring-rules/'.$ruleId.$suffix, $body);
+}
+
+/**
+ * An occurrence call with a credential, forgetting the guard afterwards.
+ *
+ * @param  array<string, mixed>  $body
+ */
+function occurrenceCall(string $method, string $credential, string $walletId, string $occurrenceId, array $body = []): TestResponse
+{
+    return walletCall($method, $credential, '/wallets/'.$walletId.'/occurrences/'.$occurrenceId, $body);
+}
+
+/**
+ * A rule's occurrences by date, payouts last on a tie, tombstones included only when asked.
+ *
+ * @return Collection<int, Occurrence>
+ */
+function occurrencesOf(string $ruleId, bool $withTombstones = false): Collection
+{
+    return Occurrence::query()
+        ->where('recurring_rule_id', $ruleId)
+        ->when(! $withTombstones, fn ($query) => $query->whereNull('deleted_at'))
+        ->orderBy('scheduled_date')
+        ->orderBy('is_payout')
+        ->get();
+}
+
+/**
+ * Runs the hourly job once.
+ *
+ * @return array{rules: int, materialised: int, confirmed: int, refused: int, failed: int}
+ */
+function runRecurringJob(): array
+{
+    return app(RecurringPass::class)->run();
+}
+
+/**
+ * A verified owner with a wallet, and a verified editor and viewer in it.
+ *
+ * @return array{owner: User, wallet: Wallet, editor: User, viewer: User}
+ */
+function recurringWorld(): array
+{
+    $owner = person('owner@example.test');
+    $editor = person('editor@example.test');
+    $viewer = person('viewer@example.test');
+    $wallet = ownedWallet($owner->id);
+    addMember($wallet->id, $editor->id, 'editor');
+    addMember($wallet->id, $viewer->id, 'viewer');
+
+    return ['owner' => $owner, 'wallet' => $wallet, 'editor' => $editor, 'viewer' => $viewer];
 }

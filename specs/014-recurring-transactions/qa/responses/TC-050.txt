@@ -1,0 +1,385 @@
+===== TC-050 2026-10-02T11:12:48.157000Z
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc51-181d-7293-b96d-b5ec4f9c890b
+> {"preset": "gameya", "status": "active", "kind": "expense", "amount_minor": 100000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 5, "start_date": "2026-10-05", "end_date": null, "occurrence_count": 10, "payout_round": 4, "payout_category_id": "01a0fa05-c344-7014-a053-5688a2879949", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fc51-181d-7293-b96d-b5ec4f9c890b",
+  "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+  "version": 1,
+  "change_seq": 643,
+  "created_at": "2026-10-02T11:12:49.159761Z",
+  "updated_at": "2026-10-02T11:12:49.159761Z",
+  "deleted_at": null,
+  "preset": "gameya",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 100000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "QA",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "monthly",
+  "interval": 1,
+  "anchor_day": 5,
+  "start_date": "2026-10-05",
+  "end_date": null,
+  "occurrence_count": 10,
+  "payout_round": 4,
+  "payout_category_id": "01a0fa05-c344-7014-a053-5688a2879949",
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+# PASS TC-050 gameya create 201 
+
+GET /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/occurrences?filter[recurring_rule_id]=eq:01a0fc51-181d-7293-b96d-b5ec4f9c890b&limit=200
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fc51-1c41-736b-8096-5afef430a338",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 1,
+   "change_seq": 644,
+   "created_at": "2026-10-02T11:12:49.217899Z",
+   "updated_at": "2026-10-02T11:12:49.217899Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc51-181d-7293-b96d-b5ec4f9c890b",
+   "ordinal": 1,
+   "is_payout": false,
+   "scheduled_date": "2026-10-05",
+   "date": "2026-10-05",
+   "status": "scheduled",
+   "kind": "expense",
+   "amount_minor": 100000,
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  },
+  {
+   "id": "01a0fc51-1c42-715b-9a3e-aecde5535218",
+   "wallet_id": "01a0fc49-cb5e-7b32-92ad-c508ad9bcd73",
+   "version": 1,
+   "change_seq": 645,
+   "created_at": "2026-10-02T11:12:49.217899Z",
+   "updated_at": "2026-10-02T11:12:49.217899Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc51-181d-7293-b96d-b5ec4f9c890b",
+   "ordinal": 2,
+   "is_payout": false,
+   "scheduled_date": "2026-11-05",
+   "date": "2026-11-05",
+   "status": "scheduled",
+   "kind": "expense",
+   "amount_minor": 100000,
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "QA",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+# [('2026-10-05', 1, False, 'expense', 100000), ('2026-11-05', 2, False, 'expense', 100000)]
+# PASS TC-050 contributions are expense 100000 
+# FAIL TC-050 one payout income on round 4 date (2027-01-05) worth 1,000,000 []
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc51-1f37-7e80-967a-6a5142aa7409
+> {"preset": "gameya", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "weekly", "interval": 1, "anchor_day": null, "start_date": "2026-11-01", "end_date": null, "occurrence_count": 10, "payout_round": 4, "payout_category_id": "01a0fa05-c344-7014-a053-5688a2879949", "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc51-206b-723b-a7f4-2f6d4543d812",
+ "errors": [
+  {
+   "pointer": "/frequency",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+# PASS TC-051 preset shape refused: gameya weekly 
+# gameya weekly: [["/frequency", "INVALID_ENUM_VALUE"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc51-227e-77c6-8b57-54858de65e3a
+> {"preset": "gameya", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 2, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": 10, "payout_round": 4, "payout_category_id": "01a0fa05-c344-7014-a053-5688a2879949", "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc51-23a2-732a-ba54-e92a8a9a0fcc",
+ "errors": [
+  {
+   "pointer": "/interval",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+# PASS TC-051 preset shape refused: gameya interval 2 
+# gameya interval 2: [["/interval", "INVALID_ENUM_VALUE"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc51-2556-7f9f-ace5-8aabf0d78d08
+> {"preset": "gameya", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": 4, "payout_category_id": "01a0fa05-c344-7014-a053-5688a2879949", "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc51-2634-7318-87a0-cd5844a1d740",
+ "errors": [
+  {
+   "pointer": "/occurrence_count",
+   "code": "REQUIRED",
+   "detail": "This field is required."
+  }
+ ]
+}
+# PASS TC-051 preset shape refused: gameya no count 
+# gameya no count: [["/occurrence_count", "REQUIRED"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc51-27f3-7aaa-826c-114d5388430f
+> {"preset": "gameya", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": 1, "payout_round": 1, "payout_category_id": "01a0fa05-c344-7014-a053-5688a2879949", "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc51-28df-7067-9fc7-eef5530e5ddc",
+ "errors": [
+  {
+   "pointer": "/occurrence_count",
+   "code": "OUT_OF_RANGE",
+   "detail": "This value is too short, too long, or outside the allowed range."
+  }
+ ]
+}
+# PASS TC-051 preset shape refused: gameya count 1 
+# gameya count 1: [["/occurrence_count", "OUT_OF_RANGE"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc51-2a9e-7c20-9fb3-978acd996ea4
+> {"preset": "gameya", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": 10, "payout_round": 11, "payout_category_id": "01a0fa05-c344-7014-a053-5688a2879949", "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc51-2b82-721e-a891-a3920724201e",
+ "errors": [
+  {
+   "pointer": "/occurrence_count",
+   "code": "OUT_OF_RANGE",
+   "detail": "This value is too short, too long, or outside the allowed range."
+  }
+ ]
+}
+# FAIL TC-051 preset shape refused: gameya payout round 11 > count 422 [["/occurrence_count", "OUT_OF_RANGE"]]
+# gameya payout round 11 > count: [["/occurrence_count", "OUT_OF_RANGE"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc51-2d9f-7491-8b23-0558ec85f2ff
+> {"preset": "gameya", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": 10, "payout_round": 4, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc51-2e93-7193-97a5-b6644a785155",
+ "errors": [
+  {
+   "pointer": "/payout_category_id",
+   "code": "REQUIRED",
+   "detail": "This field is required."
+  }
+ ]
+}
+# PASS TC-051 preset shape refused: gameya no payout category 
+# gameya no payout category: [["/payout_category_id", "REQUIRED"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc51-30b7-706c-b2bc-458ac2e50533
+> {"preset": "gameya", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": 10, "payout_round": 4, "payout_category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc51-31cc-7318-9901-59238d4169fb",
+ "errors": [
+  {
+   "pointer": "/payout_category_id",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+# PASS TC-051 preset shape refused: gameya expense payout category 
+# gameya expense payout category: [["/payout_category_id", "INVALID_ENUM_VALUE"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc51-340e-74ab-a2d2-a17801ef362a
+> {"preset": "gameya", "status": "active", "kind": "income", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c344-7014-a053-5688a2879949", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": 10, "payout_round": 4, "payout_category_id": "01a0fa05-c344-7014-a053-5688a2879949", "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc51-3511-71e9-a374-ab683dea71be",
+ "errors": [
+  {
+   "pointer": "/kind",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+# PASS TC-051 preset shape refused: gameya income kind 
+# gameya income kind: [["/kind", "INVALID_ENUM_VALUE"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc51-373f-782a-a0e8-c1a600f58318
+> {"preset": "installment", "status": "active", "kind": "income", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c344-7014-a053-5688a2879949", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": 12, "payout_round": null, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc51-3826-7091-9914-4494392a8193",
+ "errors": [
+  {
+   "pointer": "/kind",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+# PASS TC-051 preset shape refused: installment income 
+# installment income: [["/kind", "INVALID_ENUM_VALUE"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc51-39cb-7123-b767-e34c950009e4
+> {"preset": "installment", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": 12, "payout_round": 2, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc51-3a9f-7197-8237-4b7f3bd56b91",
+ "errors": [
+  {
+   "pointer": "/payout_round",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+# PASS TC-051 preset shape refused: installment payout 
+# installment payout: [["/payout_round", "INVALID_ENUM_VALUE"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc51-3c52-7b9b-b2cd-2ecfae171c88
+> {"preset": "installment", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": "2027-12-01", "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc51-3d3d-70d3-8026-078016f2ba96",
+ "errors": [
+  {
+   "pointer": "/end_date",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  },
+  {
+   "pointer": "/occurrence_count",
+   "code": "REQUIRED",
+   "detail": "This field is required."
+  }
+ ]
+}
+# PASS TC-051 preset shape refused: installment end_date 
+# installment end_date: [["/end_date", "INVALID_ENUM_VALUE"], ["/occurrence_count", "REQUIRED"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc51-3f21-729f-a95d-8041c4c2b71d
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "total", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc51-4026-7075-b19d-9de037b625c6",
+ "errors": [
+  {
+   "pointer": "/amount_basis",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+# FAIL TC-051 preset shape refused: total without count 422 [["/amount_basis", "INVALID_ENUM_VALUE"]]
+# total without count: [["/amount_basis", "INVALID_ENUM_VALUE"]]
+
+PUT /wallets/01a0fc49-cb5e-7b32-92ad-c508ad9bcd73/recurring-rules/01a0fc51-4281-71ee-b733-5d9b174332a8
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 11, "amount_basis": "total", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": 12, "payout_round": null, "payout_category_id": null, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fc51-43b1-723f-b180-03176d2baf55",
+ "errors": [
+  {
+   "pointer": "/amount_minor",
+   "code": "OUT_OF_RANGE",
+   "detail": "This value is too short, too long, or outside the allowed range."
+  }
+ ]
+}
+# PASS TC-051 preset shape refused: total < count 
+# total < count: [["/amount_minor", "OUT_OF_RANGE"]]

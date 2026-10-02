@@ -399,7 +399,7 @@ This is what makes a retry safe. The client cannot know whether a request that t
 
 ### Batch upload
 
-`POST /api/v1/sync/batch` carries 1 to 50 per-record writes in one request ([ADR-0016](adr/0016-batch-upload-beside-per-record-writes.md)). It is a transport, not a new kind of write: each item is exactly one per-record write (`PUT`, `DELETE`, or the restoring `PATCH`) and obeys exactly its rules. Items are independent, applied one at a time in array order, and each is answered by its own result (`applied`, `conflict` or `rejected`, with the status and body the single write gives). An unusable envelope is refused whole with `422` and nothing is applied. The per-record writes stay available and unchanged beside it.
+`POST /api/v1/sync/batch` carries 1 to 50 per-record writes in one request ([ADR-0016](adr/0016-batch-upload-beside-per-record-writes.md)). It is a transport, not a new kind of write: each item is exactly one per-record write (`PUT`, `DELETE`, or the restoring `PATCH`) and obeys exactly its rules. Items are independent, applied one at a time in array order, and each is answered by its own result (`applied`, `conflict` or `rejected`, with the status and body the single write gives). An unusable envelope is refused whole with `422` and nothing is applied. The per-record writes stay available and unchanged beside it. The item types are `wallet`, `category`, `transaction`, `profile`, `recurring_rule` (`upsert`, `delete`) and `occurrence` (`upsert` only: an occurrence is confirmed, skipped or edited, never created or deleted by a client).
 
 ### Every outcome
 
@@ -511,6 +511,10 @@ with the ordinary problem body and `code: METHOD_NOT_ALLOWED`.
 
 - `403` would imply a permission the caller could conceivably be granted. Nobody can write this resource, ever, including its own owner.
 - `404` would contradict the record the client just read out of a feed.
+
+### A server-created record that accepts a write
+
+An **Occurrence** (recurring transactions, [ADR-0018](adr/0018-occurrences-materialised-by-the-server.md)) is the second server-produced syncable record, and unlike a Category Reference it has a write: a `PUT` of its writable members with the last-seen `version`, to confirm, skip or edit it. That `PUT` never creates. An id the server did not mint is `404 NOT_FOUND`, never `201`, and there is no `DELETE`: it goes with its rule. The rule that "a create is a `PUT` with a client id" holds for every record a client creates; the occurrence is not one.
 
 ## Client version gating
 

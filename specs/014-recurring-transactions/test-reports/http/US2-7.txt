@@ -1,0 +1,14 @@
+===== US2-7 2026-10-02T11:19:14.191451Z
+
+PUT /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/occurrences/01a0fc56-fc0f-7665-9c9a-7b9ca44acc0e
+> {"status": "scheduled", "date": "2026-10-10", "amount_minor": 1, "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "description": null, "memo": null, "counterparty": null, "transaction_id": null, "version": 1}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fc56-fcfc-7132-966e-5b6129ef7e49"
+}
+# PASS E2E unknown occurrence -> 404 

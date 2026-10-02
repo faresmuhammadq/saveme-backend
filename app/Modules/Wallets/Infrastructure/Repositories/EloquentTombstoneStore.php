@@ -21,6 +21,26 @@ final class EloquentTombstoneStore implements TombstoneStore
         return array_map(fn (array $row): array => ['id' => (string) $row['id'], 'wallet_id' => (string) $row['wallet_id'], 'counter_wallet_id' => $row['counter_wallet_id'] === null ? null : (string) $row['counter_wallet_id']], $rows);
     }
 
+    public function nextExpiredOccurrences(DateTimeImmutable $before, string $afterId, int $limit): array
+    {
+        $rows = self::select(
+            'SELECT id, wallet_id FROM occurrences WHERE deleted_at < ?::timestamptz AND id > ?::uuid ORDER BY id LIMIT ?',
+            [self::instant($before), self::after($afterId), $limit],
+        );
+
+        return array_map(fn (array $row): array => ['id' => (string) $row['id'], 'wallet_id' => (string) $row['wallet_id']], $rows);
+    }
+
+    public function nextExpiredRules(DateTimeImmutable $before, string $afterId, int $limit): array
+    {
+        $rows = self::select(
+            'SELECT id, wallet_id FROM recurring_rules WHERE deleted_at < ?::timestamptz AND id > ?::uuid ORDER BY id LIMIT ?',
+            [self::instant($before), self::after($afterId), $limit],
+        );
+
+        return array_map(fn (array $row): array => ['id' => (string) $row['id'], 'wallet_id' => (string) $row['wallet_id']], $rows);
+    }
+
     public function nextExpiredReferences(DateTimeImmutable $before, string $afterId, int $limit): array
     {
         $rows = self::select(
@@ -96,6 +116,31 @@ final class EloquentTombstoneStore implements TombstoneStore
         ], $rows);
     }
 
+    public function deleteOccurrences(array $ids, DateTimeImmutable $before): array
+    {
+        $rows = self::select(
+            'DELETE FROM occurrences o WHERE o.id = ANY(?::uuid[]) AND o.deleted_at < ?::timestamptz
+               AND NOT EXISTS (SELECT 1 FROM transactions t WHERE t.occurrence_id = o.id)
+             RETURNING o.wallet_id, o.change_seq',
+            [self::uuidArray($ids), self::instant($before)],
+        );
+
+        return array_map(fn (array $row): array => ['wallet_id' => (string) $row['wallet_id'], 'change_seq' => (int) $row['change_seq']], $rows);
+    }
+
+    public function deleteRules(array $ids, DateTimeImmutable $before): array
+    {
+        $rows = self::select(
+            'DELETE FROM recurring_rules r WHERE r.id = ANY(?::uuid[]) AND r.deleted_at < ?::timestamptz
+               AND NOT EXISTS (SELECT 1 FROM occurrences o WHERE o.recurring_rule_id = r.id)
+               AND NOT EXISTS (SELECT 1 FROM transactions t WHERE t.recurring_rule_id = r.id)
+             RETURNING r.wallet_id, r.change_seq',
+            [self::uuidArray($ids), self::instant($before)],
+        );
+
+        return array_map(fn (array $row): array => ['wallet_id' => (string) $row['wallet_id'], 'change_seq' => (int) $row['change_seq']], $rows);
+    }
+
     public function deleteReferences(array $ids, DateTimeImmutable $before): array
     {
         $rows = self::select(
@@ -128,6 +173,8 @@ final class EloquentTombstoneStore implements TombstoneStore
                AND NOT EXISTS (SELECT 1 FROM transactions t WHERE t.category_id = c.id)
                AND NOT EXISTS (SELECT 1 FROM postings p WHERE p.category_id = c.id)
                AND NOT EXISTS (SELECT 1 FROM category_references r WHERE r.category_id = c.id)
+               AND NOT EXISTS (SELECT 1 FROM recurring_rules rr WHERE rr.category_id = c.id OR rr.payout_category_id = c.id)
+               AND NOT EXISTS (SELECT 1 FROM occurrences oc WHERE oc.category_id = c.id)
              RETURNING c.user_id, c.change_seq',
             [self::uuidArray($ids), self::instant($before)],
         );
@@ -142,7 +189,9 @@ final class EloquentTombstoneStore implements TombstoneStore
                AND NOT EXISTS (SELECT 1 FROM transactions t WHERE t.wallet_id = w.id OR t.counter_wallet_id = w.id)
                AND NOT EXISTS (SELECT 1 FROM postings p WHERE p.wallet_id = w.id)
                AND NOT EXISTS (SELECT 1 FROM category_references r WHERE r.wallet_id = w.id)
-               AND NOT EXISTS (SELECT 1 FROM wallet_members m WHERE m.wallet_id = w.id)',
+               AND NOT EXISTS (SELECT 1 FROM wallet_members m WHERE m.wallet_id = w.id)
+               AND NOT EXISTS (SELECT 1 FROM recurring_rules rr WHERE rr.wallet_id = w.id OR rr.counter_wallet_id = w.id)
+               AND NOT EXISTS (SELECT 1 FROM occurrences oc WHERE oc.wallet_id = w.id OR oc.counter_wallet_id = w.id)',
             [self::uuidArray($ids), self::instant($before)],
         );
     }

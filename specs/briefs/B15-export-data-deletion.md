@@ -41,3 +41,9 @@ The brief predates decisions ratified since. These collide with it; the ratified
 
 - **Account deletion purges the user scope**: a person's profile, device sessions, categories and memberships go with the account. Memberships are tombstoned first, each stamped from the **member's** user counter (ADR-0017), so their other devices and the wallet's other members learn of it before the scope disappears; the purge then removes the rows and the `users` row last.
 - The export reads the same records the feeds render; it does not read `change_seq`, `member_change_seq` or `purged_change_seq`, which are positions, not data.
+
+## Inherited from B7 (spec 014)
+
+- **Export recurring rules and their occurrences** with the person's wallets: each rule with its template, schedule, `timezone` and `created_by`; each occurrence with its key (`recurring_rule_id`, `scheduled_date`, `is_payout`), `status`, effective values and `transaction_id`. The `auto_confirm_from` column is internal and not exported. Tombstones are exported as tombstones.
+- **A departing author's rules.** A rule's author is `created_by`; automatic confirmation acts with the author's authority and is refused as `not_permitted` once they are no longer a member of the wallet (spec 014 R-13, open question 5). B15 decides whether such a rule is transferred, ended or left to be confirmed by hand; until then it stays live and surfaces the refusal.
+- Transactions an occurrence produced are exported as transactions; their `recurring_rule_id` and `occurrence_id` may point at tombstones that were purged after 90 days.

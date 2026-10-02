@@ -20,3 +20,10 @@ The brief predates decisions ratified since. These collide with it; the ratified
 | "Share per category" | ADR-0003 rule 7: no division or rounding on minor-unit amounts outside `allocate` | A percentage is a ratio, not money — state the rounding rule |
 | `{ label, value }` shapes | Money on the wire is `amount_minor` + `currency` (spec 003) | `value` must be money-shaped, never a decimal |
 | Shared wallet totals | ADR-0011 rule 7: identical for every member | Required |
+
+## Inherited from B7 (spec 014)
+
+- **Forecast from `scheduled` occurrences, through a query service, never from transactions.** Upcoming items are Occurrence records with `status: scheduled` (materialised through the rule's today + 35 days and at least the next one); there is no `planned` transaction and none will be. Read them through an Application query service over the Wallets tables, not by calling the recurring endpoints.
+- **"Due" and "missed" are derived** (scheduled and dated on or before the rule's today, in the rule's stored `timezone`; missed is due while a later non-payout occurrence of the same rule is also due). Compute them; they are never stored.
+- A gam'eya's **payout** is an income occurrence (`is_payout: true`) worth the sum of the scheduled contributions; a forecast counts it on the payout round's date. A skipped occurrence is a decision about one round, not a change to the series.
+- Confirmed occurrences are ordinary transactions and are already in every actual total; do not add them again from the occurrence table.

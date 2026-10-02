@@ -8,6 +8,8 @@ use App\Modules\Wallets\Domain\Categories\PlatformCategoryRecord;
 use App\Modules\Wallets\Domain\Categories\Ports\CategoryRepository;
 use App\Modules\Wallets\Infrastructure\Models\Category;
 use App\Modules\Wallets\Infrastructure\Models\CategoryReference;
+use App\Modules\Wallets\Infrastructure\Models\Occurrence;
+use App\Modules\Wallets\Infrastructure\Models\RecurringRule;
 use App\Modules\Wallets\Infrastructure\Models\Transaction;
 use App\Modules\Wallets\Infrastructure\Models\Wallet;
 use DateTimeImmutable;
@@ -52,7 +54,9 @@ final class EloquentCategoryRepository implements CategoryRepository
             ->exists()
             || Wallet::query()->whereKey($categoryId)->exists()
             || CategoryReference::query()->whereKey($categoryId)->exists()
-            || Transaction::query()->whereKey($categoryId)->exists();
+            || Transaction::query()->whereKey($categoryId)->exists()
+            || RecurringRule::query()->whereKey($categoryId)->exists()
+            || Occurrence::query()->whereKey($categoryId)->exists();
     }
 
     public function insert(string $categoryId, string $ownerId, array $values, int $changeSeq): void

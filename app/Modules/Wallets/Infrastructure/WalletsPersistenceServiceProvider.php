@@ -11,13 +11,18 @@ use App\Modules\Wallets\Domain\Ports\ScopeSequence;
 use App\Modules\Wallets\Domain\Ports\SyncFeedReader;
 use App\Modules\Wallets\Domain\Ports\TombstoneStore;
 use App\Modules\Wallets\Domain\Ports\WalletRepository;
+use App\Modules\Wallets\Domain\Recurring\Ports\OccurrenceRepository;
+use App\Modules\Wallets\Domain\Recurring\Ports\RecurringRuleRepository;
+use App\Modules\Wallets\Domain\Recurring\Ports\StampBlock;
 use App\Modules\Wallets\Domain\Transactions\Ports\PostingRepository;
 use App\Modules\Wallets\Domain\Transactions\Ports\TransactionRepository;
 use App\Modules\Wallets\Infrastructure\Ledger\EloquentPostingTotals;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentCategoryReferenceRepository;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentCategoryRepository;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentMembershipRepository;
+use App\Modules\Wallets\Infrastructure\Repositories\EloquentOccurrenceRepository;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentPostingRepository;
+use App\Modules\Wallets\Infrastructure\Repositories\EloquentRecurringRuleRepository;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentSyncFeedReader;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentTombstoneStore;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentTransactionRepository;
@@ -47,5 +52,8 @@ class WalletsPersistenceServiceProvider extends ServiceProvider
         PostingTotals::class => EloquentPostingTotals::class,
         SyncFeedReader::class => EloquentSyncFeedReader::class,
         TombstoneStore::class => EloquentTombstoneStore::class,
+        RecurringRuleRepository::class => EloquentRecurringRuleRepository::class,
+        OccurrenceRepository::class => EloquentOccurrenceRepository::class,
+        StampBlock::class => WalletScopeSequence::class,
     ];
 }

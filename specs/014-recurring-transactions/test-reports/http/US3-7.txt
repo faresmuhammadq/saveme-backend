@@ -1,0 +1,403 @@
+===== US3-7 2026-10-02T11:20:15.495812Z
+
+PUT /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/recurring-rules/01a0fc57-eb87-7e44-8aba-2111aa8baac7
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 50000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "Electricity", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-09-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fc57-eb87-7e44-8aba-2111aa8baac7",
+  "wallet_id": "01a0fc55-daaf-7350-92d8-28f5907b795f",
+  "version": 1,
+  "change_seq": 393,
+  "created_at": "2026-10-02T11:20:16.328287Z",
+  "updated_at": "2026-10-02T11:20:16.328287Z",
+  "deleted_at": null,
+  "preset": "custom",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 50000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "Electricity",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "monthly",
+  "interval": 1,
+  "anchor_day": 1,
+  "start_date": "2026-09-01",
+  "end_date": null,
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/occurrences?filter[recurring_rule_id]=eq:01a0fc57-eb87-7e44-8aba-2111aa8baac7&limit=200
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fc57-ef13-73cf-b09d-3cb1a023cf6a",
+   "wallet_id": "01a0fc55-daaf-7350-92d8-28f5907b795f",
+   "version": 1,
+   "change_seq": 394,
+   "created_at": "2026-10-02T11:20:16.403662Z",
+   "updated_at": "2026-10-02T11:20:16.403662Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc57-eb87-7e44-8aba-2111aa8baac7",
+   "ordinal": 1,
+   "is_payout": false,
+   "scheduled_date": "2026-09-01",
+   "date": "2026-09-01",
+   "status": "scheduled",
+   "kind": "expense",
+   "amount_minor": 50000,
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "Electricity",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  },
+  {
+   "id": "01a0fc57-ef13-73cf-b09d-3cb1a112fb41",
+   "wallet_id": "01a0fc55-daaf-7350-92d8-28f5907b795f",
+   "version": 1,
+   "change_seq": 395,
+   "created_at": "2026-10-02T11:20:16.403662Z",
+   "updated_at": "2026-10-02T11:20:16.403662Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc57-eb87-7e44-8aba-2111aa8baac7",
+   "ordinal": 2,
+   "is_payout": false,
+   "scheduled_date": "2026-10-01",
+   "date": "2026-10-01",
+   "status": "scheduled",
+   "kind": "expense",
+   "amount_minor": 50000,
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "Electricity",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  },
+  {
+   "id": "01a0fc57-ef14-722b-b464-61ba82652c45",
+   "wallet_id": "01a0fc55-daaf-7350-92d8-28f5907b795f",
+   "version": 1,
+   "change_seq": 396,
+   "created_at": "2026-10-02T11:20:16.403662Z",
+   "updated_at": "2026-10-02T11:20:16.403662Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fc57-eb87-7e44-8aba-2111aa8baac7",
+   "ordinal": 3,
+   "is_payout": false,
+   "scheduled_date": "2026-11-01",
+   "date": "2026-11-01",
+   "status": "scheduled",
+   "kind": "expense",
+   "amount_minor": 50000,
+   "currency": "EGP",
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "counter_wallet_id": null,
+   "description": "Electricity",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+PUT /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/occurrences/01a0fc57-ef13-73cf-b09d-3cb1a023cf6a
+> {"status": "confirmed", "date": "2026-09-01", "amount_minor": 50000, "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "description": "Electricity", "memo": null, "counterparty": null, "transaction_id": "01a0fc57-f1e3-718c-82f8-3da3c4716bbc", "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fc57-ef13-73cf-b09d-3cb1a023cf6a",
+  "wallet_id": "01a0fc55-daaf-7350-92d8-28f5907b795f",
+  "version": 2,
+  "change_seq": 398,
+  "created_at": "2026-10-02T11:20:16.403662Z",
+  "updated_at": "2026-10-02T11:20:17.930457Z",
+  "deleted_at": null,
+  "recurring_rule_id": "01a0fc57-eb87-7e44-8aba-2111aa8baac7",
+  "ordinal": 1,
+  "is_payout": false,
+  "scheduled_date": "2026-09-01",
+  "date": "2026-09-01",
+  "status": "confirmed",
+  "kind": "expense",
+  "amount_minor": 50000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "Electricity",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": "01a0fc57-f1e3-718c-82f8-3da3c4716bbc",
+  "auto_confirm_refusal": null
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/recurring-rules/01a0fc57-eb87-7e44-8aba-2111aa8baac7
+< 200
+{
+ "data": {
+  "id": "01a0fc57-eb87-7e44-8aba-2111aa8baac7",
+  "wallet_id": "01a0fc55-daaf-7350-92d8-28f5907b795f",
+  "version": 1,
+  "change_seq": 393,
+  "created_at": "2026-10-02T11:20:16.328287Z",
+  "updated_at": "2026-10-02T11:20:16.328287Z",
+  "deleted_at": null,
+  "preset": "custom",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 50000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "Electricity",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "monthly",
+  "interval": 1,
+  "anchor_day": 1,
+  "start_date": "2026-09-01",
+  "end_date": null,
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+
+DELETE /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/recurring-rules/01a0fc57-eb87-7e44-8aba-2111aa8baac7
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fc57-eb87-7e44-8aba-2111aa8baac7",
+  "wallet_id": "01a0fc55-daaf-7350-92d8-28f5907b795f",
+  "version": 2,
+  "change_seq": 405,
+  "created_at": "2026-10-02T11:20:16.328287Z",
+  "updated_at": "2026-10-02T11:20:19.257654Z",
+  "deleted_at": "2026-10-02T11:20:19.209511Z",
+  "preset": "custom",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 50000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "Electricity",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "monthly",
+  "interval": 1,
+  "anchor_day": 1,
+  "start_date": "2026-09-01",
+  "end_date": null,
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+# PASS E2E rule tombstoned 
+
+GET /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/occurrences/01a0fc57-ef13-73cf-b09d-3cb1a023cf6a
+< 200
+{
+ "data": {
+  "id": "01a0fc57-ef13-73cf-b09d-3cb1a023cf6a",
+  "wallet_id": "01a0fc55-daaf-7350-92d8-28f5907b795f",
+  "version": 3,
+  "change_seq": 402,
+  "created_at": "2026-10-02T11:20:16.403662Z",
+  "updated_at": "2026-10-02T11:20:19.237777Z",
+  "deleted_at": "2026-10-02T11:20:19.209511Z",
+  "recurring_rule_id": "01a0fc57-eb87-7e44-8aba-2111aa8baac7",
+  "ordinal": 1,
+  "is_payout": false,
+  "scheduled_date": "2026-09-01",
+  "date": "2026-09-01",
+  "status": "confirmed",
+  "kind": "expense",
+  "amount_minor": 50000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "Electricity",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": "01a0fc57-f1e3-718c-82f8-3da3c4716bbc",
+  "auto_confirm_refusal": null
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/occurrences/01a0fc57-ef13-73cf-b09d-3cb1a112fb41
+< 200
+{
+ "data": {
+  "id": "01a0fc57-ef13-73cf-b09d-3cb1a112fb41",
+  "wallet_id": "01a0fc55-daaf-7350-92d8-28f5907b795f",
+  "version": 2,
+  "change_seq": 403,
+  "created_at": "2026-10-02T11:20:16.403662Z",
+  "updated_at": "2026-10-02T11:20:19.237777Z",
+  "deleted_at": "2026-10-02T11:20:19.209511Z",
+  "recurring_rule_id": "01a0fc57-eb87-7e44-8aba-2111aa8baac7",
+  "ordinal": 2,
+  "is_payout": false,
+  "scheduled_date": "2026-10-01",
+  "date": "2026-10-01",
+  "status": "scheduled",
+  "kind": "expense",
+  "amount_minor": 50000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "Electricity",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": null,
+  "auto_confirm_refusal": null
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/occurrences/01a0fc57-ef14-722b-b464-61ba82652c45
+< 200
+{
+ "data": {
+  "id": "01a0fc57-ef14-722b-b464-61ba82652c45",
+  "wallet_id": "01a0fc55-daaf-7350-92d8-28f5907b795f",
+  "version": 2,
+  "change_seq": 404,
+  "created_at": "2026-10-02T11:20:16.403662Z",
+  "updated_at": "2026-10-02T11:20:19.237777Z",
+  "deleted_at": "2026-10-02T11:20:19.209511Z",
+  "recurring_rule_id": "01a0fc57-eb87-7e44-8aba-2111aa8baac7",
+  "ordinal": 3,
+  "is_payout": false,
+  "scheduled_date": "2026-11-01",
+  "date": "2026-11-01",
+  "status": "scheduled",
+  "kind": "expense",
+  "amount_minor": 50000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "Electricity",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": null,
+  "auto_confirm_refusal": null
+ },
+ "meta": {}
+}
+# PASS E2E all occurrences tombstoned 
+
+GET /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/transactions/01a0fc57-f1e3-718c-82f8-3da3c4716bbc
+< 200
+{
+ "data": {
+  "id": "01a0fc57-f1e3-718c-82f8-3da3c4716bbc",
+  "wallet_id": "01a0fc55-daaf-7350-92d8-28f5907b795f",
+  "version": 1,
+  "change_seq": 399,
+  "created_at": "2026-10-02T11:20:18.022083Z",
+  "updated_at": "2026-10-02T11:20:18.022083Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-09-01",
+  "amount_minor": 50000,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "Electricity",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e",
+  "recurring_rule_id": "01a0fc57-eb87-7e44-8aba-2111aa8baac7",
+  "occurrence_id": "01a0fc57-ef13-73cf-b09d-3cb1a023cf6a"
+ },
+ "meta": {}
+}
+# PASS E2E transaction untouched 
+
+DELETE /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/recurring-rules/01a0fc57-eb87-7e44-8aba-2111aa8baac7
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fc57-eb87-7e44-8aba-2111aa8baac7",
+  "wallet_id": "01a0fc55-daaf-7350-92d8-28f5907b795f",
+  "version": 2,
+  "change_seq": 405,
+  "created_at": "2026-10-02T11:20:16.328287Z",
+  "updated_at": "2026-10-02T11:20:19.257654Z",
+  "deleted_at": "2026-10-02T11:20:19.209511Z",
+  "preset": "custom",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 50000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "Electricity",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "monthly",
+  "interval": 1,
+  "anchor_day": 1,
+  "start_date": "2026-09-01",
+  "end_date": null,
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fc49-2178-70ba-bde0-1c11c2b57e1e"
+ },
+ "meta": {}
+}
+# PASS E2E delete again returns tombstone 

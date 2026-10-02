@@ -1,0 +1,118 @@
+===== US1-7 2026-10-02T11:18:33.872677Z
+
+PUT /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/recurring-rules/01a0fc56-5e90-7739-abf2-a58c52b4bd10
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/forbidden",
+ "title": "Forbidden",
+ "status": 403,
+ "detail": "Your role in this wallet does not allow this.",
+ "code": "FORBIDDEN",
+ "request_id": "01a0fc56-5f96-71c5-a89c-b047bb11880d"
+}
+# PASS E2E create -> FORBIDDEN 
+
+PUT /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/recurring-rules/01a0fc55-f586-7bf4-902e-91d2a04628ed
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 450000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "x", "memo": null, "counterparty": null, "auto_confirm": true, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 1}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/forbidden",
+ "title": "Forbidden",
+ "status": 403,
+ "detail": "Your role in this wallet does not allow this.",
+ "code": "FORBIDDEN",
+ "request_id": "01a0fc56-61e1-73dd-b4cb-bd31c572086c"
+}
+# PASS E2E edit -> FORBIDDEN 
+
+DELETE /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/recurring-rules/01a0fc55-f586-7bf4-902e-91d2a04628ed
+> {"version": 1}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/forbidden",
+ "title": "Forbidden",
+ "status": 403,
+ "detail": "Your role in this wallet does not allow this.",
+ "code": "FORBIDDEN",
+ "request_id": "01a0fc56-63f7-7068-9dee-24f9c32e23c8"
+}
+# PASS E2E delete -> FORBIDDEN 
+
+PUT /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/recurring-rules/01a0fc56-650f-7ba7-9e48-05729c6f866e
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fc56-660a-70cf-b822-c1cd413e6eaf"
+}
+# PASS E2E create -> NOT_FOUND 
+
+PUT /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/recurring-rules/01a0fc55-f586-7bf4-902e-91d2a04628ed
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 450000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "x", "memo": null, "counterparty": null, "auto_confirm": true, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 1}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fc56-69ce-72ed-b5fc-e70a8fbe1d69"
+}
+# PASS E2E edit -> NOT_FOUND 
+
+DELETE /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/recurring-rules/01a0fc55-f586-7bf4-902e-91d2a04628ed
+> {"version": 1}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fc56-6f28-7276-967a-11ebdf09c8fe"
+}
+# PASS E2E delete -> NOT_FOUND 
+
+PUT /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/recurring-rules/01a0fc56-70b1-73b8-9f0a-dbc815c86006
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 10000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/email-not-verified",
+ "title": "Address not verified",
+ "status": 403,
+ "detail": "Verify your email address first. We can send the link again.",
+ "code": "EMAIL_NOT_VERIFIED",
+ "request_id": "01a0fc56-71aa-70a2-9ca5-d997f9d2d41b"
+}
+# PASS E2E create -> EMAIL_NOT_VERIFIED 
+
+PUT /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/recurring-rules/01a0fc55-f586-7bf4-902e-91d2a04628ed
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 450000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "x", "memo": null, "counterparty": null, "auto_confirm": true, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-11-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 1}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/email-not-verified",
+ "title": "Address not verified",
+ "status": 403,
+ "detail": "Verify your email address first. We can send the link again.",
+ "code": "EMAIL_NOT_VERIFIED",
+ "request_id": "01a0fc56-7330-7371-b1fe-cee544aedb5e"
+}
+# PASS E2E edit -> EMAIL_NOT_VERIFIED 
+
+DELETE /wallets/01a0fc55-daaf-7350-92d8-28f5907b795f/recurring-rules/01a0fc55-f586-7bf4-902e-91d2a04628ed
+> {"version": 1}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/email-not-verified",
+ "title": "Address not verified",
+ "status": 403,
+ "detail": "Verify your email address first. We can send the link again.",
+ "code": "EMAIL_NOT_VERIFIED",
+ "request_id": "01a0fc56-74b8-70f3-aebf-a562872bdb2b"
+}
+# PASS E2E delete -> EMAIL_NOT_VERIFIED 

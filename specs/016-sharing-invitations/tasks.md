@@ -164,7 +164,7 @@ description: "Task list for Sharing & Invitations (B9)"
 - [X] T048 Gates: `dev exec -- vendor/bin/pint --dirty --format agent`, `dev exec -- composer test:arch`, `test:types`, `test:suite`, `test:api` (run stages separately; `composer test` exceeds Composer's 300 s timeout). `dev exec -- vendor/bin/pest tests/Contract/OpenApi` green.
 - [X] T049 Run [quickstart.md](./quickstart.md) scenarios 1–12 on the dev stack (Mailpit for mails); seeder N/A — no reference data.
 - [X] T050 Apidog sync: bundle with `npx @redocly/cli bundle docs/openapi/openapi.yaml -o <scratchpad>/bundle.json`; import with `apidog import --project 1332822 --format openapi --file <scratchpad>/bundle.json --module-map "Personal finance backend API=1363204"`; create or update the project doc "Sharing & invitations" with the C9 client notes from contracts/sharing-api.md ("What C9 asked for, answered" and "Client behaviour notes": purge signal, link format and one-time `share_url`, `feature` on `FEATURE_NOT_ENTITLED`, activity shape, unverified invitees, repeated leave = 404). Record the import counts and doc id for the summary.
-- [ ] T051 Write specs/016-sharing-invitations/summary.md (parent writes it)
+- [X] T051 Write specs/016-sharing-invitations/summary.md (parent writes it)
 
 ---
 

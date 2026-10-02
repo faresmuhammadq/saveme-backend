@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Identity\Infrastructure\Models\User;
 use App\Modules\Wallets\Application\Categories\CategoryReferences;
 use App\Modules\Wallets\Application\Categories\CategoryService;
 use App\Modules\Wallets\Application\WalletService;
@@ -43,8 +44,8 @@ function expectWalletScopeIntact(string $walletId): void
 }
 
 beforeEach(function () {
-    $this->owner = (string) Str::uuid7();
-    $this->partner = (string) Str::uuid7();
+    $this->owner = User::factory()->create()->id;
+    $this->partner = User::factory()->create()->id;
     $this->wallet = ownedWallet($this->partner);
     addMember($this->wallet->id, $this->owner, 'editor');
     $this->category = ownedCategory($this->owner, ['name' => 'Coffee', 'icon' => 'cup', 'color' => '#6D4C41']);

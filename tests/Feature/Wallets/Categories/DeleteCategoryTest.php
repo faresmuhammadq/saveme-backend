@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Identity\Infrastructure\Models\User;
 use App\Modules\Wallets\Application\Categories\CategoryQueryService;
 use App\Modules\Wallets\Application\Categories\CategoryService;
 use App\Modules\Wallets\Domain\Categories\Refusals\CategoryInUse;
@@ -13,7 +14,7 @@ use Illuminate\Support\Str;
  */
 
 beforeEach(function () {
-    $this->owner = (string) Str::uuid7();
+    $this->owner = User::factory()->create()->id;
     $this->category = ownedCategory($this->owner);
 });
 

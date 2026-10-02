@@ -1,0 +1,199 @@
+PUT /wallets/01a0fb75-5e3f-7e3b-b011-fad0da0402f9
+> {"type": "cash", "name": "E2E Sister", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 0}
+< 201
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb75-5e3f-7e3b-b011-fad0da0402f9",
+    "wallet_id": "01a0fb75-5e3f-7e3b-b011-fad0da0402f9",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T07:12:48.866445Z",
+    "updated_at": "2026-10-02T07:12:48.866445Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "E2E Sister",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+GET /sync/user/changes?cursor=eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Mi1mNDlmLTczMzktODM0Ni00NDJmOTAwNmY2MDYiLCJyIjoiMDFhMGZiNzItZjQ5Zi03MzM5LTgzNDYtNDQyZjkwMDZmNjA2IiwicCI6OH2kpvpUtZZ61DepU4lSVGKJ
+< 200
+< Content-Language: ar
+{
+  "data": [
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb75-7224-72ac-8336-deac24db88c9",
+        "wallet_id": "01a0fb75-5e3f-7e3b-b011-fad0da0402f9",
+        "version": 1,
+        "change_seq": 4,
+        "created_at": "2026-10-02T07:12:53.285761Z",
+        "updated_at": "2026-10-02T07:12:53.285761Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "display_name": "E2E Sara",
+        "role": "editor"
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Mi1mNDlmLTczMzktODM0Ni00NDJmOTAwNmY2MDYiLCJyIjoiMDFhMGZiNzItZjQ5Zi03MzM5LTgzNDYtNDQyZjkwMDZmNjA2IiwicCI6OX2iGXdDC-zF3Kf0A8LF87PL"
+  }
+}
+GET /sync/wallets/01a0fb75-5e3f-7e3b-b011-fad0da0402f9/changes
+< 200
+< Content-Language: ar
+{
+  "data": [
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb75-610b-7131-8911-afe064dab18f",
+        "wallet_id": "01a0fb75-5e3f-7e3b-b011-fad0da0402f9",
+        "version": 1,
+        "change_seq": 2,
+        "created_at": "2026-10-02T07:12:48.907858Z",
+        "updated_at": "2026-10-02T07:12:48.907858Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb72-eb07-710d-a3fb-7d4364ec4722",
+        "display_name": null,
+        "role": "owner"
+      }
+    },
+    {
+      "type": "wallet",
+      "record": {
+        "id": "01a0fb75-5e3f-7e3b-b011-fad0da0402f9",
+        "wallet_id": "01a0fb75-5e3f-7e3b-b011-fad0da0402f9",
+        "version": 1,
+        "change_seq": 4,
+        "created_at": "2026-10-02T07:12:48.866445Z",
+        "updated_at": "2026-10-02T07:12:48.866445Z",
+        "deleted_at": null,
+        "type": "cash",
+        "name": "E2E Sister",
+        "currency": "EGP",
+        "opening_balance_minor": 0,
+        "balance_minor": 0,
+        "icon": "wallet",
+        "color": "#1A2B3C",
+        "archived_at": null,
+        "currency_locked": false,
+        "my_role": "editor"
+      }
+    },
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb75-7224-72ac-8336-deac24db88c9",
+        "wallet_id": "01a0fb75-5e3f-7e3b-b011-fad0da0402f9",
+        "version": 1,
+        "change_seq": 4,
+        "created_at": "2026-10-02T07:12:53.285761Z",
+        "updated_at": "2026-10-02T07:12:53.285761Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "display_name": "E2E Sara",
+        "role": "editor"
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3NS01ZTNmLTdlM2ItYjAxMS1mYWQwZGEwNDAyZjkiLCJyIjoiMDFhMGZiNzItZjQ5Zi03MzM5LTgzNDYtNDQyZjkwMDZmNjA2IiwicCI6NH2Qq9-sROYB3ug01t3u2bDw"
+  }
+}
+GET /wallets/01a0fb75-5e3f-7e3b-b011-fad0da0402f9
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb75-5e3f-7e3b-b011-fad0da0402f9",
+    "wallet_id": "01a0fb75-5e3f-7e3b-b011-fad0da0402f9",
+    "version": 1,
+    "change_seq": 4,
+    "created_at": "2026-10-02T07:12:48.866445Z",
+    "updated_at": "2026-10-02T07:12:48.866445Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "E2E Sister",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+DELETE /wallets/01a0fb75-5e3f-7e3b-b011-fad0da0402f9
+> {"version": 1}
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb75-5e3f-7e3b-b011-fad0da0402f9",
+    "wallet_id": "01a0fb75-5e3f-7e3b-b011-fad0da0402f9",
+    "version": 2,
+    "change_seq": 7,
+    "created_at": "2026-10-02T07:12:48.866445Z",
+    "updated_at": "2026-10-02T07:12:55.568942Z",
+    "deleted_at": "2026-10-02T07:12:55.480533Z",
+    "type": "cash",
+    "name": "E2E Sister",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+GET /sync/user/changes?cursor=eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Mi1mNDlmLTczMzktODM0Ni00NDJmOTAwNmY2MDYiLCJyIjoiMDFhMGZiNzItZjQ5Zi03MzM5LTgzNDYtNDQyZjkwMDZmNjA2IiwicCI6OX2iGXdDC-zF3Kf0A8LF87PL
+< 200
+< Content-Language: ar
+{
+  "data": [
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb75-7224-72ac-8336-deac24db88c9",
+        "wallet_id": "01a0fb75-5e3f-7e3b-b011-fad0da0402f9",
+        "version": 2,
+        "change_seq": 6,
+        "created_at": "2026-10-02T07:12:53.285761Z",
+        "updated_at": "2026-10-02T07:12:55.480533Z",
+        "deleted_at": "2026-10-02T07:12:55.480533Z",
+        "member_user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "display_name": "E2E Sara",
+        "role": "editor"
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Mi1mNDlmLTczMzktODM0Ni00NDJmOTAwNmY2MDYiLCJyIjoiMDFhMGZiNzItZjQ5Zi03MzM5LTgzNDYtNDQyZjkwMDZmNjA2IiwicCI6MTB9SQSyi-noRUSr_vL9yfRPRA"
+  }
+}
+# PASS: new membership arrives live naming the wallet and role (editor), its feed readable from the start; after wallet deletion it arrives tombstoned

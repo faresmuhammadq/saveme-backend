@@ -1,0 +1,652 @@
+# Sync protocol (spec 013, brief B14). Every operation sits under /api/v1,
+# inherits the root's bearer scheme and runs through the shared runtime, so
+# each also documents the shared refusals it can produce.
+#
+# Frozen for the C14 client (wave 2). Two change feeds — the caller's user
+# scope and one per wallet — and one batch upload. The per-record writes of
+# every syncable resource stay available and unchanged beside the batch
+# (ADR-0016, superseding ADR-0008 rule 7 only). A person's own memberships
+# ride their user feed (ADR-0017); a transfer rides both of its wallets'
+# feeds (ADR-0015).
+#
+# Postings never appear (P-04 rule 6). The server never merges (P-07): a
+# stale batch item is refused whole with the current record.
+
+/sync/user/changes:
+  get:
+    operationId: listUserChanges
+    tags: [Sync]
+    summary: The caller's user-scope change feed, in commit order, tombstones included.
+    description: |
+      Everything in the caller's own scope that changed after `cursor`, in the
+      order it was committed: the profile, device sessions, the caller's own
+      categories (never platform categories) and the caller's own wallet
+      memberships. Later features add their types here inside v1; a client
+      skips any `type` it does not know.
+
+      Each row is `{type, record}`, where `record` is exactly the resource the
+      record's read endpoint returns for the caller. A deletion is a row
+      whose `record.deleted_at` is set. A record may arrive again later in a
+      newer state; keep the highest `version`.
+
+      A `wallet_member` row is one of the caller's own memberships. Live: the
+      caller belongs to `wallet_id` with `role` — read that wallet's feed
+      (from the beginning when the wallet is new to the phone). Tombstoned:
+      the caller no longer belongs to that wallet — purge its local data.
+
+      Paging: absent `cursor` means from the beginning (a full resync). Store
+      `meta.sync_cursor` after applying a page and send it back as `cursor`;
+      keep reading while `has_more` is true. `sync_cursor` is never null, so
+      the last page still gives a position to resume from. A cursor is valid
+      only for this endpoint and this account.
+
+      Refusals: a cursor that is unparseable, issued for another feed or
+      account, or ahead of the scope is 400 INVALID_CURSOR; a cursor behind
+      the scope's purge horizon (a tombstone it never saw has been purged
+      after 90 days) is 410 SYNC_CURSOR_EXPIRED — discard the scope's local
+      data, keep queued writes, and read again with no cursor. Filters and
+      sorts are not supported and are refused, never ignored.
+    x-filterable: []
+    x-sortable: []
+    parameters:
+      - &cursor
+        $ref: '../components/parameters.yaml#/components/parameters/Cursor'
+      - &limit
+        $ref: '../components/parameters.yaml#/components/parameters/Limit'
+      - &acceptLanguage
+        $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - &correlationId
+        $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - &clientPlatform
+        $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - &clientVersion
+        $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'A page of the user feed. Nothing new is 200 with `data: []` and the same position.'
+        headers: &successHeaders
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+        content:
+          application/json:
+            schema: &feedPage
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/ChangeRow'
+                    meta:
+                      $ref: '#/components/schemas/ChangeFeedMeta'
+            examples:
+              userFeedPage:
+                summary: A membership granted, a category renamed, a new session
+                value:
+                  data:
+                    - type: wallet_member
+                      record:
+                        id: 0192f7a4-0000-7000-8000-0000000000a1
+                        wallet_id: 0192f79e-0000-7000-8000-000000000002
+                        version: 1
+                        change_seq: 4
+                        created_at: '2026-10-04T09:00:00.000000Z'
+                        updated_at: '2026-10-04T09:00:00.000000Z'
+                        deleted_at: null
+                        member_user_id: 0192f700-0000-7000-8000-000000000001
+                        display_name: Sara
+                        role: editor
+                    - type: category
+                      record:
+                        id: 0192f7a1-0000-7000-8000-0000000000c1
+                        user_id: 0192f700-0000-7000-8000-000000000001
+                        version: 3
+                        change_seq: 58
+                        created_at: '2026-09-20T10:00:00.000000Z'
+                        updated_at: '2026-10-04T09:05:00.000000Z'
+                        deleted_at: null
+                        kind: expense
+                        name: Groceries
+                        icon: cart
+                        color: '#2E7D32'
+                        archived_at: null
+                        in_use: true
+                  meta:
+                    next_cursor: null
+                    has_more: false
+                    limit: 50
+                    sync_cursor: eyJ2IjoxLCJmIjoidSIsInMiOiIwMTkyZjcwMCIsInAiOjU5fQ.c2lnbmF0dXJlMTZi
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '410':
+        $ref: '../components/responses.yaml#/components/responses/Gone'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/sync/wallets/{id}/changes:
+  get:
+    operationId: listWalletChanges
+    tags: [Sync]
+    summary: One wallet's change feed, in commit order, tombstones included.
+    description: |
+      Everything in the wallet's scope that changed after `cursor`, in commit
+      order: the wallet itself, its members, its category references, its
+      transactions, and the transfers whose destination it is. A transfer is
+      the identical record on both of its wallets' feeds (ADR-0015); its
+      `change_seq` is the source wallet's and must never be compared across
+      feeds. Later features (recurring rules, occurrences, invitations) add
+      their types inside v1; skip any `type` you do not know.
+
+      The wallet record is re-sent whenever anything in the wallet changes
+      (its `change_seq` is the scope counter); a `change_seq` move alone is
+      not an edit. `my_role` is the caller's role as of the read.
+
+      Readable by any active member of the wallet (spec 010 row W-01) and,
+      for a deleted wallet not yet purged, by those who were members when it
+      was deleted. Anyone else, an unknown wallet, or a purged one gets 404
+      NOT_FOUND, revealing nothing. A malformed id is 422 INVALID_ID.
+
+      Paging, cursor storage, INVALID_CURSOR and 410 SYNC_CURSOR_EXPIRED work
+      exactly as on the user feed, for this wallet's scope only: one wallet
+      expiring says nothing about the user feed or other wallets.
+    x-filterable: []
+    x-sortable: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/components/parameters/ResourceId'
+      - *cursor
+      - *limit
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: 'A page of the wallet feed. Nothing new is 200 with `data: []` and the same position.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *feedPage
+            examples:
+              walletFeedPage:
+                summary: A transfer into this wallet and a deleted expense, more to come
+                value:
+                  data:
+                    - type: transaction
+                      record:
+                        id: 0192f7b0-0000-7000-8000-0000000000e1
+                        wallet_id: 0192f79e-0000-7000-8000-000000000001
+                        version: 1
+                        change_seq: 812
+                        created_at: '2026-10-04T08:00:00.000000Z'
+                        updated_at: '2026-10-04T08:00:00.000000Z'
+                        deleted_at: null
+                        kind: transfer
+                        date: '2026-10-04'
+                        amount_minor: 50000
+                        currency: EGP
+                        category_id: null
+                        counter_wallet_id: 0192f79e-0000-7000-8000-000000000002
+                        description: Household share
+                        memo: null
+                        counterparty: null
+                        cleared: false
+                        created_by: 0192f700-0000-7000-8000-000000000001
+                    - type: transaction
+                      record:
+                        id: 0192f7b0-0000-7000-8000-0000000000e2
+                        wallet_id: 0192f79e-0000-7000-8000-000000000002
+                        version: 3
+                        change_seq: 133
+                        created_at: '2026-10-01T18:20:00.000000Z'
+                        updated_at: '2026-10-04T08:10:00.000000Z'
+                        deleted_at: '2026-10-04T08:10:00.000000Z'
+                        kind: expense
+                        date: '2026-10-01'
+                        amount_minor: 25000
+                        currency: EGP
+                        category_id: 0192f7a1-0000-7000-8000-0000000000c1
+                        counter_wallet_id: null
+                        description: Carrefour
+                        memo: null
+                        counterparty: null
+                        cleared: false
+                        created_by: 0192f700-0000-7000-8000-000000000003
+                  meta:
+                    next_cursor: eyJ2IjoxLCJmIjoidyIsInMiOiIwMTkyZjc5ZSIsInAiOjEzM30.c2lnbmF0dXJlMTZi
+                    has_more: true
+                    limit: 2
+                    sync_cursor: eyJ2IjoxLCJmIjoidyIsInMiOiIwMTkyZjc5ZSIsInAiOjEzM30.c2lnbmF0dXJlMTZi
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '410':
+        $ref: '../components/responses.yaml#/components/responses/Gone'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/sync/batch:
+  post:
+    operationId: uploadSyncBatch
+    tags: [Sync]
+    summary: Send up to 50 writes in one request and get one result per item.
+    description: |
+      A transport for the per-record writes, not a new kind of write
+      (ADR-0016). Each item is exactly one per-record write and obeys exactly
+      its rules: client-generated id, `version` check, replay, tombstone
+      handling, authorization, verification gate, validation and refusals.
+      The server never merges; a stale item is refused whole.
+
+      | `type` | `op` | is the single write |
+      |---|---|---|
+      | `wallet` | `upsert` | `PUT /wallets/{id}` |
+      | `wallet` | `delete` | `DELETE /wallets/{id}` |
+      | `category` | `upsert` | `PUT /categories/{id}` |
+      | `category` | `delete` | `DELETE /categories/{id}` |
+      | `transaction` | `upsert` | `PUT /wallets/{wallet_id}/transactions/{id}` |
+      | `transaction` | `delete` | `DELETE /wallets/{wallet_id}/transactions/{id}` |
+      | `transaction` | `restore` | `PATCH /wallets/{wallet_id}/transactions/{id}` with `{"deleted_at": null, "version": n}` |
+      | `profile` | `upsert` | `PUT /me/profile` (`id` must be the caller's profile id, else the item is 404) |
+
+      `data` is that write's body, verbatim. Archive, ownership transfer and
+      partial (PATCH) edits are not batch operations; use their endpoints.
+
+      Semantics (frozen):
+
+      - 1 to 50 items. Outside that range the whole request is 422 with
+        OUT_OF_RANGE at `/items`; nothing is applied.
+      - Items are applied **one at a time, in array order**; item n+1 starts
+        after item n has committed or been refused. The same record may appear
+        twice; the second meets the first's result.
+      - Items are **independent**: each commits on its own; a conflict,
+        refusal or failure of one never undoes or blocks another. There is no
+        all-or-nothing mode.
+      - **No `Idempotency-Key`**: the batch is idempotent because every item
+        is (id + version). Resend a batch whose response was lost: applied
+        items come back `applied` with nothing bumped. A key sent is ignored.
+      - The per-record writes stay available and unchanged.
+      - Authentication is checked once for the whole batch. A 50-item batch
+        takes a few seconds; allow at least 30 seconds for the response.
+
+      The response is 200 whenever the envelope was usable, even if every
+      item was refused: `data` holds one result per item, in item order.
+      `outcome` is `applied` (status 200 or 201, `record` set), `conflict`
+      (status 409, `problem.code` VERSION_CONFLICT, `problem.current` the
+      record as it stands, tombstone included), or `rejected` (any other
+      status; `problem` is what the single write answers, its pointers rooted
+      at the item's `data`; an unexpected failure is 500 INTERNAL_ERROR and is
+      retryable). Branch on `problem.code` as for a single write.
+
+      Request-level refusals (nothing applied) — Codes: VALIDATION_FAILED
+      (unusable envelope: `items` missing, not an array or out of range; an
+      item not an object; a member missing or unknown; a `type` or `op` not
+      in the table; an `id` or `wallet_id` not a UUIDv7, field code INVALID_ID;
+      `wallet_id` missing on a transaction or present on anything else),
+      MALFORMED_JSON, UNSUPPORTED_MEDIA_TYPE.
+    parameters:
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SyncBatch'
+          examples:
+            mixedBatch:
+              summary: A new category, a new expense using it, an edit, a delete
+              value:
+                items:
+                  - type: category
+                    op: upsert
+                    id: 0192f7a1-0000-7000-8000-0000000000c2
+                    data:
+                      kind: expense
+                      name: Pharmacy
+                      icon: pill
+                      color: '#C62828'
+                      version: 0
+                  - type: transaction
+                    op: upsert
+                    id: 0192f7b0-0000-7000-8000-0000000000e3
+                    wallet_id: 0192f79e-0000-7000-8000-000000000001
+                    data:
+                      kind: expense
+                      date: '2026-10-04'
+                      amount_minor: 12500
+                      currency: EGP
+                      category_id: 0192f7a1-0000-7000-8000-0000000000c2
+                      counter_wallet_id: null
+                      description: Seif pharmacy
+                      memo: null
+                      counterparty: null
+                      cleared: false
+                      version: 0
+                  - type: transaction
+                    op: upsert
+                    id: 0192f7b0-0000-7000-8000-0000000000e2
+                    wallet_id: 0192f79e-0000-7000-8000-000000000002
+                    data:
+                      kind: expense
+                      date: '2026-10-01'
+                      amount_minor: 26000
+                      currency: EGP
+                      category_id: 0192f7a1-0000-7000-8000-0000000000c1
+                      counter_wallet_id: null
+                      description: Carrefour
+                      memo: null
+                      counterparty: null
+                      cleared: true
+                      version: 2
+                  - type: transaction
+                    op: delete
+                    id: 0192f7b0-0000-7000-8000-0000000000e4
+                    wallet_id: 0192f79e-0000-7000-8000-000000000001
+                    data:
+                      version: 1
+    responses:
+      '200':
+        description: One result per item, in item order.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      minItems: 1
+                      maxItems: 50
+                      items:
+                        $ref: '#/components/schemas/BatchItemResult'
+                    meta:
+                      type: object
+                      additionalProperties: false
+                      description: Always `{}`.
+            examples:
+              mixedResults:
+                summary: Two applied, one clash (the record was deleted on another device), one refused
+                value:
+                  data:
+                    - type: category
+                      id: 0192f7a1-0000-7000-8000-0000000000c2
+                      outcome: applied
+                      status: 201
+                      record:
+                        id: 0192f7a1-0000-7000-8000-0000000000c2
+                        user_id: 0192f700-0000-7000-8000-000000000001
+                        version: 1
+                        change_seq: 60
+                        created_at: '2026-10-04T10:00:00.000000Z'
+                        updated_at: '2026-10-04T10:00:00.000000Z'
+                        deleted_at: null
+                        kind: expense
+                        name: Pharmacy
+                        icon: pill
+                        color: '#C62828'
+                        archived_at: null
+                        in_use: false
+                      problem: null
+                    - type: transaction
+                      id: 0192f7b0-0000-7000-8000-0000000000e3
+                      outcome: applied
+                      status: 201
+                      record:
+                        id: 0192f7b0-0000-7000-8000-0000000000e3
+                        wallet_id: 0192f79e-0000-7000-8000-000000000001
+                        version: 1
+                        change_seq: 813
+                        created_at: '2026-10-04T10:00:00.100000Z'
+                        updated_at: '2026-10-04T10:00:00.100000Z'
+                        deleted_at: null
+                        kind: expense
+                        date: '2026-10-04'
+                        amount_minor: 12500
+                        currency: EGP
+                        category_id: 0192f7a1-0000-7000-8000-0000000000c2
+                        counter_wallet_id: null
+                        description: Seif pharmacy
+                        memo: null
+                        counterparty: null
+                        cleared: false
+                        created_by: 0192f700-0000-7000-8000-000000000001
+                      problem: null
+                    - type: transaction
+                      id: 0192f7b0-0000-7000-8000-0000000000e2
+                      outcome: conflict
+                      status: 409
+                      record: null
+                      problem:
+                        type: https://api.example/problems/version-conflict
+                        title: Version conflict
+                        status: 409
+                        detail: This record changed on another device.
+                        code: VERSION_CONFLICT
+                        request_id: 0192f7c0-9999-7000-8000-00000000abcd
+                        current:
+                          id: 0192f7b0-0000-7000-8000-0000000000e2
+                          wallet_id: 0192f79e-0000-7000-8000-000000000002
+                          version: 3
+                          change_seq: 133
+                          created_at: '2026-10-01T18:20:00.000000Z'
+                          updated_at: '2026-10-04T08:10:00.000000Z'
+                          deleted_at: '2026-10-04T08:10:00.000000Z'
+                          kind: expense
+                          date: '2026-10-01'
+                          amount_minor: 25000
+                          currency: EGP
+                          category_id: 0192f7a1-0000-7000-8000-0000000000c1
+                          counter_wallet_id: null
+                          description: Carrefour
+                          memo: null
+                          counterparty: null
+                          cleared: false
+                          created_by: 0192f700-0000-7000-8000-000000000003
+                    - type: transaction
+                      id: 0192f7b0-0000-7000-8000-0000000000e4
+                      outcome: rejected
+                      status: 404
+                      record: null
+                      problem:
+                        type: https://api.example/problems/not-found
+                        title: Not found
+                        status: 404
+                        detail: Not found.
+                        code: NOT_FOUND
+                        request_id: 0192f7c0-9999-7000-8000-00000000abcd
+                  meta: {}
+              validationRefusal:
+                summary: An item refused by its single write's validation, pointer rooted at its data
+                value:
+                  data:
+                    - type: transaction
+                      id: 0192f7b0-0000-7000-8000-0000000000e5
+                      outcome: rejected
+                      status: 422
+                      record: null
+                      problem:
+                        type: https://api.example/problems/validation-failed
+                        title: Validation failed
+                        status: 422
+                        detail: The request has 1 invalid field.
+                        code: VALIDATION_FAILED
+                        request_id: 0192f7c0-9999-7000-8000-00000000abce
+                        errors:
+                          - pointer: /amount_minor
+                            code: AMOUNT_NOT_INTEGER
+                            detail: Amount must be an integer number of minor units.
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+components:
+  schemas:
+
+    ChangeRow:
+      type: object
+      description: |
+        One record on a change feed: its type and the record exactly as its
+        read endpoint returns it for the reader. A deletion is a record with
+        `deleted_at` set; there is no separate operation member. Clients skip
+        a `type` they do not know (later features add types inside v1).
+      required: [type, record]
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          description: |
+            User feed: `profile`, `device_session`, `category`,
+            `wallet_member` (the caller's own memberships). Wallet feed:
+            `wallet`, `wallet_member`, `category_reference`, `transaction`.
+          enum: [profile, device_session, category, wallet_member, wallet, category_reference, transaction]
+        record:
+          anyOf:
+            - $ref: './identity.yaml#/components/schemas/Profile'
+            - $ref: './identity.yaml#/components/schemas/DeviceSession'
+            - $ref: './categories.yaml#/components/schemas/Category'
+            - $ref: './wallets.yaml#/components/schemas/WalletMember'
+            - $ref: './wallets.yaml#/components/schemas/Wallet'
+            - $ref: './categories.yaml#/components/schemas/CategoryReference'
+            - $ref: './transactions.yaml#/components/schemas/Transaction'
+
+    ChangeFeedMeta:
+      type: object
+      description: |
+        The `meta` of a feed page: the shared collection members plus
+        `sync_cursor`. `has_more` is false exactly when `next_cursor` is null
+        (as for any collection); `sync_cursor` is never null — it is the
+        position after this page (or the incoming position when the page is
+        empty), the value to store and send back as `cursor` next time.
+      required: [next_cursor, has_more, limit, sync_cursor]
+      additionalProperties: false
+      properties:
+        next_cursor:
+          type: [string, 'null']
+          description: Opaque; equal to `sync_cursor` while `has_more`, null on the last page.
+        has_more:
+          type: boolean
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 200
+          description: The page size actually applied, after clamping.
+        sync_cursor:
+          type: string
+          description: Opaque position to resume from. Never parsed, compared or constructed by a client, and valid only for the feed and account that issued it.
+
+    SyncBatch:
+      type: object
+      description: 1 to 50 writes, applied one at a time in array order. No other member.
+      required: [items]
+      additionalProperties: false
+      properties:
+        items:
+          type: array
+          minItems: 1
+          maxItems: 50
+          items:
+            $ref: '#/components/schemas/BatchItem'
+
+    BatchItem:
+      type: object
+      description: |
+        One per-record write. `type` and `op` select it (see the operation's
+        table), `id` (and, for a transaction, `wallet_id`) address it, and
+        `data` is its body verbatim.
+      required: [type, op, id, data]
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          enum: [wallet, category, transaction, profile]
+        op:
+          type: string
+          enum: [upsert, delete, restore]
+          description: '`restore` is for `transaction` only; `delete` for `wallet`, `category` and `transaction`; `profile` takes only `upsert`.'
+        id:
+          type: string
+          format: uuid
+          description: The record's UUIDv7 (client-generated); for `profile`, the caller's profile id.
+        wallet_id:
+          type: string
+          format: uuid
+          description: Required for `transaction` and refused on every other type — the wallet path of its single write (either wallet of a transfer).
+        data:
+          description: The single write's body.
+          anyOf:
+            - $ref: './wallets.yaml#/components/schemas/WalletWrite'
+            - $ref: './categories.yaml#/components/schemas/CategoryWrite'
+            - $ref: './transactions.yaml#/components/schemas/TransactionWrite'
+            - $ref: './identity.yaml#/components/schemas/ProfileWrite'
+            - $ref: './transactions.yaml#/components/schemas/VersionOnly'
+            - $ref: './transactions.yaml#/components/schemas/TransactionRestore'
+
+    BatchItemResult:
+      type: object
+      description: |
+        The answer to one item: the status and body its single write would
+        have produced. Exactly one of `record` and `problem` is non-null.
+      required: [type, id, outcome, status, record, problem]
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          enum: [wallet, category, transaction, profile]
+        id:
+          type: string
+          format: uuid
+        outcome:
+          type: string
+          enum: [applied, conflict, rejected]
+          description: '`applied` for 200/201; `conflict` for 409 VERSION_CONFLICT; `rejected` for every other status.'
+        status:
+          type: integer
+          minimum: 200
+          maximum: 599
+          description: The HTTP status the single write would have answered.
+        record:
+          description: The stored record when `applied`; otherwise null.
+          anyOf:
+            - type: 'null'
+            - $ref: './wallets.yaml#/components/schemas/Wallet'
+            - $ref: './categories.yaml#/components/schemas/Category'
+            - $ref: './transactions.yaml#/components/schemas/Transaction'
+            - $ref: './identity.yaml#/components/schemas/Profile'
+        problem:
+          description: The single write's problem body when `conflict` or `rejected`; otherwise null. Pointers are rooted at the item's `data`.
+          anyOf:
+            - type: 'null'
+            - $ref: '../components/schemas.yaml#/components/schemas/Problem'

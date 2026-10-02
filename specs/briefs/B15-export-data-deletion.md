@@ -36,3 +36,8 @@ The brief predates decisions ratified since. These collide with it; the ratified
 - A person's export includes the transactions in wallets they were a member of with their own `created_by` marked as theirs; amounts, descriptions, memos and counterparties are protected attributes (security baseline) and are not logged by the export job.
 - Postings are derived data; export the transactions, not the postings.
 - Account deletion's default-currency lock (`hasLiveTransactionsRecordedBy`) stops mattering once the account is gone; no ledger row is deleted for it.
+
+## Inherited from B14 (spec 013)
+
+- **Account deletion purges the user scope**: a person's profile, device sessions, categories and memberships go with the account. Memberships are tombstoned first, each stamped from the **member's** user counter (ADR-0017), so their other devices and the wallet's other members learn of it before the scope disappears; the purge then removes the rows and the `users` row last.
+- The export reads the same records the feeds render; it does not read `change_seq`, `member_change_seq` or `purged_change_seq`, which are positions, not data.

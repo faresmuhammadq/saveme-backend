@@ -1,6 +1,6 @@
 # ADR-0008: Sync: per-scope changes feed
 
-- **Status**: Accepted
+- **Status**: Accepted — rule 7 superseded by [ADR-0016](0016-batch-upload-beside-per-record-writes.md)
 - **Date**: 2026-09-19
 - **Principles**: P-07
 - **Supersedes**: —

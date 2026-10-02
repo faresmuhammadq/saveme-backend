@@ -1,0 +1,26 @@
+GET /sync/wallets/01a0fb77-383f-7ced-9bb0-b2cd891fe867/changes?cursor=eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3Ny0zODNmLTdjZWQtOWJiMC1iMmNkODkxZmU4NjciLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6MTh94ANmV9kWV0nFoKSW_lcgEg
+< 200
+< Content-Language: en
+{
+  "data": [],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3Ny0zODNmLTdjZWQtOWJiMC1iMmNkODkxZmU4NjciLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6MTh94ANmV9kWV0nFoKSW_lcgEg"
+  }
+}
+# PASS: nothing new: empty page, same sync_cursor 
+GET /sync/user/changes?cursor=eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Ny0wNzA4LTcwNGMtYmIxMi0wNTYyMGY4NTQ3YWMiLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6N32c7Xc0_axnP0vnryJcygzO
+< 200
+< Content-Language: en
+{
+  "data": [],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Ny0wNzA4LTcwNGMtYmIxMi0wNTYyMGY4NTQ3YWMiLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6N32c7Xc0_axnP0vnryJcygzO"
+  }
+}
+# PASS: user feed: nothing new -> empty page, same sync_cursor 

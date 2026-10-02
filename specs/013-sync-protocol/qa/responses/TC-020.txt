@@ -1,0 +1,114 @@
+POST /sync/batch
+> {"items": [{"type": "wallet", "op": "upsert", "id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db", "data": {"type": "cash", "name": "QA013 Batch Wallet", "currency": "EGP", "opening_balance_minor": 5000, "icon": "wallet", "color": "#1A2B3C", "version": 0}}, {"type": "category", "op": "upsert", "id": "01a0fb78-9ffb-7a14-b013-3c55080d2fb4", "data": {"kind": "expense", "name": "QA013 Batch Cat", "icon": "tag", "color": "#123456", "version": 0}}, {"type": "transaction", "op": "upsert", "id": "01a0fb78-9ffb-7345-950a-7213e989a22f", "wallet_id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": 1200, "currency": "EGP", "category_id": "01a0fb78-9ffb-7a14-b013-3c55080d2fb4", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}}]}
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "wallet",
+      "id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db",
+      "outcome": "applied",
+      "status": 201,
+      "record": {
+        "id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db",
+        "wallet_id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db",
+        "version": 1,
+        "change_seq": 3,
+        "created_at": "2026-10-02T07:16:22.346104Z",
+        "updated_at": "2026-10-02T07:16:22.346104Z",
+        "deleted_at": null,
+        "type": "cash",
+        "name": "QA013 Batch Wallet",
+        "currency": "EGP",
+        "opening_balance_minor": 5000,
+        "balance_minor": 5000,
+        "icon": "wallet",
+        "color": "#1A2B3C",
+        "archived_at": null,
+        "currency_locked": false,
+        "my_role": "owner"
+      },
+      "problem": null
+    },
+    {
+      "type": "category",
+      "id": "01a0fb78-9ffb-7a14-b013-3c55080d2fb4",
+      "outcome": "applied",
+      "status": 201,
+      "record": {
+        "id": "01a0fb78-9ffb-7a14-b013-3c55080d2fb4",
+        "user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "version": 1,
+        "change_seq": 14,
+        "created_at": "2026-10-02T07:16:22.590012Z",
+        "updated_at": "2026-10-02T07:16:22.590012Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "QA013 Batch Cat",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": false
+      },
+      "problem": null
+    },
+    {
+      "type": "transaction",
+      "id": "01a0fb78-9ffb-7345-950a-7213e989a22f",
+      "outcome": "applied",
+      "status": 201,
+      "record": {
+        "id": "01a0fb78-9ffb-7345-950a-7213e989a22f",
+        "wallet_id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db",
+        "version": 1,
+        "change_seq": 4,
+        "created_at": "2026-10-02T07:16:22.826820Z",
+        "updated_at": "2026-10-02T07:16:22.826820Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-20",
+        "amount_minor": 1200,
+        "currency": "EGP",
+        "category_id": "01a0fb78-9ffb-7a14-b013-3c55080d2fb4",
+        "counter_wallet_id": null,
+        "description": "QA013",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+      },
+      "problem": null
+    }
+  ],
+  "meta": {}
+}
+# PASS: batch 200 with three results in order 
+# PASS: all applied 201 with records [('applied', 201), ('applied', 201), ('applied', 201)]
+# PASS: meta is {} (object) 
+GET /wallets/01a0fb78-9ffb-7b56-b3af-92402af1d3db/transactions/01a0fb78-9ffb-7345-950a-7213e989a22f
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb78-9ffb-7345-950a-7213e989a22f",
+    "wallet_id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db",
+    "version": 1,
+    "change_seq": 4,
+    "created_at": "2026-10-02T07:16:22.826820Z",
+    "updated_at": "2026-10-02T07:16:22.826820Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-09-20",
+    "amount_minor": 1200,
+    "currency": "EGP",
+    "category_id": "01a0fb78-9ffb-7a14-b013-3c55080d2fb4",
+    "counter_wallet_id": null,
+    "description": "QA013",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+  },
+  "meta": {}
+}
+# PASS: stored transaction equals the item record 

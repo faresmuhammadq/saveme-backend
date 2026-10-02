@@ -1,0 +1,23 @@
+GET /sync/wallets/01a0fb73-1ddf-7b15-b285-3319c7af991a/changes
+< 404
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0fb74-d2c3-7340-9b23-0cc34fa2adc8"
+}
+GET /sync/wallets/01a0fb74-d39d-7a56-acb7-ac006d8e0434/changes
+< 404
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0fb74-d472-7184-8b1e-529768d99636"
+}
+# PASS: non-member and unknown wallet: identical 404 NOT_FOUND

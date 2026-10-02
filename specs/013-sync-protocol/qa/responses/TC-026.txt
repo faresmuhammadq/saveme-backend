@@ -1,0 +1,110 @@
+GET /me
+< 200
+< Content-Language: en
+{
+  "data": {
+    "account": {
+      "id": "01a0fb77-183e-73eb-8b31-3d7131266cce",
+      "email": "qa013-u-f1@example.test",
+      "email_verified": false,
+      "state": "active",
+      "deletion_scheduled_for": null
+    },
+    "profile": {
+      "id": "01a0fb77-1c62-7236-9f20-81e2b634380d",
+      "version": 1,
+      "change_seq": 1,
+      "created_at": "2026-10-02T07:14:42.402650Z",
+      "updated_at": "2026-10-02T07:14:42.402650Z",
+      "deleted_at": null,
+      "user_id": "01a0fb77-183e-73eb-8b31-3d7131266cce",
+      "display_name": null,
+      "locale": "en",
+      "timezone": "Africa/Cairo",
+      "default_currency": "EGP",
+      "default_currency_locked": false,
+      "budget_period_start_day": 1,
+      "budget_period_start_day_from": null
+    }
+  },
+  "meta": {}
+}
+POST /sync/batch
+> {"items": [{"type": "wallet", "op": "upsert", "id": "01a0fb79-5775-7f2d-8de7-7a6a76280f66", "data": {"type": "cash", "name": "QA013 U", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 0}}, {"type": "category", "op": "upsert", "id": "01a0fb79-5775-7433-aa08-971f16aec14e", "data": {"kind": "expense", "name": "QA013 U", "icon": "tag", "color": "#123456", "version": 0}}, {"type": "transaction", "op": "upsert", "id": "01a0fb79-5775-7b83-8330-5ac01c3ffe6a", "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": 1, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "profile", "op": "upsert", "id": "01a0fb77-1c62-7236-9f20-81e2b634380d", "data": {"display_name": "QA013 U", "locale": "en", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 1}}]}
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "wallet",
+      "id": "01a0fb79-5775-7f2d-8de7-7a6a76280f66",
+      "outcome": "rejected",
+      "status": 403,
+      "record": null,
+      "problem": {
+        "type": "http://saveme-backend.test/problems/email-not-verified",
+        "title": "Address not verified",
+        "status": 403,
+        "detail": "Verify your email address first. We can send the link again.",
+        "code": "EMAIL_NOT_VERIFIED",
+        "request_id": "01a0fb79-58bf-73c4-a72c-da572bb1db4a"
+      }
+    },
+    {
+      "type": "category",
+      "id": "01a0fb79-5775-7433-aa08-971f16aec14e",
+      "outcome": "rejected",
+      "status": 403,
+      "record": null,
+      "problem": {
+        "type": "http://saveme-backend.test/problems/email-not-verified",
+        "title": "Address not verified",
+        "status": 403,
+        "detail": "Verify your email address first. We can send the link again.",
+        "code": "EMAIL_NOT_VERIFIED",
+        "request_id": "01a0fb79-58bf-73c4-a72c-da572bb1db4a"
+      }
+    },
+    {
+      "type": "transaction",
+      "id": "01a0fb79-5775-7b83-8330-5ac01c3ffe6a",
+      "outcome": "rejected",
+      "status": 403,
+      "record": null,
+      "problem": {
+        "type": "http://saveme-backend.test/problems/email-not-verified",
+        "title": "Address not verified",
+        "status": 403,
+        "detail": "Verify your email address first. We can send the link again.",
+        "code": "EMAIL_NOT_VERIFIED",
+        "request_id": "01a0fb79-58bf-73c4-a72c-da572bb1db4a"
+      }
+    },
+    {
+      "type": "profile",
+      "id": "01a0fb77-1c62-7236-9f20-81e2b634380d",
+      "outcome": "applied",
+      "status": 200,
+      "record": {
+        "id": "01a0fb77-1c62-7236-9f20-81e2b634380d",
+        "version": 2,
+        "change_seq": 3,
+        "created_at": "2026-10-02T07:14:42.402650Z",
+        "updated_at": "2026-10-02T07:17:09.354161Z",
+        "deleted_at": null,
+        "user_id": "01a0fb77-183e-73eb-8b31-3d7131266cce",
+        "display_name": "QA013 U",
+        "locale": "en",
+        "timezone": "Africa/Cairo",
+        "default_currency": "EGP",
+        "default_currency_locked": false,
+        "budget_period_start_day": 1,
+        "budget_period_start_day_from": null
+      },
+      "problem": null
+    }
+  ],
+  "meta": {}
+}
+# PASS: wallet, category, transaction items -> rejected 403 EMAIL_NOT_VERIFIED each [('rejected', 403, 'EMAIL_NOT_VERIFIED'), ('rejected', 403, 'EMAIL_NOT_VERIFIED'), ('rejected', 403, 'EMAIL_NOT_VERIFIED'), ('applied', 200, None)]
+# PASS: profile item for unverified -> applied 200 ('applied', 200, None)

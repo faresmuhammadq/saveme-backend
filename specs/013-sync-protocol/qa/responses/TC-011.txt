@@ -1,0 +1,239 @@
+PUT /me/profile
+> {"display_name": "QA013 A", "locale": "en", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 1}
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb77-0fdf-70ab-aebb-e967aac5466b",
+    "version": 2,
+    "change_seq": 8,
+    "created_at": "2026-10-02T07:14:39.200747Z",
+    "updated_at": "2026-10-02T07:16:04.974431Z",
+    "deleted_at": null,
+    "user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+    "display_name": "QA013 A",
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": true,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+  },
+  "meta": {}
+}
+# PASS: profile save 200 200 None
+PUT /categories/01a0fb77-6915-72a6-8957-48422164ccfb
+> {"kind": "expense", "name": "QA013 Food", "icon": "tag", "color": "#123456", "version": 1}
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb77-6915-72a6-8957-48422164ccfb",
+    "user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+    "version": 2,
+    "change_seq": 9,
+    "created_at": "2026-10-02T07:15:05.528568Z",
+    "updated_at": "2026-10-02T07:16:06.516136Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "QA013 Food",
+    "icon": "tag",
+    "color": "#123456",
+    "archived_at": null,
+    "in_use": true
+  },
+  "meta": {}
+}
+GET /wallets/01a0fb77-3840-7a11-8652-f9816666771e
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb77-3840-7a11-8652-f9816666771e",
+    "wallet_id": "01a0fb77-3840-7a11-8652-f9816666771e",
+    "version": 1,
+    "change_seq": 10,
+    "created_at": "2026-10-02T07:14:52.541246Z",
+    "updated_at": "2026-10-02T07:14:52.541246Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA013 ToDelete",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": -500,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+GET /wallets/01a0fb77-3840-7321-bdc3-7d3f6e657c52
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb77-3840-7321-bdc3-7d3f6e657c52",
+    "wallet_id": "01a0fb77-3840-7321-bdc3-7d3f6e657c52",
+    "version": 1,
+    "change_seq": 4,
+    "created_at": "2026-10-02T07:14:51.852861Z",
+    "updated_at": "2026-10-02T07:14:51.852861Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA013 Unrelated",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+POST /wallets/01a0fb77-3840-7321-bdc3-7d3f6e657c52/transfer-ownership
+> {"user_id": "01a0fb77-0fee-7144-b29e-c888f803c46c", "version": 1}
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb77-3840-7321-bdc3-7d3f6e657c52",
+    "wallet_id": "01a0fb77-3840-7321-bdc3-7d3f6e657c52",
+    "version": 2,
+    "change_seq": 7,
+    "created_at": "2026-10-02T07:14:51.852861Z",
+    "updated_at": "2026-10-02T07:16:15.919438Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA013 Unrelated",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "editor"
+  },
+  "meta": {}
+}
+# PASS: ownership transfer W2 A->B 200 200 None
+GET /sync/user/changes?cursor=eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Ny0wNzA4LTcwNGMtYmIxMi0wNTYyMGY4NTQ3YWMiLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6N32c7Xc0_axnP0vnryJcygzO
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "profile",
+      "record": {
+        "id": "01a0fb77-0fdf-70ab-aebb-e967aac5466b",
+        "version": 2,
+        "change_seq": 8,
+        "created_at": "2026-10-02T07:14:39.200747Z",
+        "updated_at": "2026-10-02T07:16:04.974431Z",
+        "deleted_at": null,
+        "user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "display_name": "QA013 A",
+        "locale": "en",
+        "timezone": "Africa/Cairo",
+        "default_currency": "EGP",
+        "default_currency_locked": true,
+        "budget_period_start_day": 1,
+        "budget_period_start_day_from": null
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb77-6915-72a6-8957-48422164ccfb",
+        "user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "version": 2,
+        "change_seq": 9,
+        "created_at": "2026-10-02T07:15:05.528568Z",
+        "updated_at": "2026-10-02T07:16:06.516136Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "QA013 Food",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": true
+      }
+    },
+    {
+      "type": "device_session",
+      "record": {
+        "id": "01a0fb78-6550-72a8-a824-018431274b49",
+        "version": 1,
+        "change_seq": 10,
+        "created_at": "2026-10-02T07:16:08.410880Z",
+        "updated_at": "2026-10-02T07:16:08.410880Z",
+        "deleted_at": null,
+        "user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "device_name": "QA013 Pixel",
+        "platform": "android",
+        "app_version": "1.0.0",
+        "state": "active",
+        "end_reason": null,
+        "signed_in_at": "2026-10-02T07:16:08.401557Z",
+        "last_used_at": null,
+        "ended_at": null,
+        "current": false
+      }
+    },
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb77-4164-714c-80a1-4bf0efcce4bc",
+        "wallet_id": "01a0fb77-3840-7321-bdc3-7d3f6e657c52",
+        "version": 2,
+        "change_seq": 5,
+        "created_at": "2026-10-02T07:14:51.877191Z",
+        "updated_at": "2026-10-02T07:16:15.902380Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "display_name": "QA013 A",
+        "role": "editor"
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Ny0wNzA4LTcwNGMtYmIxMi0wNTYyMGY4NTQ3YWMiLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6MTF9ei3hkQEHuUFWE167iJpRAg"
+  }
+}
+# PASS: profile, category, new device_session, A membership of W2 (now editor) arrive once each, in commit order [('profile', '01a0fb77-0fdf-70ab-aebb-e967aac5466b'), ('category', '01a0fb77-6915-72a6-8957-48422164ccfb'), ('device_session', '01a0fb78-6550-72a8-a824-018431274b49'), ('wallet_member', '01a0fb77-3840-7321-bdc3-7d3f6e657c52')] role=editor
+GET /sync/user/changes?cursor=eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Ny0wZmVlLTcxNDQtYjI5ZS1jODg4ZjgwM2M0NmMiLCJyIjoiMDFhMGZiNzctMGZlZS03MTQ0LWIyOWUtYzg4OGY4MDNjNDZjIiwicCI6NH3cYd0GpLS1oChWTkyBy-W0
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb78-829e-7098-8833-df2a6c9a0bc3",
+        "wallet_id": "01a0fb77-3840-7321-bdc3-7d3f6e657c52",
+        "version": 2,
+        "change_seq": 6,
+        "created_at": "2026-10-02T07:16:14.111373Z",
+        "updated_at": "2026-10-02T07:16:15.912482Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb77-0fee-7144-b29e-c888f803c46c",
+        "display_name": null,
+        "role": "owner"
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Ny0wZmVlLTcxNDQtYjI5ZS1jODg4ZjgwM2M0NmMiLCJyIjoiMDFhMGZiNzctMGZlZS03MTQ0LWIyOWUtYzg4OGY4MDNjNDZjIiwicCI6Nn3I-gIZVqa6FQjWpOT784mW"
+  }
+}
+# PASS: B's user feed: new W2 membership (viewer seeded, then owner) arrives once as owner [('wallet_member', 'owner')]

@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Identity\Infrastructure\Models\User;
 use App\Modules\Shared\Domain\Errors\ErrorCode;
 use App\Modules\Wallets\Application\Categories\CategoryQueryService;
 use App\Modules\Wallets\Application\Categories\CategoryService;
@@ -22,12 +23,12 @@ function saveCategory(string $userId, string $categoryId, array $changes, int $v
 }
 
 beforeEach(function () {
-    $this->owner = (string) Str::uuid7();
+    $this->owner = User::factory()->create()->id;
     $this->id = (string) Str::uuid7();
 });
 
-test('a create sets the owner, version 1 and a change_seq from the user scope sequence', function () {
-    $nextBefore = (int) DB::scalar('select last_value from sync_change_seq');
+test('a create sets the owner, version 1 and a change_seq from the owner\'s user counter', function () {
+    $nextBefore = (int) DB::scalar('select change_seq from users where id = ?', [$this->owner]);
 
     $saved = app(CategoryService::class)->save($this->owner, $this->id, categoryValues(), 0, presentCategory());
 
@@ -35,7 +36,8 @@ test('a create sets the owner, version 1 and a change_seq from the user scope se
     expect($saved->created)->toBeTrue()
         ->and($category->user_id)->toBe($this->owner)
         ->and($category->version)->toBe(1)
-        ->and($category->change_seq)->toBeGreaterThan($nextBefore)
+        ->and($category->change_seq)->toBe($nextBefore + 1)
+        ->and((int) DB::scalar('select change_seq from users where id = ?', [$this->owner]))->toBe($category->change_seq)
         ->and($category->system_key)->toBeNull()
         ->and($saved->view->inUse)->toBeFalse();
 });

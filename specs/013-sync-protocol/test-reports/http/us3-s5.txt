@@ -1,0 +1,498 @@
+GET /sync/user/changes?limit=200
+< 200
+< Content-Language: ar
+{
+  "data": [
+    {
+      "type": "device_session",
+      "record": {
+        "id": "01a0fb73-0919-74d3-976e-24135e237f23",
+        "version": 1,
+        "change_seq": 2,
+        "created_at": "2026-10-02T07:10:16.901701Z",
+        "updated_at": "2026-10-02T07:13:36.011760Z",
+        "deleted_at": null,
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "device_name": "QA013 Pixel",
+        "platform": "android",
+        "app_version": "1.0.0",
+        "state": "active",
+        "end_reason": null,
+        "signed_in_at": "2026-10-02T07:10:16.892968Z",
+        "last_used_at": "2026-10-02T07:13:36.008793Z",
+        "ended_at": null,
+        "current": true
+      }
+    },
+    {
+      "type": "profile",
+      "record": {
+        "id": "01a0fb72-f910-7145-994a-312c5668d4e4",
+        "version": 2,
+        "change_seq": 4,
+        "created_at": "2026-10-02T07:10:11.216628Z",
+        "updated_at": "2026-10-02T07:12:41.337261Z",
+        "deleted_at": null,
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "display_name": "E2E Sara",
+        "locale": "ar",
+        "timezone": "Africa/Cairo",
+        "default_currency": "EGP",
+        "default_currency_locked": true,
+        "budget_period_start_day": 1,
+        "budget_period_start_day_from": null
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb75-43ae-76da-89f5-8ee62da30f46",
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "version": 2,
+        "change_seq": 6,
+        "created_at": "2026-10-02T07:12:41.907935Z",
+        "updated_at": "2026-10-02T07:12:43.830440Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "E2E Sara cat renamed",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": false
+      }
+    },
+    {
+      "type": "device_session",
+      "record": {
+        "id": "01a0fb75-4d5c-7994-a9de-1e9125c390f9",
+        "version": 1,
+        "change_seq": 7,
+        "created_at": "2026-10-02T07:12:45.768311Z",
+        "updated_at": "2026-10-02T07:12:45.768311Z",
+        "deleted_at": null,
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "device_name": "QA013 Pixel",
+        "platform": "android",
+        "app_version": "1.0.0",
+        "state": "active",
+        "end_reason": null,
+        "signed_in_at": "2026-10-02T07:12:45.758443Z",
+        "last_used_at": null,
+        "ended_at": null,
+        "current": false
+      }
+    },
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb73-3684-701f-ae09-dc39e32a1a4e",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 2,
+        "change_seq": 198,
+        "created_at": "2026-10-02T07:10:26.949360Z",
+        "updated_at": "2026-10-02T07:12:47.274167Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "display_name": "E2E Sara",
+        "role": "owner"
+      }
+    },
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb75-7224-72ac-8336-deac24db88c9",
+        "wallet_id": "01a0fb75-5e3f-7e3b-b011-fad0da0402f9",
+        "version": 2,
+        "change_seq": 6,
+        "created_at": "2026-10-02T07:12:53.285761Z",
+        "updated_at": "2026-10-02T07:12:55.480533Z",
+        "deleted_at": "2026-10-02T07:12:55.480533Z",
+        "member_user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "display_name": "E2E Sara",
+        "role": "editor"
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb75-7e5c-73bf-ba25-838549e431ad",
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "version": 1,
+        "change_seq": 11,
+        "created_at": "2026-10-02T07:12:57.194982Z",
+        "updated_at": "2026-10-02T07:12:57.194982Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "E2E c 431ad",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": false
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb75-81a5-76af-b9bb-7e03212ef7d3",
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "version": 1,
+        "change_seq": 13,
+        "created_at": "2026-10-02T07:13:01.698378Z",
+        "updated_at": "2026-10-02T07:13:01.698378Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "E2E c ef7d3",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": false
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb75-9357-789f-b190-4e56e8adc89a",
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "version": 1,
+        "change_seq": 14,
+        "created_at": "2026-10-02T07:13:05.207499Z",
+        "updated_at": "2026-10-02T07:13:05.207499Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "E2E c dc89a",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": false
+      }
+    },
+    {
+      "type": "device_session",
+      "record": {
+        "id": "01a0fb75-7e62-7cef-bdec-f246d25615b0",
+        "version": 2,
+        "change_seq": 15,
+        "created_at": "2026-10-02T07:12:59.782521Z",
+        "updated_at": "2026-10-02T07:13:06.581368Z",
+        "deleted_at": null,
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "device_name": "QA013 Pixel",
+        "platform": "android",
+        "app_version": "1.0.0",
+        "state": "revoked",
+        "end_reason": "signed_out",
+        "signed_in_at": "2026-10-02T07:12:59.761489Z",
+        "last_used_at": "2026-10-02T07:13:06.518865Z",
+        "ended_at": "2026-10-02T07:13:06.576538Z",
+        "current": false
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb75-a0f2-7b80-bc2f-c72a7a28ccbf",
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "version": 1,
+        "change_seq": 16,
+        "created_at": "2026-10-02T07:13:07.405858Z",
+        "updated_at": "2026-10-02T07:13:07.405858Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "E2E c 8ccbf",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": false
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb75-a99b-7b4e-8f4b-074ebfcc4f92",
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "version": 1,
+        "change_seq": 18,
+        "created_at": "2026-10-02T07:13:10.916557Z",
+        "updated_at": "2026-10-02T07:13:10.916557Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "E2E c c4f92",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": false
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb75-b73b-79e8-8f97-1b9f92a4e645",
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "version": 1,
+        "change_seq": 19,
+        "created_at": "2026-10-02T07:13:12.587011Z",
+        "updated_at": "2026-10-02T07:13:12.587011Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "E2E c 4e645",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": false
+      }
+    },
+    {
+      "type": "device_session",
+      "record": {
+        "id": "01a0fb75-a651-7830-97c9-86bc40990859",
+        "version": 2,
+        "change_seq": 20,
+        "created_at": "2026-10-02T07:13:09.990177Z",
+        "updated_at": "2026-10-02T07:13:13.615323Z",
+        "deleted_at": null,
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "device_name": "QA013 Pixel",
+        "platform": "android",
+        "app_version": "1.0.0",
+        "state": "revoked",
+        "end_reason": "signed_out",
+        "signed_in_at": "2026-10-02T07:13:09.976280Z",
+        "last_used_at": "2026-10-02T07:13:13.578198Z",
+        "ended_at": "2026-10-02T07:13:13.610826Z",
+        "current": false
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb75-bdaa-7800-8237-11d7a58f9f3e",
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "version": 1,
+        "change_seq": 21,
+        "created_at": "2026-10-02T07:13:14.227358Z",
+        "updated_at": "2026-10-02T07:13:14.227358Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "E2E c f9f3e",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": false
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb75-c429-7596-961c-7e8b204194bc",
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "version": 1,
+        "change_seq": 23,
+        "created_at": "2026-10-02T07:13:17.206067Z",
+        "updated_at": "2026-10-02T07:13:17.206067Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "E2E c 194bc",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": false
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb75-cfbb-71d3-a7f1-d9f703622901",
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "version": 1,
+        "change_seq": 24,
+        "created_at": "2026-10-02T07:13:18.994707Z",
+        "updated_at": "2026-10-02T07:13:18.994707Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "E2E c 22901",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": false
+      }
+    },
+    {
+      "type": "device_session",
+      "record": {
+        "id": "01a0fb75-c1bf-7d0a-ba01-a517c490b477",
+        "version": 2,
+        "change_seq": 25,
+        "created_at": "2026-10-02T07:13:16.620043Z",
+        "updated_at": "2026-10-02T07:13:20.219006Z",
+        "deleted_at": null,
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "device_name": "QA013 Pixel",
+        "platform": "android",
+        "app_version": "1.0.0",
+        "state": "revoked",
+        "end_reason": "signed_out",
+        "signed_in_at": "2026-10-02T07:13:16.611323Z",
+        "last_used_at": "2026-10-02T07:13:20.167852Z",
+        "ended_at": "2026-10-02T07:13:20.215318Z",
+        "current": false
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb75-d6bf-79f0-b2c3-68e3b924e507",
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "version": 1,
+        "change_seq": 26,
+        "created_at": "2026-10-02T07:13:20.742679Z",
+        "updated_at": "2026-10-02T07:13:20.742679Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "E2E c 4e507",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": false
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb75-dd8c-7329-9c9d-97c3d5d49e2d",
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "version": 1,
+        "change_seq": 28,
+        "created_at": "2026-10-02T07:13:23.276916Z",
+        "updated_at": "2026-10-02T07:13:23.276916Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "E2E c 49e2d",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": false
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb75-e782-77a0-a6c0-7ba0b600db68",
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "version": 1,
+        "change_seq": 29,
+        "created_at": "2026-10-02T07:13:25.202387Z",
+        "updated_at": "2026-10-02T07:13:25.202387Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "E2E c 0db68",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": false
+      }
+    },
+    {
+      "type": "device_session",
+      "record": {
+        "id": "01a0fb75-db84-7002-860e-2801fde67228",
+        "version": 2,
+        "change_seq": 30,
+        "created_at": "2026-10-02T07:13:22.679714Z",
+        "updated_at": "2026-10-02T07:13:26.458632Z",
+        "deleted_at": null,
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "device_name": "QA013 Pixel",
+        "platform": "android",
+        "app_version": "1.0.0",
+        "state": "revoked",
+        "end_reason": "signed_out",
+        "signed_in_at": "2026-10-02T07:13:22.670686Z",
+        "last_used_at": "2026-10-02T07:13:26.388900Z",
+        "ended_at": "2026-10-02T07:13:26.450866Z",
+        "current": false
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb75-ef08-76c4-8951-cc01b8880f5b",
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "version": 1,
+        "change_seq": 31,
+        "created_at": "2026-10-02T07:13:27.201591Z",
+        "updated_at": "2026-10-02T07:13:27.201591Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "E2E c 80f5b",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": false
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb75-f6d0-7460-8ce4-7a7c95a8b68c",
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "version": 1,
+        "change_seq": 33,
+        "created_at": "2026-10-02T07:13:30.169431Z",
+        "updated_at": "2026-10-02T07:13:30.169431Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "E2E c 8b68c",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": false
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb76-0267-70e8-b760-6a323827fc16",
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "version": 1,
+        "change_seq": 34,
+        "created_at": "2026-10-02T07:13:33.187252Z",
+        "updated_at": "2026-10-02T07:13:33.187252Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "E2E c 7fc16",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": false
+      }
+    },
+    {
+      "type": "device_session",
+      "record": {
+        "id": "01a0fb75-f401-7a11-842c-0f51441dedbd",
+        "version": 2,
+        "change_seq": 35,
+        "created_at": "2026-10-02T07:13:29.560391Z",
+        "updated_at": "2026-10-02T07:13:34.146715Z",
+        "deleted_at": null,
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "device_name": "QA013 Pixel",
+        "platform": "android",
+        "app_version": "1.0.0",
+        "state": "revoked",
+        "end_reason": "signed_out",
+        "signed_in_at": "2026-10-02T07:13:29.550766Z",
+        "last_used_at": "2026-10-02T07:13:34.106369Z",
+        "ended_at": "2026-10-02T07:13:34.142961Z",
+        "current": false
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 200,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Mi1mNDlmLTczMzktODM0Ni00NDJmOTAwNmY2MDYiLCJyIjoiMDFhMGZiNzItZjQ5Zi03MzM5LTgzNDYtNDQyZjkwMDZmNjA2IiwicCI6MzV9M87zqGRlrXdYxGR0SCUcdA"
+  }
+}
+# PASS: 26 rows on B's feed, none belonging to A (A's category, memberships, sessions absent)

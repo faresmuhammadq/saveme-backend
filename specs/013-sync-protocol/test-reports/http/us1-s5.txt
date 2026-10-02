@@ -1,0 +1,13 @@
+GET /sync/wallets/01a0fb73-1ddf-7318-a583-d5f7420866db/changes?cursor=eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3My0xZGRmLTczMTgtYTU4My1kNWY3NDIwODY2ZGIiLCJyIjoiMDFhMGZiNzItZjQ5Zi03MzM5LTgzNDYtNDQyZjkwMDZmNjA2IiwicCI6Nzh9HJH2OgcDf62iBQ7qm3G8AQ
+< 200
+< Content-Language: en
+{
+  "data": [],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3My0xZGRmLTczMTgtYTU4My1kNWY3NDIwODY2ZGIiLCJyIjoiMDFhMGZiNzItZjQ5Zi03MzM5LTgzNDYtNDQyZjkwMDZmNjA2IiwicCI6Nzh9HJH2OgcDf62iBQ7qm3G8AQ"
+  }
+}
+# PASS: last page has_more=false, next_cursor=null, sync_cursor set; reading from it: empty page, same sync_cursor

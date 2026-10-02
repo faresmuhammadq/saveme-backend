@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property CarbonImmutable|null $archived_at
  * @property int $version
  * @property int $change_seq
+ * @property int $purged_change_seq
  * @property CarbonImmutable $created_at
  * @property CarbonImmutable $updated_at
  * @property CarbonImmutable|null $deleted_at

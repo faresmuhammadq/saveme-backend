@@ -1,0 +1,161 @@
+PUT /wallets/01a0fb79-663e-75bc-87f3-7f7ee34f1cfa
+> {"type": "cash", "name": "QA013 PerRecord", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 0}
+< 201
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb79-663e-75bc-87f3-7f7ee34f1cfa",
+    "wallet_id": "01a0fb79-663e-75bc-87f3-7f7ee34f1cfa",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T07:17:13.119796Z",
+    "updated_at": "2026-10-02T07:17:13.119796Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA013 PerRecord",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0fb79-663e-75bc-87f3-7f7ee34f1cfa
+> {"type": "cash", "name": "QA013 PerRecord", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 0}
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb79-663e-75bc-87f3-7f7ee34f1cfa",
+    "wallet_id": "01a0fb79-663e-75bc-87f3-7f7ee34f1cfa",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T07:17:13.119796Z",
+    "updated_at": "2026-10-02T07:17:13.119796Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA013 PerRecord",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+# PASS: per-record PUT: 201 then replay 200, same version 
+PUT /wallets/01a0fb79-663e-75bc-87f3-7f7ee34f1cfa
+> {"type": "cash", "name": "QA013 PerRecord 2", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 0}
+< 409
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/version-conflict",
+  "title": "Version conflict",
+  "status": 409,
+  "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+  "code": "VERSION_CONFLICT",
+  "request_id": "01a0fb79-6d4d-7090-9b9c-c919a3f69993",
+  "current": {
+    "id": "01a0fb79-663e-75bc-87f3-7f7ee34f1cfa",
+    "wallet_id": "01a0fb79-663e-75bc-87f3-7f7ee34f1cfa",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T07:17:13.119796Z",
+    "updated_at": "2026-10-02T07:17:13.119796Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA013 PerRecord",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  }
+}
+# PASS: per-record stale PUT -> 409 VERSION_CONFLICT with current 
+POST /sync/batch
+> {"items": [{"type": "wallet", "op": "upsert", "id": "01a0fb79-663e-75bc-87f3-7f7ee34f1cfa", "data": {"type": "cash", "name": "QA013 PerRecord 2", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 0}}]}
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "wallet",
+      "id": "01a0fb79-663e-75bc-87f3-7f7ee34f1cfa",
+      "outcome": "conflict",
+      "status": 409,
+      "record": null,
+      "problem": {
+        "type": "http://saveme-backend.test/problems/version-conflict",
+        "title": "Version conflict",
+        "status": 409,
+        "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+        "code": "VERSION_CONFLICT",
+        "request_id": "01a0fb79-7064-727b-9904-fac465d4cc0c",
+        "current": {
+          "id": "01a0fb79-663e-75bc-87f3-7f7ee34f1cfa",
+          "wallet_id": "01a0fb79-663e-75bc-87f3-7f7ee34f1cfa",
+          "version": 1,
+          "change_seq": 3,
+          "created_at": "2026-10-02T07:17:13.119796Z",
+          "updated_at": "2026-10-02T07:17:13.119796Z",
+          "deleted_at": null,
+          "type": "cash",
+          "name": "QA013 PerRecord",
+          "currency": "EGP",
+          "opening_balance_minor": 0,
+          "balance_minor": 0,
+          "icon": "wallet",
+          "color": "#1A2B3C",
+          "archived_at": null,
+          "currency_locked": false,
+          "my_role": "owner"
+        }
+      }
+    }
+  ],
+  "meta": {}
+}
+# PASS: same stale write as a batch item: identical problem body 
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "upsert", "id": "01a0fb79-723b-7382-839a-cdb5b72c15d1", "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": -1, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}}]}
+< 200
+< Content-Language: ar
+{
+  "data": [
+    {
+      "type": "transaction",
+      "id": "01a0fb79-723b-7382-839a-cdb5b72c15d1",
+      "outcome": "rejected",
+      "status": 422,
+      "record": null,
+      "problem": {
+        "type": "http://saveme-backend.test/problems/validation-failed",
+        "title": "Validation failed",
+        "status": 422,
+        "detail": "\u0628\u0639\u0636 \u0627\u0644\u0628\u064a\u0627\u0646\u0627\u062a \u0627\u0644\u0645\u0631\u0633\u0644\u0629 \u063a\u064a\u0631 \u0635\u062d\u064a\u062d\u0629\u060c \u0648\u0643\u0644 \u0645\u0634\u0643\u0644\u0629 \u0645\u0630\u0643\u0648\u0631\u0629 \u0628\u0627\u0644\u062a\u0641\u0635\u064a\u0644.",
+        "code": "VALIDATION_FAILED",
+        "request_id": "01a0fb79-7374-73ef-9165-cd23065ba48a",
+        "errors": [
+          {
+            "pointer": "/amount_minor",
+            "code": "OUT_OF_RANGE",
+            "detail": "\u0647\u0630\u0647 \u0627\u0644\u0642\u064a\u0645\u0629 \u0623\u0642\u0635\u0631 \u0623\u0648 \u0623\u0637\u0648\u0644 \u0645\u0646 \u0627\u0644\u0644\u0627\u0632\u0645\u060c \u0623\u0648 \u062e\u0627\u0631\u062c \u0627\u0644\u0646\u0637\u0627\u0642 \u0627\u0644\u0645\u0633\u0645\u0648\u062d."
+          }
+        ]
+      }
+    }
+  ],
+  "meta": {}
+}
+# PASS: Accept-Language ar: Content-Language ar, item problem localised (title stays code-stable) ar

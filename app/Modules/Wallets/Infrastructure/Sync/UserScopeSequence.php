@@ -2,18 +2,19 @@
 
 namespace App\Modules\Wallets\Infrastructure\Sync;
 
+use App\Modules\Identity\Application\Sync\UserScopeCounter;
 use App\Modules\Wallets\Domain\Categories\Ports\UserScopeSequence as UserScopeSequencePort;
-use Illuminate\Support\Facades\DB;
 
 /**
- * The user scope's counter is the shared sync_change_seq sequence (spec 007
- * R-19), which Profile and Device Session already draw from. Wallets keeps
- * its own adapter rather than importing Identity's (P-02).
+ * The user scope's counter is Identity's (spec 013, R-5): this adapter calls
+ * Identity's Application service rather than its Infrastructure (P-02).
  */
 final class UserScopeSequence implements UserScopeSequencePort
 {
-    public function next(): int
+    public function __construct(private readonly UserScopeCounter $counter) {}
+
+    public function next(string $userId): int
     {
-        return (int) DB::scalar("select nextval('sync_change_seq')");
+        return $this->counter->next($userId);
     }
 }

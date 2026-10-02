@@ -254,6 +254,7 @@ The two kinds of collection guarantee different things, and the difference matte
 - ordered within the scope;
 - at-least-once — a row may arrive twice, and none is skipped;
 - replays are idempotent;
+- `meta.sync_cursor` is always present and never null: it is the position after the page (or the incoming one when the page is empty), the value to store and send back as `cursor`. The two feeds are `GET /sync/user/changes` and `GET /sync/wallets/{id}/changes`;
 - **no ordering across scopes.** A row on the user feed and a row on a wallet feed have no defined relative order. A client needing a cross-scope invariant resolves it locally.
 
 **Ordinary collections**, keyset paged on the sort key plus `id`:
@@ -396,6 +397,10 @@ PUT /api/v1/transactions/0192f7a0-1c3d-7abc-9f01-2b3c4d5e6f70
 
 This is what makes a retry safe. The client cannot know whether a request that timed out was applied, so the contract makes applying it twice indistinguishable from applying it once.
 
+### Batch upload
+
+`POST /api/v1/sync/batch` carries 1 to 50 per-record writes in one request ([ADR-0016](adr/0016-batch-upload-beside-per-record-writes.md)). It is a transport, not a new kind of write: each item is exactly one per-record write (`PUT`, `DELETE`, or the restoring `PATCH`) and obeys exactly its rules. Items are independent, applied one at a time in array order, and each is answered by its own result (`applied`, `conflict` or `rejected`, with the status and body the single write gives). An unusable envelope is refused whole with `422` and nothing is applied. The per-record writes stay available and unchanged beside it.
+
 ### Every outcome
 
 | Case | Status | Body |
@@ -457,7 +462,7 @@ Deletion is a write that sets `deleted_at`, bumps `version` and bumps `change_se
 
 Restoring is an explicit write of `deleted_at: null` carrying the current `version`, authorised exactly like any other update. An ordinary edit to a tombstoned record is **not** an implicit undelete — it is a conflict, and the client decides whether the user meant to bring the record back.
 
-Tombstones are retained for at least 90 days. A client offline longer than that gets `410 SYNC_CURSOR_EXPIRED` on its next pull and resyncs the scope from scratch.
+Tombstones are retained for at least 90 days. A client offline longer than that gets `410 SYNC_CURSOR_EXPIRED` on its next pull and resyncs the scope from scratch. Precisely: a daily purge removes older tombstones and raises the scope's purge horizon, and a cursor behind that horizon is the one that expires; a cursor at or beyond it is served, however old.
 
 ## Idempotency
 
@@ -468,6 +473,8 @@ Most writes need no idempotency header: a syncable create is already idempotent 
 - Google Play purchase acknowledgement
 
 Those three **require** `Idempotency-Key`. Nothing else uses it — a header nobody sends is a header nobody can rely on.
+
+The sync batch carries no key: it is idempotent because every item is, by its identifier and `version`. A key sent with it is ignored and nothing is stored.
 
 ### The key
 

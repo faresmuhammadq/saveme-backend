@@ -15,6 +15,7 @@ use App\Modules\Wallets\Application\Authorization\WalletAuthorizer;
 use App\Modules\Wallets\Application\Deletion\WalletDeletionParticipant;
 use App\Modules\Wallets\Application\Dto\SavedWallet;
 use App\Modules\Wallets\Application\Dto\WalletView;
+use App\Modules\Wallets\Domain\Categories\Ports\UserScopeSequence;
 use App\Modules\Wallets\Domain\Events\WalletCreated;
 use App\Modules\Wallets\Domain\Events\WalletDeleted;
 use App\Modules\Wallets\Domain\Events\WalletOwnershipTransferred;
@@ -46,6 +47,10 @@ use RuntimeException;
  * cached balance is recomputed when the opening balance moves, and events
  * follow the commit (spec 010, R-2 to R-4, R-9, R-10).
  *
+ * A write that creates, moves or tombstones a membership also stamps its
+ * member_change_seq from the member's user counter (ADR-0017), after the
+ * wallet lock and before any other user lock, people in ascending user id.
+ *
  * Precedence for every write: not-found, forbidden, not-entitled, a write
  * to a tombstone, an identical replay, a stale version, the state rules.
  */
@@ -58,6 +63,7 @@ final class WalletService
         private readonly WalletRepository $wallets,
         private readonly MembershipRepository $members,
         private readonly ScopeSequence $sequence,
+        private readonly UserScopeSequence $userSequence,
         private readonly PostingTotals $postings,
         private readonly TransactionRepository $transactions,
         private readonly WalletAuthorizer $authorizer,
@@ -149,7 +155,7 @@ final class WalletService
             $at = now()->toDateTimeImmutable();
             $nextChangeSeq = fn (): int => $this->sequence->nextFor($walletId);
 
-            $this->members->tombstoneAllIn($walletId, $at, $nextChangeSeq);
+            $this->members->tombstoneAllIn($walletId, $at, $nextChangeSeq, fn (string $memberUserId): int => $this->userSequence->next($memberUserId));
 
             foreach ($this->participants as $participant) {
                 $participant->tombstoneWithin($walletId, $at, $nextChangeSeq);
@@ -192,8 +198,19 @@ final class WalletService
                 throw new OwnershipTargetInvalid;
             }
 
-            $this->members->changeRole($actor->id, Role::Editor, $this->sequence->nextFor($walletId));
-            $this->members->changeRole($target->id, Role::Owner, $this->sequence->nextFor($walletId));
+            $actorSeq = $this->sequence->nextFor($walletId);
+            $targetSeq = $this->sequence->nextFor($walletId);
+
+            // Both people's user counters, in ascending user id, after the wallet lock (ADR-0017 rule 5).
+            $memberSeq = [];
+            $people = [$actorId, $targetUserId];
+            sort($people, SORT_STRING);
+            foreach ($people as $personId) {
+                $memberSeq[$personId] = $this->userSequence->next($personId);
+            }
+
+            $this->members->changeRole($actor->id, Role::Editor, $actorSeq, $memberSeq[$actorId]);
+            $this->members->changeRole($target->id, Role::Owner, $targetSeq, $memberSeq[$targetUserId]);
             $this->bump($walletId, $version, []);
 
             $this->audit->record(AuditRecord::byUser(
@@ -223,7 +240,7 @@ final class WalletService
 
         $view = DB::transaction(function () use ($actorId, $walletId, $values): WalletView {
             $this->wallets->insert($walletId, $values, $this->postings->sumFor($walletId));
-            $this->members->insert($walletId, $actorId, Role::Owner, $this->sequence->nextFor($walletId));
+            $this->members->insert($walletId, $actorId, Role::Owner, $this->sequence->nextFor($walletId), $this->userSequence->next($actorId));
             $this->sequence->nextFor($walletId);
 
             event(new WalletCreated(...Events::stamp(), walletId: $walletId, ownerUserId: $actorId, type: $values['type'], currency: $values['currency']));

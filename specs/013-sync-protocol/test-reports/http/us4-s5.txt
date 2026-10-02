@@ -1,0 +1,107 @@
+PUT /wallets/01a0fb76-a54f-7f9b-8ef8-7da65838da78
+> {"type": "cash", "name": "E2E Deleted dest", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 0}
+< 201
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb76-a54f-7f9b-8ef8-7da65838da78",
+    "wallet_id": "01a0fb76-a54f-7f9b-8ef8-7da65838da78",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T07:14:12.410518Z",
+    "updated_at": "2026-10-02T07:14:12.410518Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "E2E Deleted dest",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0fb73-1ddf-7b15-b285-3319c7af991a/transactions/01a0fb76-a782-7e0e-a10d-d92ad865696e
+> {"kind": "transfer", "date": "2026-09-21", "amount_minor": 5, "currency": "EGP", "category_id": null, "counter_wallet_id": "01a0fb76-a54f-7f9b-8ef8-7da65838da78", "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 201
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb76-a782-7e0e-a10d-d92ad865696e",
+    "wallet_id": "01a0fb73-1ddf-7b15-b285-3319c7af991a",
+    "version": 1,
+    "change_seq": 10,
+    "created_at": "2026-10-02T07:14:13.078296Z",
+    "updated_at": "2026-10-02T07:14:13.078296Z",
+    "deleted_at": null,
+    "kind": "transfer",
+    "date": "2026-09-21",
+    "amount_minor": 5,
+    "currency": "EGP",
+    "category_id": null,
+    "counter_wallet_id": "01a0fb76-a54f-7f9b-8ef8-7da65838da78",
+    "description": "E2E",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+  },
+  "meta": {}
+}
+GET /wallets/01a0fb76-a54f-7f9b-8ef8-7da65838da78
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb76-a54f-7f9b-8ef8-7da65838da78",
+    "wallet_id": "01a0fb76-a54f-7f9b-8ef8-7da65838da78",
+    "version": 1,
+    "change_seq": 5,
+    "created_at": "2026-10-02T07:14:12.410518Z",
+    "updated_at": "2026-10-02T07:14:12.410518Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "E2E Deleted dest",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 5,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+DELETE /wallets/01a0fb76-a54f-7f9b-8ef8-7da65838da78
+> {"version": 1}
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb76-a54f-7f9b-8ef8-7da65838da78",
+    "wallet_id": "01a0fb76-a54f-7f9b-8ef8-7da65838da78",
+    "version": 2,
+    "change_seq": 7,
+    "created_at": "2026-10-02T07:14:12.410518Z",
+    "updated_at": "2026-10-02T07:14:14.390041Z",
+    "deleted_at": "2026-10-02T07:14:14.295519Z",
+    "type": "cash",
+    "name": "E2E Deleted dest",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 5,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+# aged 120 days
+# Purged 1 tombstones.
+# PASS: tombstoned wallet referenced by a live transfer: kept after purge (removed on a later run once unreferenced)

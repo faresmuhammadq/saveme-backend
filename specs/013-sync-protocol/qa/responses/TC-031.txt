@@ -1,0 +1,7 @@
+# 966 sync log lines in /home/faresmuhammad/projects/personal/financial-tracker/saveme-backend/storage/logs/laravel.log; sample:
+[2026-10-02 07:17:38] local.INFO: sync_feed_read {"feed":"wallet","rows":2,"has_more":false,"cursor_absent":false} {"request_id":"01a0fb79-c8d1-728a-9fb3-11ed19955d66"}
+[2026-10-02 07:17:39] local.INFO: sync_feed_read {"feed":"user","rows":0,"has_more":false,"cursor_absent":false} {"request_id":"01a0fb79-ce2a-7241-8ee7-e50e3084067b"}
+[2026-10-02 07:17:39] local.INFO: sync_feed_read {"feed":"wallet","rows":55,"has_more":false,"cursor_absent":true} {"request_id":"01a0fb79-d062-7212-847a-cf6284ccf148"}
+[2026-10-02 07:17:40] local.INFO: sync_feed_read {"feed":"wallet","rows":4,"has_more":false,"cursor_absent":false} {"request_id":"01a0fb79-d32f-733d-afd3-4dc06eefb584"}
+[2026-10-02 07:17:45] local.INFO: sync_tombstones_purged {"retention_days":90,"removed":{"transactions":0,"category_references":0,"wallet_members":0,"categories":0,"wallets":0}} 
+# PASS: sync log lines present and carry no ids, names, amounts or credentials 966 lines, 0 leaking

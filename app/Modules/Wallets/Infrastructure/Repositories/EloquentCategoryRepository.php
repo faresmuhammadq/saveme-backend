@@ -118,7 +118,7 @@ final class EloquentCategoryRepository implements CategoryRepository
             ->all());
     }
 
-    private static function record(Category $category): CategoryRecord
+    public static function record(Category $category): CategoryRecord
     {
         return new CategoryRecord(
             id: $category->id,
@@ -142,7 +142,7 @@ final class EloquentCategoryRepository implements CategoryRepository
      *
      * @param  object{id: string, user_id: string, kind: string, name: string, icon: ?string, color: ?string, archived_at: ?string, version: int|string, change_seq: int|string, created_at: string, updated_at: string, deleted_at: ?string}  $row
      */
-    private static function rawRecord(object $row): CategoryRecord
+    public static function rawRecord(object $row): CategoryRecord
     {
         return new CategoryRecord(
             id: $row->id,

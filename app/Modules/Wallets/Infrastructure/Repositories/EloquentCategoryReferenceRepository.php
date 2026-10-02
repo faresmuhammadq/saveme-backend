@@ -116,7 +116,7 @@ final class EloquentCategoryReferenceRepository implements CategoryReferenceRepo
         return $at->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s.uP');
     }
 
-    private static function record(CategoryReference $reference): CategoryReferenceRecord
+    public static function record(CategoryReference $reference): CategoryReferenceRecord
     {
         return new CategoryReferenceRecord(
             id: $reference->id,

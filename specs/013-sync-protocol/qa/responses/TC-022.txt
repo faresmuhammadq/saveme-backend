@@ -1,0 +1,265 @@
+PUT /wallets/01a0fb78-bd1a-7ffc-bd1e-fe017939c172
+> {"type": "cash", "name": "QA013 C Wallet", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 0}
+< 201
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb78-bd1a-7ffc-bd1e-fe017939c172",
+    "wallet_id": "01a0fb78-bd1a-7ffc-bd1e-fe017939c172",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T07:16:29.775521Z",
+    "updated_at": "2026-10-02T07:16:29.775521Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA013 C Wallet",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "upsert", "id": "01a0fb78-c065-7bc7-9de6-1e878bed1b5e", "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": 100, "currency": "EGP", "category_id": "01a0fb77-6915-72a6-8957-48422164ccfb", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "transaction", "op": "upsert", "id": "01a0fb77-76e7-7d8d-9037-1745cc7acf09", "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": 9999, "currency": "EGP", "category_id": "01a0fb77-6915-72a6-8957-48422164ccfb", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 1}}, {"type": "transaction", "op": "upsert", "id": "01a0fb78-c065-7301-bac4-3bc6fd65b0a8", "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": -5, "currency": "EGP", "category_id": "01a0fb77-6915-72a6-8957-48422164ccfb", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "transaction", "op": "upsert", "id": "01a0fb78-c065-7c67-8752-8f01451835e3", "wallet_id": "01a0fb78-bd1a-7ffc-bd1e-fe017939c172", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": 100, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "category", "op": "delete", "id": "01a0fb77-6915-72a6-8957-48422164ccfb", "data": {"version": 2}}, {"type": "wallet", "op": "upsert", "id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867", "data": {"type": "cash", "name": "x", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 999}}, {"type": "transaction", "op": "upsert", "id": "01a0fb78-c065-7f87-82e2-7fa5c5081faa", "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": 200, "currency": "EGP", "category_id": "01a0fb77-6915-72a6-8957-48422164ccfb", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}}]}
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "transaction",
+      "id": "01a0fb78-c065-7bc7-9de6-1e878bed1b5e",
+      "outcome": "applied",
+      "status": 201,
+      "record": {
+        "id": "01a0fb78-c065-7bc7-9de6-1e878bed1b5e",
+        "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+        "version": 1,
+        "change_seq": 21,
+        "created_at": "2026-10-02T07:16:30.896181Z",
+        "updated_at": "2026-10-02T07:16:30.896181Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-20",
+        "amount_minor": 100,
+        "currency": "EGP",
+        "category_id": "01a0fb77-6915-72a6-8957-48422164ccfb",
+        "counter_wallet_id": null,
+        "description": "QA013",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+      },
+      "problem": null
+    },
+    {
+      "type": "transaction",
+      "id": "01a0fb77-76e7-7d8d-9037-1745cc7acf09",
+      "outcome": "conflict",
+      "status": 409,
+      "record": null,
+      "problem": {
+        "type": "http://saveme-backend.test/problems/version-conflict",
+        "title": "Version conflict",
+        "status": 409,
+        "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+        "code": "VERSION_CONFLICT",
+        "request_id": "01a0fb78-c1c0-72c2-8790-b7f71ad9e8b2",
+        "current": {
+          "id": "01a0fb77-76e7-7d8d-9037-1745cc7acf09",
+          "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+          "version": 3,
+          "change_seq": 13,
+          "created_at": "2026-10-02T07:15:06.247364Z",
+          "updated_at": "2026-10-02T07:15:23.703688Z",
+          "deleted_at": null,
+          "kind": "expense",
+          "date": "2026-09-20",
+          "amount_minor": 3500,
+          "currency": "EGP",
+          "category_id": "01a0fb77-6915-72a6-8957-48422164ccfb",
+          "counter_wallet_id": null,
+          "description": "QA013",
+          "memo": null,
+          "counterparty": null,
+          "cleared": false,
+          "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+        }
+      }
+    },
+    {
+      "type": "transaction",
+      "id": "01a0fb78-c065-7301-bac4-3bc6fd65b0a8",
+      "outcome": "rejected",
+      "status": 422,
+      "record": null,
+      "problem": {
+        "type": "http://saveme-backend.test/problems/validation-failed",
+        "title": "Validation failed",
+        "status": 422,
+        "detail": "Some of the information sent is not valid. Each problem is listed.",
+        "code": "VALIDATION_FAILED",
+        "request_id": "01a0fb78-c1c0-72c2-8790-b7f71ad9e8b2",
+        "errors": [
+          {
+            "pointer": "/amount_minor",
+            "code": "OUT_OF_RANGE",
+            "detail": "This value is too short, too long, or outside the allowed range."
+          }
+        ]
+      }
+    },
+    {
+      "type": "transaction",
+      "id": "01a0fb78-c065-7c67-8752-8f01451835e3",
+      "outcome": "rejected",
+      "status": 404,
+      "record": null,
+      "problem": {
+        "type": "http://saveme-backend.test/problems/not-found",
+        "title": "Not found",
+        "status": 404,
+        "detail": "We could not find that.",
+        "code": "NOT_FOUND",
+        "request_id": "01a0fb78-c1c0-72c2-8790-b7f71ad9e8b2"
+      }
+    },
+    {
+      "type": "category",
+      "id": "01a0fb77-6915-72a6-8957-48422164ccfb",
+      "outcome": "rejected",
+      "status": 409,
+      "record": null,
+      "problem": {
+        "type": "http://saveme-backend.test/problems/category-in-use",
+        "title": "Category in use",
+        "status": 409,
+        "detail": "This category is used by your records, so it can't be deleted. Archive it instead.",
+        "code": "CATEGORY_IN_USE",
+        "request_id": "01a0fb78-c1c0-72c2-8790-b7f71ad9e8b2"
+      }
+    },
+    {
+      "type": "wallet",
+      "id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+      "outcome": "conflict",
+      "status": 409,
+      "record": null,
+      "problem": {
+        "type": "http://saveme-backend.test/problems/version-conflict",
+        "title": "Version conflict",
+        "status": 409,
+        "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+        "code": "VERSION_CONFLICT",
+        "request_id": "01a0fb78-c1c0-72c2-8790-b7f71ad9e8b2",
+        "current": {
+          "id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+          "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+          "version": 1,
+          "change_seq": 22,
+          "created_at": "2026-10-02T07:14:51.015429Z",
+          "updated_at": "2026-10-02T07:14:51.015429Z",
+          "deleted_at": null,
+          "type": "cash",
+          "name": "QA013 Household",
+          "currency": "EGP",
+          "opening_balance_minor": 0,
+          "balance_minor": 6400,
+          "icon": "wallet",
+          "color": "#1A2B3C",
+          "archived_at": null,
+          "currency_locked": true,
+          "my_role": "owner"
+        }
+      }
+    },
+    {
+      "type": "transaction",
+      "id": "01a0fb78-c065-7f87-82e2-7fa5c5081faa",
+      "outcome": "applied",
+      "status": 201,
+      "record": {
+        "id": "01a0fb78-c065-7f87-82e2-7fa5c5081faa",
+        "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+        "version": 1,
+        "change_seq": 23,
+        "created_at": "2026-10-02T07:16:31.690624Z",
+        "updated_at": "2026-10-02T07:16:31.690624Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-20",
+        "amount_minor": 200,
+        "currency": "EGP",
+        "category_id": "01a0fb77-6915-72a6-8957-48422164ccfb",
+        "counter_wallet_id": null,
+        "description": "QA013",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+      },
+      "problem": null
+    }
+  ],
+  "meta": {}
+}
+# [('applied', 201, None), ('conflict', 409, 'VERSION_CONFLICT'), ('rejected', 422, 'VALIDATION_FAILED'), ('rejected', 404, 'NOT_FOUND'), ('rejected', 409, 'CATEGORY_IN_USE'), ('conflict', 409, 'VERSION_CONFLICT'), ('applied', 201, None)]
+# PASS: item 0 applied 201 
+# PASS: item 1 stale -> conflict 409 VERSION_CONFLICT with problem.current (latest T1), record null 
+PUT /wallets/01a0fb77-383f-7ced-9bb0-b2cd891fe867/transactions/01a0fb78-c065-7301-bac4-3bc6fd65b0a8
+> {"kind": "expense", "date": "2026-09-20", "amount_minor": -5, "currency": "EGP", "category_id": "01a0fb77-6915-72a6-8957-48422164ccfb", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb78-c890-7114-8c97-2cecef2c2439",
+  "errors": [
+    {
+      "pointer": "/amount_minor",
+      "code": "OUT_OF_RANGE",
+      "detail": "This value is too short, too long, or outside the allowed range."
+    }
+  ]
+}
+# PASS: item 2 invalid -> rejected 422, pointers rooted at data (same errors as the single PUT) [{"pointer": "/amount_minor", "code": "OUT_OF_RANGE", "detail": "This value is too short, too long, or outside the allowed range."}]
+# PASS: rejected problem equals single write problem (except instance/request_id) 
+# PASS: item 3 wallet the caller cannot see -> rejected 404 NOT_FOUND 
+# PASS: item 4 category in use -> rejected 409 CATEGORY_IN_USE 
+# PASS: item 5 wallet ahead version -> conflict 409 with current 
+# PASS: item 6 after refusals still applied 201 
+GET /wallets/01a0fb77-383f-7ced-9bb0-b2cd891fe867/transactions/01a0fb77-76e7-7d8d-9037-1745cc7acf09
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb77-76e7-7d8d-9037-1745cc7acf09",
+    "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+    "version": 3,
+    "change_seq": 13,
+    "created_at": "2026-10-02T07:15:06.247364Z",
+    "updated_at": "2026-10-02T07:15:23.703688Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-09-20",
+    "amount_minor": 3500,
+    "currency": "EGP",
+    "category_id": "01a0fb77-6915-72a6-8957-48422164ccfb",
+    "counter_wallet_id": null,
+    "description": "QA013",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+  },
+  "meta": {}
+}
+# PASS: stale item stored nothing (T1 still 3500) 

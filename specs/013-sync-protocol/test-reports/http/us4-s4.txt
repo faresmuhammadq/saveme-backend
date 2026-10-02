@@ -1,0 +1,56 @@
+GET /sync/wallets/01a0fb73-1ddf-7318-a583-d5f7420866db/changes?cursor=eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3My0xZGRmLTczMTgtYTU4My1kNWY3NDIwODY2ZGIiLCJyIjoiMDFhMGZiNzItZjQ5Zi03MzM5LTgzNDYtNDQyZjkwMDZmNjA2IiwicCI6Nzh9HJH2OgcDf62iBQ7qm3G8AQ
+< 400
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/invalid-cursor",
+  "title": "Invalid cursor",
+  "status": 400,
+  "detail": "The page cursor is not valid. Start again from the first page.",
+  "code": "INVALID_CURSOR",
+  "request_id": "01a0fb76-7a22-7123-af1f-b4c849505018"
+}
+GET /sync/user/changes?cursor=eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3My0xZGRmLTdiMTUtYjI4NS0zMzE5YzdhZjk5MWEiLCJyIjoiMDFhMGZiNzItZWIwNy03MTBkLWEzZmItN2Q0MzY0ZWM0NzIyIiwicCI6OX2gKkcg6I0wzIfEWvNFLn0L
+< 400
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/invalid-cursor",
+  "title": "Invalid cursor",
+  "status": 400,
+  "detail": "The page cursor is not valid. Start again from the first page.",
+  "code": "INVALID_CURSOR",
+  "request_id": "01a0fb76-7dce-717a-a777-6acced9efcd9"
+}
+GET /sync/wallets/01a0fb73-1ddf-7318-a583-d5f7420866db/changes?cursor=eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3My0xZGRmLTdiMTUtYjI4NS0zMzE5YzdhZjk5MWEiLCJyIjoiMDFhMGZiNzItZWIwNy03MTBkLWEzZmItN2Q0MzY0ZWM0NzIyIiwicCI6OX2gKkcg6I0wzIfEWvNFLn0L
+< 400
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/invalid-cursor",
+  "title": "Invalid cursor",
+  "status": 400,
+  "detail": "The page cursor is not valid. Start again from the first page.",
+  "code": "INVALID_CURSOR",
+  "request_id": "01a0fb76-811d-73c1-8f6e-0ed75608deac"
+}
+GET /sync/wallets/01a0fb73-1ddf-7318-a583-d5f7420866db/changes?cursor=%%%garbage
+< 400
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/invalid-cursor",
+  "title": "Invalid cursor",
+  "status": 400,
+  "detail": "The page cursor is not valid. Start again from the first page.",
+  "code": "INVALID_CURSOR",
+  "request_id": "01a0fb76-8502-72e1-bbf1-8ac3612a5d79"
+}
+GET /sync/wallets/01a0fb73-1ddf-7318-a583-d5f7420866db/changes?cursor=eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3My0xZGRmLTczMTgtYTU4My1kNWY3NDIwODY2ZGIiLCJyIjoiMDFhMGZiNzItZWIwNy03MTBkLWEzZmItN2Q0MzY0ZWM0NzIyIiwicCI6MjQ5fRJLwR-FoVdpdmnEmPiI70g
+< 400
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/invalid-cursor",
+  "title": "Invalid cursor",
+  "status": 400,
+  "detail": "The page cursor is not valid. Start again from the first page.",
+  "code": "INVALID_CURSOR",
+  "request_id": "01a0fb76-a46c-72e7-a359-e97defad5126"
+}
+# PASS: other person, other feed, other scope, unparseable, ahead of scope: [(400, 'INVALID_CURSOR'), (400, 'INVALID_CURSOR'), (400, 'INVALID_CURSOR'), (400, 'INVALID_CURSOR'), (400, 'INVALID_CURSOR')]

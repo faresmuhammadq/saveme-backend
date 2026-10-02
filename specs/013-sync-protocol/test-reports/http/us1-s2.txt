@@ -1,0 +1,732 @@
+# A recorded 30 expenses in HH
+PUT /wallets/01a0fb73-1ddf-7318-a583-d5f7420866db/transactions/01a0fb73-4b48-7b45-b137-dad659dd1298
+> {"kind": "expense", "date": "2026-09-21", "amount_minor": 999, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 1}
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb73-4b48-7b45-b137-dad659dd1298",
+    "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+    "version": 2,
+    "change_seq": 71,
+    "created_at": "2026-10-02T07:10:32.947000Z",
+    "updated_at": "2026-10-02T07:10:58.458869Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-09-21",
+    "amount_minor": 999,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "E2E",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0fb73-1ddf-7318-a583-d5f7420866db/transactions/01a0fb73-4b48-7b45-b137-dad659dd1298
+> {"kind": "expense", "date": "2026-09-21", "amount_minor": 1999, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 2}
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb73-4b48-7b45-b137-dad659dd1298",
+    "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+    "version": 3,
+    "change_seq": 73,
+    "created_at": "2026-10-02T07:10:32.947000Z",
+    "updated_at": "2026-10-02T07:10:59.311426Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-09-21",
+    "amount_minor": 1999,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "E2E",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0fb73-1ddf-7318-a583-d5f7420866db/transactions/01a0fb73-4e66-7f8d-843c-825375e58f02
+> {"kind": "expense", "date": "2026-09-21", "amount_minor": 888, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 1}
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb73-4e66-7f8d-843c-825375e58f02",
+    "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+    "version": 2,
+    "change_seq": 75,
+    "created_at": "2026-10-02T07:10:33.729899Z",
+    "updated_at": "2026-10-02T07:11:00.803860Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-09-21",
+    "amount_minor": 888,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "E2E",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+  },
+  "meta": {}
+}
+DELETE /wallets/01a0fb73-1ddf-7318-a583-d5f7420866db/transactions/01a0fb73-514e-70fc-9e08-37324cb854c1
+> {"version": 1}
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb73-514e-70fc-9e08-37324cb854c1",
+    "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+    "version": 2,
+    "change_seq": 77,
+    "created_at": "2026-10-02T07:10:34.369527Z",
+    "updated_at": "2026-10-02T07:11:02.864829Z",
+    "deleted_at": "2026-10-02T07:11:02.862697Z",
+    "kind": "expense",
+    "date": "2026-09-21",
+    "amount_minor": 102,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "E2E",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+  },
+  "meta": {}
+}
+GET /sync/wallets/01a0fb73-1ddf-7318-a583-d5f7420866db/changes?cursor=eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3My0xZGRmLTczMTgtYTU4My1kNWY3NDIwODY2ZGIiLCJyIjoiMDFhMGZiNzItZjQ5Zi03MzM5LTgzNDYtNDQyZjkwMDZmNjA2IiwicCI6MTB9RzoADA9Edp8o9gIBYzuAJg
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-53e4-7fb2-802f-81c42c907838",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 17,
+        "created_at": "2026-10-02T07:10:35.196699Z",
+        "updated_at": "2026-10-02T07:10:35.196699Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 103,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-5724-7933-ae54-3a028612236a",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 19,
+        "created_at": "2026-10-02T07:10:36.062654Z",
+        "updated_at": "2026-10-02T07:10:36.062654Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 104,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-5aaa-70c1-abba-2251d80b069d",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 21,
+        "created_at": "2026-10-02T07:10:37.044579Z",
+        "updated_at": "2026-10-02T07:10:37.044579Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 105,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-5e8a-7d0b-93c3-aedc1eb47f39",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 23,
+        "created_at": "2026-10-02T07:10:38.186756Z",
+        "updated_at": "2026-10-02T07:10:38.186756Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 106,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-6304-7440-94f5-34b2e448509e",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 25,
+        "created_at": "2026-10-02T07:10:39.111616Z",
+        "updated_at": "2026-10-02T07:10:39.111616Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 107,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-667a-72b5-b289-fcdd7c3822fd",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 27,
+        "created_at": "2026-10-02T07:10:40.192555Z",
+        "updated_at": "2026-10-02T07:10:40.192555Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 108,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-6abd-7312-8c86-c7da0729fd8f",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 29,
+        "created_at": "2026-10-02T07:10:41.199494Z",
+        "updated_at": "2026-10-02T07:10:41.199494Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 109,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-6ea1-7667-89f3-2e37d678f150",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 31,
+        "created_at": "2026-10-02T07:10:42.218305Z",
+        "updated_at": "2026-10-02T07:10:42.218305Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 110,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-7295-7519-8b97-8469c0e1fec6",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 33,
+        "created_at": "2026-10-02T07:10:43.116193Z",
+        "updated_at": "2026-10-02T07:10:43.116193Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 111,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-7626-7a85-91f7-8161e634b5a2",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 35,
+        "created_at": "2026-10-02T07:10:44.118082Z",
+        "updated_at": "2026-10-02T07:10:44.118082Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 112,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-7a02-708a-b262-344c54ceb304",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 37,
+        "created_at": "2026-10-02T07:10:44.791897Z",
+        "updated_at": "2026-10-02T07:10:44.791897Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 113,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-7caa-7783-a754-ec211dc19e5c",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 39,
+        "created_at": "2026-10-02T07:10:45.544574Z",
+        "updated_at": "2026-10-02T07:10:45.544574Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 114,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-7f8e-7d9b-8529-46bfb100f94e",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 41,
+        "created_at": "2026-10-02T07:10:46.363672Z",
+        "updated_at": "2026-10-02T07:10:46.363672Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 115,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-82bc-71a8-88dd-3325d2860cde",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 43,
+        "created_at": "2026-10-02T07:10:47.092965Z",
+        "updated_at": "2026-10-02T07:10:47.092965Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 116,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-8593-741c-bda6-bb3c619362b8",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 45,
+        "created_at": "2026-10-02T07:10:47.868841Z",
+        "updated_at": "2026-10-02T07:10:47.868841Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 117,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-889c-7307-add9-cfd3d6c1f595",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 47,
+        "created_at": "2026-10-02T07:10:48.689644Z",
+        "updated_at": "2026-10-02T07:10:48.689644Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 118,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-8be0-75b6-9a32-c00d2a10d5da",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 49,
+        "created_at": "2026-10-02T07:10:49.655328Z",
+        "updated_at": "2026-10-02T07:10:49.655328Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 119,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-8f9e-7360-8b4a-56890f8d7a61",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 51,
+        "created_at": "2026-10-02T07:10:50.549864Z",
+        "updated_at": "2026-10-02T07:10:50.549864Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 120,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-932b-76f3-9984-66564ac88367",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 53,
+        "created_at": "2026-10-02T07:10:51.317918Z",
+        "updated_at": "2026-10-02T07:10:51.317918Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 121,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-961f-7eff-8e38-3a048e17979d",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 55,
+        "created_at": "2026-10-02T07:10:51.955812Z",
+        "updated_at": "2026-10-02T07:10:51.955812Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 122,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-987a-72af-87ab-b9dff2ebb933",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 57,
+        "created_at": "2026-10-02T07:10:52.614108Z",
+        "updated_at": "2026-10-02T07:10:52.614108Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 123,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-9b1c-7bf2-9e47-8eee04609dcc",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 59,
+        "created_at": "2026-10-02T07:10:53.337378Z",
+        "updated_at": "2026-10-02T07:10:53.337378Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 124,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-9de7-7ada-87dc-3a154e142a5b",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 61,
+        "created_at": "2026-10-02T07:10:54.197441Z",
+        "updated_at": "2026-10-02T07:10:54.197441Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 125,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-a146-77aa-8d91-e98b5400505b",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 63,
+        "created_at": "2026-10-02T07:10:54.909167Z",
+        "updated_at": "2026-10-02T07:10:54.909167Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 126,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-a432-7cc3-b1c3-c4dea5b3922f",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 65,
+        "created_at": "2026-10-02T07:10:55.732891Z",
+        "updated_at": "2026-10-02T07:10:55.732891Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 127,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-a769-7e86-972c-9b943db49373",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 67,
+        "created_at": "2026-10-02T07:10:56.594272Z",
+        "updated_at": "2026-10-02T07:10:56.594272Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 128,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-aab6-7e43-8797-2a86ed1f1df1",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 69,
+        "created_at": "2026-10-02T07:10:57.528915Z",
+        "updated_at": "2026-10-02T07:10:57.528915Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 129,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+   
+# PASS: 30 transaction rows for 30 new ids, each once; twice-edited arrives once at 1999; deleted one tombstoned; older T0/transfer not repeated; 1 pages

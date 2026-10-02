@@ -64,6 +64,9 @@ Rules:
 | [Payment Claim](#payment-claim) | — | Plans & Billing | root | persisted | no |
 | [Redeem Code](#redeem-code) | — | Plans & Billing | root | persisted | no |
 | [Sync Cursor](#sync-cursor) | — | Sync | protocol value | client-held | n/a |
+| [Change Row](#change-row) | — | Sync | protocol value | derived (a read of the feed) | n/a |
+| [Sync Batch](#sync-batch) | — | Sync | protocol value | request-only | n/a |
+| [Purge Horizon](#purge-horizon) | — | Sync | value on a scope row | persisted on the scope row | n/a |
 | [Report](#report) | — | Reporting | derived value | derived | no |
 | [Operator Notification](#operator-notification) | — | Admin | root | persisted | no |
 
@@ -88,7 +91,7 @@ Rules:
 | Audit Entry | never — operator-only |
 | Operator Notification | never — operator-only |
 
-**4 never persisted** — Entitlement, Budget Period, Report (all derived), and Sync Cursor (held by the client).
+**6 never persisted** — Entitlement, Budget Period, Report (all derived), Sync Cursor (held by the client), Change Row (a read of a feed) and Sync Batch (a request that is gone once answered). The Purge Horizon is a counter on the scope row, not an entity.
 
 ---
 
@@ -120,6 +123,7 @@ The user's own preferences and display identity.
   - `default_currency`: an ISO 4217 code, EGP by default. It is only the default offered for new wallets; each wallet keeps its own currency. It is **locked** while the person has recorded a live transaction, and the profile reports this as `default_currency_locked` (derived, never stored).
   - `budget_period_start_day` (1–28) and `budget_period_start_day_from`: the day [Budget Periods](#budget-period) begin, and the calendar date that day applies from. Periods already begun are never re-cut.
   - Written as a whole with `PUT /me/profile` carrying `version`, under the syncable write rules.
+  - The **user scope counter** is `users.change_seq`; a profile, device session, category or membership write takes the next value under the person's row lock (ADR-0008 rules 2-5, ADR-0017).
 
 ### Device Session
 
@@ -171,7 +175,7 @@ One person's membership of one wallet, carrying their role.
 - **Sync**: yes — wallet scope
 - **States**: `active` → `revoked` (a role change stays `active`)
 - **Referenced by**: every authorization check
-- **Notes**: roles are `owner`, `editor`, `viewer`. **The permission matrix — which role may do what — lives only in the Wallets spec** and is deliberately not repeated here (P-08, FR-017). Authorization is evaluated against every wallet a write touches, and a non-member receives 404 rather than 403 (ADR-0006). A shared wallet is governed by its **owner's** entitlements (ADR-0007). **Ownership transfer**: the owner hands `owner` to another active member and becomes `editor`; it never adds or removes a person. The member is exposed on the wire as `member_user_id`. Ownership sits here and not on a separate grouping entity: `Space` was dropped, see [Prior-art mapping](#prior-art-mapping).
+- **Notes**: a person's **own** memberships also ride their user feed, so a phone learns of a wallet shared with it and of losing one (ADR-0017). Roles are `owner`, `editor`, `viewer`. **The permission matrix — which role may do what — lives only in the Wallets spec** and is deliberately not repeated here (P-08, FR-017). Authorization is evaluated against every wallet a write touches, and a non-member receives 404 rather than 403 (ADR-0006). A shared wallet is governed by its **owner's** entitlements (ADR-0007). **Ownership transfer**: the owner hands `owner` to another active member and becomes `editor`; it never adds or removes a person. The member is exposed on the wire as `member_user_id`. Ownership sits here and not on a separate grouping entity: `Space` was dropped, see [Prior-art mapping](#prior-art-mapping).
 
 ### Category
 
@@ -394,7 +398,43 @@ The client's marker for "everything in this scope up to here, I already have".
 - **Sync**: n/a
 - **States**: `single-state`
 - **Referenced by**: every pull request
-- **Notes**: the server side of the mechanism is the `change_seq` counter on the **scope row** (a wallet or a user) plus the `change_seq` stamped on each syncable entity (ADR-0008). A cursor older than the tombstone retention horizon (**≥ 90 days**) is answered with an expiry error and the client fully resyncs that scope. A server-side cursor table would duplicate state the client owns and then disagree with it.
+- **Notes**: the server side of the mechanism is the `change_seq` counter on the **scope row** (a wallet or a user) plus the `change_seq` stamped on each syncable entity (ADR-0008). A cursor behind the scope's [Purge Horizon](#purge-horizon) (a tombstone it never saw was purged after **≥ 90 days**) is answered with an expiry error and the client fully resyncs that scope. A server-side cursor table would duplicate state the client owns and then disagree with it. **One per scope**: the user scope and each wallet; it is bound to the feed and the account that issued it, and signed so a client cannot forge or move one (spec 013).
+
+### Change Row
+
+One record on a change feed: its type plus the record exactly as its read returns it.
+
+- **Context**: Sync
+- **Role**: protocol value
+- **Persistence**: derived — a read of the feed, never stored
+- **Sync**: n/a
+- **States**: `single-state`
+- **Referenced by**: every feed page
+- **Notes**: a deletion is a record with `deleted_at` set; there is no separate operation. The record is rendered by the same resource as the record's read endpoint, so a feed never carries a shape the read does not. Clients skip a `type` they do not know. A transfer is the identical Change Row on both of its wallets' feeds (ADR-0015).
+
+### Sync Batch
+
+One upload of 1–50 per-record writes, each answered by its own result.
+
+- **Context**: Sync
+- **Role**: protocol value
+- **Persistence**: request-only — nothing of it is stored
+- **Sync**: n/a
+- **States**: `single-state`
+- **Referenced by**: the client's offline write queue
+- **Notes**: every item is exactly one per-record write (a Wallet, Category, Transaction or Profile upsert, a delete or a restore) and obeys exactly its rules; items are independent and applied in array order. Each item's result is `applied`, `conflict` (a stale `version`, with the current record) or `rejected`. The batch carries no idempotency key: it is idempotent because every item is (ADR-0016).
+
+### Purge Horizon
+
+Per scope, the highest feed position whose tombstone has been purged.
+
+- **Context**: Sync
+- **Role**: value on a scope row
+- **Persistence**: persisted as `purged_change_seq` on the wallet or user row
+- **Sync**: n/a
+- **States**: `single-state`, raised only, never lowered
+- **Referenced by**: Sync Cursor
+- **Notes**: raised by the daily tombstone purge in the same transaction as the removal. A cursor at a position below it is expired (`410 SYNC_CURSOR_EXPIRED`); a cursor at or above it is served, however old, so a quiet scope never forces a resync.
 
 ---
 

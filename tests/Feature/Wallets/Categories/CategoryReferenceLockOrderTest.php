@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Identity\Infrastructure\Models\User;
 use App\Modules\Wallets\Application\Categories\CategoryReferences;
 use App\Modules\Wallets\Application\Categories\CategoryService;
 use App\Modules\Wallets\Domain\Categories\Ports\CategoryRepository;
@@ -9,7 +10,6 @@ use App\Modules\Wallets\Infrastructure\Models\Wallet;
 use App\Modules\Wallets\Infrastructure\Models\WalletMember;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 /*
  * Lock order (spec 011, FR-023, ADR-0014 rule 10): category rows first, then
@@ -48,8 +48,8 @@ beforeEach(function () {
     config(['database.connections.pgsql_b' => config('database.connections.pgsql')]);
     DB::purge('pgsql_b');
 
-    $this->owner = (string) Str::uuid7();
-    $this->partner = (string) Str::uuid7();
+    $this->owner = User::factory()->create()->id;
+    $this->partner = User::factory()->create()->id;
     $this->category = Category::factory()->create(['user_id' => $this->owner, 'name' => 'Coffee']);
     $this->wallets = [ownedWallet($this->partner), ownedWallet($this->partner)];
 });
@@ -66,6 +66,7 @@ afterEach(function () {
     WalletMember::query()->whereIn('wallet_id', array_map(fn (Wallet $wallet): string => $wallet->id, $this->wallets))->delete();
     Wallet::query()->whereIn('id', array_map(fn (Wallet $wallet): string => $wallet->id, $this->wallets))->delete();
     Category::query()->whereKey($this->category->id)->delete();
+    User::query()->whereIn('id', [$this->owner, $this->partner])->delete();
     DB::purge('pgsql_b');
 });
 

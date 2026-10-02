@@ -27,18 +27,25 @@ interface MembershipRepository
      */
     public function activeMembersOf(string $walletId, ?array $after, int $limit): array;
 
-    public function insert(string $walletId, string $userId, Role $role, int $changeSeq): MemberRecord;
+    /**
+     * Inserts version 1. `$memberChangeSeq` is the membership's position on
+     * its member's user feed (ADR-0017 rule 2), stamped by the caller.
+     */
+    public function insert(string $walletId, string $userId, Role $role, int $changeSeq, int $memberChangeSeq): MemberRecord;
 
     /**
-     * Moves the role, version + 1, with the given change_seq.
+     * Moves the role, version + 1, with the given change_seq and user-feed stamp.
      */
-    public function changeRole(string $memberId, Role $role, int $changeSeq): void;
+    public function changeRole(string $memberId, Role $role, int $changeSeq, int $memberChangeSeq): void;
 
     /**
      * Tombstones every active membership of the wallet, each with
-     * version + 1 and its own change_seq from $nextChangeSeq.
+     * version + 1, its own change_seq from $nextChangeSeq and its user-feed
+     * stamp from $nextMemberChangeSeq. Members are taken in ascending user
+     * id, the order user rows are locked in (ADR-0017 rule 5).
      *
      * @param  Closure(): int  $nextChangeSeq
+     * @param  Closure(string): int  $nextMemberChangeSeq  given the member's user id
      */
-    public function tombstoneAllIn(string $walletId, DateTimeImmutable $at, Closure $nextChangeSeq): void;
+    public function tombstoneAllIn(string $walletId, DateTimeImmutable $at, Closure $nextChangeSeq, Closure $nextMemberChangeSeq): void;
 }

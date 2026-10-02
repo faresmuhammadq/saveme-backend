@@ -1,0 +1,137 @@
+PUT /wallets/01a0fb75-309d-7aaa-8b16-15983d7ff0e6
+> {"type": "cash", "name": "E2E PerRecord", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 0}
+< 201
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb75-309d-7aaa-8b16-15983d7ff0e6",
+    "wallet_id": "01a0fb75-309d-7aaa-8b16-15983d7ff0e6",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T07:12:36.953677Z",
+    "updated_at": "2026-10-02T07:12:36.953677Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "E2E PerRecord",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0fb75-309d-7aaa-8b16-15983d7ff0e6
+> {"type": "cash", "name": "E2E PerRecord", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 0}
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb75-309d-7aaa-8b16-15983d7ff0e6",
+    "wallet_id": "01a0fb75-309d-7aaa-8b16-15983d7ff0e6",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T07:12:36.953677Z",
+    "updated_at": "2026-10-02T07:12:36.953677Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "E2E PerRecord",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0fb75-309d-7aaa-8b16-15983d7ff0e6
+> {"type": "cash", "name": "E2E PerRecord 2", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 1}
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb75-309d-7aaa-8b16-15983d7ff0e6",
+    "wallet_id": "01a0fb75-309d-7aaa-8b16-15983d7ff0e6",
+    "version": 2,
+    "change_seq": 4,
+    "created_at": "2026-10-02T07:12:36.953677Z",
+    "updated_at": "2026-10-02T07:12:38.002204Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "E2E PerRecord 2",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0fb75-309d-7aaa-8b16-15983d7ff0e6
+> {"type": "cash", "name": "E2E PerRecord 3", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 1}
+< 409
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/version-conflict",
+  "title": "Version conflict",
+  "status": 409,
+  "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+  "code": "VERSION_CONFLICT",
+  "request_id": "01a0fb75-3791-7294-bd59-c9c0d4def2f5",
+  "current": {
+    "id": "01a0fb75-309d-7aaa-8b16-15983d7ff0e6",
+    "wallet_id": "01a0fb75-309d-7aaa-8b16-15983d7ff0e6",
+    "version": 2,
+    "change_seq": 4,
+    "created_at": "2026-10-02T07:12:36.953677Z",
+    "updated_at": "2026-10-02T07:12:38.002204Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "E2E PerRecord 2",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  }
+}
+PUT /wallets/01a0fb75-309d-7aaa-8b16-15983d7ff0e6/transactions/01a0fb75-3911-7634-8d88-314ef8137fb7
+> {"kind": "expense", "date": "2026-09-21", "amount_minor": 1, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 201
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb75-3911-7634-8d88-314ef8137fb7",
+    "wallet_id": "01a0fb75-309d-7aaa-8b16-15983d7ff0e6",
+    "version": 1,
+    "change_seq": 5,
+    "created_at": "2026-10-02T07:12:39.704082Z",
+    "updated_at": "2026-10-02T07:12:39.704082Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-09-21",
+    "amount_minor": 1,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "E2E",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+  },
+  "meta": {}
+}
+# PASS: per-record PUT: create 201, replay 200 identical, edit 200, stale 409 VERSION_CONFLICT, transaction create 201

@@ -2,10 +2,10 @@
 
 namespace App\Modules\Identity\Infrastructure\Database\Factories;
 
+use App\Modules\Identity\Domain\Ports\ChangeSequence;
 use App\Modules\Identity\Infrastructure\Models\DeviceSession;
 use App\Modules\Identity\Infrastructure\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 /**
@@ -35,7 +35,7 @@ class DeviceSessionFactory extends Factory
             'state' => 'active',
             'signed_in_at' => now(),
             'version' => 1,
-            'change_seq' => fn (): int => (int) DB::scalar("select nextval('sync_change_seq')"),
+            'change_seq' => fn (array $attributes): int => app(ChangeSequence::class)->next((string) $attributes['user_id']),
         ];
     }
 

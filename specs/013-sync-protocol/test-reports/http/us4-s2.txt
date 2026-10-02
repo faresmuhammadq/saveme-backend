@@ -1,0 +1,12 @@
+GET /sync/wallets/01a0fb73-1ddf-7b15-b285-3319c7af991a/changes?cursor=eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3My0xZGRmLTdiMTUtYjI4NS0zMzE5YzdhZjk5MWEiLCJyIjoiMDFhMGZiNzItZWIwNy03MTBkLWEzZmItN2Q0MzY0ZWM0NzIyIiwicCI6N32coUT_CNpyW30Qe75IjddR
+< 410
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/sync-cursor-expired",
+  "title": "Sync cursor expired",
+  "status": 410,
+  "detail": "This device has been offline too long to catch up. Syncing everything again.",
+  "code": "SYNC_CURSOR_EXPIRED",
+  "request_id": "01a0fb76-7274-7392-9061-7e60ad04cf32"
+}
+# PASS: 410 SYNC_CURSOR_EXPIRED, no partial data

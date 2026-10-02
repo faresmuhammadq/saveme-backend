@@ -1,0 +1,205 @@
+DELETE /wallets/01a0fb77-3840-7a11-8652-f9816666771e
+> {"version": 1}
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb77-3840-7a11-8652-f9816666771e",
+    "wallet_id": "01a0fb77-3840-7a11-8652-f9816666771e",
+    "version": 2,
+    "change_seq": 15,
+    "created_at": "2026-10-02T07:14:52.541246Z",
+    "updated_at": "2026-10-02T07:16:18.433077Z",
+    "deleted_at": "2026-10-02T07:16:18.305387Z",
+    "type": "cash",
+    "name": "QA013 ToDelete",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": -500,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+# PASS: A deletes WD 200 200 None
+GET /sync/user/changes?cursor=eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Ny0wZmVlLTcxNDQtYjI5ZS1jODg4ZjgwM2M0NmMiLCJyIjoiMDFhMGZiNzctMGZlZS03MTQ0LWIyOWUtYzg4OGY4MDNjNDZjIiwicCI6Nn3I-gIZVqa6FQjWpOT784mW
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb77-67a1-716b-aa80-67092b313066",
+        "wallet_id": "01a0fb77-3840-7a11-8652-f9816666771e",
+        "version": 2,
+        "change_seq": 12,
+        "created_at": "2026-10-02T07:15:01.669050Z",
+        "updated_at": "2026-10-02T07:16:18.305387Z",
+        "deleted_at": "2026-10-02T07:16:18.305387Z",
+        "member_user_id": "01a0fb77-0fee-7144-b29e-c888f803c46c",
+        "display_name": null,
+        "role": "editor"
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Ny0wZmVlLTcxNDQtYjI5ZS1jODg4ZjgwM2M0NmMiLCJyIjoiMDFhMGZiNzctMGZlZS03MTQ0LWIyOWUtYzg4OGY4MDNjNDZjIiwicCI6N330ARBoo53q6UlygSinlETa"
+  }
+}
+# PASS: B's user feed carries tombstoned WD membership 
+GET /sync/user/changes?cursor=eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Ny0wNzA4LTcwNGMtYmIxMi0wNTYyMGY4NTQ3YWMiLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6MTF9ei3hkQEHuUFWE167iJpRAg
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb77-4419-72ce-843b-fd8a9de9c201",
+        "wallet_id": "01a0fb77-3840-7a11-8652-f9816666771e",
+        "version": 2,
+        "change_seq": 11,
+        "created_at": "2026-10-02T07:14:52.570386Z",
+        "updated_at": "2026-10-02T07:16:18.305387Z",
+        "deleted_at": "2026-10-02T07:16:18.305387Z",
+        "member_user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "display_name": "QA013 A",
+        "role": "owner"
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Ny0wNzA4LTcwNGMtYmIxMi0wNTYyMGY4NTQ3YWMiLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6MTJ9KJVpoQVqZdGuYeZq1MzOBw"
+  }
+}
+# PASS: A's user feed carries A's tombstoned WD owner membership 
+GET /sync/wallets/01a0fb77-3840-7a11-8652-f9816666771e/changes
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb77-4419-72ce-843b-fd8a9de9c201",
+        "wallet_id": "01a0fb77-3840-7a11-8652-f9816666771e",
+        "version": 2,
+        "change_seq": 11,
+        "created_at": "2026-10-02T07:14:52.570386Z",
+        "updated_at": "2026-10-02T07:16:18.305387Z",
+        "deleted_at": "2026-10-02T07:16:18.305387Z",
+        "member_user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "display_name": "QA013 A",
+        "role": "owner"
+      }
+    },
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb77-67a1-716b-aa80-67092b313066",
+        "wallet_id": "01a0fb77-3840-7a11-8652-f9816666771e",
+        "version": 2,
+        "change_seq": 12,
+        "created_at": "2026-10-02T07:15:01.669050Z",
+        "updated_at": "2026-10-02T07:16:18.305387Z",
+        "deleted_at": "2026-10-02T07:16:18.305387Z",
+        "member_user_id": "01a0fb77-0fee-7144-b29e-c888f803c46c",
+        "display_name": null,
+        "role": "editor"
+      }
+    },
+    {
+      "type": "category_reference",
+      "record": {
+        "id": "01a0fb77-8166-73fe-b46c-b83fb867ef3b",
+        "wallet_id": "01a0fb77-3840-7a11-8652-f9816666771e",
+        "version": 3,
+        "change_seq": 13,
+        "created_at": "2026-10-02T07:15:08.263602Z",
+        "updated_at": "2026-10-02T07:16:18.305387Z",
+        "deleted_at": "2026-10-02T07:16:18.305387Z",
+        "category_id": "01a0fb77-6915-72a6-8957-48422164ccfb",
+        "owner_user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "kind": "expense",
+        "name": "QA013 Food",
+        "icon": "tag",
+        "color": "#123456"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb77-7e3f-7add-85bf-0e5093aff067",
+        "wallet_id": "01a0fb77-3840-7a11-8652-f9816666771e",
+        "version": 2,
+        "change_seq": 14,
+        "created_at": "2026-10-02T07:15:08.167779Z",
+        "updated_at": "2026-10-02T07:16:18.403871Z",
+        "deleted_at": "2026-10-02T07:16:18.305387Z",
+        "kind": "expense",
+        "date": "2026-09-20",
+        "amount_minor": 500,
+        "currency": "EGP",
+        "category_id": "01a0fb77-6915-72a6-8957-48422164ccfb",
+        "counter_wallet_id": null,
+        "description": "QA013",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+      }
+    },
+    {
+      "type": "wallet",
+      "record": {
+        "id": "01a0fb77-3840-7a11-8652-f9816666771e",
+        "wallet_id": "01a0fb77-3840-7a11-8652-f9816666771e",
+        "version": 2,
+        "change_seq": 15,
+        "created_at": "2026-10-02T07:14:52.541246Z",
+        "updated_at": "2026-10-02T07:16:18.433077Z",
+        "deleted_at": "2026-10-02T07:16:18.305387Z",
+        "type": "cash",
+        "name": "QA013 ToDelete",
+        "currency": "EGP",
+        "opening_balance_minor": 0,
+        "balance_minor": -500,
+        "icon": "wallet",
+        "color": "#1A2B3C",
+        "archived_at": null,
+        "currency_locked": true,
+        "my_role": "editor"
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3Ny0zODQwLTdhMTEtODY1Mi1mOTgxNjY2Njc3MWUiLCJyIjoiMDFhMGZiNzctMGZlZS03MTQ0LWIyOWUtYzg4OGY4MDNjNDZjIiwicCI6MTV9MLJg45ySfVX0Wbuw59SSCg"
+  }
+}
+# PASS: former member B reads deleted unpurged WD feed -> 200, wallet tombstoned ['wallet_member', 'wallet_member', 'category_reference', 'transaction', 'wallet']
+# PASS: every WD record arrives tombstoned (wallet, members, transaction) 
+GET /sync/wallets/01a0fb77-3840-7a11-8652-f9816666771e/changes
+< 404
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0fb78-9ece-7193-bb61-a5c7feb6615b"
+}
+# PASS: never-member C on deleted wallet -> 404 

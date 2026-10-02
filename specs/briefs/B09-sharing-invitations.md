@@ -19,3 +19,9 @@ The brief predates decisions ratified since. These collide with it; the ratified
 | Activity feed per wallet | Not in the glossary; the audit log records membership events but not "who edited what" in the ledger | New entity: add to the glossary first, and decide how it differs from the audit log |
 | Invite by email | Security baseline: invitation answers identically for registered and unregistered addresses; matching uses the keyed lookup value | Required |
 | "On removal the client must purge" | ADR-0008 rule 15 fixes the signal: the revocation appears in the user feed, then the wallet returns 404 | Already defined; the privacy page says a removed member's device keeps what it synced |
+
+## Inherited from B14 (spec 013)
+
+- **Every membership write stamps `member_change_seq`** from the member's user counter (`UserScopeSequence::next($memberUserId)`) in the same unit of work, after the wallet lock and before any other user lock, several people in ascending user id (ADR-0017 rules 2 and 5): grant (accepting an invitation), role change, removal and leave. `MembershipRepository::insert`, `changeRole` and `tombstoneAllIn` take the stamp as a parameter, so a write that omits it does not compile.
+- A removal or leave is a tombstoned membership on the **removed person's own user feed**: that row is the "you lost this wallet" signal ADR-0008 rule 15 asks for.
+- Invitations join the **wallet feed** (add a source with its own `type`, positioned by `change_seq`).

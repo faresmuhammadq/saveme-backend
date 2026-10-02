@@ -1,0 +1,222 @@
+GET /sync/user/changes
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "profile",
+      "record": {
+        "id": "01a0fb77-0fdf-70ab-aebb-e967aac5466b",
+        "version": 1,
+        "change_seq": 1,
+        "created_at": "2026-10-02T07:14:39.200747Z",
+        "updated_at": "2026-10-02T07:14:39.200747Z",
+        "deleted_at": null,
+        "user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "display_name": null,
+        "locale": "en",
+        "timezone": "Africa/Cairo",
+        "default_currency": "EGP",
+        "default_currency_locked": true,
+        "budget_period_start_day": 1,
+        "budget_period_start_day_from": null
+      }
+    },
+    {
+      "type": "device_session",
+      "record": {
+        "id": "01a0fb77-1cf6-78a4-a1d4-1527b7f35c26",
+        "version": 1,
+        "change_seq": 2,
+        "created_at": "2026-10-02T07:14:44.017703Z",
+        "updated_at": "2026-10-02T07:15:08.929940Z",
+        "deleted_at": null,
+        "user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "device_name": "QA013 Pixel",
+        "platform": "android",
+        "app_version": "1.0.0",
+        "state": "active",
+        "end_reason": null,
+        "signed_in_at": "2026-10-02T07:14:44.007751Z",
+        "last_used_at": "2026-10-02T07:15:08.926703Z",
+        "ended_at": null,
+        "current": true
+      }
+    },
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb77-3b14-7258-8437-393a1c075a02",
+        "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703",
+        "version": 1,
+        "change_seq": 2,
+        "created_at": "2026-10-02T07:14:50.261938Z",
+        "updated_at": "2026-10-02T07:14:50.261938Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "display_name": null,
+        "role": "owner"
+      }
+    },
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb77-3e22-708d-a1af-e6d5a1af1c1b",
+        "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+        "version": 1,
+        "change_seq": 2,
+        "created_at": "2026-10-02T07:14:51.043582Z",
+        "updated_at": "2026-10-02T07:14:51.043582Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "display_name": null,
+        "role": "owner"
+      }
+    },
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb77-4164-714c-80a1-4bf0efcce4bc",
+        "wallet_id": "01a0fb77-3840-7321-bdc3-7d3f6e657c52",
+        "version": 1,
+        "change_seq": 2,
+        "created_at": "2026-10-02T07:14:51.877191Z",
+        "updated_at": "2026-10-02T07:14:51.877191Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "display_name": null,
+        "role": "owner"
+      }
+    },
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb77-4419-72ce-843b-fd8a9de9c201",
+        "wallet_id": "01a0fb77-3840-7a11-8652-f9816666771e",
+        "version": 1,
+        "change_seq": 2,
+        "created_at": "2026-10-02T07:14:52.570386Z",
+        "updated_at": "2026-10-02T07:14:52.570386Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "display_name": null,
+        "role": "owner"
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb77-6915-72a6-8957-48422164ccfb",
+        "user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "version": 1,
+        "change_seq": 7,
+        "created_at": "2026-10-02T07:15:05.528568Z",
+        "updated_at": "2026-10-02T07:15:05.528568Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "QA013 Groceries",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": true
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Ny0wNzA4LTcwNGMtYmIxMi0wNTYyMGY4NTQ3YWMiLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6N32c7Xc0_axnP0vnryJcygzO"
+  }
+}
+# PASS: A user feed 200 
+# PASS: types are profile/device_session/category/wallet_member ['category', 'device_session', 'profile', 'wallet_member']
+# PASS: only own categories (no platform category) ["01a0fb77-6915-72a6-8957-48422164ccfb"]
+# PASS: A's four owner memberships 4
+GET /me
+< 200
+< Content-Language: en
+{
+  "data": {
+    "account": {
+      "id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+      "email": "qa013-a-f1@example.test",
+      "email_verified": true,
+      "state": "active",
+      "deletion_scheduled_for": null
+    },
+    "profile": {
+      "id": "01a0fb77-0fdf-70ab-aebb-e967aac5466b",
+      "version": 1,
+      "change_seq": 1,
+      "created_at": "2026-10-02T07:14:39.200747Z",
+      "updated_at": "2026-10-02T07:14:39.200747Z",
+      "deleted_at": null,
+      "user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+      "display_name": null,
+      "locale": "en",
+      "timezone": "Africa/Cairo",
+      "default_currency": "EGP",
+      "default_currency_locked": true,
+      "budget_period_start_day": 1,
+      "budget_period_start_day_from": null
+    }
+  },
+  "meta": {}
+}
+# PASS: profile row identical to GET /me profile 
+GET /categories/01a0fb77-6915-72a6-8957-48422164ccfb
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb77-6915-72a6-8957-48422164ccfb",
+    "user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+    "version": 1,
+    "change_seq": 7,
+    "created_at": "2026-10-02T07:15:05.528568Z",
+    "updated_at": "2026-10-02T07:15:05.528568Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "QA013 Groceries",
+    "icon": "tag",
+    "color": "#123456",
+    "archived_at": null,
+    "in_use": true
+  },
+  "meta": {}
+}
+# PASS: category row identical to GET /categories/{id} 
+# PASS: user-scope rows ordered by change_seq ascending [1, 2, 7]
+# PASS: meta: limit 50, has_more false, next_cursor null, sync_cursor string 
+GET /auth/sessions
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "id": "01a0fb77-1cf6-78a4-a1d4-1527b7f35c26",
+      "version": 1,
+      "change_seq": 2,
+      "created_at": "2026-10-02T07:14:44.017703Z",
+      "updated_at": "2026-10-02T07:15:11.247579Z",
+      "deleted_at": null,
+      "user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+      "device_name": "QA013 Pixel",
+      "platform": "android",
+      "app_version": "1.0.0",
+      "state": "active",
+      "end_reason": null,
+      "signed_in_at": "2026-10-02T07:14:44.007751Z",
+      "last_used_at": "2026-10-02T07:15:11.243103Z",
+      "ended_at": null,
+      "current": true
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50
+  }
+}
+# PASS: device_session rows identical to GET /auth/sessions items, current computed for reader (last_used_at/updated_at touched by use, not a sync change) 1 vs 1

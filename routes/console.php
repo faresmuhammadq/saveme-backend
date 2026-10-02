@@ -16,3 +16,6 @@ Schedule::command('billing:lapse-subscriptions')->hourly();
 
 // Recomputes each wallet's cached balance and repairs drift (ADR-0005 rule 6, spec 010).
 Schedule::command('wallets:verify-balances')->daily();
+
+// Purges tombstones past the 90-day horizon and raises purge horizons (ADR-0008 rule 12, spec 013).
+Schedule::command('sync:purge-tombstones')->daily();

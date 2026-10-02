@@ -3,6 +3,7 @@
 namespace App\Modules\Wallets\Infrastructure\Database\Factories;
 
 use App\Modules\Wallets\Domain\Categories\CategoryKind;
+use App\Modules\Wallets\Domain\Categories\Ports\UserScopeSequence;
 use App\Modules\Wallets\Infrastructure\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\DB;
@@ -36,9 +37,24 @@ class CategoryFactory extends Factory
             'position' => null,
             'archived_at' => null,
             'version' => 1,
-            'change_seq' => fn (): int => (int) DB::scalar("select nextval('sync_change_seq')"),
+            'change_seq' => fn (array $attributes): int => self::stampFor($attributes['user_id'] ?? null),
             'deleted_at' => null,
         ];
+    }
+
+    /**
+     * The owner's next user-scope stamp. A category given an owner who has no
+     * users row (many tests do) takes a stamp above anything a counter hands out.
+     */
+    private static function stampFor(?string $userId): int
+    {
+        static $orphan = 1_000_000_000;
+
+        if ($userId !== null && DB::table('users')->where('id', $userId)->exists()) {
+            return app(UserScopeSequence::class)->next($userId);
+        }
+
+        return ++$orphan;
     }
 
     public function income(): static

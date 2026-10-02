@@ -1,0 +1,341 @@
+PUT /wallets/01a0fb7b-bf30-7297-9c2e-465c8248e9e1
+> {"type": "cash", "name": "QA013 Src", "currency": "EGP", "opening_balance_minor": 50000, "icon": "wallet", "color": "#1A2B3C", "version": 0}
+< 201
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb7b-bf30-7297-9c2e-465c8248e9e1",
+    "wallet_id": "01a0fb7b-bf30-7297-9c2e-465c8248e9e1",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T07:19:46.906014Z",
+    "updated_at": "2026-10-02T07:19:46.906014Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA013 Src",
+    "currency": "EGP",
+    "opening_balance_minor": 50000,
+    "balance_minor": 50000,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0fb7b-bf30-7777-a058-54e2867df17a
+> {"type": "cash", "name": "QA013 Dst", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 0}
+< 201
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb7b-bf30-7777-a058-54e2867df17a",
+    "wallet_id": "01a0fb7b-bf30-7777-a058-54e2867df17a",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T07:19:47.721392Z",
+    "updated_at": "2026-10-02T07:19:47.721392Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA013 Dst",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "upsert", "id": "01a0fb7b-c556-71b7-946f-04f46c7ac2c6", "wallet_id": "01a0fb7b-bf30-7297-9c2e-465c8248e9e1", "data": {"kind": "transfer", "date": "2026-09-20", "amount_minor": 1000, "currency": "EGP", "category_id": null, "counter_wallet_id": "01a0fb7b-bf30-7777-a058-54e2867df17a", "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "transaction", "op": "delete", "id": "01a0fb7b-c556-71b7-946f-04f46c7ac2c6", "wallet_id": "01a0fb7b-bf30-7777-a058-54e2867df17a", "data": {"version": 1}}, {"type": "transaction", "op": "restore", "id": "01a0fb7b-c556-71b7-946f-04f46c7ac2c6", "wallet_id": "01a0fb7b-bf30-7777-a058-54e2867df17a", "data": {"deleted_at": null, "version": 2}}]}
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "transaction",
+      "id": "01a0fb7b-c556-71b7-946f-04f46c7ac2c6",
+      "outcome": "applied",
+      "status": 201,
+      "record": {
+        "id": "01a0fb7b-c556-71b7-946f-04f46c7ac2c6",
+        "wallet_id": "01a0fb7b-bf30-7297-9c2e-465c8248e9e1",
+        "version": 1,
+        "change_seq": 4,
+        "created_at": "2026-10-02T07:19:48.691631Z",
+        "updated_at": "2026-10-02T07:19:48.691631Z",
+        "deleted_at": null,
+        "kind": "transfer",
+        "date": "2026-09-20",
+        "amount_minor": 1000,
+        "currency": "EGP",
+        "category_id": null,
+        "counter_wallet_id": "01a0fb7b-bf30-7777-a058-54e2867df17a",
+        "description": "QA013",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb7a-11c7-7240-be37-a756fec0efdd"
+      },
+      "problem": null
+    },
+    {
+      "type": "transaction",
+      "id": "01a0fb7b-c556-71b7-946f-04f46c7ac2c6",
+      "outcome": "applied",
+      "status": 200,
+      "record": {
+        "id": "01a0fb7b-c556-71b7-946f-04f46c7ac2c6",
+        "wallet_id": "01a0fb7b-bf30-7297-9c2e-465c8248e9e1",
+        "version": 2,
+        "change_seq": 6,
+        "created_at": "2026-10-02T07:19:48.691631Z",
+        "updated_at": "2026-10-02T07:19:48.911097Z",
+        "deleted_at": "2026-10-02T07:19:48.908665Z",
+        "kind": "transfer",
+        "date": "2026-09-20",
+        "amount_minor": 1000,
+        "currency": "EGP",
+        "category_id": null,
+        "counter_wallet_id": "01a0fb7b-bf30-7777-a058-54e2867df17a",
+        "description": "QA013",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb7a-11c7-7240-be37-a756fec0efdd"
+      },
+      "problem": null
+    },
+    {
+      "type": "transaction",
+      "id": "01a0fb7b-c556-71b7-946f-04f46c7ac2c6",
+      "outcome": "applied",
+      "status": 200,
+      "record": {
+        "id": "01a0fb7b-c556-71b7-946f-04f46c7ac2c6",
+        "wallet_id": "01a0fb7b-bf30-7297-9c2e-465c8248e9e1",
+        "version": 3,
+        "change_seq": 8,
+        "created_at": "2026-10-02T07:19:48.691631Z",
+        "updated_at": "2026-10-02T07:19:49.113658Z",
+        "deleted_at": null,
+        "kind": "transfer",
+        "date": "2026-09-20",
+        "amount_minor": 1000,
+        "currency": "EGP",
+        "category_id": null,
+        "counter_wallet_id": "01a0fb7b-bf30-7777-a058-54e2867df17a",
+        "description": "QA013",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb7a-11c7-7240-be37-a756fec0efdd"
+      },
+      "problem": null
+    }
+  ],
+  "meta": {}
+}
+# PASS: transfer created via source, deleted and restored via destination path in one batch [('applied', 201, 1), ('applied', 200, 2), ('applied', 200, 3)]
+GET /wallets/01a0fb7b-bf30-7297-9c2e-465c8248e9e1
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb7b-bf30-7297-9c2e-465c8248e9e1",
+    "wallet_id": "01a0fb7b-bf30-7297-9c2e-465c8248e9e1",
+    "version": 1,
+    "change_seq": 9,
+    "created_at": "2026-10-02T07:19:46.906014Z",
+    "updated_at": "2026-10-02T07:19:46.906014Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA013 Src",
+    "currency": "EGP",
+    "opening_balance_minor": 50000,
+    "balance_minor": 49000,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+GET /wallets/01a0fb7b-bf30-7777-a058-54e2867df17a
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb7b-bf30-7777-a058-54e2867df17a",
+    "wallet_id": "01a0fb7b-bf30-7777-a058-54e2867df17a",
+    "version": 1,
+    "change_seq": 9,
+    "created_at": "2026-10-02T07:19:47.721392Z",
+    "updated_at": "2026-10-02T07:19:47.721392Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA013 Dst",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 1000,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+# PASS: balances as the single writes leave them (49000 / 1000) 49000/1000
+GET /sync/wallets/01a0fb7b-bf30-7297-9c2e-465c8248e9e1/changes
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb7b-c1f8-71c7-8bda-7a7011d3b378",
+        "wallet_id": "01a0fb7b-bf30-7297-9c2e-465c8248e9e1",
+        "version": 1,
+        "change_seq": 2,
+        "created_at": "2026-10-02T07:19:46.936591Z",
+        "updated_at": "2026-10-02T07:19:46.936591Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb7a-11c7-7240-be37-a756fec0efdd",
+        "display_name": null,
+        "role": "owner"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb7b-c556-71b7-946f-04f46c7ac2c6",
+        "wallet_id": "01a0fb7b-bf30-7297-9c2e-465c8248e9e1",
+        "version": 3,
+        "change_seq": 8,
+        "created_at": "2026-10-02T07:19:48.691631Z",
+        "updated_at": "2026-10-02T07:19:49.113658Z",
+        "deleted_at": null,
+        "kind": "transfer",
+        "date": "2026-09-20",
+        "amount_minor": 1000,
+        "currency": "EGP",
+        "category_id": null,
+        "counter_wallet_id": "01a0fb7b-bf30-7777-a058-54e2867df17a",
+        "description": "QA013",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb7a-11c7-7240-be37-a756fec0efdd"
+      }
+    },
+    {
+      "type": "wallet",
+      "record": {
+        "id": "01a0fb7b-bf30-7297-9c2e-465c8248e9e1",
+        "wallet_id": "01a0fb7b-bf30-7297-9c2e-465c8248e9e1",
+        "version": 1,
+        "change_seq": 9,
+        "created_at": "2026-10-02T07:19:46.906014Z",
+        "updated_at": "2026-10-02T07:19:46.906014Z",
+        "deleted_at": null,
+        "type": "cash",
+        "name": "QA013 Src",
+        "currency": "EGP",
+        "opening_balance_minor": 50000,
+        "balance_minor": 49000,
+        "icon": "wallet",
+        "color": "#1A2B3C",
+        "archived_at": null,
+        "currency_locked": true,
+        "my_role": "owner"
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3Yi1iZjMwLTcyOTctOWMyZS00NjVjODI0OGU5ZTEiLCJyIjoiMDFhMGZiN2EtMTFjNy03MjQwLWJlMzctYTc1NmZlYzBlZmRkIiwicCI6OX3RIN9q9YzYx3JD3-MXpcMT"
+  }
+}
+GET /sync/wallets/01a0fb7b-bf30-7777-a058-54e2867df17a/changes
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb7b-c526-73be-b85a-2d699681670f",
+        "wallet_id": "01a0fb7b-bf30-7777-a058-54e2867df17a",
+        "version": 1,
+        "change_seq": 2,
+        "created_at": "2026-10-02T07:19:47.750723Z",
+        "updated_at": "2026-10-02T07:19:47.750723Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb7a-11c7-7240-be37-a756fec0efdd",
+        "display_name": null,
+        "role": "owner"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb7b-c556-71b7-946f-04f46c7ac2c6",
+        "wallet_id": "01a0fb7b-bf30-7297-9c2e-465c8248e9e1",
+        "version": 3,
+        "change_seq": 8,
+        "created_at": "2026-10-02T07:19:48.691631Z",
+        "updated_at": "2026-10-02T07:19:49.113658Z",
+        "deleted_at": null,
+        "kind": "transfer",
+        "date": "2026-09-20",
+        "amount_minor": 1000,
+        "currency": "EGP",
+        "category_id": null,
+        "counter_wallet_id": "01a0fb7b-bf30-7777-a058-54e2867df17a",
+        "description": "QA013",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb7a-11c7-7240-be37-a756fec0efdd"
+      }
+    },
+    {
+      "type": "wallet",
+      "record": {
+        "id": "01a0fb7b-bf30-7777-a058-54e2867df17a",
+        "wallet_id": "01a0fb7b-bf30-7777-a058-54e2867df17a",
+        "version": 1,
+        "change_seq": 9,
+        "created_at": "2026-10-02T07:19:47.721392Z",
+        "updated_at": "2026-10-02T07:19:47.721392Z",
+        "deleted_at": null,
+        "type": "cash",
+        "name": "QA013 Dst",
+        "currency": "EGP",
+        "opening_balance_minor": 0,
+        "balance_minor": 1000,
+        "icon": "wallet",
+        "color": "#1A2B3C",
+        "archived_at": null,
+        "currency_locked": true,
+        "my_role": "owner"
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3Yi1iZjMwLTc3NzctYTA1OC01NGUyODY3ZGYxN2EiLCJyIjoiMDFhMGZiN2EtMTFjNy03MjQwLWJlMzctYTc1NmZlYzBlZmRkIiwicCI6OX3UHgs45wnxVqAXFwJKtwwJ"
+  }
+}
+# PASS: restored transfer identical on both feeds, once each, v3 

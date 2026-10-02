@@ -38,6 +38,10 @@ test('saving new preferences changes only the profile row', function () {
     $after['device_sessions'] = preg_replace('/"updated_at":"[^"]*"/', '', $after['device_sessions']);
     $before['device_sessions'] = preg_replace('/"updated_at":"[^"]*"/', '', $before['device_sessions']);
 
+    // The profile save moves the person's user counter, and nothing else on the user row.
+    $after['users'] = preg_replace('/"change_seq":\d+/', '', $after['users']);
+    $before['users'] = preg_replace('/"change_seq":\d+/', '', $before['users']);
+
     expect($after)->toBe($before)
         ->and(DB::table('profiles')->where('user_id', $user->id)->first())->not->toEqual($profileBefore);
 });

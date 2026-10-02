@@ -1,0 +1,122 @@
+GET /sync/wallets/01a0fb77-383f-7ced-9bb0-b2cd891fe867/changes?cursor=not-a-cursor!!
+< 400
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/invalid-cursor",
+  "title": "Invalid cursor",
+  "status": 400,
+  "detail": "The page cursor is not valid. Start again from the first page.",
+  "code": "INVALID_CURSOR",
+  "request_id": "01a0fb77-cdcb-70db-bd73-a0b21dd9771c"
+}
+# PASS: garbage -> 400 INVALID_CURSOR 400 INVALID_CURSOR
+GET /sync/wallets/01a0fb77-383f-7ced-9bb0-b2cd891fe867/changes?cursor=aGVsbG8gd29ybGQgdGhpcyBpcyBub3QgYSBjdXJzb3I
+< 400
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/invalid-cursor",
+  "title": "Invalid cursor",
+  "status": 400,
+  "detail": "The page cursor is not valid. Start again from the first page.",
+  "code": "INVALID_CURSOR",
+  "request_id": "01a0fb77-d029-7152-b23c-568a56fd1ea0"
+}
+# PASS: base64 garbage -> 400 INVALID_CURSOR 400 INVALID_CURSOR
+GET /sync/wallets/01a0fb77-383f-7ced-9bb0-b2cd891fe867/changes?cursor=eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3Ny0zODNmLTdjZWQtOWJiMC1iMmNkODkxZmU4NjciLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6MTEwfd10FiTJ8mxNcNCUUry1yCo
+< 400
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/invalid-cursor",
+  "title": "Invalid cursor",
+  "status": 400,
+  "detail": "The page cursor is not valid. Start again from the first page.",
+  "code": "INVALID_CURSOR",
+  "request_id": "01a0fb77-d309-7008-97ad-59007b5f1253"
+}
+# PASS: tampered position -> 400 INVALID_CURSOR 400 INVALID_CURSOR
+GET /sync/wallets/01a0fb77-383f-7ced-9bb0-b2cd891fe867/changes?cursor=eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3Ny0zODNmLTdjZWQtOWJiMC1iMmNkODkxZmU4NjciLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6MTB93XQWJMnybE1w0JRSvLXIKg
+< 400
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/invalid-cursor",
+  "title": "Invalid cursor",
+  "status": 400,
+  "detail": "The page cursor is not valid. Start again from the first page.",
+  "code": "INVALID_CURSOR",
+  "request_id": "01a0fb77-d579-73f8-babc-480ee06bf2a9"
+}
+# PASS: other account (A's cursor read by B) -> 400 INVALID_CURSOR 400 INVALID_CURSOR
+GET /sync/wallets/01a0fb77-383f-7ced-9bb0-b2cd891fe867/changes?cursor=eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Ny0wNzA4LTcwNGMtYmIxMi0wNTYyMGY4NTQ3YWMiLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6N32c7Xc0_axnP0vnryJcygzO
+< 400
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/invalid-cursor",
+  "title": "Invalid cursor",
+  "status": 400,
+  "detail": "The page cursor is not valid. Start again from the first page.",
+  "code": "INVALID_CURSOR",
+  "request_id": "01a0fb77-d7f6-73a8-8417-23024879820d"
+}
+# PASS: other feed (user cursor on wallet feed) -> 400 INVALID_CURSOR 400 INVALID_CURSOR
+GET /sync/user/changes?cursor=eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3Ny0zODNmLTdjZWQtOWJiMC1iMmNkODkxZmU4NjciLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6MTB93XQWJMnybE1w0JRSvLXIKg
+< 400
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/invalid-cursor",
+  "title": "Invalid cursor",
+  "status": 400,
+  "detail": "The page cursor is not valid. Start again from the first page.",
+  "code": "INVALID_CURSOR",
+  "request_id": "01a0fb77-da01-735e-a3d5-d159aa9ea6a2"
+}
+# PASS: other feed (wallet cursor on user feed) -> 400 INVALID_CURSOR 400 INVALID_CURSOR
+GET /sync/wallets/01a0fb77-383f-7ced-9bb0-b2cd891fe867/changes?cursor=eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3Ny0zODNmLTdiZjMtYWE5MC04M2RkYmVjMTA3MDMiLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6NX1WSyDZYBSU_RIFFb2EdaIh
+< 400
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/invalid-cursor",
+  "title": "Invalid cursor",
+  "status": 400,
+  "detail": "The page cursor is not valid. Start again from the first page.",
+  "code": "INVALID_CURSOR",
+  "request_id": "01a0fb77-dc1d-7319-b651-968ce4a559c8"
+}
+# PASS: other scope (W1 cursor on WH) -> 400 INVALID_CURSOR 400 INVALID_CURSOR
+# WH counter 18; minted signed cursor at 118
+GET /sync/wallets/01a0fb77-383f-7ced-9bb0-b2cd891fe867/changes?cursor=eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3Ny0zODNmLTdjZWQtOWJiMC1iMmNkODkxZmU4NjciLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6MTE4fQT50WDG_2w_LH30jKKkimY
+< 400
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/invalid-cursor",
+  "title": "Invalid cursor",
+  "status": 400,
+  "detail": "The page cursor is not valid. Start again from the first page.",
+  "code": "INVALID_CURSOR",
+  "request_id": "01a0fb77-fe10-725f-8f8a-664267ca93b8"
+}
+# PASS: ahead of scope -> 400 INVALID_CURSOR 400 INVALID_CURSOR
+GET /sync/user/changes?cursor=eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Ny0wNzA4LTcwNGMtYmIxMi0wNTYyMGY4NTQ3YWMiLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6MTJ9KJVpoQVqZdGuYeZq1MzOBw
+< 400
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/invalid-cursor",
+  "title": "Invalid cursor",
+  "status": 400,
+  "detail": "The page cursor is not valid. Start again from the first page.",
+  "code": "INVALID_CURSOR",
+  "request_id": "01a0fb78-22f7-7016-a000-6963bf2dfc32"
+}
+# PASS: user feed ahead of scope -> 400 INVALID_CURSOR 400 INVALID_CURSOR
+GET /sync/wallets/01a0fb77-383f-7ced-9bb0-b2cd891fe867/changes?cursor=eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3Ny0zODNmLTdjZWQtOWJiMC1iMmNkODkxZmU4NjciLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6MTh94ANmV9kWV0nFoKSW_lcgEg
+< 200
+< Content-Language: en
+{
+  "data": [],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3Ny0zODNmLTdjZWQtOWJiMC1iMmNkODkxZmU4NjciLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6MTh94ANmV9kWV0nFoKSW_lcgEg"
+  }
+}
+# PASS: cursor exactly at scope counter -> 200 empty 

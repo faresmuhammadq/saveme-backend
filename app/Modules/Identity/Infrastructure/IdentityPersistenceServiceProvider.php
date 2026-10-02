@@ -12,6 +12,7 @@ use App\Modules\Identity\Domain\Ports\ProfileRepository;
 use App\Modules\Identity\Domain\Ports\SessionIssuer;
 use App\Modules\Identity\Domain\Ports\SessionRepository;
 use App\Modules\Identity\Domain\Ports\UserRepository;
+use App\Modules\Identity\Domain\Ports\UserScope;
 use App\Modules\Identity\Infrastructure\Console\RewrapKeys;
 use App\Modules\Identity\Infrastructure\Crypto\HmacAddressLookup;
 use App\Modules\Identity\Infrastructure\Crypto\Keyring;
@@ -24,7 +25,8 @@ use App\Modules\Identity\Infrastructure\Repositories\EloquentProfileRepository;
 use App\Modules\Identity\Infrastructure\Repositories\EloquentSessionRepository;
 use App\Modules\Identity\Infrastructure\Repositories\EloquentUserRepository;
 use App\Modules\Identity\Infrastructure\Sessions\SanctumSessionIssuer;
-use App\Modules\Identity\Infrastructure\Sync\PostgresChangeSequence;
+use App\Modules\Identity\Infrastructure\Sync\EloquentUserScope;
+use App\Modules\Identity\Infrastructure\Sync\UserRowChangeSequence;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Sanctum\Sanctum;
 
@@ -46,7 +48,8 @@ class IdentityPersistenceServiceProvider extends ServiceProvider
         LinkRepository::class => EloquentLinkRepository::class,
         FailureCounter::class => EloquentFailureCounter::class,
         AuditStore::class => EloquentAuditStore::class,
-        ChangeSequence::class => PostgresChangeSequence::class,
+        ChangeSequence::class => UserRowChangeSequence::class,
+        UserScope::class => EloquentUserScope::class,
     ];
 
     public function register(): void

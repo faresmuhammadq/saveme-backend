@@ -8,6 +8,8 @@ use App\Modules\Wallets\Domain\Categories\Ports\UserScopeSequence as UserScopeSe
 use App\Modules\Wallets\Domain\Ports\MembershipRepository;
 use App\Modules\Wallets\Domain\Ports\PostingTotals;
 use App\Modules\Wallets\Domain\Ports\ScopeSequence;
+use App\Modules\Wallets\Domain\Ports\SyncFeedReader;
+use App\Modules\Wallets\Domain\Ports\TombstoneStore;
 use App\Modules\Wallets\Domain\Ports\WalletRepository;
 use App\Modules\Wallets\Domain\Transactions\Ports\PostingRepository;
 use App\Modules\Wallets\Domain\Transactions\Ports\TransactionRepository;
@@ -16,6 +18,8 @@ use App\Modules\Wallets\Infrastructure\Repositories\EloquentCategoryReferenceRep
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentCategoryRepository;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentMembershipRepository;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentPostingRepository;
+use App\Modules\Wallets\Infrastructure\Repositories\EloquentSyncFeedReader;
+use App\Modules\Wallets\Infrastructure\Repositories\EloquentTombstoneStore;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentTransactionRepository;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentWalletRepository;
 use App\Modules\Wallets\Infrastructure\Sync\UserScopeSequence;
@@ -41,5 +45,7 @@ class WalletsPersistenceServiceProvider extends ServiceProvider
         TransactionRepository::class => EloquentTransactionRepository::class,
         PostingRepository::class => EloquentPostingRepository::class,
         PostingTotals::class => EloquentPostingTotals::class,
+        SyncFeedReader::class => EloquentSyncFeedReader::class,
+        TombstoneStore::class => EloquentTombstoneStore::class,
     ];
 }

@@ -25,6 +25,10 @@ use RuntimeException;
  * change_seq of the user scope, and a change to the display fields
  * republishes every wallet reference in the same unit of work.
  *
+ * LOCK ORDER (ADR-0017 rule 5): category row, then the wallets whose
+ * references the write republishes or withdraws, then the owner's user row,
+ * which the stamp locks until the commit.
+ *
  * Precedence for every write: not-found, a write to a tombstone, an
  * identical replay, a stale version, the kind rule, in-use (delete only).
  * There are no events (P-11) and no entitlement check (P-09 rule 5).
@@ -146,7 +150,7 @@ final class CategoryService
     private function create(string $actorId, string $categoryId, array $values): SavedCategory
     {
         // A savepoint, so a lost id race does not abort the outer transaction.
-        DB::transaction(fn () => $this->categories->insert($categoryId, $actorId, $values, $this->sequence->next()));
+        DB::transaction(fn () => $this->categories->insert($categoryId, $actorId, $values, $this->sequence->next($actorId)));
 
         return new SavedCategory($this->view($this->reload($categoryId)), true);
     }
@@ -169,13 +173,18 @@ final class CategoryService
 
         CategoryRules::assertKindUnchanged($current, CategoryKind::from($values['kind']));
 
+        // Wallets before the user counter (ADR-0017 rule 5): the references are
+        // republished, locking each wallet, before bump() takes the owner's stamp.
+        if ($values['name'] !== $current->name || $values['icon'] !== $current->icon || $values['color'] !== $current->color) {
+            $this->references->republish(new CategoryRecord(
+                $current->id, $current->ownerId, $current->kind, $values['name'], $values['icon'], $values['color'],
+                $current->archivedAt, $current->version, $current->changeSeq, $current->createdAt, $current->updatedAt, $current->deletedAt,
+            ));
+        }
+
         $this->bump($current, ['name' => $values['name'], 'icon' => $values['icon'], 'color' => $values['color']]);
 
         $saved = $this->reload($current->id);
-
-        if ($saved->name !== $current->name || $saved->icon !== $current->icon || $saved->color !== $current->color) {
-            $this->references->republish($saved);
-        }
 
         return $this->view($saved);
     }
@@ -210,7 +219,7 @@ final class CategoryService
      */
     private function bump(CategoryRecord $current, array $columns): void
     {
-        if (! $this->categories->updateIfVersion($current->id, $current->version, $columns, $this->sequence->next())) {
+        if (! $this->categories->updateIfVersion($current->id, $current->version, $columns, $this->sequence->next($current->ownerId))) {
             throw new RuntimeException('The category changed under its own lock.');
         }
     }

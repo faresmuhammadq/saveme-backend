@@ -111,7 +111,7 @@ final class EloquentWalletRepository implements WalletRepository
         return array_values(Wallet::query()->whereNull('deleted_at')->orderBy('created_at')->pluck('id')->map(fn (mixed $id): string => (string) $id)->all());
     }
 
-    private static function record(Wallet $wallet): WalletRecord
+    public static function record(Wallet $wallet): WalletRecord
     {
         return new WalletRecord(
             id: $wallet->id,

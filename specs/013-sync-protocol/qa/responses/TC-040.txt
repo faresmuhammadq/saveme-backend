@@ -1,0 +1,161 @@
+PUT /wallets/01a0fb7a-4c2e-7cad-879f-7cc8c4d7890c
+> {"type": "cash", "name": "QA013 Gap", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 0}
+< 201
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb7a-4c2e-7cad-879f-7cc8c4d7890c",
+    "wallet_id": "01a0fb7a-4c2e-7cad-879f-7cc8c4d7890c",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T07:18:11.937407Z",
+    "updated_at": "2026-10-02T07:18:11.937407Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA013 Gap",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+GET /sync/wallets/01a0fb7a-4c2e-7cad-879f-7cc8c4d7890c/changes
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb7a-4efd-7013-af36-5454ed8d1ec9",
+        "wallet_id": "01a0fb7a-4c2e-7cad-879f-7cc8c4d7890c",
+        "version": 1,
+        "change_seq": 2,
+        "created_at": "2026-10-02T07:18:11.966578Z",
+        "updated_at": "2026-10-02T07:18:11.966578Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb7a-11c7-7240-be37-a756fec0efdd",
+        "display_name": null,
+        "role": "owner"
+      }
+    },
+    {
+      "type": "wallet",
+      "record": {
+        "id": "01a0fb7a-4c2e-7cad-879f-7cc8c4d7890c",
+        "wallet_id": "01a0fb7a-4c2e-7cad-879f-7cc8c4d7890c",
+        "version": 1,
+        "change_seq": 4,
+        "created_at": "2026-10-02T07:18:11.937407Z",
+        "updated_at": "2026-10-02T07:18:11.937407Z",
+        "deleted_at": null,
+        "type": "cash",
+        "name": "QA013 Gap",
+        "currency": "EGP",
+        "opening_balance_minor": 0,
+        "balance_minor": 0,
+        "icon": "wallet",
+        "color": "#1A2B3C",
+        "archived_at": null,
+        "currency_locked": false,
+        "my_role": "owner"
+      }
+    },
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb7a-651b-718e-9a5d-ae2095259012",
+        "wallet_id": "01a0fb7a-4c2e-7cad-879f-7cc8c4d7890c",
+        "version": 1,
+        "change_seq": 4,
+        "created_at": "2026-10-02T07:18:17.627844Z",
+        "updated_at": "2026-10-02T07:18:17.627844Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb7a-1afb-702d-9f41-5cc75e38e574",
+        "display_name": null,
+        "role": "editor"
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3YS00YzJlLTdjYWQtODc5Zi03Y2M4YzRkNzg5MGMiLCJyIjoiMDFhMGZiN2EtMTFjNy03MjQwLWJlMzctYTc1NmZlYzBlZmRkIiwicCI6NH2X3wQhtMe1mlVwxgzY8FyD"
+  }
+}
+GET /sync/user/changes
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "profile",
+      "record": {
+        "id": "01a0fb7a-1aec-7017-90d1-2eb793ac3095",
+        "version": 1,
+        "change_seq": 1,
+        "created_at": "2026-10-02T07:17:58.637043Z",
+        "updated_at": "2026-10-02T07:17:58.637043Z",
+        "deleted_at": null,
+        "user_id": "01a0fb7a-11c7-7240-be37-a756fec0efdd",
+        "display_name": null,
+        "locale": "en",
+        "timezone": "Africa/Cairo",
+        "default_currency": "EGP",
+        "default_currency_locked": false,
+        "budget_period_start_day": 1,
+        "budget_period_start_day_from": null
+      }
+    },
+    {
+      "type": "device_session",
+      "record": {
+        "id": "01a0fb7a-381d-7634-8339-e136004a7892",
+        "version": 1,
+        "change_seq": 2,
+        "created_at": "2026-10-02T07:18:08.031745Z",
+        "updated_at": "2026-10-02T07:18:19.517402Z",
+        "deleted_at": null,
+        "user_id": "01a0fb7a-11c7-7240-be37-a756fec0efdd",
+        "device_name": "QA013 Pixel",
+        "platform": "android",
+        "app_version": "1.0.0",
+        "state": "active",
+        "end_reason": null,
+        "signed_in_at": "2026-10-02T07:18:08.023131Z",
+        "last_used_at": "2026-10-02T07:18:19.510485Z",
+        "ended_at": null,
+        "current": true
+      }
+    },
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb7a-4efd-7013-af36-5454ed8d1ec9",
+        "wallet_id": "01a0fb7a-4c2e-7cad-879f-7cc8c4d7890c",
+        "version": 1,
+        "change_seq": 2,
+        "created_at": "2026-10-02T07:18:11.966578Z",
+        "updated_at": "2026-10-02T07:18:11.966578Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb7a-11c7-7240-be37-a756fec0efdd",
+        "display_name": null,
+        "role": "owner"
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3YS0xMWM3LTcyNDAtYmUzNy1hNzU2ZmVjMGVmZGQiLCJyIjoiMDFhMGZiN2EtMTFjNy03MjQwLWJlMzctYTc1NmZlYzBlZmRkIiwicCI6M33b-gmZ4eUkH7xuny3_Vg65"
+  }
+}
+# written 80 (60 transactions by A and B, 20 categories by A), errors [], missing 0
+# PASS: reader paging while three writers commit: no committed write skipped on either feed 80 written, 0 missing

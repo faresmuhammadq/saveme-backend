@@ -1,0 +1,26 @@
+# C is a factory user with no profile row (GET /me 404)
+POST /sync/batch
+> {"items": [{"type": "profile", "op": "upsert", "id": "01a0fb7c-6723-7603-81a5-fd444613e21b", "data": {"display_name": "x", "locale": "en", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 1}}]}
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "profile",
+      "id": "01a0fb7c-6723-7603-81a5-fd444613e21b",
+      "outcome": "rejected",
+      "status": 404,
+      "record": null,
+      "problem": {
+        "type": "http://saveme-backend.test/problems/not-found",
+        "title": "Not found",
+        "status": 404,
+        "detail": "We could not find that.",
+        "code": "NOT_FOUND",
+        "request_id": "01a0fb7c-6833-718e-92ac-fe8cab54e938"
+      }
+    }
+  ],
+  "meta": {}
+}
+# PASS: profile item from a caller with no profile -> rejected 404 NOT_FOUND (was 500 INTERNAL_ERROR) ('rejected', 404, 'NOT_FOUND')

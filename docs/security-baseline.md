@@ -336,7 +336,7 @@ Every period is a number. Nothing here says "a reasonable time", because a revie
 
 | What | Kept for | Fixed by |
 |---|---|---|
-| Deleted syncable record, content and marker | 90 days | [the sync decision](adr/0008-sync-changes-feed.md) |
+| Deleted syncable record, content and marker | 90 days, enforced by `sync:purge-tombstones` | [the sync decision](adr/0008-sync-changes-feed.md) |
 | Other soft-deleted records | 30 days | this document |
 | Account after a deletion request | 30 days, then purged | this document |
 | Audit entries | 400 days | this document |

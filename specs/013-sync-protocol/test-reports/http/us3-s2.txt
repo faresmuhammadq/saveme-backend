@@ -1,0 +1,236 @@
+GET /me
+< 200
+< Content-Language: en
+{
+  "data": {
+    "account": {
+      "id": "01a0fb72-f49f-7339-8346-442f9006f606",
+      "email": "qa013-b-e2@example.test",
+      "email_verified": true,
+      "state": "active",
+      "deletion_scheduled_for": null
+    },
+    "profile": {
+      "id": "01a0fb72-f910-7145-994a-312c5668d4e4",
+      "version": 1,
+      "change_seq": 1,
+      "created_at": "2026-10-02T07:10:11.216628Z",
+      "updated_at": "2026-10-02T07:10:11.216628Z",
+      "deleted_at": null,
+      "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+      "display_name": null,
+      "locale": "en",
+      "timezone": "Africa/Cairo",
+      "default_currency": "EGP",
+      "default_currency_locked": true,
+      "budget_period_start_day": 1,
+      "budget_period_start_day_from": null
+    }
+  },
+  "meta": {}
+}
+PUT /me/profile
+> {"display_name": "E2E Sara", "locale": "ar", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 1}
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb72-f910-7145-994a-312c5668d4e4",
+    "version": 2,
+    "change_seq": 4,
+    "created_at": "2026-10-02T07:10:11.216628Z",
+    "updated_at": "2026-10-02T07:12:41.337261Z",
+    "deleted_at": null,
+    "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+    "display_name": "E2E Sara",
+    "locale": "ar",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": true,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+  },
+  "meta": {}
+}
+PUT /categories/01a0fb75-43ae-76da-89f5-8ee62da30f46
+> {"kind": "expense", "name": "E2E Sara cat", "icon": "tag", "color": "#123456", "version": 0}
+< 201
+< Content-Language: ar
+{
+  "data": {
+    "id": "01a0fb75-43ae-76da-89f5-8ee62da30f46",
+    "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+    "version": 1,
+    "change_seq": 5,
+    "created_at": "2026-10-02T07:12:41.907935Z",
+    "updated_at": "2026-10-02T07:12:41.907935Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "E2E Sara cat",
+    "icon": "tag",
+    "color": "#123456",
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}
+PUT /categories/01a0fb75-43ae-76da-89f5-8ee62da30f46
+> {"kind": "expense", "name": "E2E Sara cat renamed", "icon": "tag", "color": "#123456", "version": 1}
+< 200
+< Content-Language: ar
+{
+  "data": {
+    "id": "01a0fb75-43ae-76da-89f5-8ee62da30f46",
+    "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+    "version": 2,
+    "change_seq": 6,
+    "created_at": "2026-10-02T07:12:41.907935Z",
+    "updated_at": "2026-10-02T07:12:43.830440Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "E2E Sara cat renamed",
+    "icon": "tag",
+    "color": "#123456",
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}
+GET /wallets/01a0fb73-1ddf-7318-a583-d5f7420866db
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+    "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+    "version": 2,
+    "change_seq": 196,
+    "created_at": "2026-10-02T07:10:21.317155Z",
+    "updated_at": "2026-10-02T07:12:19.147115Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "E2E Household renamed by B",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 10570,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+POST /wallets/01a0fb73-1ddf-7318-a583-d5f7420866db/transfer-ownership
+> {"user_id": "01a0fb72-f49f-7339-8346-442f9006f606", "version": 2}
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+    "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+    "version": 3,
+    "change_seq": 199,
+    "created_at": "2026-10-02T07:10:21.317155Z",
+    "updated_at": "2026-10-02T07:12:47.280323Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "E2E Household renamed by B",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 10570,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "editor"
+  },
+  "meta": {}
+}
+GET /sync/user/changes?cursor=eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Mi1mNDlmLTczMzktODM0Ni00NDJmOTAwNmY2MDYiLCJyIjoiMDFhMGZiNzItZjQ5Zi03MzM5LTgzNDYtNDQyZjkwMDZmNjA2IiwicCI6M30CW_yXPMEAOtb6N1DrKJ8V
+< 200
+< Content-Language: ar
+{
+  "data": [
+    {
+      "type": "profile",
+      "record": {
+        "id": "01a0fb72-f910-7145-994a-312c5668d4e4",
+        "version": 2,
+        "change_seq": 4,
+        "created_at": "2026-10-02T07:10:11.216628Z",
+        "updated_at": "2026-10-02T07:12:41.337261Z",
+        "deleted_at": null,
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "display_name": "E2E Sara",
+        "locale": "ar",
+        "timezone": "Africa/Cairo",
+        "default_currency": "EGP",
+        "default_currency_locked": true,
+        "budget_period_start_day": 1,
+        "budget_period_start_day_from": null
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb75-43ae-76da-89f5-8ee62da30f46",
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "version": 2,
+        "change_seq": 6,
+        "created_at": "2026-10-02T07:12:41.907935Z",
+        "updated_at": "2026-10-02T07:12:43.830440Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "E2E Sara cat renamed",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": false
+      }
+    },
+    {
+      "type": "device_session",
+      "record": {
+        "id": "01a0fb75-4d5c-7994-a9de-1e9125c390f9",
+        "version": 1,
+        "change_seq": 7,
+        "created_at": "2026-10-02T07:12:45.768311Z",
+        "updated_at": "2026-10-02T07:12:45.768311Z",
+        "deleted_at": null,
+        "user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "device_name": "QA013 Pixel",
+        "platform": "android",
+        "app_version": "1.0.0",
+        "state": "active",
+        "end_reason": null,
+        "signed_in_at": "2026-10-02T07:12:45.758443Z",
+        "last_used_at": null,
+        "ended_at": null,
+        "current": false
+      }
+    },
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb73-3684-701f-ae09-dc39e32a1a4e",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 2,
+        "change_seq": 198,
+        "created_at": "2026-10-02T07:10:26.949360Z",
+        "updated_at": "2026-10-02T07:12:47.274167Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb72-f49f-7339-8346-442f9006f606",
+        "display_name": "E2E Sara",
+        "role": "owner"
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Mi1mNDlmLTczMzktODM0Ni00NDJmOTAwNmY2MDYiLCJyIjoiMDFhMGZiNzItZjQ5Zi03MzM5LTgzNDYtNDQyZjkwMDZmNjA2IiwicCI6OH2kpvpUtZZ61DepU4lSVGKJ"
+  }
+}
+# PASS: profile save, category created+renamed (arrives once), new sign-in, ownership transfer: [('profile', None), ('category', None), ('device_session', None), ('wallet_member', 'owner')] in commit order

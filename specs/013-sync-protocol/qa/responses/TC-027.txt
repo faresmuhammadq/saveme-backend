@@ -1,0 +1,246 @@
+GET /wallets/01a0fb78-9ffb-7b56-b3af-92402af1d3db/transactions/01a0fb78-9ffb-7345-950a-7213e989a22f
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb78-9ffb-7345-950a-7213e989a22f",
+    "wallet_id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db",
+    "version": 1,
+    "change_seq": 4,
+    "created_at": "2026-10-02T07:16:22.826820Z",
+    "updated_at": "2026-10-02T07:16:22.826820Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-09-20",
+    "amount_minor": 1200,
+    "currency": "EGP",
+    "category_id": "01a0fb78-9ffb-7a14-b013-3c55080d2fb4",
+    "counter_wallet_id": null,
+    "description": "QA013",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+  },
+  "meta": {}
+}
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "delete", "id": "01a0fb78-9ffb-7345-950a-7213e989a22f", "wallet_id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db", "data": {"version": 1}}, {"type": "transaction", "op": "delete", "id": "01a0fb78-9ffb-7345-950a-7213e989a22f", "wallet_id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db", "data": {"version": 2}}, {"type": "transaction", "op": "restore", "id": "01a0fb78-9ffb-7345-950a-7213e989a22f", "wallet_id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db", "data": {"deleted_at": null, "version": 2}}, {"type": "transaction", "op": "restore", "id": "01a0fb78-9ffb-7345-950a-7213e989a22f", "wallet_id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db", "data": {"version": 3}}]}
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "transaction",
+      "id": "01a0fb78-9ffb-7345-950a-7213e989a22f",
+      "outcome": "applied",
+      "status": 200,
+      "record": {
+        "id": "01a0fb78-9ffb-7345-950a-7213e989a22f",
+        "wallet_id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db",
+        "version": 2,
+        "change_seq": 8,
+        "created_at": "2026-10-02T07:16:22.826820Z",
+        "updated_at": "2026-10-02T07:17:10.704341Z",
+        "deleted_at": "2026-10-02T07:17:10.702929Z",
+        "kind": "expense",
+        "date": "2026-09-20",
+        "amount_minor": 1200,
+        "currency": "EGP",
+        "category_id": "01a0fb78-9ffb-7a14-b013-3c55080d2fb4",
+        "counter_wallet_id": null,
+        "description": "QA013",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+      },
+      "problem": null
+    },
+    {
+      "type": "transaction",
+      "id": "01a0fb78-9ffb-7345-950a-7213e989a22f",
+      "outcome": "applied",
+      "status": 200,
+      "record": {
+        "id": "01a0fb78-9ffb-7345-950a-7213e989a22f",
+        "wallet_id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db",
+        "version": 2,
+        "change_seq": 8,
+        "created_at": "2026-10-02T07:16:22.826820Z",
+        "updated_at": "2026-10-02T07:17:10.704341Z",
+        "deleted_at": "2026-10-02T07:17:10.702929Z",
+        "kind": "expense",
+        "date": "2026-09-20",
+        "amount_minor": 1200,
+        "currency": "EGP",
+        "category_id": "01a0fb78-9ffb-7a14-b013-3c55080d2fb4",
+        "counter_wallet_id": null,
+        "description": "QA013",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+      },
+      "problem": null
+    },
+    {
+      "type": "transaction",
+      "id": "01a0fb78-9ffb-7345-950a-7213e989a22f",
+      "outcome": "applied",
+      "status": 200,
+      "record": {
+        "id": "01a0fb78-9ffb-7345-950a-7213e989a22f",
+        "wallet_id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db",
+        "version": 3,
+        "change_seq": 10,
+        "created_at": "2026-10-02T07:16:22.826820Z",
+        "updated_at": "2026-10-02T07:17:10.971740Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-20",
+        "amount_minor": 1200,
+        "currency": "EGP",
+        "category_id": "01a0fb78-9ffb-7a14-b013-3c55080d2fb4",
+        "counter_wallet_id": null,
+        "description": "QA013",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+      },
+      "problem": null
+    },
+    {
+      "type": "transaction",
+      "id": "01a0fb78-9ffb-7345-950a-7213e989a22f",
+      "outcome": "applied",
+      "status": 200,
+      "record": {
+        "id": "01a0fb78-9ffb-7345-950a-7213e989a22f",
+        "wallet_id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db",
+        "version": 3,
+        "change_seq": 10,
+        "created_at": "2026-10-02T07:16:22.826820Z",
+        "updated_at": "2026-10-02T07:17:10.971740Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-20",
+        "amount_minor": 1200,
+        "currency": "EGP",
+        "category_id": "01a0fb78-9ffb-7a14-b013-3c55080d2fb4",
+        "counter_wallet_id": null,
+        "description": "QA013",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+      },
+      "problem": null
+    }
+  ],
+  "meta": {}
+}
+# PASS: delete -> applied 200 tombstone [('applied', 200, 2, True), ('applied', 200, 2, True), ('applied', 200, 3, False), ('applied', 200, 3, False)]
+# PASS: repeat delete -> applied 200 same tombstone (idempotent) 
+# PASS: restore -> applied 200 live 
+# PASS: restore with data {version} only -> applied (deleted_at defaulted) ('applied', 200, 3, False)
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "upsert", "id": "01a0fb79-6189-7c0c-8e4a-d9813e24a16f", "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": 10, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "transaction", "op": "upsert", "id": "01a0fb79-6189-7c0c-8e4a-d9813e24a16f", "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": 10, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "transaction", "op": "upsert", "id": "01a0fb79-6189-7c0c-8e4a-d9813e24a16f", "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": 20, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}}]}
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "transaction",
+      "id": "01a0fb79-6189-7c0c-8e4a-d9813e24a16f",
+      "outcome": "applied",
+      "status": 201,
+      "record": {
+        "id": "01a0fb79-6189-7c0c-8e4a-d9813e24a16f",
+        "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703",
+        "version": 1,
+        "change_seq": 106,
+        "created_at": "2026-10-02T07:17:12.029708Z",
+        "updated_at": "2026-10-02T07:17:12.029708Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-20",
+        "amount_minor": 10,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "QA013",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+      },
+      "problem": null
+    },
+    {
+      "type": "transaction",
+      "id": "01a0fb79-6189-7c0c-8e4a-d9813e24a16f",
+      "outcome": "applied",
+      "status": 200,
+      "record": {
+        "id": "01a0fb79-6189-7c0c-8e4a-d9813e24a16f",
+        "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703",
+        "version": 1,
+        "change_seq": 106,
+        "created_at": "2026-10-02T07:17:12.029708Z",
+        "updated_at": "2026-10-02T07:17:12.029708Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-20",
+        "amount_minor": 10,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "QA013",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+      },
+      "problem": null
+    },
+    {
+      "type": "transaction",
+      "id": "01a0fb79-6189-7c0c-8e4a-d9813e24a16f",
+      "outcome": "conflict",
+      "status": 409,
+      "record": null,
+      "problem": {
+        "type": "http://saveme-backend.test/problems/version-conflict",
+        "title": "Version conflict",
+        "status": 409,
+        "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+        "code": "VERSION_CONFLICT",
+        "request_id": "01a0fb79-62f4-715c-b043-41f96151df8f",
+        "current": {
+          "id": "01a0fb79-6189-7c0c-8e4a-d9813e24a16f",
+          "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703",
+          "version": 1,
+          "change_seq": 106,
+          "created_at": "2026-10-02T07:17:12.029708Z",
+          "updated_at": "2026-10-02T07:17:12.029708Z",
+          "deleted_at": null,
+          "kind": "expense",
+          "date": "2026-09-20",
+          "amount_minor": 10,
+          "currency": "EGP",
+          "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+          "counter_wallet_id": null,
+          "description": "QA013",
+          "memo": null,
+          "counterparty": null,
+          "cleared": false,
+          "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+        }
+      }
+    }
+  ],
+  "meta": {}
+}
+# PASS: same record thrice: 201, replay 200, different body at v0 -> conflict 409 [('applied', 201), ('applied', 200), ('conflict', 409)]

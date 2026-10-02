@@ -2,6 +2,7 @@
 
 namespace App\Modules\Identity\Http;
 
+use App\Modules\Identity\Application\Sync\FeedPresenter;
 use App\Modules\Identity\Domain\Ports\AddressLookup;
 use App\Modules\Identity\Http\Console\ExpireSessions;
 use App\Modules\Identity\Http\Console\TimingProbe;
@@ -27,6 +28,13 @@ use Laravel\Sanctum\Events\TokenAuthenticated;
  */
 class IdentityServiceProvider extends ServiceProvider
 {
+    /**
+     * @var array<class-string, class-string>
+     */
+    public array $bindings = [
+        FeedPresenter::class => ResourceFeedPresenter::class,
+    ];
+
     public function boot(Router $router): void
     {
         $this->loadViewsFrom(__DIR__.'/Views', 'identity');

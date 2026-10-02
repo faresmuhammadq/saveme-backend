@@ -1,0 +1,304 @@
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "upsert", "id": "01a0fb79-1cd6-7d52-ae60-28d14fb9b0d0", "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": 77, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "budget", "op": "upsert", "id": "01a0fb79-1cd6-7156-a556-34c229de0f9f", "data": {}}]}
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb79-1dfe-7063-8bdd-4cd8a22a64ce",
+  "errors": [
+    {
+      "pointer": "/items/1/type",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}
+# PASS: unknown type 422 [('/items/1/type', 'INVALID_ENUM_VALUE')]
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "upsert", "id": "01a0fb79-1cd6-7d52-ae60-28d14fb9b0d0", "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": 77, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "wallet", "op": "restore", "id": "01a0fb79-1efa-765b-832e-d6bc9283b7e6", "data": {}}]}
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb79-2002-7314-bf84-c31f53b6b5f2",
+  "errors": [
+    {
+      "pointer": "/items/1/op",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}
+# PASS: op not allowed for type (wallet restore) 422 [('/items/1/op', 'INVALID_ENUM_VALUE')]
+POST /sync/batch
+> {"items": [{"type": "profile", "op": "delete", "id": "01a0fb79-20fb-77fa-8cd1-e7d7553c0400", "data": {}}]}
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb79-2349-72b5-8639-5ebf6b7daefb",
+  "errors": [
+    {
+      "pointer": "/items/0/op",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}
+# PASS: profile delete not allowed 422 [('/items/0/op', 'INVALID_ENUM_VALUE')]
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "upsert", "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479", "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": 77, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}}]}
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb79-253d-703c-8a15-c5ea7044bd6d",
+  "errors": [
+    {
+      "pointer": "/items/0/id",
+      "code": "INVALID_ID",
+      "detail": "The identifier is not valid."
+    }
+  ]
+}
+# PASS: malformed id (v4) 422 [('/items/0/id', 'INVALID_ID')]
+POST /sync/batch
+> {"items": [{"type": "wallet", "op": "upsert", "id": "01a0fb79-26b7-7bc3-80c0-8eb18fe0383a", "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703", "data": {"type": "cash", "name": "z", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 0}}]}
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb79-27fc-7336-aa36-d5ebc6e117a8",
+  "errors": [
+    {
+      "pointer": "/items/0/wallet_id",
+      "code": "UNKNOWN_FIELD",
+      "detail": "This field is not accepted here."
+    }
+  ]
+}
+# PASS: wallet_id on wallet item 422 [('/items/0/wallet_id', 'UNKNOWN_FIELD')]
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "upsert", "id": "01a0fb79-1cd6-7d52-ae60-28d14fb9b0d0", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": 77, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}}]}
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb79-2a05-70c1-80d7-7c21bea40ded",
+  "errors": [
+    {
+      "pointer": "/items/0/wallet_id",
+      "code": "REQUIRED",
+      "detail": "This field is required."
+    }
+  ]
+}
+# PASS: missing wallet_id on transaction 422 [('/items/0/wallet_id', 'REQUIRED')]
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "upsert", "id": "01a0fb79-1cd6-7d52-ae60-28d14fb9b0d0", "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": 77, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}, "extra": 1}]}
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb79-2c85-7313-b5d6-fb6a7f5f1ffe",
+  "errors": [
+    {
+      "pointer": "/items/0/extra",
+      "code": "UNKNOWN_FIELD",
+      "detail": "This field is not accepted here."
+    }
+  ]
+}
+# PASS: unknown member on item 422 [('/items/0/extra', 'UNKNOWN_FIELD')]
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "upsert", "id": "01a0fb79-1cd6-7d52-ae60-28d14fb9b0d0", "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703"}]}
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb79-2ec4-70e1-955b-b3e9d7ebdd64",
+  "errors": [
+    {
+      "pointer": "/items/0/data",
+      "code": "REQUIRED",
+      "detail": "This field is required."
+    }
+  ]
+}
+# PASS: missing data 422 [('/items/0/data', 'REQUIRED')]
+POST /sync/batch
+> {"items": {"a": 1}}
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb79-313a-7242-b7dc-492f2a9f8c9a",
+  "errors": [
+    {
+      "pointer": "/items",
+      "code": "INVALID_TYPE",
+      "detail": "This value is not in the expected form."
+    }
+  ]
+}
+# PASS: items not an array 422 [('/items', 'INVALID_TYPE')]
+POST /sync/batch
+> {}
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb79-3371-7124-b29b-3fd351ed0606",
+  "errors": [
+    {
+      "pointer": "/items",
+      "code": "REQUIRED",
+      "detail": "This field is required."
+    }
+  ]
+}
+# PASS: items missing 422 [('/items', 'REQUIRED')]
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "upsert", "id": "01a0fb79-1cd6-7d52-ae60-28d14fb9b0d0", "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": 77, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}}], "idempotency_key": "x"}
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb79-356e-7199-887c-1171d991b05a",
+  "errors": [
+    {
+      "pointer": "/idempotency_key",
+      "code": "UNKNOWN_FIELD",
+      "detail": "This field is not accepted here."
+    }
+  ]
+}
+# PASS: unknown top-level member 422 [('/idempotency_key', 'UNKNOWN_FIELD')]
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "upsert", "id": "01a0fb79-1cd6-7d52-ae60-28d14fb9b0d0", "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": 77, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, 5]}
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb79-3bb4-7068-8c54-684b199cbb1e",
+  "errors": [
+    {
+      "pointer": "/items/1",
+      "code": "INVALID_TYPE",
+      "detail": "This value is not in the expected form."
+    }
+  ]
+}
+# PASS: item not an object 422 [('/items/1', 'INVALID_TYPE')]
+GET /wallets/01a0fb77-383f-7bf3-aa90-83ddbec10703/transactions/01a0fb79-1cd6-7d52-ae60-28d14fb9b0d0
+< 404
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0fb79-4238-7061-a826-2cee9b27f835"
+}
+# PASS: valid sibling item never applied when the envelope is refused 
+POST /sync/batch
+> {"items": [
+< 400
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/malformed-json",
+  "title": "Malformed JSON",
+  "status": 400,
+  "detail": "The request could not be read. Send a JSON object.",
+  "code": "MALFORMED_JSON",
+  "request_id": "01a0fb79-456b-712a-92e7-e5d04026ec3c"
+}
+# PASS: malformed JSON -> 400 MALFORMED_JSON 400 MALFORMED_JSON
+POST /sync/batch
+> items=1
+< 415
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/unsupported-media-type",
+  "title": "Unsupported media type",
+  "status": 415,
+  "detail": "Send the request body as JSON.",
+  "code": "UNSUPPORTED_MEDIA_TYPE",
+  "request_id": "01a0fb79-46ca-70f0-8f7d-164f8087a419"
+}
+# PASS: text/plain -> 415 UNSUPPORTED_MEDIA_TYPE 415 UNSUPPORTED_MEDIA_TYPE
+POST /sync/batch
+> [1,2]
+< 400
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/malformed-json",
+  "title": "Malformed JSON",
+  "status": 400,
+  "detail": "The request could not be read. Send a JSON object.",
+  "code": "MALFORMED_JSON",
+  "request_id": "01a0fb79-482b-718f-8db2-1e216d6160ef"
+}
+# PASS: JSON array body -> 422 (not 500) 400 MALFORMED_JSON
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "upsert", "id": "01a0fb79-1cd6-7d52-ae60-28d14fb9b0d0", "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703", "data": {"kind": "expense", "date": "2026-09-20", "amount_minor": 77, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "QA013", "memo": null, "counterparty": null, "cleared": false, "version": 0}}]}
+< 401
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/unauthenticated",
+  "title": "Unauthenticated",
+  "status": 401,
+  "detail": "Please sign in again.",
+  "code": "UNAUTHENTICATED",
+  "request_id": "01a0fb79-49bb-733c-9e02-52accb968f56"
+}
+# PASS: no credential -> 401 

@@ -185,7 +185,7 @@ final class EloquentTransactionRepository implements TransactionRepository
      *
      * @param  object{id: string, wallet_id: string, kind: string, date: string, amount_minor: int|string, currency: string, category_id: ?string, counter_wallet_id: ?string, description: ?string, memo: ?string, counterparty: ?string, cleared: bool|int|string, created_by: string, version: int|string, change_seq: int|string, counter_change_seq: int|string|null, created_at: string, updated_at: string, deleted_at: ?string}  $row
      */
-    private static function rawRecord(object $row): TransactionRecord
+    public static function rawRecord(object $row): TransactionRecord
     {
         return new TransactionRecord(
             id: $row->id,

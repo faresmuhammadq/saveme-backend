@@ -1,0 +1,250 @@
+GET /sync/wallets/01a0fb77-383f-7ced-9bb0-b2cd891fe867/changes
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb77-3e22-708d-a1af-e6d5a1af1c1b",
+        "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+        "version": 1,
+        "change_seq": 2,
+        "created_at": "2026-10-02T07:14:51.043582Z",
+        "updated_at": "2026-10-02T07:14:51.043582Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "display_name": null,
+        "role": "owner"
+      }
+    },
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb77-5335-7268-a33e-803eb3aee9c2",
+        "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+        "version": 1,
+        "change_seq": 4,
+        "created_at": "2026-10-02T07:14:56.437801Z",
+        "updated_at": "2026-10-02T07:14:56.437801Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb77-0fee-7144-b29e-c888f803c46c",
+        "display_name": null,
+        "role": "editor"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb77-76e7-7d8d-9037-1745cc7acf09",
+        "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+        "version": 1,
+        "change_seq": 5,
+        "created_at": "2026-10-02T07:15:06.247364Z",
+        "updated_at": "2026-10-02T07:15:06.247364Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-20",
+        "amount_minor": 2500,
+        "currency": "EGP",
+        "category_id": "01a0fb77-6915-72a6-8957-48422164ccfb",
+        "counter_wallet_id": null,
+        "description": "QA013",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+      }
+    },
+    {
+      "type": "category_reference",
+      "record": {
+        "id": "01a0fb77-79ca-737d-8389-93c653fa1db3",
+        "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+        "version": 1,
+        "change_seq": 6,
+        "created_at": "2026-10-02T07:15:06.315285Z",
+        "updated_at": "2026-10-02T07:15:06.315285Z",
+        "deleted_at": null,
+        "category_id": "01a0fb77-6915-72a6-8957-48422164ccfb",
+        "owner_user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "kind": "expense",
+        "name": "QA013 Groceries",
+        "icon": "tag",
+        "color": "#123456"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb77-79fa-7eb7-a52a-a1b58b500de8",
+        "wallet_id": "01a0fb77-383f-7bf3-aa90-83ddbec10703",
+        "version": 1,
+        "change_seq": 4,
+        "created_at": "2026-10-02T07:15:07.375227Z",
+        "updated_at": "2026-10-02T07:15:07.375227Z",
+        "deleted_at": null,
+        "kind": "transfer",
+        "date": "2026-09-20",
+        "amount_minor": 10000,
+        "currency": "EGP",
+        "category_id": null,
+        "counter_wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+        "description": "QA013",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+      }
+    },
+    {
+      "type": "wallet",
+      "record": {
+        "id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+        "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+        "version": 1,
+        "change_seq": 10,
+        "created_at": "2026-10-02T07:14:51.015429Z",
+        "updated_at": "2026-10-02T07:14:51.015429Z",
+        "deleted_at": null,
+        "type": "cash",
+        "name": "QA013 Household",
+        "currency": "EGP",
+        "opening_balance_minor": 0,
+        "balance_minor": 7500,
+        "icon": "wallet",
+        "color": "#1A2B3C",
+        "archived_at": null,
+        "currency_locked": true,
+        "my_role": "owner"
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3Ny0zODNmLTdjZWQtOWJiMC1iMmNkODkxZmU4NjciLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6MTB93XQWJMnybE1w0JRSvLXIKg"
+  }
+}
+# PASS: WH feed has wallet, 2 members, category_reference, expense, transfer in ['wallet_member', 'wallet_member', 'transaction', 'category_reference', 'transaction', 'wallet']
+GET /wallets/01a0fb77-383f-7ced-9bb0-b2cd891fe867
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+    "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+    "version": 1,
+    "change_seq": 10,
+    "created_at": "2026-10-02T07:14:51.015429Z",
+    "updated_at": "2026-10-02T07:14:51.015429Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA013 Household",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 7500,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+# PASS: wallet row identical to GET /wallets/{id} 
+GET /wallets/01a0fb77-383f-7ced-9bb0-b2cd891fe867/transactions/01a0fb77-76e7-7d8d-9037-1745cc7acf09
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb77-76e7-7d8d-9037-1745cc7acf09",
+    "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+    "version": 1,
+    "change_seq": 5,
+    "created_at": "2026-10-02T07:15:06.247364Z",
+    "updated_at": "2026-10-02T07:15:06.247364Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-09-20",
+    "amount_minor": 2500,
+    "currency": "EGP",
+    "category_id": "01a0fb77-6915-72a6-8957-48422164ccfb",
+    "counter_wallet_id": null,
+    "description": "QA013",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+  },
+  "meta": {}
+}
+# PASS: transaction row identical to GET transaction 
+GET /wallets/01a0fb77-383f-7ced-9bb0-b2cd891fe867/category-references
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "id": "01a0fb77-79ca-737d-8389-93c653fa1db3",
+      "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+      "version": 1,
+      "change_seq": 6,
+      "created_at": "2026-10-02T07:15:06.315285Z",
+      "updated_at": "2026-10-02T07:15:06.315285Z",
+      "deleted_at": null,
+      "category_id": "01a0fb77-6915-72a6-8957-48422164ccfb",
+      "owner_user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+      "kind": "expense",
+      "name": "QA013 Groceries",
+      "icon": "tag",
+      "color": "#123456"
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50
+  }
+}
+# PASS: category_reference row identical to list entry 
+GET /wallets/01a0fb77-383f-7ced-9bb0-b2cd891fe867/members
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "id": "01a0fb77-3e22-708d-a1af-e6d5a1af1c1b",
+      "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+      "version": 1,
+      "change_seq": 2,
+      "created_at": "2026-10-02T07:14:51.043582Z",
+      "updated_at": "2026-10-02T07:14:51.043582Z",
+      "deleted_at": null,
+      "member_user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+      "display_name": null,
+      "role": "owner"
+    },
+    {
+      "id": "01a0fb77-5335-7268-a33e-803eb3aee9c2",
+      "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+      "version": 1,
+      "change_seq": 4,
+      "created_at": "2026-10-02T07:14:56.437801Z",
+      "updated_at": "2026-10-02T07:14:56.437801Z",
+      "deleted_at": null,
+      "member_user_id": "01a0fb77-0fee-7144-b29e-c888f803c46c",
+      "display_name": null,
+      "role": "editor"
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50
+  }
+}
+# PASS: wallet_member rows identical to member list 
+# PASS: no posting rows/fields on the feed 
+# PASS: sync_cursor present on last page 

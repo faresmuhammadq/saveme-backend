@@ -5,7 +5,8 @@ namespace App\Modules\Wallets\Domain\Membership;
 use DateTimeImmutable;
 
 /**
- * One person's membership of one wallet.
+ * One person's membership of one wallet. `memberChangeSeq` is its position on
+ * the member's user feed (ADR-0017) and never goes on the wire.
  */
 final readonly class MemberRecord
 {
@@ -19,5 +20,6 @@ final readonly class MemberRecord
         public DateTimeImmutable $createdAt,
         public DateTimeImmutable $updatedAt,
         public ?DateTimeImmutable $deletedAt,
+        public int $memberChangeSeq = 0,
     ) {}
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Identity\Infrastructure\Models\User;
 use App\Modules\Shared\Domain\Errors\ErrorCode;
 use App\Modules\Wallets\Application\Categories\CategoryService;
 use App\Modules\Wallets\Application\Transactions\TransactionService;
@@ -45,8 +46,8 @@ beforeEach(function () {
     config(['database.connections.pgsql_b' => config('database.connections.pgsql')]);
     DB::purge('pgsql_b');
 
-    $this->owner = (string) Str::uuid7();
-    $this->partner = (string) Str::uuid7();
+    $this->owner = User::factory()->create()->id;
+    $this->partner = User::factory()->create()->id;
     $this->category = Category::factory()->create(['user_id' => $this->owner, 'name' => 'Coffee']);
     $this->wallets = [ownedWallet($this->partner), ownedWallet($this->partner)];
     foreach ($this->wallets as $wallet) {
@@ -70,6 +71,7 @@ afterEach(function () {
     WalletMember::query()->whereIn('wallet_id', $ids)->delete();
     Wallet::query()->whereIn('id', $ids)->delete();
     Category::query()->whereKey($this->category->id)->delete();
+    User::query()->whereIn('id', [$this->owner, $this->partner])->delete();
     DB::purge('pgsql_b');
 });
 

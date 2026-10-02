@@ -1,0 +1,173 @@
+GET /sync/wallets/01a0fb78-9ffb-7b56-b3af-92402af1d3db/changes
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb78-a2f1-71b7-8f82-f0b216144f36",
+        "wallet_id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db",
+        "version": 1,
+        "change_seq": 2,
+        "created_at": "2026-10-02T07:16:22.386084Z",
+        "updated_at": "2026-10-02T07:16:22.386084Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "display_name": "QA013 A batch",
+        "role": "owner"
+      }
+    },
+    {
+      "type": "category_reference",
+      "record": {
+        "id": "01a0fb78-a50a-701b-be7e-c39bdff14015",
+        "wallet_id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db",
+        "version": 1,
+        "change_seq": 5,
+        "created_at": "2026-10-02T07:16:22.925107Z",
+        "updated_at": "2026-10-02T07:16:22.925107Z",
+        "deleted_at": null,
+        "category_id": "01a0fb78-9ffb-7a14-b013-3c55080d2fb4",
+        "owner_user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "kind": "expense",
+        "name": "QA013 Batch Cat",
+        "icon": "tag",
+        "color": "#123456"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb78-9ffb-7345-950a-7213e989a22f",
+        "wallet_id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db",
+        "version": 3,
+        "change_seq": 10,
+        "created_at": "2026-10-02T07:16:22.826820Z",
+        "updated_at": "2026-10-02T07:17:10.971740Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-20",
+        "amount_minor": 1200,
+        "currency": "EGP",
+        "category_id": "01a0fb78-9ffb-7a14-b013-3c55080d2fb4",
+        "counter_wallet_id": null,
+        "description": "QA013",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb77-0708-704c-bb12-05620f8547ac"
+      }
+    },
+    {
+      "type": "wallet",
+      "record": {
+        "id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db",
+        "wallet_id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db",
+        "version": 1,
+        "change_seq": 11,
+        "created_at": "2026-10-02T07:16:22.346104Z",
+        "updated_at": "2026-10-02T07:16:22.346104Z",
+        "deleted_at": null,
+        "type": "cash",
+        "name": "QA013 Batch Wallet",
+        "currency": "EGP",
+        "opening_balance_minor": 5000,
+        "balance_minor": 3800,
+        "icon": "wallet",
+        "color": "#1A2B3C",
+        "archived_at": null,
+        "currency_locked": true,
+        "my_role": "owner"
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3OC05ZmZiLTdiNTYtYjNhZi05MjQwMmFmMWQzZGIiLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6MTF9SC7nck23BM15476QjH6aWQ"
+  }
+}
+# PASS: batch-created wallet feed has wallet, owner member, category_reference, transaction ['wallet_member', 'category_reference', 'transaction', 'wallet']
+GET /sync/user/changes?cursor=eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Ny0wNzA4LTcwNGMtYmIxMi0wNTYyMGY4NTQ3YWMiLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6MTJ9KJVpoQVqZdGuYeZq1MzOBw
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb78-a2f1-71b7-8f82-f0b216144f36",
+        "wallet_id": "01a0fb78-9ffb-7b56-b3af-92402af1d3db",
+        "version": 1,
+        "change_seq": 2,
+        "created_at": "2026-10-02T07:16:22.386084Z",
+        "updated_at": "2026-10-02T07:16:22.386084Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "display_name": "QA013 A batch",
+        "role": "owner"
+      }
+    },
+    {
+      "type": "category",
+      "record": {
+        "id": "01a0fb78-9ffb-7a14-b013-3c55080d2fb4",
+        "user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "version": 1,
+        "change_seq": 14,
+        "created_at": "2026-10-02T07:16:22.590012Z",
+        "updated_at": "2026-10-02T07:16:22.590012Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "name": "QA013 Batch Cat",
+        "icon": "tag",
+        "color": "#123456",
+        "archived_at": null,
+        "in_use": true
+      }
+    },
+    {
+      "type": "profile",
+      "record": {
+        "id": "01a0fb77-0fdf-70ab-aebb-e967aac5466b",
+        "version": 3,
+        "change_seq": 15,
+        "created_at": "2026-10-02T07:14:39.200747Z",
+        "updated_at": "2026-10-02T07:17:07.207548Z",
+        "deleted_at": null,
+        "user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "display_name": "QA013 A batch",
+        "locale": "en",
+        "timezone": "Africa/Cairo",
+        "default_currency": "EGP",
+        "default_currency_locked": true,
+        "budget_period_start_day": 1,
+        "budget_period_start_day_from": null
+      }
+    },
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb79-693d-7106-b6cb-58333e4f26be",
+        "wallet_id": "01a0fb79-663e-75bc-87f3-7f7ee34f1cfa",
+        "version": 1,
+        "change_seq": 2,
+        "created_at": "2026-10-02T07:17:13.150287Z",
+        "updated_at": "2026-10-02T07:17:13.150287Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+        "display_name": "QA013 A batch",
+        "role": "owner"
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Ny0wNzA4LTcwNGMtYmIxMi0wNTYyMGY4NTQ3YWMiLCJyIjoiMDFhMGZiNzctMDcwOC03MDRjLWJiMTItMDU2MjBmODU0N2FjIiwicCI6MTZ9zcAzom5nW6cGI1Mq7v2iPw"
+  }
+}
+# PASS: A's user feed got batch category and owner membership of WN ['wallet_member', 'category', 'profile', 'wallet_member']

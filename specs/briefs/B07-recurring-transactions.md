@@ -36,3 +36,8 @@ The brief predates decisions ratified since. These collide with it; the ratified
 - **Lock order** is `TransactionService`'s (spec 012 FR-011, R-4): categories first (share), then wallets in ascending id. A rule that fires into a shared wallet or makes a transfer follows it by calling the service.
 - **Transfers** are one record with `counter_wallet_id` (ADR-0015): a recurring transfer rule needs T-02 in the source and T-03 in the destination at the moment it fires, and a destination that was deleted or left is a refusal to surface, not a retry.
 - A deleted wallet tombstones its income and expense and the transfers whose other wallet is already deleted; a transfer to a live wallet stays live (spec 012 FR-015).
+
+## Inherited from B14 (spec 013)
+
+- **Recurring rules and occurrences join the wallet feed** (`GET /sync/wallets/{id}/changes`): add a source to Wallets' (or the rules module's) feed query with its own `type`, positioned by the wallet counter (`change_seq`, stamped under the wallet lock), rendered by the resource its read endpoint uses. They add a row to the batch type map only if they are whole-record writes (`PUT`/`DELETE`/restore); the batch is a transport for per-record writes (ADR-0016).
+- Their tombstones are purged by `sync:purge-tombstones` after 90 days: register them with the wallet purge, raising the wallet's `purged_change_seq`, and keep a tombstoned rule that an occurrence still refers to.

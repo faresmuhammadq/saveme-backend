@@ -25,7 +25,7 @@ final class SanctumSessionIssuer implements SessionIssuer
     {
         $secret = Str::random(64);
 
-        DeviceSession::query()->forceCreate([
+        DB::transaction(fn () => DeviceSession::query()->forceCreate([
             'id' => $device->sessionId,
             'user_id' => $userId,
             'token' => hash('sha256', $secret),
@@ -37,8 +37,8 @@ final class SanctumSessionIssuer implements SessionIssuer
             'state' => SessionState::Active->value,
             'signed_in_at' => now()->format('Y-m-d H:i:s.uP'),
             'version' => 1,
-            'change_seq' => $this->sequence->next(),
-        ]);
+            'change_seq' => $this->sequence->next($userId),
+        ]));
 
         return new IssuedCredential($device->sessionId, "{$device->sessionId}|{$secret}");
     }
@@ -47,13 +47,21 @@ final class SanctumSessionIssuer implements SessionIssuer
     {
         $secret = Str::random(64);
 
-        DeviceSession::query()->whereKey($sessionId)->where('state', SessionState::Active->value)->update([
-            'token' => hash('sha256', $secret),
-            'signed_in_at' => now()->format('Y-m-d H:i:s.uP'),
-            'version' => DB::raw('version + 1'),
-            'change_seq' => $this->sequence->next(),
-            'updated_at' => now()->format('Y-m-d H:i:s.uP'),
-        ]);
+        DB::transaction(function () use ($sessionId, $secret): void {
+            $userId = DeviceSession::query()->whereKey($sessionId)->where('state', SessionState::Active->value)->value('user_id');
+
+            if ($userId === null) {
+                return;
+            }
+
+            DeviceSession::query()->whereKey($sessionId)->where('state', SessionState::Active->value)->update([
+                'token' => hash('sha256', $secret),
+                'signed_in_at' => now()->format('Y-m-d H:i:s.uP'),
+                'version' => DB::raw('version + 1'),
+                'change_seq' => $this->sequence->next((string) $userId),
+                'updated_at' => now()->format('Y-m-d H:i:s.uP'),
+            ]);
+        });
 
         return new IssuedCredential($sessionId, "{$sessionId}|{$secret}");
     }

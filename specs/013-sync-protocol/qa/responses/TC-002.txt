@@ -1,0 +1,122 @@
+GET /sync/user/changes
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "profile",
+      "record": {
+        "id": "01a0fb77-13e6-727c-b9b3-3c6b2ee9503a",
+        "version": 1,
+        "change_seq": 1,
+        "created_at": "2026-10-02T07:14:40.231571Z",
+        "updated_at": "2026-10-02T07:14:40.231571Z",
+        "deleted_at": null,
+        "user_id": "01a0fb77-0fee-7144-b29e-c888f803c46c",
+        "display_name": null,
+        "locale": "en",
+        "timezone": "Africa/Cairo",
+        "default_currency": "EGP",
+        "default_currency_locked": false,
+        "budget_period_start_day": 1,
+        "budget_period_start_day_from": null
+      }
+    },
+    {
+      "type": "device_session",
+      "record": {
+        "id": "01a0fb77-234c-75ea-a83d-eab1a89c5cd9",
+        "version": 1,
+        "change_seq": 2,
+        "created_at": "2026-10-02T07:14:45.662899Z",
+        "updated_at": "2026-10-02T07:15:11.658113Z",
+        "deleted_at": null,
+        "user_id": "01a0fb77-0fee-7144-b29e-c888f803c46c",
+        "device_name": "QA013 Pixel",
+        "platform": "android",
+        "app_version": "1.0.0",
+        "state": "active",
+        "end_reason": null,
+        "signed_in_at": "2026-10-02T07:14:45.655958Z",
+        "last_used_at": "2026-10-02T07:15:11.656580Z",
+        "ended_at": null,
+        "current": true
+      }
+    },
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb77-5335-7268-a33e-803eb3aee9c2",
+        "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+        "version": 1,
+        "change_seq": 4,
+        "created_at": "2026-10-02T07:14:56.437801Z",
+        "updated_at": "2026-10-02T07:14:56.437801Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb77-0fee-7144-b29e-c888f803c46c",
+        "display_name": null,
+        "role": "editor"
+      }
+    },
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb77-67a1-716b-aa80-67092b313066",
+        "wallet_id": "01a0fb77-3840-7a11-8652-f9816666771e",
+        "version": 1,
+        "change_seq": 4,
+        "created_at": "2026-10-02T07:15:01.669050Z",
+        "updated_at": "2026-10-02T07:15:01.669050Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb77-0fee-7144-b29e-c888f803c46c",
+        "display_name": null,
+        "role": "editor"
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmI3Ny0wZmVlLTcxNDQtYjI5ZS1jODg4ZjgwM2M0NmMiLCJyIjoiMDFhMGZiNzctMGZlZS03MTQ0LWIyOWUtYzg4OGY4MDNjNDZjIiwicCI6NH3cYd0GpLS1oChWTkyBy-W0"
+  }
+}
+# PASS: B's user feed carries B's editor memberships of WH and WD 
+# PASS: no record of A on B's user feed 
+GET /wallets/01a0fb77-383f-7ced-9bb0-b2cd891fe867/members
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "id": "01a0fb77-3e22-708d-a1af-e6d5a1af1c1b",
+      "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+      "version": 1,
+      "change_seq": 2,
+      "created_at": "2026-10-02T07:14:51.043582Z",
+      "updated_at": "2026-10-02T07:14:51.043582Z",
+      "deleted_at": null,
+      "member_user_id": "01a0fb77-0708-704c-bb12-05620f8547ac",
+      "display_name": null,
+      "role": "owner"
+    },
+    {
+      "id": "01a0fb77-5335-7268-a33e-803eb3aee9c2",
+      "wallet_id": "01a0fb77-383f-7ced-9bb0-b2cd891fe867",
+      "version": 1,
+      "change_seq": 4,
+      "created_at": "2026-10-02T07:14:56.437801Z",
+      "updated_at": "2026-10-02T07:14:56.437801Z",
+      "deleted_at": null,
+      "member_user_id": "01a0fb77-0fee-7144-b29e-c888f803c46c",
+      "display_name": null,
+      "role": "editor"
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50
+  }
+}
+# PASS: membership row identical to member list entry 

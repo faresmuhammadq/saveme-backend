@@ -5,6 +5,8 @@ namespace App\Modules\Identity\Infrastructure\Repositories;
 use App\Modules\Identity\Domain\Ports\ChangeSequence;
 use App\Modules\Identity\Domain\Ports\ProfileRepository;
 use App\Modules\Identity\Infrastructure\Models\Profile;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 final class EloquentProfileRepository implements ProfileRepository
 {
@@ -12,14 +14,15 @@ final class EloquentProfileRepository implements ProfileRepository
 
     public function create(string $userId, string $locale, string $timezone, ?string $sealedDisplayName): void
     {
-        Profile::query()->create([
+        // One transaction: the user counter's row lock lasts until the profile row is written.
+        DB::transaction(fn () => Profile::query()->create([
             'user_id' => $userId,
             'locale' => $locale,
             'timezone' => $timezone,
             'display_name_ciphertext' => $sealedDisplayName,
             'version' => 1,
-            'change_seq' => $this->sequence->next(),
-        ]);
+            'change_seq' => $this->sequence->next($userId),
+        ]));
     }
 
     public function findSealed(string $userId): array
@@ -44,16 +47,30 @@ final class EloquentProfileRepository implements ProfileRepository
 
     public function saveIfVersion(string $userId, int $expectedVersion, array $columns): bool
     {
-        return Profile::query()
-            ->where('user_id', $userId)
-            ->where('version', $expectedVersion)
-            ->toBase()
-            ->update([
-                ...$columns,
-                'version' => $expectedVersion + 1,
-                'change_seq' => $this->sequence->next(),
-                'updated_at' => now()->format('Y-m-d H:i:s.uP'),
-            ]) === 1;
+        // One transaction: the user counter's row lock lasts until the profile row is written,
+        // and a lost version race rolls the stamp back so the counter has no hole.
+        DB::beginTransaction();
+
+        try {
+            $saved = Profile::query()
+                ->where('user_id', $userId)
+                ->where('version', $expectedVersion)
+                ->toBase()
+                ->update([
+                    ...$columns,
+                    'version' => $expectedVersion + 1,
+                    'change_seq' => $this->sequence->next($userId),
+                    'updated_at' => now()->format('Y-m-d H:i:s.uP'),
+                ]) === 1;
+        } catch (Throwable $e) {
+            DB::rollBack();
+
+            throw $e;
+        }
+
+        $saved ? DB::commit() : DB::rollBack();
+
+        return $saved;
     }
 
     public function sealedDisplayNames(array $userIds): array

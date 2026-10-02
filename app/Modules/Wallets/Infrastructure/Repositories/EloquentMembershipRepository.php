@@ -59,7 +59,7 @@ final class EloquentMembershipRepository implements MembershipRepository
             ->all());
     }
 
-    public function insert(string $walletId, string $userId, Role $role, int $changeSeq): MemberRecord
+    public function insert(string $walletId, string $userId, Role $role, int $changeSeq, int $memberChangeSeq): MemberRecord
     {
         $member = WalletMember::query()->create([
             'wallet_id' => $walletId,
@@ -67,31 +67,34 @@ final class EloquentMembershipRepository implements MembershipRepository
             'role' => $role->value,
             'version' => 1,
             'change_seq' => $changeSeq,
+            'member_change_seq' => $memberChangeSeq,
         ]);
 
         return self::record($member->refresh());
     }
 
-    public function changeRole(string $memberId, Role $role, int $changeSeq): void
+    public function changeRole(string $memberId, Role $role, int $changeSeq, int $memberChangeSeq): void
     {
         WalletMember::query()->whereKey($memberId)->toBase()->update([
             'role' => $role->value,
             'version' => DB::raw('version + 1'),
             'change_seq' => $changeSeq,
+            'member_change_seq' => $memberChangeSeq,
             'updated_at' => now()->format('Y-m-d H:i:s.uP'),
         ]);
     }
 
-    public function tombstoneAllIn(string $walletId, DateTimeImmutable $at, Closure $nextChangeSeq): void
+    public function tombstoneAllIn(string $walletId, DateTimeImmutable $at, Closure $nextChangeSeq, Closure $nextMemberChangeSeq): void
     {
-        $ids = WalletMember::query()->where('wallet_id', $walletId)->whereNull('deleted_at')
-            ->orderBy('created_at')->orderBy('id')->pluck('id');
+        $members = WalletMember::query()->where('wallet_id', $walletId)->whereNull('deleted_at')
+            ->orderBy('user_id')->orderBy('id')->get(['id', 'user_id']);
 
-        foreach ($ids as $id) {
-            WalletMember::query()->whereKey($id)->toBase()->update([
+        foreach ($members as $member) {
+            WalletMember::query()->whereKey($member->id)->toBase()->update([
                 'deleted_at' => self::instant($at),
                 'version' => DB::raw('version + 1'),
                 'change_seq' => $nextChangeSeq(),
+                'member_change_seq' => $nextMemberChangeSeq($member->user_id),
                 'updated_at' => self::instant($at),
             ]);
         }
@@ -102,7 +105,7 @@ final class EloquentMembershipRepository implements MembershipRepository
         return $at->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s.uP');
     }
 
-    private static function record(WalletMember $member): MemberRecord
+    public static function record(WalletMember $member): MemberRecord
     {
         return new MemberRecord(
             id: $member->id,
@@ -114,6 +117,7 @@ final class EloquentMembershipRepository implements MembershipRepository
             createdAt: $member->created_at->toDateTimeImmutable(),
             updatedAt: $member->updated_at->toDateTimeImmutable(),
             deletedAt: $member->deleted_at?->toDateTimeImmutable(),
+            memberChangeSeq: (int) $member->member_change_seq,
         );
     }
 }

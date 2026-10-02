@@ -1,0 +1,209 @@
+PUT /wallets/01a0fb74-e466-7025-826f-beae4b4fe9cc
+> {"type": "cash", "name": "E2E C", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 0}
+< 201
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb74-e466-7025-826f-beae4b4fe9cc",
+    "wallet_id": "01a0fb74-e466-7025-826f-beae4b4fe9cc",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T07:12:17.459264Z",
+    "updated_at": "2026-10-02T07:12:17.459264Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "E2E C",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+GET /wallets/01a0fb73-1ddf-7318-a583-d5f7420866db
+< 200
+< Content-Language: en
+{
+  "data": {
+    "id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+    "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+    "version": 1,
+    "change_seq": 193,
+    "created_at": "2026-10-02T07:10:21.317155Z",
+    "updated_at": "2026-10-02T07:10:21.317155Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "E2E Household",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 10577,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "editor"
+  },
+  "meta": {}
+}
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "upsert", "id": "01a0fb74-e682-7a90-a0b5-1e070cf2672d", "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db", "data": {"kind": "expense", "date": "2026-09-21", "amount_minor": 0, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "transaction", "op": "upsert", "id": "01a0fb74-e682-70fb-ba77-405bbc847921", "wallet_id": "01a0fb74-e466-7025-826f-beae4b4fe9cc", "data": {"kind": "expense", "date": "2026-09-21", "amount_minor": 1, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "category", "op": "delete", "id": "01a0fb73-3765-755c-b2da-e17fc646b516", "data": {"version": 1}}, {"type": "wallet", "op": "upsert", "id": "01a0fb73-1ddf-7318-a583-d5f7420866db", "data": {"type": "cash", "name": "E2E Household renamed by B", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 1}}, {"type": "transaction", "op": "upsert", "id": "01a0fb74-e8a5-7318-b78b-06551f49586d", "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db", "data": {"kind": "expense", "date": "2026-09-21", "amount_minor": 7, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}}]}
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "transaction",
+      "id": "01a0fb74-e682-7a90-a0b5-1e070cf2672d",
+      "outcome": "rejected",
+      "status": 422,
+      "record": null,
+      "problem": {
+        "type": "http://saveme-backend.test/problems/validation-failed",
+        "title": "Validation failed",
+        "status": 422,
+        "detail": "Some of the information sent is not valid. Each problem is listed.",
+        "code": "VALIDATION_FAILED",
+        "request_id": "01a0fb74-e9db-739b-9099-2185c9803539",
+        "errors": [
+          {
+            "pointer": "/amount_minor",
+            "code": "OUT_OF_RANGE",
+            "detail": "This value is too short, too long, or outside the allowed range."
+          }
+        ]
+      }
+    },
+    {
+      "type": "transaction",
+      "id": "01a0fb74-e682-70fb-ba77-405bbc847921",
+      "outcome": "rejected",
+      "status": 404,
+      "record": null,
+      "problem": {
+        "type": "http://saveme-backend.test/problems/not-found",
+        "title": "Not found",
+        "status": 404,
+        "detail": "We could not find that.",
+        "code": "NOT_FOUND",
+        "request_id": "01a0fb74-e9db-739b-9099-2185c9803539"
+      }
+    },
+    {
+      "type": "category",
+      "id": "01a0fb73-3765-755c-b2da-e17fc646b516",
+      "outcome": "rejected",
+      "status": 409,
+      "record": null,
+      "problem": {
+        "type": "http://saveme-backend.test/problems/category-in-use",
+        "title": "Category in use",
+        "status": 409,
+        "detail": "This category is used by your records, so it can't be deleted. Archive it instead.",
+        "code": "CATEGORY_IN_USE",
+        "request_id": "01a0fb74-e9db-739b-9099-2185c9803539"
+      }
+    },
+    {
+      "type": "wallet",
+      "id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+      "outcome": "applied",
+      "status": 200,
+      "record": {
+        "id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 2,
+        "change_seq": 194,
+        "created_at": "2026-10-02T07:10:21.317155Z",
+        "updated_at": "2026-10-02T07:12:19.147115Z",
+        "deleted_at": null,
+        "type": "cash",
+        "name": "E2E Household renamed by B",
+        "currency": "EGP",
+        "opening_balance_minor": 0,
+        "balance_minor": 10577,
+        "icon": "wallet",
+        "color": "#1A2B3C",
+        "archived_at": null,
+        "currency_locked": true,
+        "my_role": "owner"
+      },
+      "problem": null
+    },
+    {
+      "type": "transaction",
+      "id": "01a0fb74-e8a5-7318-b78b-06551f49586d",
+      "outcome": "applied",
+      "status": 201,
+      "record": {
+        "id": "01a0fb74-e8a5-7318-b78b-06551f49586d",
+        "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "version": 1,
+        "change_seq": 195,
+        "created_at": "2026-10-02T07:12:19.317692Z",
+        "updated_at": "2026-10-02T07:12:19.317692Z",
+        "deleted_at": null,
+        "kind": "expense",
+        "date": "2026-09-21",
+        "amount_minor": 7,
+        "currency": "EGP",
+        "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+        "counter_wallet_id": null,
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      },
+      "problem": null
+    }
+  ],
+  "meta": {}
+}
+POST /sync/batch
+> {"items": [{"type": "wallet", "op": "upsert", "id": "01a0fb73-1ddf-7318-a583-d5f7420866db", "data": {"type": "cash", "name": "E2E Household renamed by B", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#1A2B3C", "version": 1}}]}
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "wallet",
+      "id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+      "outcome": "rejected",
+      "status": 403,
+      "record": null,
+      "problem": {
+        "type": "http://saveme-backend.test/problems/forbidden",
+        "title": "Forbidden",
+        "status": 403,
+        "detail": "Your role in this wallet does not allow this.",
+        "code": "FORBIDDEN",
+        "request_id": "01a0fb74-ee92-73f1-b88e-938a6f7fd489"
+      }
+    }
+  ],
+  "meta": {}
+}
+PUT /wallets/01a0fb73-1ddf-7318-a583-d5f7420866db/transactions/01a0fb74-e682-7a90-a0b5-1e070cf2672d
+> {"kind": "expense", "date": "2026-09-21", "amount_minor": 0, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb74-f11a-7068-8139-1112c4fef9bf",
+  "errors": [
+    {
+      "pointer": "/amount_minor",
+      "code": "OUT_OF_RANGE",
+      "detail": "This value is too short, too long, or outside the allowed range."
+    }
+  ]
+}
+# PASS: validation 422 at /amount_minor (== single PUT), not found 404, category in use 409, forbidden (editor renames wallet) 403; last item applied: [('rejected', 422, 'VALIDATION_FAILED'), ('rejected', 404, 'NOT_FOUND'), ('rejected', 409, 'CATEGORY_IN_USE'), ('applied', 200, None), ('applied', 201, None)] / B: 403

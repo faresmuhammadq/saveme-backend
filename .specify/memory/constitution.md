@@ -1,6 +1,10 @@
 <!--
 Sync Impact Report (latest first)
 
+v1.3.5 → 1.3.6 — 2026-10-04
+- PATCH: P-07 and P-08 list ADR-0016 and ADR-0017, introduced by spec 013; no rule changes.
+- Reason: spec 013 (B14, Sync Protocol); ADR-0016 supersedes ADR-0008 rule 7 only; ADR-0017 extends ADR-0008 and ADR-0014.
+
 v1.3.4 → 1.3.5 — 2026-10-03
 - PATCH: P-04 and P-07 list ADR-0015, introduced by spec 012; no rule changes.
 - Reason: spec 012 (B6, Transactions Ledger); ADR-0015 extends ADR-0008 and ADR-0012.
@@ -95,7 +99,7 @@ v1.0.0 — 2026-09-19 (ratified)
 
 <!-- "Save Me" is a working codename used as display text only; see P-13. -->
 
-**Version**: 1.3.5 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-03
+**Version**: 1.3.6 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-04
 
 ## Purpose & Precedence
 
@@ -180,7 +184,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-07 Sync and concurrency
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0008](../../docs/adr/0008-sync-changes-feed.md), [ADR-0015](../../docs/adr/0015-transfers-on-two-wallet-feeds.md) (extends ADR-0008)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0008](../../docs/adr/0008-sync-changes-feed.md), [ADR-0015](../../docs/adr/0015-transfers-on-two-wallet-feeds.md) (extends ADR-0008), [ADR-0016](../../docs/adr/0016-batch-upload-beside-per-record-writes.md) (supersedes ADR-0008 rule 7), [ADR-0017](../../docs/adr/0017-membership-on-the-members-user-feed.md) (extends ADR-0008)
 
 1. Every syncable entity MUST carry `version`, `updated_at`, `deleted_at` and `change_seq`.
 2. Every write MUST carry the client's last-seen `version`.
@@ -192,7 +196,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-08 Authorization
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0006](../../docs/adr/0006-wallet-scoped-authorization.md)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0006](../../docs/adr/0006-wallet-scoped-authorization.md), [ADR-0017](../../docs/adr/0017-membership-on-the-members-user-feed.md)
 
 1. Authorization MUST be wallet-scoped: the caller's `wallet_members.role` combined with entitlement checks.
 2. A write MUST be authorized against every wallet it touches.
@@ -367,7 +371,7 @@ Every `plan.md` includes this section, filled in before Phase 0 and again after 
 ```markdown
 ## Constitution Check
 
-*Constitution v1.3.5. GATE: before Phase 0 and again after Phase 1.*
+*Constitution v1.3.6. GATE: before Phase 0 and again after Phase 1.*
 
 | Principle | Result | Evidence / justification |
 |---|---|---|
@@ -405,4 +409,4 @@ Every amendment updates the footer's **Last Amended** date and the Sync Impact R
 
 **Consistency** — run `/speckit-analyze` before implementing each feature. Contradictions between this constitution, the ADRs and a feature's spec are defects to resolve before code.
 
-**Version**: 1.3.5 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-03
+**Version**: 1.3.6 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-04

@@ -10,6 +10,7 @@ use App\Modules\Identity\Domain\Sessions\SessionState;
 use App\Modules\Identity\Infrastructure\Models\DeviceSession;
 use DateTimeImmutable;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 final class EloquentSessionRepository implements SessionRepository
 {
@@ -37,17 +38,39 @@ final class EloquentSessionRepository implements SessionRepository
     {
         $state = $reason === EndReason::Expired ? SessionState::Expired : SessionState::Revoked;
 
-        return DeviceSession::query()
+        $userId = DeviceSession::query()
             ->whereKey($sessionId)
             ->where('state', SessionState::Active->value)
-            ->update([
-                'state' => $state->value,
-                'end_reason' => $reason->value,
-                'ended_at' => now()->format('Y-m-d H:i:s.uP'),
-                'version' => DB::raw('version + 1'),
-                'change_seq' => $this->sequence->next(),
-                'updated_at' => now()->format('Y-m-d H:i:s.uP'),
-            ]) === 1;
+            ->value('user_id');
+
+        if ($userId === null) {
+            return false;
+        }
+
+        // One transaction: the user counter's row lock lasts until the session row is written.
+        DB::beginTransaction();
+
+        try {
+            $ended = DeviceSession::query()
+                ->whereKey($sessionId)
+                ->where('state', SessionState::Active->value)
+                ->update([
+                    'state' => $state->value,
+                    'end_reason' => $reason->value,
+                    'ended_at' => now()->format('Y-m-d H:i:s.uP'),
+                    'version' => DB::raw('version + 1'),
+                    'change_seq' => $this->sequence->next((string) $userId),
+                    'updated_at' => now()->format('Y-m-d H:i:s.uP'),
+                ]) === 1;
+        } catch (Throwable $e) {
+            DB::rollBack();
+
+            throw $e;
+        }
+
+        $ended ? DB::commit() : DB::rollBack();
+
+        return $ended;
     }
 
     public function activeIdsFor(string $userId, ?string $except = null): array

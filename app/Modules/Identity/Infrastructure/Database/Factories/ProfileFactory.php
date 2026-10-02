@@ -2,10 +2,10 @@
 
 namespace App\Modules\Identity\Infrastructure\Database\Factories;
 
+use App\Modules\Identity\Domain\Ports\ChangeSequence;
 use App\Modules\Identity\Infrastructure\Models\Profile;
 use App\Modules\Identity\Infrastructure\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @extends Factory<Profile>
@@ -25,7 +25,7 @@ class ProfileFactory extends Factory
             'timezone' => 'Africa/Cairo',
             'display_name_ciphertext' => null,
             'version' => 1,
-            'change_seq' => fn (): int => (int) DB::scalar("select nextval('sync_change_seq')"),
+            'change_seq' => fn (array $attributes): int => app(ChangeSequence::class)->next((string) $attributes['user_id']),
         ];
     }
 }

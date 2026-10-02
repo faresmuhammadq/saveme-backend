@@ -1,0 +1,86 @@
+GET /sync/wallets/01a0fb73-1ddf-7b15-b285-3319c7af991a/changes?cursor=eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3My0xZGRmLTdiMTUtYjI4NS0zMzE5YzdhZjk5MWEiLCJyIjoiMDFhMGZiNzItZWIwNy03MTBkLWEzZmItN2Q0MzY0ZWM0NzIyIiwicCI6OX2gKkcg6I0wzIfEWvNFLn0L
+< 200
+< Content-Language: en
+{
+  "data": [],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3My0xZGRmLTdiMTUtYjI4NS0zMzE5YzdhZjk5MWEiLCJyIjoiMDFhMGZiNzItZWIwNy03MTBkLWEzZmItN2Q0MzY0ZWM0NzIyIiwicCI6OX2gKkcg6I0wzIfEWvNFLn0L"
+  }
+}
+GET /sync/wallets/01a0fb73-1ddf-7b15-b285-3319c7af991a/changes?limit=200
+< 200
+< Content-Language: en
+{
+  "data": [
+    {
+      "type": "wallet_member",
+      "record": {
+        "id": "01a0fb73-242a-7083-b9d7-bf800dd7eb01",
+        "wallet_id": "01a0fb73-1ddf-7b15-b285-3319c7af991a",
+        "version": 1,
+        "change_seq": 2,
+        "created_at": "2026-10-02T07:10:22.251341Z",
+        "updated_at": "2026-10-02T07:10:22.251341Z",
+        "deleted_at": null,
+        "member_user_id": "01a0fb72-eb07-710d-a3fb-7d4364ec4722",
+        "display_name": null,
+        "role": "owner"
+      }
+    },
+    {
+      "type": "transaction",
+      "record": {
+        "id": "01a0fb73-3ce9-7835-a367-dc046570c0ca",
+        "wallet_id": "01a0fb73-1ddf-7b15-b285-3319c7af991a",
+        "version": 1,
+        "change_seq": 4,
+        "created_at": "2026-10-02T07:10:29.218331Z",
+        "updated_at": "2026-10-02T07:10:29.218331Z",
+        "deleted_at": null,
+        "kind": "transfer",
+        "date": "2026-09-21",
+        "amount_minor": 20000,
+        "currency": "EGP",
+        "category_id": null,
+        "counter_wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db",
+        "description": "E2E",
+        "memo": null,
+        "counterparty": null,
+        "cleared": false,
+        "created_by": "01a0fb72-eb07-710d-a3fb-7d4364ec4722"
+      }
+    },
+    {
+      "type": "wallet",
+      "record": {
+        "id": "01a0fb73-1ddf-7b15-b285-3319c7af991a",
+        "wallet_id": "01a0fb73-1ddf-7b15-b285-3319c7af991a",
+        "version": 1,
+        "change_seq": 9,
+        "created_at": "2026-10-02T07:10:22.219415Z",
+        "updated_at": "2026-10-02T07:10:22.219415Z",
+        "deleted_at": null,
+        "type": "cash",
+        "name": "E2E Personal",
+        "currency": "EGP",
+        "opening_balance_minor": 100000,
+        "balance_minor": 80000,
+        "icon": "wallet",
+        "color": "#1A2B3C",
+        "archived_at": null,
+        "currency_locked": true,
+        "my_role": "owner"
+      }
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 200,
+    "sync_cursor": "eyJ2IjoxLCJmIjoidyIsInMiOiIwMWEwZmI3My0xZGRmLTdiMTUtYjI4NS0zMzE5YzdhZjk5MWEiLCJyIjoiMDFhMGZiNzItZWIwNy03MTBkLWEzZmItN2Q0MzY0ZWM0NzIyIiwicCI6OX2gKkcg6I0wzIfEWvNFLn0L"
+  }
+}
+# PASS: cursor newer than the purged marker served normally; a no-cursor resync yields the current state without the purged record

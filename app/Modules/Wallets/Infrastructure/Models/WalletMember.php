@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $role
  * @property int $version
  * @property int $change_seq
+ * @property int $member_change_seq
  * @property CarbonImmutable $created_at
  * @property CarbonImmutable $updated_at
  * @property CarbonImmutable|null $deleted_at
@@ -37,6 +38,7 @@ class WalletMember extends Model
         return [
             'version' => 'integer',
             'change_seq' => 'integer',
+            'member_change_seq' => 'integer',
             'created_at' => 'immutable_datetime',
             'updated_at' => 'immutable_datetime',
             'deleted_at' => 'immutable_datetime',

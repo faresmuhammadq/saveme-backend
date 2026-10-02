@@ -34,3 +34,8 @@ The brief predates decisions ratified since. These collide with it; the ratified
 - **Exclude transfers** (`kind = transfer`, postings that all reference wallets) from every budget total; income and expense postings only (glossary, ADR-0012).
 - **Platform categories are scoped and grouped by `system_key`** (ADR-0014 rules 5-6); a transaction references the platform category directly, never a copy.
 - Totals are summed from postings, never from `wallets.balance_minor` (P-05).
+
+## Inherited from B14 (spec 013)
+
+- **Budgets join the user feed** (`GET /sync/user/changes`, user scope) and may join the batch type map. Stamp `change_seq` from `UserScopeCounter::next($userId)` (Identity's Application service): it increments `users.change_seq` under the person's row lock, so **take it last** in the write, after any category or wallet lock (lock order categories, wallets ascending, users ascending; ADR-0017 rule 5).
+- A budget is a person's category's referrer: report it through `CategoryUsage` so a used category is never deleted, and have the tombstone purge keep a category a budget refers to.

@@ -746,3 +746,70 @@ function fieldErrorsOf(?Refusal $refusal): array
 {
     return array_map(fn ($error): string => $error->pointer.' '.$error->code->value, $refusal->fieldErrors ?? []);
 }
+
+/*
+|--------------------------------------------------------------------------
+| Sync (spec 013)
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * Reads a change feed page.
+ *
+ * @param  string  $feed  `user` or a wallet id
+ */
+function readFeed(string $credential, string $feed, ?string $cursor = null, ?int $limit = null): TestResponse
+{
+    $query = array_filter(['cursor' => $cursor, 'limit' => $limit], fn ($value) => $value !== null);
+    $path = $feed === 'user' ? '/sync/user/changes' : '/sync/wallets/'.$feed.'/changes';
+
+    return walletCall('GET', $credential, $path.($query === [] ? '' : '?'.http_build_query($query)));
+}
+
+/**
+ * Reads a feed to its end and returns every row, with the last cursor.
+ *
+ * @return array{rows: list<array{type: string, record: array<string, mixed>}>, cursor: string}
+ */
+function readFeedFully(string $credential, string $feed, ?string $cursor = null, int $limit = 200): array
+{
+    $rows = [];
+
+    do {
+        $page = readFeed($credential, $feed, $cursor, $limit)->assertOk();
+        $rows = [...$rows, ...$page->json('data')];
+        $cursor = $page->json('meta.sync_cursor');
+    } while ($page->json('meta.has_more'));
+
+    return ['rows' => $rows, 'cursor' => $cursor];
+}
+
+/**
+ * @param  list<array{type: string, record: array<string, mixed>}>  $rows
+ * @return list<string> "type:id" of each row
+ */
+function feedKeys(array $rows): array
+{
+    return array_map(fn (array $row): string => $row['type'].':'.$row['record']['id'], $rows);
+}
+
+/**
+ * Posts a sync batch.
+ *
+ * @param  list<array<string, mixed>>  $items
+ */
+function postBatch(string $credential, array $items): TestResponse
+{
+    return walletCall('POST', $credential, '/sync/batch', ['items' => $items]);
+}
+
+/**
+ * A batch item.
+ *
+ * @param  array<string, mixed>  $data
+ * @return array<string, mixed>
+ */
+function syncItem(string $type, string $op, string $id, array $data, ?string $walletId = null): array
+{
+    return ['type' => $type, 'op' => $op, 'id' => $id, ...($walletId === null ? [] : ['wallet_id' => $walletId]), 'data' => $data];
+}

@@ -1,0 +1,107 @@
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "upsert", "id": "01a0fb75-2551-7227-9d16-0b4d346a4d15", "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db", "data": {"kind": "expense", "date": "2026-09-21", "amount_minor": 1, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "transaction", "op": "upsert", "id": "01a0fb75-2551-7176-aae8-d96e1364087e", "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db", "data": {"kind": "expense", "date": "2026-09-21", "amount_minor": 1, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "transaction", "op": "upsert", "id": "01a0fb75-2551-7d03-a563-011585e4d174", "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db", "data": {"kind": "expense", "date": "2026-09-21", "amount_minor": 1, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "transaction", "op": "upsert", "id": "01a0fb75-2551-7623-a6bc-3697deced44a", "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db", "data": {"kind": "expense", "date": "2026-09-21", "amount_minor": 1, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "transaction", "op": "upsert", "id": "01a0fb75-2551-7aff-8dd4-19c8b2dceed4", "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db", "data": {"kind": "expense", "date": "2026-09-21", "amount_minor": 1, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "transaction", "op": "upsert", "id": "01a0fb75-2551-7d33-98be-f42cee6667bc", "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db", "data": {"kind": "expense", "date": "2026-09-21", "amount_minor": 1, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "transaction", "op": "upsert", "id": "01a0fb75-2551-7bdd-ac9a-8336502e921d", "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db", "data": {"kind": "expense", "date": "2026-09-21", "amount_minor": 1, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "transaction", "op": "upsert", "id": "01a0fb75-2551-79f6-9d9d-d2325772f6b2", "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db", "data": {"kind": "expense", "date": "2026-09-21", "amount_minor": 1, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "transaction", "op": "upsert", "id": "01a0fb75-2551-7138-8d54-867029cfeeb4", "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db", "data": {"kind": "expense", "date": "2026-09-21", "amount_minor": 1, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "transaction", "op": "upsert", "id": "01a0fb75-2551-783f-9ca2-e97d06fcfed0", "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db", "data": {"kind": "expense", "date": "2026-09-21", "amount_minor": 1, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": fa
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb75-2632-70a6-af02-14efa3a00ea3",
+  "errors": [
+    {
+      "pointer": "/items",
+      "code": "OUT_OF_RANGE",
+      "detail": "This value is too short, too long, or outside the allowed range."
+    }
+  ]
+}
+POST /sync/batch
+> {"items": []}
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb75-2801-7352-bc63-281bea743049",
+  "errors": [
+    {
+      "pointer": "/items",
+      "code": "OUT_OF_RANGE",
+      "detail": "This value is too short, too long, or outside the allowed range."
+    }
+  ]
+}
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "upsert", "id": "01a0fb75-2551-70cf-9ae0-aadb41684672", "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db", "data": {"kind": "expense", "date": "2026-09-21", "amount_minor": 1, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "budget", "op": "upsert", "id": "01a0fb75-2551-70c2-80f7-6cf49c350566", "data": {}}]}
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb75-2a3c-7388-908e-d48377cc395d",
+  "errors": [
+    {
+      "pointer": "/items/1/type",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "upsert", "id": "01a0fb75-2551-70cf-9ae0-aadb41684672", "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db", "data": {"kind": "expense", "date": "2026-09-21", "amount_minor": 1, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "category", "op": "restore", "id": "01a0fb75-2551-7333-afbf-5f67a4911f6d", "data": {}}]}
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb75-2c75-73e8-aa77-f202dd292147",
+  "errors": [
+    {
+      "pointer": "/items/1/op",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}
+POST /sync/batch
+> {"items": [{"type": "transaction", "op": "upsert", "id": "01a0fb75-2551-70cf-9ae0-aadb41684672", "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db", "data": {"kind": "expense", "date": "2026-09-21", "amount_minor": 1, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}}, {"type": "transaction", "op": "upsert", "id": "123", "wallet_id": "01a0fb73-1ddf-7318-a583-d5f7420866db", "data": {"kind": "expense", "date": "2026-09-21", "amount_minor": 1, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}}]}
+< 422
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fb75-2dde-736f-b177-cde76a89d7df",
+  "errors": [
+    {
+      "pointer": "/items/1/id",
+      "code": "INVALID_ID",
+      "detail": "The identifier is not valid."
+    }
+  ]
+}
+GET /wallets/01a0fb73-1ddf-7318-a583-d5f7420866db/transactions/01a0fb75-2551-70cf-9ae0-aadb41684672
+< 404
+< Content-Language: en
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0fb75-2f97-72d8-a93e-b31cf364a83f"
+}
+# PASS: {'51 items': True, 'empty': True, 'unknown type': True, 'unsupported op': True, 'malformed id': True}; valid sibling never applied (404)

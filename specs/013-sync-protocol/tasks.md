@@ -172,7 +172,7 @@ description: "Task list for Sync Protocol (B14)"
 - [X] T047 Apply the endpoint review checklist and the security review checklist to the three operations in `docs/openapi/paths/sync.yaml` (plan.md "Review checklists"); record the result in plan.md. Confirm the implementation changed nothing the client binds to in `contracts/sync-api.md`; if anything had to change, bump `info.version` and say so in the summary.
 - [X] T048 Run the gates: `dev exec -- composer test:lint`, `test:types`, `test:arch`, then `dev exec -- vendor/bin/pest tests/Unit tests/Feature/Sync tests/Contract/Sync --compact`, then the full Feature and Contract suites in the background (no existing test changed except `SaveCategoryTest`'s sequence read, T013).
 - [X] T049 [P] Record B14's obligations on later features under a short "Inherited from B14 (spec 013)" note in `specs/briefs/B07-recurring-transactions.md` (recurring rules and occurrences join the wallet feed and the batch type list), `specs/briefs/B08-budgets.md` (budgets join the user feed and the batch; stamp from `users.change_seq` under the user lock, users locked last), `specs/briefs/B09-sharing-invitations.md` (every grant, role change, removal and leave stamps `member_change_seq` per ADR-0017; invitations join the wallet feed) and `specs/briefs/B15-export-data-deletion.md` (account deletion purges the user scope; memberships tombstoned per ADR-0017).
-- [ ] T050 Write specs/013-sync-protocol/summary.md (parent writes it).
+- [X] T050 Write specs/013-sync-protocol/summary.md (parent writes it).
 
 ---
 

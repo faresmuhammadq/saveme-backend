@@ -190,7 +190,7 @@ description: "Task list for Recurring Transactions (B7)"
 - [X] T056 [P] Apply the endpoint review checklist and the security review checklist to every operation in `docs/openapi/paths/recurring.yaml` (and the changed parts of `sync.yaml`, `transactions.yaml`); record results in plan.md § Review checklists, with the exceptions already listed there. Confirm the implementation matches the frozen contract member for member — any change to a member C7 binds to (contracts/recurring-api.md) is a contract change to raise, not to make.
 - [X] T057 [P] Record B7's obligations on later features as "Inherited from B7 (spec 014)" notes in `specs/briefs/B08-budgets.md` (confirmed occurrences are ordinary transactions; attribution by `created_by` = rule author), `specs/briefs/B13-reports.md` (forecast from `scheduled` occurrences through a query service; never from transactions), `specs/briefs/B15-export-data-deletion.md` (export rules and occurrences; a departing author's rules), `specs/briefs/B16-devices-push.md` (due-ness is derived; compute it, no stored state).
 - [X] T058 Run the gates: `dev exec -- composer test` (lint, types, arch, suite, api) and the quickstart walk; measure p95 of a daily-rule create and of the occurrence list (200 rules / 2,000 occurrences) and one job run over 10,000 active rules on the dev stack with Xdebug off (SC-007); re-bundle `docs/openapi` and import into Apidog (project 1332822, module 1363204) with a "Recurring transactions" doc. State "Seeder: N/A — no reference data" in the commit/PR description.
-- [ ] T059 Write specs/014-recurring-transactions/summary.md (parent writes it)
+- [X] T059 Write specs/014-recurring-transactions/summary.md (parent writes it)
 
 ---
 

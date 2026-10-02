@@ -1,0 +1,269 @@
+===== US2_See_how_far_into_my_budgets_I_am_Scenario_2 US2 See how far into my budgets I am — Scenario 2 2026-10-02T15:06:25.047628Z
+
+PUT /wallets/01a0fd26-f997-7402-aae5-e300003e4089
+> {"type": "cash", "name": "QA015 E2E 2", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd26-f997-7402-aae5-e300003e4089",
+  "wallet_id": "01a0fd26-f997-7402-aae5-e300003e4089",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T15:06:25.463961Z",
+  "updated_at": "2026-10-02T15:06:25.463961Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "QA015 E2E 2",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fd26-afc1-7741-b49d-ddc54f8712f7/transactions/01a0fd26-fb75-77ed-8ad0-69ec0ad88f6c
+> {"kind": "transfer", "date": "2026-10-01", "amount_minor": 111, "currency": "EGP", "category_id": null, "counter_wallet_id": "01a0fd26-f997-7402-aae5-e300003e4089", "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd26-fb75-77ed-8ad0-69ec0ad88f6c",
+  "wallet_id": "01a0fd26-afc1-7741-b49d-ddc54f8712f7",
+  "version": 1,
+  "change_seq": 10,
+  "created_at": "2026-10-02T15:06:26.128909Z",
+  "updated_at": "2026-10-02T15:06:26.128909Z",
+  "deleted_at": null,
+  "kind": "transfer",
+  "date": "2026-10-01",
+  "amount_minor": 111,
+  "currency": "EGP",
+  "category_id": null,
+  "counter_wallet_id": "01a0fd26-f997-7402-aae5-e300003e4089",
+  "description": "E2E",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fd26-afc1-7741-b49d-ddc54f8712f7/transactions/01a0fd26-fe1f-7285-b479-b9e6cd337cd2
+> {"kind": "income", "date": "2026-10-01", "amount_minor": 222, "currency": "EGP", "category_id": "01a0fa05-c344-7014-a053-5688a2879949", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd26-fe1f-7285-b479-b9e6cd337cd2",
+  "wallet_id": "01a0fd26-afc1-7741-b49d-ddc54f8712f7",
+  "version": 1,
+  "change_seq": 12,
+  "created_at": "2026-10-02T15:06:26.697335Z",
+  "updated_at": "2026-10-02T15:06:26.697335Z",
+  "deleted_at": null,
+  "kind": "income",
+  "date": "2026-10-01",
+  "amount_minor": 222,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c344-7014-a053-5688a2879949",
+  "counter_wallet_id": null,
+  "description": "E2E",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fd26-afc1-7741-b49d-ddc54f8712f7/transactions/01a0fd27-004f-7422-b2ca-cc78d343f04a
+> {"kind": "expense", "date": "2026-10-01", "amount_minor": 333, "currency": "EGP", "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-004f-7422-b2ca-cc78d343f04a",
+  "wallet_id": "01a0fd26-afc1-7741-b49d-ddc54f8712f7",
+  "version": 1,
+  "change_seq": 14,
+  "created_at": "2026-10-02T15:06:27.222709Z",
+  "updated_at": "2026-10-02T15:06:27.222709Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-10-01",
+  "amount_minor": 333,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+  "counter_wallet_id": null,
+  "description": "E2E",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+DELETE /wallets/01a0fd26-afc1-7741-b49d-ddc54f8712f7/transactions/01a0fd27-004f-7422-b2ca-cc78d343f04a
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fd27-004f-7422-b2ca-cc78d343f04a",
+  "wallet_id": "01a0fd26-afc1-7741-b49d-ddc54f8712f7",
+  "version": 2,
+  "change_seq": 16,
+  "created_at": "2026-10-02T15:06:27.222709Z",
+  "updated_at": "2026-10-02T15:06:27.756538Z",
+  "deleted_at": "2026-10-02T15:06:27.754922Z",
+  "kind": "expense",
+  "date": "2026-10-01",
+  "amount_minor": 333,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+  "counter_wallet_id": null,
+  "description": "E2E",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fd26-afc1-7741-b49d-ddc54f8712f7/transactions/01a0fd27-0462-75d4-9d61-7ef958ffaee2
+> {"kind": "expense", "date": "2026-09-30", "amount_minor": 444, "currency": "EGP", "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-0462-75d4-9d61-7ef958ffaee2",
+  "wallet_id": "01a0fd26-afc1-7741-b49d-ddc54f8712f7",
+  "version": 1,
+  "change_seq": 18,
+  "created_at": "2026-10-02T15:06:28.372902Z",
+  "updated_at": "2026-10-02T15:06:28.372902Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-09-30",
+  "amount_minor": 444,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+  "counter_wallet_id": null,
+  "description": "E2E",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fd26-b1b2-7180-b3e2-44533c8107f8/transactions/01a0fd27-06ed-70bf-b83e-08b59b689020
+> {"kind": "expense", "date": "2026-10-01", "amount_minor": 555, "currency": "USD", "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-06ed-70bf-b83e-08b59b689020",
+  "wallet_id": "01a0fd26-b1b2-7180-b3e2-44533c8107f8",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T15:06:28.935288Z",
+  "updated_at": "2026-10-02T15:06:28.935288Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-10-01",
+  "amount_minor": 555,
+  "currency": "USD",
+  "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+  "counter_wallet_id": null,
+  "description": "E2E",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fd26-afc1-7741-b49d-ddc54f8712f7/transactions/01a0fd27-091e-7267-996b-44a775c9f004
+> {"kind": "expense", "date": "2026-10-01", "amount_minor": 666, "currency": "EGP", "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-091e-7267-996b-44a775c9f004",
+  "wallet_id": "01a0fd26-afc1-7741-b49d-ddc54f8712f7",
+  "version": 1,
+  "change_seq": 20,
+  "created_at": "2026-10-02T15:06:29.605716Z",
+  "updated_at": "2026-10-02T15:06:29.605716Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-10-01",
+  "amount_minor": 666,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0",
+  "counter_wallet_id": null,
+  "description": "E2E",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd26-ec18-7132-9336-cfd4e626d984/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd26-ec18-7132-9336-cfd4e626d984",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 6000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 6500,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": -500,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 100750,
+   "currency": "EGP"
+  },
+  "over_limit": true,
+  "other_currencies": [
+   "USD"
+  ]
+ },
+ "meta": {}
+}
+
+CHECK [PASS] spent still 6500 {"amount_minor": 6500, "currency": "EGP"}
+CHECK [PASS] other_currencies [USD] 

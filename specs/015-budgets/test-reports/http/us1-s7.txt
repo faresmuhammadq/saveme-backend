@@ -1,0 +1,94 @@
+===== US1_Set_a_monthly_limit_for_a_category_Scenario_7 US1 Set a monthly limit for a category — Scenario 7 2026-10-02T15:06:19.111225Z
+
+GET /budgets/01a0fd26-c430-72b9-a70b-7452d91575d4
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd26-e312-73df-ab8d-1b2608ca62ed"
+}
+
+GET /budgets/01a0fd26-c430-72b9-a70b-7452d91575d4/progress
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd26-e452-7217-9122-1f2f3923fa50"
+}
+
+PUT /budgets/01a0fd26-c430-72b9-a70b-7452d91575d4
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 1, "currency": "EGP", "version": 1}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd26-e59b-714d-bd7f-2b1eaccf8c88"
+}
+
+PATCH /budgets/01a0fd26-c430-72b9-a70b-7452d91575d4
+> {"amount_minor": 1, "version": 1}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd26-e700-725d-ac19-ba0f81c82271"
+}
+
+DELETE /budgets/01a0fd26-c430-72b9-a70b-7452d91575d4
+> {"version": 1}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd26-e878-731d-9205-09cbcc35f9d4"
+}
+
+POST /budgets/01a0fd26-c430-72b9-a70b-7452d91575d4/archive
+> {"version": 1}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd26-ea28-7380-8a22-0e395bc78005"
+}
+
+CHECK [PASS] all 404 NOT_FOUND [(404, 'NOT_FOUND'), (404, 'NOT_FOUND'), (404, 'NOT_FOUND'), (404, 'NOT_FOUND'), (404, 'NOT_FOUND'), (404, 'NOT_FOUND')]
+GET /budgets/01a0fd26-c430-72b9-a70b-7452d91575d4
+< 200
+{
+ "data": {
+  "id": "01a0fd26-c430-72b9-a70b-7452d91575d4",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-02T15:06:11.807370Z",
+  "updated_at": "2026-10-02T15:06:11.807370Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 600000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] untouched 

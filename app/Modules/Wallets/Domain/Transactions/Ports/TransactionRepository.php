@@ -99,4 +99,20 @@ interface TransactionRepository
      * @return list<TransactionRecord>
      */
     public function liveGoingWith(string $walletId): array;
+
+    /**
+     * Σ category-leg postings of the person's own live expenses dated within
+     * the span, in live wallets where they hold a live membership, grouped by
+     * category and currency (spec 015, R-2).
+     *
+     * @param  string  $from  YYYY-MM-DD
+     * @param  string  $to  YYYY-MM-DD
+     * @return list<array{category_id: string, currency: string, amount_minor: int}>
+     */
+    public function expenseTotalsRecordedBy(string $userId, string $from, string $to): array;
+
+    /**
+     * Whether the id names any Wallets & Ledger record of any kind.
+     */
+    public function identifierTaken(string $id): bool;
 }

@@ -1,0 +1,41 @@
+===== US6_Budgets_sync_like_every_user_record_Scenario_4 US6 Budgets sync like every user record — Scenario 4 2026-10-02T15:07:37.606611Z
+
+age: 1
+purge: Purged 1 tombstones.
+
+CHECK [PASS] budget row gone 
+GET /budgets/01a0fd27-c310-73b5-91b4-33512fe51727
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd28-3b3d-72bc-bbf9-4fc2aa4d1cfd"
+}
+
+CHECK [PASS] GET 404 after purge 
+DELETE /categories/01a0fd27-c141-76c5-8ae2-18da2d6889f7
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fd27-c141-76c5-8ae2-18da2d6889f7",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 2,
+  "change_seq": 41,
+  "created_at": "2026-10-02T15:07:16.551806Z",
+  "updated_at": "2026-10-02T15:07:48.020747Z",
+  "deleted_at": "2026-10-02T15:07:48.015443Z",
+  "kind": "expense",
+  "name": "used tombstoned",
+  "icon": "cup",
+  "color": "#6D4C41",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+CHECK [PASS] category freed -> deletable 200 None

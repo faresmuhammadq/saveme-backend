@@ -1,0 +1,70 @@
+===== TC-004 US1-5: archived own category and retired platform category are budgetable 2026-10-02T14:59:27.549941Z
+
+PUT /categories/01a0fd20-9abe-759e-a467-b5e60fc0420c
+> {"kind": "expense", "name": "A archived", "icon": "cup", "color": "#6D4C41", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd20-9abe-759e-a467-b5e60fc0420c",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 1,
+  "change_seq": 11,
+  "created_at": "2026-10-02T14:59:27.957532Z",
+  "updated_at": "2026-10-02T14:59:27.957532Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "A archived",
+  "icon": "cup",
+  "color": "#6D4C41",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+POST /categories/01a0fd20-9abe-759e-a467-b5e60fc0420c/archive
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fd20-9abe-759e-a467-b5e60fc0420c",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 2,
+  "change_seq": 12,
+  "created_at": "2026-10-02T14:59:27.957532Z",
+  "updated_at": "2026-10-02T14:59:28.574594Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "A archived",
+  "icon": "cup",
+  "color": "#6D4C41",
+  "archived_at": "2026-10-02T14:59:28.570184Z",
+  "in_use": false
+ },
+ "meta": {}
+}
+
+CHECK [PASS] category archived 200
+PUT /budgets/01a0fd20-9f1a-731d-b229-f5a045a0d151
+> {"category_id": "01a0fd20-9abe-759e-a467-b5e60fc0420c", "period_type": "monthly", "amount_minor": 100, "currency": "EGP", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd20-9f1a-731d-b229-f5a045a0d151",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 1,
+  "change_seq": 13,
+  "created_at": "2026-10-02T14:59:29.120134Z",
+  "updated_at": "2026-10-02T14:59:29.120134Z",
+  "deleted_at": null,
+  "category_id": "01a0fd20-9abe-759e-a467-b5e60fc0420c",
+  "period_type": "monthly",
+  "amount_minor": 100,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] budget PUT -> 201 201 None []
+CHECK [PASS] retired platform category: none in catalogue (skipped, covered by BudgetCategoryRulesTest) 

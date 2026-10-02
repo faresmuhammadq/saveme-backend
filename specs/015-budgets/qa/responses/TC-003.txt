@@ -1,0 +1,212 @@
+===== TC-003 US1-4: income, partner, unknown, deleted category -> 422 INVALID_ENUM_VALUE /category_id 2026-10-02T14:59:22.509456Z
+
+PUT /categories/01a0fd20-870d-73b0-8197-b8db07d85a66
+> {"kind": "expense", "name": "B own", "icon": "cup", "color": "#6D4C41", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd20-870d-73b0-8197-b8db07d85a66",
+  "user_id": "01a0fd20-4a33-730e-96fa-50173982fab3",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T14:59:22.941298Z",
+  "updated_at": "2026-10-02T14:59:22.941298Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "B own",
+  "icon": "cup",
+  "color": "#6D4C41",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+CHECK [PASS] B category created 201
+PUT /categories/01a0fd20-8916-7091-87d4-95d0a75fb096
+> {"kind": "expense", "name": "A doomed", "icon": "cup", "color": "#6D4C41", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd20-8916-7091-87d4-95d0a75fb096",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 1,
+  "change_seq": 8,
+  "created_at": "2026-10-02T14:59:23.469165Z",
+  "updated_at": "2026-10-02T14:59:23.469165Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "A doomed",
+  "icon": "cup",
+  "color": "#6D4C41",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+DELETE /categories/01a0fd20-8916-7091-87d4-95d0a75fb096
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fd20-8916-7091-87d4-95d0a75fb096",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 2,
+  "change_seq": 9,
+  "created_at": "2026-10-02T14:59:23.469165Z",
+  "updated_at": "2026-10-02T14:59:23.928049Z",
+  "deleted_at": "2026-10-02T14:59:23.923785Z",
+  "kind": "expense",
+  "name": "A doomed",
+  "icon": "cup",
+  "color": "#6D4C41",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+CHECK [PASS] A category deleted 200
+PUT /categories/01a0fd20-8ce1-70d1-be40-1a29661edfdc
+> {"kind": "income", "name": "A income", "icon": "cup", "color": "#6D4C41", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd20-8ce1-70d1-be40-1a29661edfdc",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 1,
+  "change_seq": 10,
+  "created_at": "2026-10-02T14:59:24.468861Z",
+  "updated_at": "2026-10-02T14:59:24.468861Z",
+  "deleted_at": null,
+  "kind": "income",
+  "name": "A income",
+  "icon": "cup",
+  "color": "#6D4C41",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+PUT /budgets/01a0fd20-8ee7-73a1-a279-0619767d8bb8
+> {"category_id": "01a0fa05-c344-7014-a053-5688a2879949", "period_type": "monthly", "amount_minor": 600000, "currency": "EGP", "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-8f8e-73be-8e68-0c2a9188f62c",
+ "errors": [
+  {
+   "pointer": "/category_id",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+
+CHECK [PASS] platform income -> 422 INVALID_ENUM_VALUE /category_id 422 [('/category_id', 'INVALID_ENUM_VALUE')]
+PUT /budgets/01a0fd20-90d7-7135-bb7b-438c5fe99381
+> {"category_id": "01a0fd20-8ce1-70d1-be40-1a29661edfdc", "period_type": "monthly", "amount_minor": 600000, "currency": "EGP", "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-91bc-71ec-82ec-1791f739b16e",
+ "errors": [
+  {
+   "pointer": "/category_id",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+
+CHECK [PASS] own income -> 422 INVALID_ENUM_VALUE /category_id 422 [('/category_id', 'INVALID_ENUM_VALUE')]
+PUT /budgets/01a0fd20-930f-755e-9653-7392d7184a98
+> {"category_id": "01a0fd20-870d-73b0-8197-b8db07d85a66", "period_type": "monthly", "amount_minor": 600000, "currency": "EGP", "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-93b2-7081-874b-08e46a1f506e",
+ "errors": [
+  {
+   "pointer": "/category_id",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+
+CHECK [PASS] partner -> 422 INVALID_ENUM_VALUE /category_id 422 [('/category_id', 'INVALID_ENUM_VALUE')]
+PUT /budgets/01a0fd20-952c-728d-930f-d408b25cfd13
+> {"category_id": "01a0fd20-8ee7-73a1-a279-061886781fdb", "period_type": "monthly", "amount_minor": 600000, "currency": "EGP", "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-95da-7167-acbf-c52c0414dd51",
+ "errors": [
+  {
+   "pointer": "/category_id",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+
+CHECK [PASS] unknown -> 422 INVALID_ENUM_VALUE /category_id 422 [('/category_id', 'INVALID_ENUM_VALUE')]
+PUT /budgets/01a0fd20-9735-73ae-811e-72a7be278e6a
+> {"category_id": "01a0fd20-8916-7091-87d4-95d0a75fb096", "period_type": "monthly", "amount_minor": 600000, "currency": "EGP", "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-980f-7003-ab00-25b739b05b9c",
+ "errors": [
+  {
+   "pointer": "/category_id",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+
+CHECK [PASS] deleted -> 422 INVALID_ENUM_VALUE /category_id 422 [('/category_id', 'INVALID_ENUM_VALUE')]
+PUT /budgets/01a0fd20-9926-7627-b63d-cbfc97542a9e
+> {"category_id": "not-a-uuid", "period_type": "monthly", "amount_minor": 600000, "currency": "EGP", "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-99e5-73f0-b10a-2d90c673af57",
+ "errors": [
+  {
+   "pointer": "/category_id",
+   "code": "INVALID_ID",
+   "detail": "The identifier is not valid."
+  }
+ ]
+}
+
+CHECK [PASS] malformed category id -> 422 422 [('/category_id', 'INVALID_ID')]

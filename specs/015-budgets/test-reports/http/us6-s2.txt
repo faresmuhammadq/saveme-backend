@@ -1,0 +1,54 @@
+===== US6_Budgets_sync_like_every_user_record_Scenario_2 US6 Budgets sync like every user record — Scenario 2 2026-10-02T15:07:30.712677Z
+
+POST /sync/batch
+> {"items": [{"type": "budget", "op": "delete", "id": "01a0fd27-f461-754f-bc41-404081dc56cf", "data": {"version": 1}}]}
+< 200
+{
+ "data": [
+  {
+   "type": "budget",
+   "id": "01a0fd27-f461-754f-bc41-404081dc56cf",
+   "outcome": "applied",
+   "status": 200,
+   "record": {
+    "id": "01a0fd27-f461-754f-bc41-404081dc56cf",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 2,
+    "change_seq": 39,
+    "created_at": "2026-10-02T15:07:29.759253Z",
+    "updated_at": "2026-10-02T15:07:31.137508Z",
+    "deleted_at": "2026-10-02T15:07:31.136367Z",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "period_type": "monthly",
+    "amount_minor": 4321,
+    "currency": "EGP",
+    "archived_at": null
+   },
+   "problem": null
+  }
+ ],
+ "meta": {}
+}
+
+DELETE /budgets/01a0fd27-f461-754f-bc41-4041b6aa47ac
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fd27-f461-754f-bc41-4041b6aa47ac",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 2,
+  "change_seq": 40,
+  "created_at": "2026-10-02T15:07:30.284011Z",
+  "updated_at": "2026-10-02T15:07:31.550804Z",
+  "deleted_at": "2026-10-02T15:07:31.549831Z",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 4321,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] delete parity 

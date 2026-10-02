@@ -1,0 +1,389 @@
+===== TC-009 US4-5: DELETE with body -> tombstone; repeat; later edit 409; progress 404; lists exclude 2026-10-02T14:59:48.703890Z
+
+PUT /budgets/01a0fd20-ed60-76f2-a23c-dd564a968420
+> {"category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f", "period_type": "monthly", "amount_minor": 100, "currency": "EGP", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd20-ed60-76f2-a23c-dd564a968420",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 1,
+  "change_seq": 21,
+  "created_at": "2026-10-02T14:59:49.122885Z",
+  "updated_at": "2026-10-02T14:59:49.122885Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+  "period_type": "monthly",
+  "amount_minor": 100,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] budget PUT -> 201 201 None []
+DELETE /budgets/01a0fd20-ed60-76f2-a23c-dd564a968420
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fd20-ed60-76f2-a23c-dd564a968420",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 2,
+  "change_seq": 22,
+  "created_at": "2026-10-02T14:59:49.122885Z",
+  "updated_at": "2026-10-02T14:59:49.595912Z",
+  "deleted_at": "2026-10-02T14:59:49.594156Z",
+  "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+  "period_type": "monthly",
+  "amount_minor": 100,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] DELETE 200 deleted_at v2 200
+DELETE /budgets/01a0fd20-ed60-76f2-a23c-dd564a968420
+> {"version": 2}
+< 200
+{
+ "data": {
+  "id": "01a0fd20-ed60-76f2-a23c-dd564a968420",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 2,
+  "change_seq": 22,
+  "created_at": "2026-10-02T14:59:49.122885Z",
+  "updated_at": "2026-10-02T14:59:49.595912Z",
+  "deleted_at": "2026-10-02T14:59:49.594156Z",
+  "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+  "period_type": "monthly",
+  "amount_minor": 100,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] repeat DELETE returns tombstone unchanged 
+DELETE /budgets/01a0fd20-ed60-76f2-a23c-dd564a968420
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fd20-ed60-76f2-a23c-dd564a968420",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 2,
+  "change_seq": 22,
+  "created_at": "2026-10-02T14:59:49.122885Z",
+  "updated_at": "2026-10-02T14:59:49.595912Z",
+  "deleted_at": "2026-10-02T14:59:49.594156Z",
+  "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+  "period_type": "monthly",
+  "amount_minor": 100,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] repeat DELETE stale version returns tombstone 200 None
+DELETE /budgets/01a0fd20-ed60-76f2-a23c-dd564a968420
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-f4a1-70ca-8e6a-5c6c23b90e40",
+ "errors": [
+  {
+   "pointer": "/version",
+   "code": "REQUIRED",
+   "detail": "This field is required."
+  }
+ ]
+}
+
+CHECK [PASS] DELETE without body -> 422 REQUIRED /version 422 [('/version', 'REQUIRED')]
+PATCH /budgets/01a0fd20-ed60-76f2-a23c-dd564a968420
+> {"amount_minor": 5, "version": 2}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fd20-f63a-721f-b3ba-c7806c2426f6",
+ "current": {
+  "id": "01a0fd20-ed60-76f2-a23c-dd564a968420",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 2,
+  "change_seq": 22,
+  "created_at": "2026-10-02T14:59:49.122885Z",
+  "updated_at": "2026-10-02T14:59:49.595912Z",
+  "deleted_at": "2026-10-02T14:59:49.594156Z",
+  "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+  "period_type": "monthly",
+  "amount_minor": 100,
+  "currency": "EGP",
+  "archived_at": null
+ }
+}
+
+CHECK [PASS] PATCH on tombstone -> 409 with tombstone 409 VERSION_CONFLICT
+PUT /budgets/01a0fd20-ed60-76f2-a23c-dd564a968420
+> {"category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f", "period_type": "monthly", "amount_minor": 5, "currency": "EGP", "version": 2}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fd20-f7ce-72fa-bdf7-4bb8516314a7",
+ "current": {
+  "id": "01a0fd20-ed60-76f2-a23c-dd564a968420",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 2,
+  "change_seq": 22,
+  "created_at": "2026-10-02T14:59:49.122885Z",
+  "updated_at": "2026-10-02T14:59:49.595912Z",
+  "deleted_at": "2026-10-02T14:59:49.594156Z",
+  "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+  "period_type": "monthly",
+  "amount_minor": 100,
+  "currency": "EGP",
+  "archived_at": null
+ }
+}
+
+CHECK [PASS] PUT on tombstone -> 409 with tombstone 409 VERSION_CONFLICT
+POST /budgets/01a0fd20-ed60-76f2-a23c-dd564a968420/archive
+> {"version": 2}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fd20-f9cc-727c-93b4-e8941f77730f",
+ "current": {
+  "id": "01a0fd20-ed60-76f2-a23c-dd564a968420",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 2,
+  "change_seq": 22,
+  "created_at": "2026-10-02T14:59:49.122885Z",
+  "updated_at": "2026-10-02T14:59:49.595912Z",
+  "deleted_at": "2026-10-02T14:59:49.594156Z",
+  "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+  "period_type": "monthly",
+  "amount_minor": 100,
+  "currency": "EGP",
+  "archived_at": null
+ }
+}
+
+CHECK [PASS] POST on tombstone -> 409 with tombstone 409 VERSION_CONFLICT
+GET /budgets/01a0fd20-ed60-76f2-a23c-dd564a968420
+< 200
+{
+ "data": {
+  "id": "01a0fd20-ed60-76f2-a23c-dd564a968420",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 2,
+  "change_seq": 22,
+  "created_at": "2026-10-02T14:59:49.122885Z",
+  "updated_at": "2026-10-02T14:59:49.595912Z",
+  "deleted_at": "2026-10-02T14:59:49.594156Z",
+  "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+  "period_type": "monthly",
+  "amount_minor": 100,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] GET tombstone 200 
+GET /budgets/01a0fd20-ed60-76f2-a23c-dd564a968420/progress
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd20-fc9a-7396-8ff8-f23d4b7f6cc8"
+}
+
+CHECK [PASS] progress of tombstone 404 404
+GET /budgets params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 5,
+   "change_seq": 17,
+   "created_at": "2026-10-02T14:59:20.756445Z",
+   "updated_at": "2026-10-02T14:59:43.087411Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "period_type": "monthly",
+   "amount_minor": 600000,
+   "currency": "EGP",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd20-851a-71b1-9169-c46d3d2b9ae5",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 1,
+   "change_seq": 7,
+   "created_at": "2026-10-02T14:59:22.477758Z",
+   "updated_at": "2026-10-02T14:59:22.477758Z",
+   "deleted_at": null,
+   "category_id": null,
+   "period_type": "monthly",
+   "amount_minor": 1000000,
+   "currency": "EGP",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd20-9f1a-731d-b229-f5a045a0d151",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 3,
+   "change_seq": 20,
+   "created_at": "2026-10-02T14:59:29.120134Z",
+   "updated_at": "2026-10-02T14:59:48.212143Z",
+   "deleted_at": null,
+   "category_id": "01a0fd20-9abe-759e-a467-b5e60fc0420c",
+   "period_type": "monthly",
+   "amount_minor": 222,
+   "currency": "EGP",
+   "archived_at": "2026-10-02T14:59:45.874959Z"
+  },
+  {
+   "id": "01a0fd20-df00-70d6-be9f-1d32c581b96c",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 1,
+   "change_seq": 18,
+   "created_at": "2026-10-02T14:59:45.480660Z",
+   "updated_at": "2026-10-02T14:59:45.480660Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "period_type": "monthly",
+   "amount_minor": 10,
+   "currency": "KWD",
+   "archived_at": null
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] tombstone not in /budgets 
+GET /budget-progress params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "budget_id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 600000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 600000,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": []
+  },
+  {
+   "budget_id": "01a0fd20-851a-71b1-9169-c46d3d2b9ae5",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 1000000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 1000000,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": []
+  },
+  {
+   "budget_id": "01a0fd20-df00-70d6-be9f-1d32c581b96c",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 10,
+    "currency": "KWD"
+   },
+   "spent": {
+    "amount_minor": 0,
+    "currency": "KWD"
+   },
+   "remaining": {
+    "amount_minor": 10,
+    "currency": "KWD"
+   },
+   "projected_end": {
+    "amount_minor": 0,
+    "currency": "KWD"
+   },
+   "over_limit": false,
+   "other_currencies": []
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] tombstone not in /budget-progress 

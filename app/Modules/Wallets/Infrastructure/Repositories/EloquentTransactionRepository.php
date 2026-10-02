@@ -15,6 +15,7 @@ use App\Modules\Wallets\Infrastructure\Models\WalletMember;
 use DateTimeImmutable;
 use DateTimeZone;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 final class EloquentTransactionRepository implements TransactionRepository
 {
@@ -218,5 +219,38 @@ final class EloquentTransactionRepository implements TransactionRepository
             recurringRuleId: $row->recurring_rule_id ?? null,
             occurrenceId: $row->occurrence_id ?? null,
         );
+    }
+
+    public function expenseTotalsRecordedBy(string $userId, string $from, string $to): array
+    {
+        /** @var list<object{category_id: string, currency: string, amount_minor: int|string}> $rows */
+        $rows = DB::select(<<<'SQL'
+            SELECT p.category_id, p.currency, SUM(p.amount_minor)::bigint AS amount_minor
+            FROM transactions t
+            JOIN postings p ON p.transaction_id = t.id AND p.category_id IS NOT NULL
+            JOIN wallets w ON w.id = t.wallet_id AND w.deleted_at IS NULL
+            JOIN wallet_members m ON m.wallet_id = t.wallet_id AND m.user_id = :member AND m.deleted_at IS NULL
+            WHERE t.created_by = :author
+              AND t.deleted_at IS NULL
+              AND t.kind = 'expense'
+              AND t.date BETWEEN :from AND :to
+            GROUP BY p.category_id, p.currency
+            SQL, ['member' => $userId, 'author' => $userId, 'from' => $from, 'to' => $to]);
+
+        return array_map(
+            fn (object $row): array => ['category_id' => (string) $row->category_id, 'currency' => (string) $row->currency, 'amount_minor' => (int) $row->amount_minor],
+            $rows,
+        );
+    }
+
+    public function identifierTaken(string $id): bool
+    {
+        return Wallet::query()->whereKey($id)->exists()
+            || Category::query()->whereKey($id)->exists()
+            || CategoryReference::query()->whereKey($id)->exists()
+            || WalletMember::query()->whereKey($id)->exists()
+            || Transaction::query()->whereKey($id)->exists()
+            || RecurringRule::query()->whereKey($id)->exists()
+            || Occurrence::query()->whereKey($id)->exists();
     }
 }

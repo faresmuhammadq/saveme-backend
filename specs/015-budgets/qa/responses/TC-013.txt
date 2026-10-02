@@ -1,0 +1,692 @@
+===== TC-013 US2-5 progress list: once each, sorted by created_at, paging, cursor bound to period 2026-10-02T15:00:16.766891Z
+
+GET /budget-progress params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "budget_id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 600000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 1000,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 599000,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 15500,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": [
+    "USD"
+   ]
+  },
+  {
+   "budget_id": "01a0fd20-851a-71b1-9169-c46d3d2b9ae5",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 1000000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 5444,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 994556,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 84382,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": [
+    "USD"
+   ]
+  },
+  {
+   "budget_id": "01a0fd20-df00-70d6-be9f-1d32c581b96c",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 10,
+    "currency": "KWD"
+   },
+   "spent": {
+    "amount_minor": 0,
+    "currency": "KWD"
+   },
+   "remaining": {
+    "amount_minor": 10,
+    "currency": "KWD"
+   },
+   "projected_end": {
+    "amount_minor": 0,
+    "currency": "KWD"
+   },
+   "over_limit": false,
+   "other_currencies": [
+    "EGP",
+    "USD"
+   ]
+  },
+  {
+   "budget_id": "01a0fd21-180c-77c5-aa1a-250f95e5288b",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 3000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 1000,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 2000,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 15500,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": [
+    "USD"
+   ]
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] each active budget once 
+GET /budgets params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 5,
+   "change_seq": 17,
+   "created_at": "2026-10-02T14:59:20.756445Z",
+   "updated_at": "2026-10-02T14:59:43.087411Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "period_type": "monthly",
+   "amount_minor": 600000,
+   "currency": "EGP",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd20-851a-71b1-9169-c46d3d2b9ae5",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 1,
+   "change_seq": 7,
+   "created_at": "2026-10-02T14:59:22.477758Z",
+   "updated_at": "2026-10-02T14:59:22.477758Z",
+   "deleted_at": null,
+   "category_id": null,
+   "period_type": "monthly",
+   "amount_minor": 1000000,
+   "currency": "EGP",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd20-9f1a-731d-b229-f5a045a0d151",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 3,
+   "change_seq": 20,
+   "created_at": "2026-10-02T14:59:29.120134Z",
+   "updated_at": "2026-10-02T14:59:48.212143Z",
+   "deleted_at": null,
+   "category_id": "01a0fd20-9abe-759e-a467-b5e60fc0420c",
+   "period_type": "monthly",
+   "amount_minor": 222,
+   "currency": "EGP",
+   "archived_at": "2026-10-02T14:59:45.874959Z"
+  },
+  {
+   "id": "01a0fd20-df00-70d6-be9f-1d32c581b96c",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 1,
+   "change_seq": 18,
+   "created_at": "2026-10-02T14:59:45.480660Z",
+   "updated_at": "2026-10-02T14:59:45.480660Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "period_type": "monthly",
+   "amount_minor": 10,
+   "currency": "KWD",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd21-180c-77c5-aa1a-250f95e5288b",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 2,
+   "change_seq": 24,
+   "created_at": "2026-10-02T15:00:00.085493Z",
+   "updated_at": "2026-10-02T15:00:02.275412Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "period_type": "monthly",
+   "amount_minor": 3000,
+   "currency": "EGP",
+   "archived_at": null
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] progress order = budgets list order (created_at, id) of active ['01a0fd20-7e56-7101-bd4b-4e2be46cac0a', '01a0fd20-851a-71b1-9169-c46d3d2b9ae5', '01a0fd20-df00-70d6-be9f-1d32c581b96c', '01a0fd21-180c-77c5-aa1a-250f95e5288b'] vs ['01a0fd20-7e56-7101-bd4b-4e2be46cac0a', '01a0fd20-851a-71b1-9169-c46d3d2b9ae5', '01a0fd20-df00-70d6-be9f-1d32c581b96c', '01a0fd21-180c-77c5-aa1a-250f95e5288b']
+GET /budget-progress params={'limit': 2}
+< 200
+{
+ "data": [
+  {
+   "budget_id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 600000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 1000,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 599000,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 15500,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": [
+    "USD"
+   ]
+  },
+  {
+   "budget_id": "01a0fd20-851a-71b1-9169-c46d3d2b9ae5",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 1000000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 5444,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 994556,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 84382,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": [
+    "USD"
+   ]
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJrIjoiMDgwYmIyMTg1NGQ0NjU1MCIsInAiOnsidmFsdWUiOiIyMDI2LTEwLTAyIDE0OjU5OjIyLjQ3Nzc1OCswMDowMCIsImlkIjoiMDFhMGZkMjAtODUxYS03MWIxLTkxNjktYzQ2ZDNkMmI5YWU1IiwicGVyaW9kX3N0YXJ0IjoiMjAyNi0xMC0wMSJ9fQ",
+  "has_more": true,
+  "limit": 2
+ }
+}
+
+GET /budget-progress params={'limit': 2, 'cursor': 'eyJrIjoiMDgwYmIyMTg1NGQ0NjU1MCIsInAiOnsidmFsdWUiOiIyMDI2LTEwLTAyIDE0OjU5OjIyLjQ3Nzc1OCswMDowMCIsImlkIjoiMDFhMGZkMjAtODUxYS03MWIxLTkxNjktYzQ2ZDNkMmI5YWU1IiwicGVyaW9kX3N0YXJ0IjoiMjAyNi0xMC0wMSJ9fQ'}
+< 200
+{
+ "data": [
+  {
+   "budget_id": "01a0fd20-df00-70d6-be9f-1d32c581b96c",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 10,
+    "currency": "KWD"
+   },
+   "spent": {
+    "amount_minor": 0,
+    "currency": "KWD"
+   },
+   "remaining": {
+    "amount_minor": 10,
+    "currency": "KWD"
+   },
+   "projected_end": {
+    "amount_minor": 0,
+    "currency": "KWD"
+   },
+   "over_limit": false,
+   "other_currencies": [
+    "EGP",
+    "USD"
+   ]
+  },
+  {
+   "budget_id": "01a0fd21-180c-77c5-aa1a-250f95e5288b",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 3000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 1000,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 2000,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 15500,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": [
+    "USD"
+   ]
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 2
+ }
+}
+
+CHECK [PASS] walk with limit 2 over 2 pages equals full list ['01a0fd20-7e56-7101-bd4b-4e2be46cac0a', '01a0fd20-851a-71b1-9169-c46d3d2b9ae5', '01a0fd20-df00-70d6-be9f-1d32c581b96c', '01a0fd21-180c-77c5-aa1a-250f95e5288b']
+GET /budget-progress params={'limit': 1}
+< 200
+{
+ "data": [
+  {
+   "budget_id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 600000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 1000,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 599000,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 15500,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": [
+    "USD"
+   ]
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJrIjoiMDgwYmIyMTg1NGQ0NjU1MCIsInAiOnsidmFsdWUiOiIyMDI2LTEwLTAyIDE0OjU5OjIwLjc1NjQ0NSswMDowMCIsImlkIjoiMDFhMGZkMjAtN2U1Ni03MTAxLWJkNGItNGUyYmU0NmNhYzBhIiwicGVyaW9kX3N0YXJ0IjoiMjAyNi0xMC0wMSJ9fQ",
+  "has_more": true,
+  "limit": 1
+ }
+}
+
+GET /budget-progress params={'limit': 1, 'cursor': 'eyJrIjoiMDgwYmIyMTg1NGQ0NjU1MCIsInAiOnsidmFsdWUiOiIyMDI2LTEwLTAyIDE0OjU5OjIwLjc1NjQ0NSswMDowMCIsImlkIjoiMDFhMGZkMjAtN2U1Ni03MTAxLWJkNGItNGUyYmU0NmNhYzBhIiwicGVyaW9kX3N0YXJ0IjoiMjAyNi0xMC0wMSJ9fQ', 'date': '2026-09-15'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-cursor",
+ "title": "Invalid cursor",
+ "status": 400,
+ "detail": "The page cursor is not valid. Start again from the first page.",
+ "code": "INVALID_CURSOR",
+ "request_id": "01a0fd21-64c1-70e6-a934-db9c98d26804"
+}
+
+CHECK [PASS] cursor + date in another period -> 400 INVALID_CURSOR 400 INVALID_CURSOR
+GET /budget-progress params={'limit': 1, 'cursor': 'eyJrIjoiMDgwYmIyMTg1NGQ0NjU1MCIsInAiOnsidmFsdWUiOiIyMDI2LTEwLTAyIDE0OjU5OjIwLjc1NjQ0NSswMDowMCIsImlkIjoiMDFhMGZkMjAtN2U1Ni03MTAxLWJkNGItNGUyYmU0NmNhYzBhIiwicGVyaW9kX3N0YXJ0IjoiMjAyNi0xMC0wMSJ9fQ', 'date': '2026-10-20'}
+< 200
+{
+ "data": [
+  {
+   "budget_id": "01a0fd20-851a-71b1-9169-c46d3d2b9ae5",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 1000000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 5444,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 994556,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 84382,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": [
+    "USD"
+   ]
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJrIjoiMDgwYmIyMTg1NGQ0NjU1MCIsInAiOnsidmFsdWUiOiIyMDI2LTEwLTAyIDE0OjU5OjIyLjQ3Nzc1OCswMDowMCIsImlkIjoiMDFhMGZkMjAtODUxYS03MWIxLTkxNjktYzQ2ZDNkMmI5YWU1IiwicGVyaW9kX3N0YXJ0IjoiMjAyNi0xMC0wMSJ9fQ",
+  "has_more": true,
+  "limit": 1
+ }
+}
+
+CHECK [PASS] cursor + date in same period -> 200 200 None
+GET /budget-progress params={'cursor': 'garbage'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-cursor",
+ "title": "Invalid cursor",
+ "status": 400,
+ "detail": "The page cursor is not valid. Start again from the first page.",
+ "code": "INVALID_CURSOR",
+ "request_id": "01a0fd21-67c9-709f-8a45-b0bc305df3e1"
+}
+
+CHECK [PASS] garbage cursor -> 400 INVALID_CURSOR 
+GET /budget-progress params={'limit': 1, 'date': '2026-09-15'}
+< 200
+{
+ "data": [
+  {
+   "budget_id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+   "period": {
+    "start": "2026-09-01",
+    "end": "2026-09-30",
+    "days_in_period": 30,
+    "days_elapsed": null
+   },
+   "is_current": false,
+   "limit": {
+    "amount_minor": 600000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 3333,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 596667,
+    "currency": "EGP"
+   },
+   "projected_end": null,
+   "over_limit": false,
+   "other_currencies": []
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJrIjoiMDgwYmIyMTg1NGQ0NjU1MCIsInAiOnsidmFsdWUiOiIyMDI2LTEwLTAyIDE0OjU5OjIwLjc1NjQ0NSswMDowMCIsImlkIjoiMDFhMGZkMjAtN2U1Ni03MTAxLWJkNGItNGUyYmU0NmNhYzBhIiwicGVyaW9kX3N0YXJ0IjoiMjAyNi0wOS0wMSJ9fQ",
+  "has_more": true,
+  "limit": 1
+ }
+}
+
+GET /budget-progress params={'limit': 1, 'cursor': 'eyJrIjoiMDgwYmIyMTg1NGQ0NjU1MCIsInAiOnsidmFsdWUiOiIyMDI2LTEwLTAyIDE0OjU5OjIwLjc1NjQ0NSswMDowMCIsImlkIjoiMDFhMGZkMjAtN2U1Ni03MTAxLWJkNGItNGUyYmU0NmNhYzBhIiwicGVyaW9kX3N0YXJ0IjoiMjAyNi0wOS0wMSJ9fQ'}
+< 200
+{
+ "data": [
+  {
+   "budget_id": "01a0fd20-851a-71b1-9169-c46d3d2b9ae5",
+   "period": {
+    "start": "2026-09-01",
+    "end": "2026-09-30",
+    "days_in_period": 30,
+    "days_elapsed": null
+   },
+   "is_current": false,
+   "limit": {
+    "amount_minor": 1000000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 3333,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 996667,
+    "currency": "EGP"
+   },
+   "projected_end": null,
+   "over_limit": false,
+   "other_currencies": []
+  }
+ ],
+ "meta": {
+  "next_cursor": "eyJrIjoiMDgwYmIyMTg1NGQ0NjU1MCIsInAiOnsidmFsdWUiOiIyMDI2LTEwLTAyIDE0OjU5OjIyLjQ3Nzc1OCswMDowMCIsImlkIjoiMDFhMGZkMjAtODUxYS03MWIxLTkxNjktYzQ2ZDNkMmI5YWU1IiwicGVyaW9kX3N0YXJ0IjoiMjAyNi0wOS0wMSJ9fQ",
+  "has_more": true,
+  "limit": 1
+ }
+}
+
+CHECK [PASS] Sep cursor without date keeps Sep period 200 [{'budget_id': '01a0fd20-851a-71b1-9169-c46d3d2b9ae5', 'period': {'start': '2026-09-01', 'end': '2026-09-30', 'days_in_period': 30, 'days_elapsed': None}, 'is_current': False, 'limit': {'amount_minor': 1000000, 'currency': 'EGP'}, 'spent': {'amount_minor': 3333, 'currency': 'EGP'}, 'remaining': {'amount_minor': 996667, 'currency': 'EGP'}, 'projected_end': None, 'over_limit': False, 'other_currencies': []}]
+GET /budgets params={'cursor': 'eyJrIjoiMDgwYmIyMTg1NGQ0NjU1MCIsInAiOnsidmFsdWUiOiIyMDI2LTEwLTAyIDE0OjU5OjIwLjc1NjQ0NSswMDowMCIsImlkIjoiMDFhMGZkMjAtN2U1Ni03MTAxLWJkNGItNGUyYmU0NmNhYzBhIiwicGVyaW9kX3N0YXJ0IjoiMjAyNi0wOS0wMSJ9fQ'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-cursor",
+ "title": "Invalid cursor",
+ "status": 400,
+ "detail": "The page cursor is not valid. Start again from the first page.",
+ "code": "INVALID_CURSOR",
+ "request_id": "01a0fd21-6cc8-7104-874b-04f12faa25a6"
+}
+
+CHECK [PASS] progress cursor on /budgets -> INVALID_CURSOR 400 INVALID_CURSOR
+GET /budget-progress params={'filter[category_id]': '01a0fa05-c298-7250-b5b2-2c85cc436f70'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/filter-field-not-supported",
+ "title": "Filter field not supported",
+ "status": 400,
+ "detail": "This list cannot be filtered by that field.",
+ "code": "FILTER_FIELD_NOT_SUPPORTED",
+ "request_id": "01a0fd21-6e77-7320-a105-b57c1440ff9a"
+}
+
+CHECK [PASS] filter -> FILTER_FIELD_NOT_SUPPORTED 400 FILTER_FIELD_NOT_SUPPORTED
+GET /budget-progress params={'sort': 'amount_minor'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/sort-field-not-supported",
+ "title": "Sort field not supported",
+ "status": 400,
+ "detail": "This list cannot be sorted by that field.",
+ "code": "SORT_FIELD_NOT_SUPPORTED",
+ "request_id": "01a0fd21-6fbd-71d4-9d3c-ae0c9b0881cc"
+}
+
+CHECK [PASS] sort -> SORT_FIELD_NOT_SUPPORTED 400 SORT_FIELD_NOT_SUPPORTED
+GET /budgets params={'sort': '-created_at', 'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fd21-180c-77c5-aa1a-250f95e5288b",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 2,
+   "change_seq": 24,
+   "created_at": "2026-10-02T15:00:00.085493Z",
+   "updated_at": "2026-10-02T15:00:02.275412Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "period_type": "monthly",
+   "amount_minor": 3000,
+   "currency": "EGP",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd20-df00-70d6-be9f-1d32c581b96c",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 1,
+   "change_seq": 18,
+   "created_at": "2026-10-02T14:59:45.480660Z",
+   "updated_at": "2026-10-02T14:59:45.480660Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "period_type": "monthly",
+   "amount_minor": 10,
+   "currency": "KWD",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd20-9f1a-731d-b229-f5a045a0d151",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 3,
+   "change_seq": 20,
+   "created_at": "2026-10-02T14:59:29.120134Z",
+   "updated_at": "2026-10-02T14:59:48.212143Z",
+   "deleted_at": null,
+   "category_id": "01a0fd20-9abe-759e-a467-b5e60fc0420c",
+   "period_type": "monthly",
+   "amount_minor": 222,
+   "currency": "EGP",
+   "archived_at": "2026-10-02T14:59:45.874959Z"
+  },
+  {
+   "id": "01a0fd20-851a-71b1-9169-c46d3d2b9ae5",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 1,
+   "change_seq": 7,
+   "created_at": "2026-10-02T14:59:22.477758Z",
+   "updated_at": "2026-10-02T14:59:22.477758Z",
+   "deleted_at": null,
+   "category_id": null,
+   "period_type": "monthly",
+   "amount_minor": 1000000,
+   "currency": "EGP",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 5,
+   "change_seq": 17,
+   "created_at": "2026-10-02T14:59:20.756445Z",
+   "updated_at": "2026-10-02T14:59:43.087411Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "period_type": "monthly",
+   "amount_minor": 600000,
+   "currency": "EGP",
+   "archived_at": null
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] /budgets sort=-created_at reverses 200
+GET /budgets params={'limit': 0}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a0fd21-72a7-7324-a6bb-d2bb487c0661"
+}
+
+CHECK [PASS] limit=0 -> 400 INVALID_QUERY_PARAMETER 400 INVALID_QUERY_PARAMETER
+GET /budget-progress
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] B progress list has no A budgets 

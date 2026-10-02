@@ -5,6 +5,9 @@ use App\Modules\Admin\Infrastructure\AdminPersistenceServiceProvider;
 use App\Modules\Billing\Application\BillingServiceProvider;
 use App\Modules\Billing\Http\BillingHttpServiceProvider;
 use App\Modules\Billing\Infrastructure\BillingPersistenceServiceProvider;
+use App\Modules\Budgeting\Application\BudgetingServiceProvider;
+use App\Modules\Budgeting\Http\BudgetingHttpServiceProvider;
+use App\Modules\Budgeting\Infrastructure\BudgetingPersistenceServiceProvider;
 use App\Modules\Identity\Http\IdentityServiceProvider;
 use App\Modules\Identity\Infrastructure\IdentityPersistenceServiceProvider;
 use App\Modules\Sync\Http\SyncHttpServiceProvider;
@@ -26,6 +29,9 @@ return [
     WalletsPersistenceServiceProvider::class,
     WalletsServiceProvider::class,
     WalletsHttpServiceProvider::class,
+    BudgetingPersistenceServiceProvider::class,
+    BudgetingServiceProvider::class,
+    BudgetingHttpServiceProvider::class,
     SyncPersistenceServiceProvider::class,
     SyncHttpServiceProvider::class,
     AdminPersistenceServiceProvider::class,

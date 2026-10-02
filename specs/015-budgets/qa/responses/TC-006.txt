@@ -1,0 +1,149 @@
+===== TC-006 US1-7: another person's budget -> 404 everywhere, nothing overwritten 2026-10-02T14:59:32.291681Z
+
+GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd20-adfd-7210-b608-143882650eb8"
+}
+
+CHECK [PASS] B GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a -> 404 404 NOT_FOUND
+GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd20-af6a-728f-9818-f1eaaa53a800"
+}
+
+CHECK [PASS] B GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress -> 404 404 NOT_FOUND
+PUT /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 1, "currency": "EGP", "version": 1}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd20-b0cc-71e1-b22d-eafe5f136e28"
+}
+
+CHECK [PASS] B PUT /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a -> 404 404 NOT_FOUND
+PUT /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 1, "currency": "EGP", "version": 0}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd20-b2a4-701d-ba2e-985b6ca990b6"
+}
+
+CHECK [PASS] B PUT /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a -> 404 404 NOT_FOUND
+PATCH /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"amount_minor": 1, "version": 1}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd20-b453-70fa-9841-5fa3b5a54ed3"
+}
+
+CHECK [PASS] B PATCH /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a -> 404 404 NOT_FOUND
+DELETE /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"version": 1}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd20-b5c0-72e9-8c7d-33512e9867b5"
+}
+
+CHECK [PASS] B DELETE /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a -> 404 404 NOT_FOUND
+POST /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/archive
+> {"version": 1}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd20-b732-725c-9797-cd3181786f24"
+}
+
+CHECK [PASS] B POST /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/archive -> 404 404 NOT_FOUND
+GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+< 200
+{
+ "data": {
+  "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-02T14:59:20.756445Z",
+  "updated_at": "2026-10-02T14:59:20.756445Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 600000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] A budget untouched 
+GET /budgets
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] B list has none of A's 
+PUT /budgets/01a0fd20-751a-75d9-b305-9872952c3fd4
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 600000, "currency": "EGP", "version": 0}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd20-bbbd-712c-ae50-6c3fe8cf748b"
+}
+
+CHECK [PASS] budget id held by a wallet -> 404 404 NOT_FOUND
+GET /budgets/not-a-uuid
+< 422
+{
+ "type": "http://saveme-backend.test/problems/invalid-id",
+ "title": "Invalid identifier",
+ "status": 422,
+ "detail": "The identifier is not valid.",
+ "code": "INVALID_ID",
+ "request_id": "01a0fd20-bd73-73d8-9a24-ec231dee6b7f"
+}
+
+CHECK [PASS] GET malformed id -> INVALID_ID 422 INVALID_ID

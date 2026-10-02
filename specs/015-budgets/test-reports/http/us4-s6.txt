@@ -1,0 +1,273 @@
+===== US4_Change,_archive_or_delete_a_budget_Scenario_6 US4 Change, archive or delete a budget — Scenario 6 2026-10-02T15:07:11.887447Z
+
+PUT /categories/01a0fd27-b08f-705d-87d9-0ef788cdbefc
+> {"kind": "expense", "name": "used live", "icon": "cup", "color": "#6D4C41", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-b08f-705d-87d9-0ef788cdbefc",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 27,
+  "created_at": "2026-10-02T15:07:12.389810Z",
+  "updated_at": "2026-10-02T15:07:12.389810Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "used live",
+  "icon": "cup",
+  "color": "#6D4C41",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+PUT /budgets/01a0fd27-b2dc-7411-86d8-f4c4869964eb
+> {"category_id": "01a0fd27-b08f-705d-87d9-0ef788cdbefc", "period_type": "monthly", "amount_minor": 5, "currency": "EGP", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-b2dc-7411-86d8-f4c4869964eb",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 28,
+  "created_at": "2026-10-02T15:07:12.969628Z",
+  "updated_at": "2026-10-02T15:07:12.969628Z",
+  "deleted_at": null,
+  "category_id": "01a0fd27-b08f-705d-87d9-0ef788cdbefc",
+  "period_type": "monthly",
+  "amount_minor": 5,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /categories/01a0fd27-b08f-705d-87d9-0ef788cdbefc
+< 200
+{
+ "data": {
+  "id": "01a0fd27-b08f-705d-87d9-0ef788cdbefc",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 27,
+  "created_at": "2026-10-02T15:07:12.389810Z",
+  "updated_at": "2026-10-02T15:07:12.389810Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "used live",
+  "icon": "cup",
+  "color": "#6D4C41",
+  "archived_at": null,
+  "in_use": true
+ },
+ "meta": {}
+}
+
+DELETE /categories/01a0fd27-b08f-705d-87d9-0ef788cdbefc
+> {"version": 1}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/category-in-use",
+ "title": "Category in use",
+ "status": 409,
+ "detail": "This category is used by your records, so it can't be deleted. Archive it instead.",
+ "code": "CATEGORY_IN_USE",
+ "request_id": "01a0fd27-b754-70ee-bd0c-d4d161d1734f"
+}
+
+PUT /categories/01a0fd27-b83c-73d3-82af-07caa93db8b0
+> {"kind": "expense", "name": "used archived", "icon": "cup", "color": "#6D4C41", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-b83c-73d3-82af-07caa93db8b0",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 29,
+  "created_at": "2026-10-02T15:07:14.292479Z",
+  "updated_at": "2026-10-02T15:07:14.292479Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "used archived",
+  "icon": "cup",
+  "color": "#6D4C41",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+PUT /budgets/01a0fd27-ba2a-708e-98a4-c4ac9620ca14
+> {"category_id": "01a0fd27-b83c-73d3-82af-07caa93db8b0", "period_type": "monthly", "amount_minor": 5, "currency": "EGP", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-ba2a-708e-98a4-c4ac9620ca14",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 30,
+  "created_at": "2026-10-02T15:07:14.797056Z",
+  "updated_at": "2026-10-02T15:07:14.797056Z",
+  "deleted_at": null,
+  "category_id": "01a0fd27-b83c-73d3-82af-07caa93db8b0",
+  "period_type": "monthly",
+  "amount_minor": 5,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+POST /budgets/01a0fd27-ba2a-708e-98a4-c4ac9620ca14/archive
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fd27-ba2a-708e-98a4-c4ac9620ca14",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 2,
+  "change_seq": 31,
+  "created_at": "2026-10-02T15:07:14.797056Z",
+  "updated_at": "2026-10-02T15:07:15.219314Z",
+  "deleted_at": null,
+  "category_id": "01a0fd27-b83c-73d3-82af-07caa93db8b0",
+  "period_type": "monthly",
+  "amount_minor": 5,
+  "currency": "EGP",
+  "archived_at": "2026-10-02T15:07:15.218262Z"
+ },
+ "meta": {}
+}
+
+GET /categories/01a0fd27-b83c-73d3-82af-07caa93db8b0
+< 200
+{
+ "data": {
+  "id": "01a0fd27-b83c-73d3-82af-07caa93db8b0",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 29,
+  "created_at": "2026-10-02T15:07:14.292479Z",
+  "updated_at": "2026-10-02T15:07:14.292479Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "used archived",
+  "icon": "cup",
+  "color": "#6D4C41",
+  "archived_at": null,
+  "in_use": true
+ },
+ "meta": {}
+}
+
+DELETE /categories/01a0fd27-b83c-73d3-82af-07caa93db8b0
+> {"version": 1}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/category-in-use",
+ "title": "Category in use",
+ "status": 409,
+ "detail": "This category is used by your records, so it can't be deleted. Archive it instead.",
+ "code": "CATEGORY_IN_USE",
+ "request_id": "01a0fd27-c027-72bf-bf22-3fcafa920948"
+}
+
+PUT /categories/01a0fd27-c141-76c5-8ae2-18da2d6889f7
+> {"kind": "expense", "name": "used tombstoned", "icon": "cup", "color": "#6D4C41", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-c141-76c5-8ae2-18da2d6889f7",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 32,
+  "created_at": "2026-10-02T15:07:16.551806Z",
+  "updated_at": "2026-10-02T15:07:16.551806Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "used tombstoned",
+  "icon": "cup",
+  "color": "#6D4C41",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+PUT /budgets/01a0fd27-c310-73b5-91b4-33512fe51727
+> {"category_id": "01a0fd27-c141-76c5-8ae2-18da2d6889f7", "period_type": "monthly", "amount_minor": 5, "currency": "EGP", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-c310-73b5-91b4-33512fe51727",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 33,
+  "created_at": "2026-10-02T15:07:17.149245Z",
+  "updated_at": "2026-10-02T15:07:17.149245Z",
+  "deleted_at": null,
+  "category_id": "01a0fd27-c141-76c5-8ae2-18da2d6889f7",
+  "period_type": "monthly",
+  "amount_minor": 5,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+DELETE /budgets/01a0fd27-c310-73b5-91b4-33512fe51727
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fd27-c310-73b5-91b4-33512fe51727",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 2,
+  "change_seq": 34,
+  "created_at": "2026-10-02T15:07:17.149245Z",
+  "updated_at": "2026-10-02T15:07:17.553325Z",
+  "deleted_at": "2026-10-02T15:07:17.552445Z",
+  "category_id": "01a0fd27-c141-76c5-8ae2-18da2d6889f7",
+  "period_type": "monthly",
+  "amount_minor": 5,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /categories/01a0fd27-c141-76c5-8ae2-18da2d6889f7
+< 200
+{
+ "data": {
+  "id": "01a0fd27-c141-76c5-8ae2-18da2d6889f7",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 32,
+  "created_at": "2026-10-02T15:07:16.551806Z",
+  "updated_at": "2026-10-02T15:07:16.551806Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "used tombstoned",
+  "icon": "cup",
+  "color": "#6D4C41",
+  "archived_at": null,
+  "in_use": true
+ },
+ "meta": {}
+}
+
+DELETE /categories/01a0fd27-c141-76c5-8ae2-18da2d6889f7
+> {"version": 1}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/category-in-use",
+ "title": "Category in use",
+ "status": 409,
+ "detail": "This category is used by your records, so it can't be deleted. Archive it instead.",
+ "code": "CATEGORY_IN_USE",
+ "request_id": "01a0fd27-c8dd-735c-afb8-d6fcf2d00b6d"
+}
+
+CHECK [PASS] all in_use true and 409 CATEGORY_IN_USE [('live', True, 409, 'CATEGORY_IN_USE'), ('archived', True, 409, 'CATEGORY_IN_USE'), ('tombstoned', True, 409, 'CATEGORY_IN_USE')]

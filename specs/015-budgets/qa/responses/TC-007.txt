@@ -1,0 +1,454 @@
+===== TC-007 US4-1/2/3: PATCH/PUT limit, stale 409, IMMUTABLE_FIELD, UNKNOWN_FIELD, unknown id 2026-10-02T14:59:36.580724Z
+
+PATCH /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"amount_minor": 700000, "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 2,
+  "change_seq": 14,
+  "created_at": "2026-10-02T14:59:20.756445Z",
+  "updated_at": "2026-10-02T14:59:36.967173Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 700000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] PATCH -> 200 v2 200
+PUT /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 600000, "currency": "EGP", "version": 2}
+< 200
+{
+ "data": {
+  "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 3,
+  "change_seq": 15,
+  "created_at": "2026-10-02T14:59:20.756445Z",
+  "updated_at": "2026-10-02T14:59:37.403014Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 600000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] budget PUT -> 200 200 None []
+CHECK [PASS] PUT -> v3 600000 
+PUT /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 1, "currency": "EGP", "version": 2}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fd20-c21c-704e-aa37-3d57ef731b26",
+ "current": {
+  "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 3,
+  "change_seq": 15,
+  "created_at": "2026-10-02T14:59:20.756445Z",
+  "updated_at": "2026-10-02T14:59:37.403014Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 600000,
+  "currency": "EGP",
+  "archived_at": null
+ }
+}
+
+CHECK [PASS] budget PUT -> 409 409 VERSION_CONFLICT []
+CHECK [PASS] stale PUT -> VERSION_CONFLICT with current 
+PATCH /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"amount_minor": 5, "version": 1}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fd20-c3dd-703e-a899-9d20e03c6f97",
+ "current": {
+  "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 3,
+  "change_seq": 15,
+  "created_at": "2026-10-02T14:59:20.756445Z",
+  "updated_at": "2026-10-02T14:59:37.403014Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 600000,
+  "currency": "EGP",
+  "archived_at": null
+ }
+}
+
+CHECK [PASS] stale PATCH -> 409 
+PUT /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f", "period_type": "monthly", "amount_minor": 600000, "currency": "EGP", "version": 3}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-c5a3-71a5-aeaf-4911b9a3451e",
+ "errors": [
+  {
+   "pointer": "/category_id",
+   "code": "IMMUTABLE_FIELD",
+   "detail": "This field cannot be changed."
+  }
+ ]
+}
+
+CHECK [PASS] change /category_id -> 422 IMMUTABLE_FIELD 422 [('/category_id', 'IMMUTABLE_FIELD')]
+PUT /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"category_id": null, "period_type": "monthly", "amount_minor": 600000, "currency": "EGP", "version": 3}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-c761-73c8-aadf-a1b09cb7cff1",
+ "errors": [
+  {
+   "pointer": "/category_id",
+   "code": "IMMUTABLE_FIELD",
+   "detail": "This field cannot be changed."
+  }
+ ]
+}
+
+CHECK [PASS] change /category_id -> 422 IMMUTABLE_FIELD 422 [('/category_id', 'IMMUTABLE_FIELD')]
+PUT /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 600000, "currency": "USD", "version": 3}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-c925-7364-ad42-5f06064a6f80",
+ "errors": [
+  {
+   "pointer": "/currency",
+   "code": "IMMUTABLE_FIELD",
+   "detail": "This field cannot be changed."
+  }
+ ]
+}
+
+CHECK [PASS] change /currency -> 422 IMMUTABLE_FIELD 422 [('/currency', 'IMMUTABLE_FIELD')]
+PUT /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "weekly", "amount_minor": 600000, "currency": "EGP", "version": 3}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-caa1-712a-aec0-af58e7d535be",
+ "errors": [
+  {
+   "pointer": "/period_type",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+
+CHECK [PASS] period_type weekly -> 422 INVALID_ENUM_VALUE /period_type 422 [('/period_type', 'INVALID_ENUM_VALUE')]
+PUT /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 600000, "currency": "EGP", "version": 3, "rollover": true}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-cc11-721c-9a25-5e26b3ae64d9",
+ "errors": [
+  {
+   "pointer": "/rollover",
+   "code": "UNKNOWN_FIELD",
+   "detail": "This field is not accepted here."
+  }
+ ]
+}
+
+CHECK [PASS] rollover -> UNKNOWN_FIELD 422 [('/rollover', 'UNKNOWN_FIELD')]
+PATCH /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"amount_minor": 5, "currency": "USD", "version": 3}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-cd7f-70e8-808f-8b3a4064564d",
+ "errors": [
+  {
+   "pointer": "/currency",
+   "code": "UNKNOWN_FIELD",
+   "detail": "This field is not accepted here."
+  }
+ ]
+}
+
+CHECK [PASS] PATCH currency -> UNKNOWN_FIELD 422 [('/currency', 'UNKNOWN_FIELD')]
+PATCH /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"amount_minor": 0, "version": 3}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-cf69-7186-9a93-cba95c0f9956",
+ "errors": [
+  {
+   "pointer": "/amount_minor",
+   "code": "OUT_OF_RANGE",
+   "detail": "This value is too short, too long, or outside the allowed range."
+  }
+ ]
+}
+
+CHECK [PASS] amount 0 -> 422 422 [('/amount_minor', 'OUT_OF_RANGE')]
+PATCH /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"amount_minor": 9007199254740992, "version": 3}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-d0eb-71b9-9f3b-20f05b0558ad",
+ "errors": [
+  {
+   "pointer": "/amount_minor",
+   "code": "OUT_OF_RANGE",
+   "detail": "This value is too short, too long, or outside the allowed range."
+  }
+ ]
+}
+
+CHECK [PASS] amount 9007199254740992 -> 422 422 [('/amount_minor', 'OUT_OF_RANGE')]
+PATCH /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"amount_minor": 1.5, "version": 3}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-d27f-7394-b711-24df76e4c138",
+ "errors": [
+  {
+   "pointer": "/amount_minor",
+   "code": "AMOUNT_NOT_INTEGER",
+   "detail": "Amounts must be whole numbers of minor units."
+  }
+ ]
+}
+
+CHECK [PASS] amount 1.5 -> 422 422 [('/amount_minor', 'AMOUNT_NOT_INTEGER')]
+PATCH /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"amount_minor": "10", "version": 3}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-d3ca-7086-bd5f-9d19b3efe007",
+ "errors": [
+  {
+   "pointer": "/amount_minor",
+   "code": "AMOUNT_NOT_INTEGER",
+   "detail": "Amounts must be whole numbers of minor units."
+  }
+ ]
+}
+
+CHECK [PASS] amount '10' -> 422 422 [('/amount_minor', 'AMOUNT_NOT_INTEGER')]
+PATCH /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"amount_minor": 9007199254740991, "version": 3}
+< 200
+{
+ "data": {
+  "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 4,
+  "change_seq": 16,
+  "created_at": "2026-10-02T14:59:20.756445Z",
+  "updated_at": "2026-10-02T14:59:42.703910Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 9007199254740991,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] amount 2^53-1 accepted 200
+PATCH /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"amount_minor": 600000, "version": 4}
+< 200
+{
+ "data": {
+  "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 5,
+  "change_seq": 17,
+  "created_at": "2026-10-02T14:59:20.756445Z",
+  "updated_at": "2026-10-02T14:59:43.087411Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 600000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+PUT /budgets/01a0fd20-d792-7575-b504-009b140f0527
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 600000, "currency": "egp", "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-d83c-709a-aaf2-2322395511b8",
+ "errors": [
+  {
+   "pointer": "/currency",
+   "code": "INVALID_CURRENCY",
+   "detail": "Use an uppercase three-letter currency code."
+  }
+ ]
+}
+
+CHECK [PASS] lowercase currency -> INVALID_CURRENCY [('/currency', 'INVALID_CURRENCY')]
+PUT /budgets/01a0fd20-d901-751c-abd5-f6708cb811b7
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 600000, "currency": "XYZ", "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-d9b1-733b-86d2-871641a663af",
+ "errors": [
+  {
+   "pointer": "/currency",
+   "code": "INVALID_CURRENCY",
+   "detail": "Use an uppercase three-letter currency code."
+  }
+ ]
+}
+
+CHECK [PASS] unknown currency XYZ -> INVALID_CURRENCY [('/currency', 'INVALID_CURRENCY')]
+PUT /budgets/01a0fd20-da63-7543-b6b0-90d28f98e09a
+> {"period_type": "monthly", "amount_minor": 5, "currency": "EGP", "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd20-db12-7104-ab79-9d8848f90cfb",
+ "errors": [
+  {
+   "pointer": "/category_id",
+   "code": "REQUIRED",
+   "detail": "This field is required."
+  }
+ ]
+}
+
+CHECK [PASS] missing category_id -> REQUIRED [('/category_id', 'REQUIRED')]
+PUT /budgets/01a0fd20-dbdf-72a6-9aa3-4980ab2a54c3
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 600000, "currency": "EGP", "version": 3}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd20-dcea-7292-9668-bc3fca9aa338"
+}
+
+CHECK [PASS] unknown id with version 3 -> 404 404
+PATCH /budgets/01a0fd20-dda3-74db-9cfd-9a4e59212abe
+> {"amount_minor": 5, "version": 1}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd20-de57-73c6-ab48-82cd1c6732df"
+}
+
+CHECK [PASS] PATCH unknown id -> 404 (never creates) 404
+PUT /budgets/01a0fd20-df00-70d6-be9f-1d32c581b96c
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 10, "currency": "KWD", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd20-df00-70d6-be9f-1d32c581b96c",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 1,
+  "change_seq": 18,
+  "created_at": "2026-10-02T14:59:45.480660Z",
+  "updated_at": "2026-10-02T14:59:45.480660Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 10,
+  "currency": "KWD",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] budget PUT -> 201 201 None []
+CHECK [PASS] any valid currency (KWD) accepted without a wallet 

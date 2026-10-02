@@ -1,0 +1,236 @@
+===== TC-021 Envelope: meta {} on singles, 405 with Allow, unauthenticated 401 2026-10-02T15:01:16.096725Z
+
+POST /budgets
+> {}
+< 405 Allow: GET, HEAD
+{
+ "type": "http://saveme-backend.test/problems/method-not-allowed",
+ "title": "Method not allowed",
+ "status": 405,
+ "detail": "This action is not available here.",
+ "code": "METHOD_NOT_ALLOWED",
+ "request_id": "01a0fd22-43f2-71e1-b8db-2eb91ebb7ff2"
+}
+
+CHECK [PASS] POST /budgets -> 405 Allow 405 GET, HEAD
+POST /budget-progress
+> {}
+< 405 Allow: GET, HEAD
+{
+ "type": "http://saveme-backend.test/problems/method-not-allowed",
+ "title": "Method not allowed",
+ "status": 405,
+ "detail": "This action is not available here.",
+ "code": "METHOD_NOT_ALLOWED",
+ "request_id": "01a0fd22-4548-716d-9428-945597be83e1"
+}
+
+CHECK [PASS] POST /budget-progress -> 405 405
+PUT /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress
+> {}
+< 405 Allow: GET, HEAD
+{
+ "type": "http://saveme-backend.test/problems/method-not-allowed",
+ "title": "Method not allowed",
+ "status": 405,
+ "detail": "This action is not available here.",
+ "code": "METHOD_NOT_ALLOWED",
+ "request_id": "01a0fd22-46b7-7147-ae78-3925edd308e2"
+}
+
+CHECK [PASS] PUT progress -> 405 405
+GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/archive
+< 405 Allow: POST
+{
+ "type": "http://saveme-backend.test/problems/method-not-allowed",
+ "title": "Method not allowed",
+ "status": 405,
+ "detail": "This action is not available here.",
+ "code": "METHOD_NOT_ALLOWED",
+ "request_id": "01a0fd22-483e-7188-b099-b158e2f66cee"
+}
+
+CHECK [PASS] GET archive -> 405 405
+GET /budgets
+< 401
+{
+ "type": "http://saveme-backend.test/problems/unauthenticated",
+ "title": "Unauthenticated",
+ "status": 401,
+ "detail": "Please sign in again.",
+ "code": "UNAUTHENTICATED",
+ "request_id": "01a0fd22-49b2-715c-8522-2ab51ccc587a"
+}
+
+CHECK [PASS] no credential -> 401 401
+GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+< 200
+{
+ "data": {
+  "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 5,
+  "change_seq": 17,
+  "created_at": "2026-10-02T14:59:20.756445Z",
+  "updated_at": "2026-10-02T14:59:43.087411Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 600000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a meta is {} 
+GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 600000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 1000,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 599000,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 15500,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": [
+   "USD"
+  ]
+ },
+ "meta": {}
+}
+
+CHECK [PASS] /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress meta is {} 
+GET /budgets
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 5,
+   "change_seq": 17,
+   "created_at": "2026-10-02T14:59:20.756445Z",
+   "updated_at": "2026-10-02T14:59:43.087411Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "period_type": "monthly",
+   "amount_minor": 600000,
+   "currency": "EGP",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd20-851a-71b1-9169-c46d3d2b9ae5",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 1,
+   "change_seq": 7,
+   "created_at": "2026-10-02T14:59:22.477758Z",
+   "updated_at": "2026-10-02T14:59:22.477758Z",
+   "deleted_at": null,
+   "category_id": null,
+   "period_type": "monthly",
+   "amount_minor": 1000000,
+   "currency": "EGP",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd20-9f1a-731d-b229-f5a045a0d151",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 3,
+   "change_seq": 20,
+   "created_at": "2026-10-02T14:59:29.120134Z",
+   "updated_at": "2026-10-02T14:59:48.212143Z",
+   "deleted_at": null,
+   "category_id": "01a0fd20-9abe-759e-a467-b5e60fc0420c",
+   "period_type": "monthly",
+   "amount_minor": 222,
+   "currency": "EGP",
+   "archived_at": "2026-10-02T14:59:45.874959Z"
+  },
+  {
+   "id": "01a0fd20-df00-70d6-be9f-1d32c581b96c",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 1,
+   "change_seq": 18,
+   "created_at": "2026-10-02T14:59:45.480660Z",
+   "updated_at": "2026-10-02T14:59:45.480660Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "period_type": "monthly",
+   "amount_minor": 10,
+   "currency": "KWD",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd21-180c-77c5-aa1a-250f95e5288b",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 2,
+   "change_seq": 24,
+   "created_at": "2026-10-02T15:00:00.085493Z",
+   "updated_at": "2026-10-02T15:00:02.275412Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "period_type": "monthly",
+   "amount_minor": 3000,
+   "currency": "EGP",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd21-839d-7411-89a2-693fc13e3ba9",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 1,
+   "change_seq": 27,
+   "created_at": "2026-10-02T15:00:27.690597Z",
+   "updated_at": "2026-10-02T15:00:27.690597Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0",
+   "period_type": "monthly",
+   "amount_minor": 100000,
+   "currency": "EGP",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd22-2eae-7330-88c3-bb7a48a6ae11",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 1,
+   "change_seq": 38,
+   "created_at": "2026-10-02T15:01:11.752350Z",
+   "updated_at": "2026-10-02T15:01:11.752350Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+   "period_type": "monthly",
+   "amount_minor": 100000,
+   "currency": "EGP",
+   "archived_at": null
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] /budgets meta is object 
+PUT text/plain < 415 {"type":"http:\/\/saveme-backend.test\/problems\/unsupported-media-type","title":"Unsupported media type","status":415,"detail":"Send the request body as JSON.","code":"UNSUPPORTED_MEDIA_TYPE","request_id":"01a0fd22-5332-700b-b52f-d7df03a0dacb"}
+CHECK [PASS] wrong content type -> 415 415

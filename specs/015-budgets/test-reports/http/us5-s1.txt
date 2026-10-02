@@ -1,0 +1,142 @@
+===== US5_Budget_Periods_follow_my_salary_day_Scenario_1 US5 Budget Periods follow my salary day — Scenario 1 2026-10-02T15:07:18.388159Z
+
+GET /me
+< 200
+{
+ "data": {
+  "account": {
+   "id": "01a0fd26-8176-713d-9ba5-b18abd23075e",
+   "email": "qa015-n-e1790953547@example.test",
+   "email_verified": true,
+   "state": "active",
+   "deletion_scheduled_for": null
+  },
+  "profile": {
+   "id": "01a0fd26-857e-709d-b296-215f8537c038",
+   "version": 1,
+   "change_seq": 1,
+   "created_at": "2026-10-02T15:05:55.327754Z",
+   "updated_at": "2026-10-02T15:05:55.327754Z",
+   "deleted_at": null,
+   "user_id": "01a0fd26-8176-713d-9ba5-b18abd23075e",
+   "display_name": null,
+   "locale": "en",
+   "timezone": "America/New_York",
+   "default_currency": "EGP",
+   "default_currency_locked": false,
+   "budget_period_start_day": 1,
+   "budget_period_start_day_from": null
+  }
+ },
+ "meta": {}
+}
+
+PUT /me/profile
+> {"display_name": null, "locale": "en", "timezone": "America/New_York", "default_currency": "EGP", "budget_period_start_day": 25, "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fd26-857e-709d-b296-215f8537c038",
+  "version": 2,
+  "change_seq": 4,
+  "created_at": "2026-10-02T15:05:55.327754Z",
+  "updated_at": "2026-10-02T15:07:19.253597Z",
+  "deleted_at": null,
+  "user_id": "01a0fd26-8176-713d-9ba5-b18abd23075e",
+  "display_name": null,
+  "locale": "en",
+  "timezone": "America/New_York",
+  "default_currency": "EGP",
+  "default_currency_locked": false,
+  "budget_period_start_day": 25,
+  "budget_period_start_day_from": "2026-10-25"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] N start day 25 
+PUT /budgets/01a0fd27-cd94-7052-97e1-caba112e5be1
+> {"category_id": null, "period_type": "monthly", "amount_minor": 10, "currency": "EGP", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-cd94-7052-97e1-caba112e5be1",
+  "user_id": "01a0fd26-8176-713d-9ba5-b18abd23075e",
+  "version": 1,
+  "change_seq": 5,
+  "created_at": "2026-10-02T15:07:19.819946Z",
+  "updated_at": "2026-10-02T15:07:19.819946Z",
+  "deleted_at": null,
+  "category_id": null,
+  "period_type": "monthly",
+  "amount_minor": 10,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd27-cd94-7052-97e1-caba112e5be1/progress params={'date': '2026-11-02'}
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd27-cd94-7052-97e1-caba112e5be1",
+  "period": {
+   "start": "2026-10-25",
+   "end": "2026-11-24",
+   "days_in_period": 31,
+   "days_elapsed": null
+  },
+  "is_current": false,
+  "limit": {
+   "amount_minor": 10,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 10,
+   "currency": "EGP"
+  },
+  "projected_end": null,
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] a date after it applies: 2026-10-25..2026-11-24 {"start": "2026-10-25", "end": "2026-11-24", "days_in_period": 31, "days_elapsed": null}
+GET /budgets/01a0fd27-cd94-7052-97e1-caba112e5be1/progress params={'date': '2027-01-02'}
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd27-cd94-7052-97e1-caba112e5be1",
+  "period": {
+   "start": "2026-12-25",
+   "end": "2027-01-24",
+   "days_in_period": 31,
+   "days_elapsed": null
+  },
+  "is_current": false,
+  "limit": {
+   "amount_minor": 10,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 10,
+   "currency": "EGP"
+  },
+  "projected_end": null,
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] 2027-01-02 -> 2026-12-25..2027-01-24 (same shape as spec 2026-10-02 -> 09-25..10-24) {"start": "2026-12-25", "end": "2027-01-24", "days_in_period": 31, "days_elapsed": null}

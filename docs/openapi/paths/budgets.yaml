@@ -1,0 +1,776 @@
+# Budgets (spec 015, brief B8). Every operation sits under /api/v1, inherits
+# the root's bearer scheme and runs through the shared runtime, so each also
+# documents the shared refusals it can produce.
+#
+# Frozen for the C8 client. A budget is personal and user-scoped: only its
+# owner reads or writes it or its progress, and anyone else gets 404
+# NOT_FOUND. No wallet role is involved and a budget never appears in a
+# wallet feed. Every write sits behind the verification gate (403
+# EMAIL_NOT_VERIFIED); reads are not.
+#
+# Budget Progress is a read model computed from the ledger on every read: the
+# owner's own live expenses (created_by = owner), in the budget's currency
+# and category (or every expense category), dated in the Budget Period, in
+# wallets the owner currently belongs to. Transfers, incomes and scheduled
+# occurrences never count; other currencies are named, never summed.
+#
+# New in v1.8. No new error code.
+
+/budgets:
+  get:
+    operationId: listBudgets
+    tags: [Budgeting]
+    summary: List the caller's own live budgets, archived included.
+    description: |
+      Returns every live budget the caller owns, archived ones included.
+      Tombstoned budgets are not listed (read one by id, or through the user
+      feed). Sorted by `created_at`, stabilised by `id`. No filters.
+    x-filterable: []
+    x-sortable: [created_at]
+    parameters:
+      - $ref: '../components/parameters.yaml#/components/parameters/Cursor'
+      - $ref: '../components/parameters.yaml#/components/parameters/Limit'
+      - $ref: '../components/parameters.yaml#/components/parameters/Filter'
+      - $ref: '../components/parameters.yaml#/components/parameters/Sort'
+      - &acceptLanguage
+        $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - &correlationId
+        $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - &clientPlatform
+        $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - &clientVersion
+        $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'A page of budgets. None is 200 with `data: []`, never 404.'
+        headers: &successHeaders
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Budget'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+            examples:
+              groceriesAndAll:
+                summary: A Groceries budget and an all-expenses budget
+                value:
+                  data:
+                    - &groceriesBudget
+                      id: 0192f7e0-0000-7000-8000-0000000000b1
+                      user_id: 0192f700-0000-7000-8000-000000000001
+                      version: 1
+                      change_seq: 412
+                      created_at: '2026-10-02T09:00:00.000000Z'
+                      updated_at: '2026-10-02T09:00:00.000000Z'
+                      deleted_at: null
+                      category_id: 0192f7a1-0000-7000-8000-0000000000c5
+                      period_type: monthly
+                      amount_minor: 600000
+                      currency: EGP
+                      archived_at: null
+                    - id: 0192f7e0-0000-7000-8000-0000000000b2
+                      user_id: 0192f700-0000-7000-8000-000000000001
+                      version: 2
+                      change_seq: 418
+                      created_at: '2026-10-02T09:05:00.000000Z'
+                      updated_at: '2026-10-02T10:00:00.000000Z'
+                      deleted_at: null
+                      category_id: null
+                      period_type: monthly
+                      amount_minor: 2500000
+                      currency: EGP
+                      archived_at: null
+                  meta:
+                    next_cursor: null
+                    has_more: false
+                    limit: 50
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/budgets/{id}:
+  get:
+    operationId: getBudget
+    tags: [Budgeting]
+    summary: Read one of the caller's own budgets.
+    description: |
+      Returned to its owner only, tombstone included (with `deleted_at` set).
+      Another person's budget, or any other kind of record, is 404 NOT_FOUND.
+    parameters:
+      - &budgetId
+        $ref: '../components/parameters.yaml#/components/parameters/ResourceId'
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: The budget.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: &budgetEnvelope
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Budget'
+            examples:
+              groceries:
+                summary: A Groceries budget
+                value:
+                  data: *groceriesBudget
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  put:
+    operationId: upsertBudget
+    tags: [Budgeting]
+    summary: Create or save the whole budget, addressed by the client-generated identifier.
+    description: |
+      A create, not a POST: the client generates the id offline and the same
+      write may arrive twice. `version` is omitted or 0 to create, and carries
+      the client's last-seen value to save. The caller becomes the owner.
+
+      Outcomes, in this order of precedence:
+
+      - not verified → 403 EMAIL_NOT_VERIFIED;
+      - malformed id → 422 INVALID_ID; malformed body → 422 VALIDATION_FAILED;
+      - id held by another person's budget, or by any other kind of record →
+        404 NOT_FOUND, nothing disclosed or overwritten;
+      - a version above 0 for an id that matches no record → 404 NOT_FOUND
+        (nothing to update; nothing is created);
+      - the budget is tombstoned → 409 VERSION_CONFLICT with the tombstone in
+        `current`, even for an identical body;
+      - body identical to the stored budget → 200, nothing changed (a replay);
+      - stale version → 409 VERSION_CONFLICT with the stored budget in
+        `current`; nothing merged;
+      - a different `category_id`, `currency` or `period_type` → 422 with
+        IMMUTABLE_FIELD at that member;
+      - on create, a category that is not a live expense category of the
+        caller's own or of the platform (archived and retired allowed) → 422
+        with INVALID_ENUM_VALUE at `/category_id`, one answer for unknown,
+        foreign, deleted and income categories;
+      - otherwise 201 (created) or 200 (saved), version + 1.
+
+      `category_id: null` is an all-expenses budget. `period_type` is
+      `monthly`, the only value in this release. `amount_minor` is the limit,
+      1 to 2^53 − 1 (OUT_OF_RANGE otherwise). Budgets may overlap: nothing is
+      unique per category or currency. Any member not listed (for example
+      `rollover`) is UNKNOWN_FIELD.
+    parameters:
+      - *budgetId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BudgetWrite'
+          examples:
+            createGroceries:
+              summary: Create a 6,000 EGP monthly Groceries budget
+              value:
+                category_id: 0192f7a1-0000-7000-8000-0000000000c5
+                period_type: monthly
+                amount_minor: 600000
+                currency: EGP
+                version: 0
+            createAllExpenses:
+              summary: Create an all-expenses budget
+              value:
+                category_id: null
+                period_type: monthly
+                amount_minor: 2500000
+                currency: EGP
+            raiseLimit:
+              summary: Raise the Groceries limit to 7,000 EGP
+              value:
+                category_id: 0192f7a1-0000-7000-8000-0000000000c5
+                period_type: monthly
+                amount_minor: 700000
+                currency: EGP
+                version: 1
+    responses:
+      '200':
+        description: Saved, or an identical replay returning the budget unchanged.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *budgetEnvelope
+      '201':
+        description: Created. The caller is the budget's owner.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *budgetEnvelope
+            examples:
+              created:
+                summary: The created Groceries budget
+                value:
+                  data: *groceriesBudget
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  patch:
+    operationId: patchBudget
+    tags: [Budgeting]
+    summary: Save the budget's limit, carrying the last-seen version.
+    description: |
+      `amount_minor` and `version` are required. The same outcomes as a whole
+      save apply — 200 with nothing changed when the sent limit already holds,
+      409 VERSION_CONFLICT on a stale version or a tombstone — except that a
+      PATCH never creates: an unknown id is 404 NOT_FOUND. `category_id`,
+      `currency` and `period_type` are not patchable and are refused as
+      UNKNOWN_FIELD.
+    parameters:
+      - *budgetId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BudgetPatch'
+          examples:
+            raiseLimit:
+              summary: Raise the limit to 7,000 EGP
+              value:
+                amount_minor: 700000
+                version: 1
+    responses:
+      '200':
+        description: Saved, or nothing to change.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *budgetEnvelope
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  delete:
+    operationId: deleteBudget
+    tags: [Budgeting]
+    summary: Delete one of the caller's own budgets. A tombstone, never a removal.
+    description: |
+      Tombstones the budget and returns the tombstone; it leaves both lists
+      and rides the user feed as a deletion. Deleting an already deleted
+      budget returns its tombstone with nothing changed, whatever version is
+      sent. A stale version on a live budget is 409 VERSION_CONFLICT.
+      Deletion is final: there is no restore. While the tombstone is kept,
+      the category it names stays in use.
+    parameters:
+      - *budgetId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BudgetVersionOnly'
+          examples:
+            delete:
+              summary: Delete at version 2
+              value:
+                version: 2
+    responses:
+      '200':
+        description: The tombstone.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *budgetEnvelope
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/budgets/{id}/archive:
+  post:
+    operationId: archiveBudget
+    tags: [Budgeting]
+    summary: Archive one of the caller's own budgets. It leaves the progress list; its record stays.
+    description: |
+      Sets `archived_at` and moves the version on. An archived budget is still
+      listed by `GET /budgets`, still on the user feed, and its progress can
+      still be read by id; `GET /budget-progress` omits it. Its limit stays
+      editable. Archiving an
+      archived budget returns it with nothing changed. Not reversible in this
+      release. A stale version, or a tombstoned budget, is 409
+      VERSION_CONFLICT. Idempotent by outcome; not an idempotency-keyed
+      operation.
+    parameters:
+      - *budgetId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BudgetVersionOnly'
+    responses:
+      '200':
+        description: The archived budget.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *budgetEnvelope
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/budgets/{id}/progress:
+  get:
+    operationId: getBudgetProgress
+    tags: [Budgeting]
+    summary: Read one budget's progress for the Budget Period containing a date.
+    description: |
+      Computed from the ledger on this read, never cached. Served for a live
+      budget of the caller's, archived included. A tombstoned budget, another
+      person's budget or any other record is 404 NOT_FOUND. `date` selects
+      the Budget Period (default: today in the caller's profile timezone);
+      a malformed `date` is 400 INVALID_QUERY_PARAMETER.
+    parameters:
+      - *budgetId
+      - &progressDate
+        $ref: '#/components/parameters/BudgetProgressDate'
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: The budget's progress for that Budget Period.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/BudgetProgress'
+            examples:
+              currentPeriod:
+                summary: Groceries, current period, on pace to go over
+                value:
+                  data: &groceriesProgress
+                    budget_id: 0192f7e0-0000-7000-8000-0000000000b1
+                    period:
+                      start: '2026-09-25'
+                      end: '2026-10-24'
+                      days_in_period: 30
+                      days_elapsed: 8
+                    is_current: true
+                    limit: { amount_minor: 600000, currency: EGP }
+                    spent: { amount_minor: 350000, currency: EGP }
+                    remaining: { amount_minor: 250000, currency: EGP }
+                    projected_end: { amount_minor: 1312500, currency: EGP }
+                    over_limit: false
+                    other_currencies: []
+                  meta: {}
+              pastPeriodOver:
+                summary: Groceries, a past period that went over, with USD spending not counted
+                value:
+                  data:
+                    budget_id: 0192f7e0-0000-7000-8000-0000000000b1
+                    period:
+                      start: '2026-08-25'
+                      end: '2026-09-24'
+                      days_in_period: 31
+                      days_elapsed: null
+                    is_current: false
+                    limit: { amount_minor: 600000, currency: EGP }
+                    spent: { amount_minor: 650000, currency: EGP }
+                    remaining: { amount_minor: -50000, currency: EGP }
+                    projected_end: null
+                    over_limit: true
+                    other_currencies: [USD]
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/budget-progress:
+  get:
+    operationId: listBudgetProgress
+    tags: [Budgeting]
+    summary: List the progress of every active budget of the caller's for the Budget Period containing a date.
+    description: |
+      One entry per live, non-archived budget of the caller's, for the Budget
+      Period containing `date` (default: today in the caller's profile
+      timezone). Every entry of a page shares that Budget Period. Computed
+      from the ledger on this read, never cached. Sorted by the budget's
+      `created_at`, stabilised by its id; no filters and no other sort. A
+      malformed `date` is 400 INVALID_QUERY_PARAMETER.
+
+      The first page fixes the Budget Period and its cursor carries it: later
+      pages of the walk use that period even if the day changes meanwhile. A
+      cursor sent with a `date` in another Budget Period is 400
+      INVALID_CURSOR.
+
+      The percentage is not returned: derive `spent / limit` on the client for
+      display. Present the figures neutrally; colour is the client's choice.
+    x-filterable: []
+    x-sortable: []
+    parameters:
+      - *progressDate
+      - $ref: '../components/parameters.yaml#/components/parameters/Cursor'
+      - $ref: '../components/parameters.yaml#/components/parameters/Limit'
+      - $ref: '../components/parameters.yaml#/components/parameters/Filter'
+      - $ref: '../components/parameters.yaml#/components/parameters/Sort'
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: 'A page of progress entries. No active budget is 200 with `data: []`.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/BudgetProgress'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+            examples:
+              home:
+                summary: Two active budgets in the current period
+                value:
+                  data:
+                    - *groceriesProgress
+                    - budget_id: 0192f7e0-0000-7000-8000-0000000000b2
+                      period:
+                        start: '2026-09-25'
+                        end: '2026-10-24'
+                        days_in_period: 30
+                        days_elapsed: 8
+                      is_current: true
+                      limit: { amount_minor: 2500000, currency: EGP }
+                      spent: { amount_minor: 410000, currency: EGP }
+                      remaining: { amount_minor: 2090000, currency: EGP }
+                      projected_end: { amount_minor: 1537500, currency: EGP }
+                      over_limit: false
+                      other_currencies: []
+                  meta:
+                    next_cursor: null
+                    has_more: false
+                    limit: 50
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+components:
+  parameters:
+    BudgetProgressDate:
+      name: date
+      in: query
+      required: false
+      description: |
+        Any calendar date (`YYYY-MM-DD`, 1900-01-01 to 2999-12-31) inside the
+        wanted Budget Period. Absent means today in the caller's profile
+        timezone. Anything else is 400 INVALID_QUERY_PARAMETER.
+      schema:
+        type: string
+        format: date
+      examples:
+        today:
+          summary: Omitted — the current Budget Period
+          value: null
+        lastMonth:
+          summary: A day in an earlier Budget Period
+          value: '2026-09-10'
+
+  schemas:
+    PeriodType:
+      type: string
+      enum: [monthly]
+      description: The Budget Period type. Only `monthly` in this release; immutable after creation.
+
+    Budget:
+      description: |
+        One person's spending limit for one expense category (or all
+        expenses, `category_id: null`) per Budget Period, in one currency.
+        User-scoped and syncable; rides the owner's user feed as `budget`,
+        never a wallet feed.
+      allOf:
+        - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
+        - $ref: '../components/schemas.yaml#/components/schemas/UserScoped'
+        - type: object
+          required: [category_id, period_type, amount_minor, currency, archived_at]
+          properties:
+            category_id:
+              type: [string, 'null']
+              format: uuid
+              description: The budgeted expense category (the owner's or a platform one), or null for all expenses. Immutable.
+            period_type:
+              $ref: '#/components/schemas/PeriodType'
+            amount_minor:
+              type: integer
+              minimum: 1
+              maximum: 9007199254740991
+              description: The limit per Budget Period, in minor units of `currency`.
+            currency:
+              type: string
+              pattern: '^[A-Z]{3}$'
+              description: ISO 4217. Only spending in this currency counts. Immutable.
+            archived_at:
+              type: [string, 'null']
+              format: date-time
+              description: Read-only. When the budget was archived; null while active.
+
+    BudgetWrite:
+      type: object
+      description: |
+        The whole writable budget plus the last-seen version. `id` comes from
+        the path; the owner is the caller. `user_id`, `archived_at`,
+        `deleted_at`, `change_seq`, `created_at` and `updated_at` are
+        server-owned and refused with UNKNOWN_FIELD, as is anything not listed
+        (no `rollover` in this release).
+      required: [category_id, period_type, amount_minor, currency]
+      additionalProperties: false
+      properties:
+        category_id:
+          type: [string, 'null']
+          format: uuid
+        period_type:
+          $ref: '#/components/schemas/PeriodType'
+        amount_minor:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+        version:
+          type: integer
+          minimum: 0
+          description: The client's last-seen version. Omitted or 0 means create.
+
+    BudgetPatch:
+      type: object
+      description: The limit plus the last-seen version.
+      required: [amount_minor, version]
+      additionalProperties: false
+      properties:
+        amount_minor:
+          type: integer
+          minimum: 1
+          maximum: 9007199254740991
+        version:
+          type: integer
+          minimum: 1
+
+    BudgetVersionOnly:
+      type: object
+      required: [version]
+      additionalProperties: false
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          description: The client's last-seen version of the budget.
+
+    BudgetPeriod:
+      type: object
+      description: |
+        The Budget Period, as calendar dates (no timezone). It starts on the
+        owner's budget start day; when the start day changed, the period
+        under way at the change ends the day before the new day applies.
+      required: [start, end, days_in_period, days_elapsed]
+      additionalProperties: false
+      properties:
+        start:
+          type: string
+          format: date
+        end:
+          type: string
+          format: date
+          description: Inclusive.
+        days_in_period:
+          type: integer
+          minimum: 1
+        days_elapsed:
+          type: [integer, 'null']
+          minimum: 1
+          description: Days from `start` through today inclusive, when today (owner's timezone) is inside the period; null otherwise.
+
+    BudgetProgress:
+      type: object
+      description: |
+        A derived read model, never stored and never synced. Money members
+        share the budget's currency. `remaining` is `limit − spent` and is
+        negative when over. `over_limit` is true exactly when `spent > limit`.
+        `projected_end` is `spent` extrapolated linearly over the period at
+        the pace so far, rounded up to the minor unit; it is present for the
+        current period only, and null for past and future periods or when it
+        would exceed 2^53 − 1. No percentage: derive it on the client.
+      required: [budget_id, period, is_current, limit, spent, remaining, projected_end, over_limit, other_currencies]
+      additionalProperties: false
+      properties:
+        budget_id:
+          type: string
+          format: uuid
+        period:
+          $ref: '#/components/schemas/BudgetPeriod'
+        is_current:
+          type: boolean
+          description: True when the period contains today in the owner's profile timezone.
+        limit:
+          $ref: '../components/schemas.yaml#/components/schemas/Money'
+        spent:
+          $ref: '../components/schemas.yaml#/components/schemas/Money'
+        remaining:
+          $ref: '../components/schemas.yaml#/components/schemas/Money'
+        projected_end:
+          oneOf:
+            - $ref: '../components/schemas.yaml#/components/schemas/Money'
+            - type: 'null'
+        over_limit:
+          type: boolean
+        other_currencies:
+          type: array
+          description: Codes of other currencies in which matching spending exists in the period; never summed into `spent`. Sorted.
+          items:
+            type: string
+            pattern: '^[A-Z]{3}$'

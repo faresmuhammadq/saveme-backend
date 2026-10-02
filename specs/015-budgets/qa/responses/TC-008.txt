@@ -1,0 +1,313 @@
+===== TC-008 US4-4: archive one-way, repeat unchanged, leaves progress list, stays in list, limit editable 2026-10-02T14:59:45.513528Z
+
+POST /budgets/01a0fd20-9f1a-731d-b229-f5a045a0d151/archive
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fd20-9f1a-731d-b229-f5a045a0d151",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 2,
+  "change_seq": 19,
+  "created_at": "2026-10-02T14:59:29.120134Z",
+  "updated_at": "2026-10-02T14:59:45.876271Z",
+  "deleted_at": null,
+  "category_id": "01a0fd20-9abe-759e-a467-b5e60fc0420c",
+  "period_type": "monthly",
+  "amount_minor": 100,
+  "currency": "EGP",
+  "archived_at": "2026-10-02T14:59:45.874959Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] archive 200 archived_at set v2 200
+POST /budgets/01a0fd20-9f1a-731d-b229-f5a045a0d151/archive
+> {"version": 2}
+< 200
+{
+ "data": {
+  "id": "01a0fd20-9f1a-731d-b229-f5a045a0d151",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 2,
+  "change_seq": 19,
+  "created_at": "2026-10-02T14:59:29.120134Z",
+  "updated_at": "2026-10-02T14:59:45.876271Z",
+  "deleted_at": null,
+  "category_id": "01a0fd20-9abe-759e-a467-b5e60fc0420c",
+  "period_type": "monthly",
+  "amount_minor": 100,
+  "currency": "EGP",
+  "archived_at": "2026-10-02T14:59:45.874959Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] repeat archive unchanged 200
+POST /budgets/01a0fd20-9f1a-731d-b229-f5a045a0d151/archive
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fd20-9f1a-731d-b229-f5a045a0d151",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 2,
+  "change_seq": 19,
+  "created_at": "2026-10-02T14:59:29.120134Z",
+  "updated_at": "2026-10-02T14:59:45.876271Z",
+  "deleted_at": null,
+  "category_id": "01a0fd20-9abe-759e-a467-b5e60fc0420c",
+  "period_type": "monthly",
+  "amount_minor": 100,
+  "currency": "EGP",
+  "archived_at": "2026-10-02T14:59:45.874959Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] repeat archive with stale version: 200 unchanged (replay before stale) 200 None
+GET /budgets params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 5,
+   "change_seq": 17,
+   "created_at": "2026-10-02T14:59:20.756445Z",
+   "updated_at": "2026-10-02T14:59:43.087411Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "period_type": "monthly",
+   "amount_minor": 600000,
+   "currency": "EGP",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd20-851a-71b1-9169-c46d3d2b9ae5",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 1,
+   "change_seq": 7,
+   "created_at": "2026-10-02T14:59:22.477758Z",
+   "updated_at": "2026-10-02T14:59:22.477758Z",
+   "deleted_at": null,
+   "category_id": null,
+   "period_type": "monthly",
+   "amount_minor": 1000000,
+   "currency": "EGP",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd20-9f1a-731d-b229-f5a045a0d151",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 2,
+   "change_seq": 19,
+   "created_at": "2026-10-02T14:59:29.120134Z",
+   "updated_at": "2026-10-02T14:59:45.876271Z",
+   "deleted_at": null,
+   "category_id": "01a0fd20-9abe-759e-a467-b5e60fc0420c",
+   "period_type": "monthly",
+   "amount_minor": 100,
+   "currency": "EGP",
+   "archived_at": "2026-10-02T14:59:45.874959Z"
+  },
+  {
+   "id": "01a0fd20-df00-70d6-be9f-1d32c581b96c",
+   "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+   "version": 1,
+   "change_seq": 18,
+   "created_at": "2026-10-02T14:59:45.480660Z",
+   "updated_at": "2026-10-02T14:59:45.480660Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "period_type": "monthly",
+   "amount_minor": 10,
+   "currency": "KWD",
+   "archived_at": null
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] archived in /budgets 
+GET /budget-progress params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "budget_id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 600000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 600000,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": []
+  },
+  {
+   "budget_id": "01a0fd20-851a-71b1-9169-c46d3d2b9ae5",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 1000000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 1000000,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": []
+  },
+  {
+   "budget_id": "01a0fd20-df00-70d6-be9f-1d32c581b96c",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 10,
+    "currency": "KWD"
+   },
+   "spent": {
+    "amount_minor": 0,
+    "currency": "KWD"
+   },
+   "remaining": {
+    "amount_minor": 10,
+    "currency": "KWD"
+   },
+   "projected_end": {
+    "amount_minor": 0,
+    "currency": "KWD"
+   },
+   "over_limit": false,
+   "other_currencies": []
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] archived not in /budget-progress 
+GET /budgets/01a0fd20-9f1a-731d-b229-f5a045a0d151/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd20-9f1a-731d-b229-f5a045a0d151",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 100,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 100,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] archived progress by id 200 200
+PATCH /budgets/01a0fd20-9f1a-731d-b229-f5a045a0d151
+> {"amount_minor": 222, "version": 2}
+< 200
+{
+ "data": {
+  "id": "01a0fd20-9f1a-731d-b229-f5a045a0d151",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 3,
+  "change_seq": 20,
+  "created_at": "2026-10-02T14:59:29.120134Z",
+  "updated_at": "2026-10-02T14:59:48.212143Z",
+  "deleted_at": null,
+  "category_id": "01a0fd20-9abe-759e-a467-b5e60fc0420c",
+  "period_type": "monthly",
+  "amount_minor": 222,
+  "currency": "EGP",
+  "archived_at": "2026-10-02T14:59:45.874959Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] archived limit editable 200
+PUT /budgets/01a0fd20-9f1a-731d-b229-f5a045a0d151
+> {"category_id": "01a0fd20-9abe-759e-a467-b5e60fc0420c", "period_type": "monthly", "amount_minor": 222, "currency": "EGP", "version": 3}
+< 200
+{
+ "data": {
+  "id": "01a0fd20-9f1a-731d-b229-f5a045a0d151",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 3,
+  "change_seq": 20,
+  "created_at": "2026-10-02T14:59:29.120134Z",
+  "updated_at": "2026-10-02T14:59:48.212143Z",
+  "deleted_at": null,
+  "category_id": "01a0fd20-9abe-759e-a467-b5e60fc0420c",
+  "period_type": "monthly",
+  "amount_minor": 222,
+  "currency": "EGP",
+  "archived_at": "2026-10-02T14:59:45.874959Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] PUT on archived budget (identical) 200, archived_at kept 200

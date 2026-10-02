@@ -1,0 +1,96 @@
+===== US6_Budgets_sync_like_every_user_record_Scenario_1 US6 Budgets sync like every user record — Scenario 1 2026-10-02T15:07:29.249293Z
+
+POST /sync/batch
+> {"items": [{"type": "budget", "op": "upsert", "id": "01a0fd27-f461-754f-bc41-404081dc56cf", "data": {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 4321, "currency": "EGP", "version": 0}}, {"type": "budget", "op": "upsert", "id": "01a0fd27-f461-754f-bc41-404081dc56cf", "data": {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 4321, "currency": "USD", "version": 1}}]}
+< 200
+{
+ "data": [
+  {
+   "type": "budget",
+   "id": "01a0fd27-f461-754f-bc41-404081dc56cf",
+   "outcome": "applied",
+   "status": 201,
+   "record": {
+    "id": "01a0fd27-f461-754f-bc41-404081dc56cf",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 1,
+    "change_seq": 37,
+    "created_at": "2026-10-02T15:07:29.759253Z",
+    "updated_at": "2026-10-02T15:07:29.759253Z",
+    "deleted_at": null,
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "period_type": "monthly",
+    "amount_minor": 4321,
+    "currency": "EGP",
+    "archived_at": null
+   },
+   "problem": null
+  },
+  {
+   "type": "budget",
+   "id": "01a0fd27-f461-754f-bc41-404081dc56cf",
+   "outcome": "rejected",
+   "status": 422,
+   "record": null,
+   "problem": {
+    "type": "http://saveme-backend.test/problems/validation-failed",
+    "title": "Validation failed",
+    "status": 422,
+    "detail": "Some of the information sent is not valid. Each problem is listed.",
+    "code": "VALIDATION_FAILED",
+    "request_id": "01a0fd27-f506-70d6-8213-1b3fa1af31dd",
+    "errors": [
+     {
+      "pointer": "/currency",
+      "code": "IMMUTABLE_FIELD",
+      "detail": "This field cannot be changed."
+     }
+    ]
+   }
+  }
+ ],
+ "meta": {}
+}
+
+PUT /budgets/01a0fd27-f461-754f-bc41-4041b6aa47ac
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 4321, "currency": "EGP", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-f461-754f-bc41-4041b6aa47ac",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 38,
+  "created_at": "2026-10-02T15:07:30.284011Z",
+  "updated_at": "2026-10-02T15:07:30.284011Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 4321,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] create parity: 201 and same shape 
+PUT /budgets/01a0fd27-f461-754f-bc41-4041b6aa47ac
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 4321, "currency": "USD", "version": 1}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd27-f942-72a0-9ee0-e74fe8e1a5b8",
+ "errors": [
+  {
+   "pointer": "/currency",
+   "code": "IMMUTABLE_FIELD",
+   "detail": "This field cannot be changed."
+  }
+ ]
+}
+
+CHECK [PASS] refusal parity 

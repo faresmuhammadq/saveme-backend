@@ -1,0 +1,25 @@
+===== TC-002 US1-3: category_id null = all-expenses budget 2026-10-02T14:59:22.009970Z
+
+PUT /budgets/01a0fd20-851a-71b1-9169-c46d3d2b9ae5
+> {"category_id": null, "period_type": "monthly", "amount_minor": 1000000, "currency": "EGP", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd20-851a-71b1-9169-c46d3d2b9ae5",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 1,
+  "change_seq": 7,
+  "created_at": "2026-10-02T14:59:22.477758Z",
+  "updated_at": "2026-10-02T14:59:22.477758Z",
+  "deleted_at": null,
+  "category_id": null,
+  "period_type": "monthly",
+  "amount_minor": 1000000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] budget PUT -> 201 201 None []
+CHECK [PASS] category_id null stored 

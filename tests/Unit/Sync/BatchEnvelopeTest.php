@@ -72,7 +72,7 @@ test('type, op, id and data are required and checked', function () {
     expect(envelopeFaults(['items' => [[]]]))->toBe([
         ['/items/0/type', 'REQUIRED'], ['/items/0/op', 'REQUIRED'], ['/items/0/id', 'REQUIRED'], ['/items/0/data', 'REQUIRED'],
     ])
-        ->and(envelopeFaults(['items' => [batchItem(['type' => 'budget'])]]))->toBe([['/items/0/type', 'INVALID_ENUM_VALUE']])
+        ->and(envelopeFaults(['items' => [batchItem(['type' => 'goal'])]]))->toBe([['/items/0/type', 'INVALID_ENUM_VALUE']])
         ->and(envelopeFaults(['items' => [batchItem(['op' => 'merge'])]]))->toBe([['/items/0/op', 'INVALID_ENUM_VALUE']])
         ->and(envelopeFaults(['items' => [batchItem(['id' => 'nope'])]]))->toBe([['/items/0/id', 'INVALID_ID']])
         ->and(envelopeFaults(['items' => [batchItem(['id' => '0192f7a0-1c3d-4abc-9f01-2b3c4d5e6f70'])]]))->toBe([['/items/0/id', 'INVALID_ID']])

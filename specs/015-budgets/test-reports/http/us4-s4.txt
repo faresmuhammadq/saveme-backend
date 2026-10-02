@@ -1,0 +1,356 @@
+===== US4_Change,_archive_or_delete_a_budget_Scenario_4 US4 Change, archive or delete a budget — Scenario 4 2026-10-02T15:07:07.733830Z
+
+POST /budgets/01a0fd27-9394-7566-9a2b-f41419b89591/archive
+> {"version": 3}
+< 200
+{
+ "data": {
+  "id": "01a0fd27-9394-7566-9a2b-f41419b89591",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 4,
+  "change_seq": 25,
+  "created_at": "2026-10-02T15:07:04.931920Z",
+  "updated_at": "2026-10-02T15:07:08.200095Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 300,
+  "currency": "EGP",
+  "archived_at": "2026-10-02T15:07:08.199188Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] archived 
+POST /budgets/01a0fd27-9394-7566-9a2b-f41419b89591/archive
+> {"version": 4}
+< 200
+{
+ "data": {
+  "id": "01a0fd27-9394-7566-9a2b-f41419b89591",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 4,
+  "change_seq": 25,
+  "created_at": "2026-10-02T15:07:04.931920Z",
+  "updated_at": "2026-10-02T15:07:08.200095Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 300,
+  "currency": "EGP",
+  "archived_at": "2026-10-02T15:07:08.199188Z"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] again unchanged 
+GET /budget-progress params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "budget_id": "01a0fd26-c430-72b9-a70b-7452d91575d4",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 600000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 600000,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": []
+  },
+  {
+   "budget_id": "01a0fd26-c96f-7351-9813-e03f708871d6",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 900000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 9323,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 890677,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 144507,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": [
+    "USD"
+   ]
+  },
+  {
+   "budget_id": "01a0fd26-dbe0-74c6-85df-ba7fb2ec4e9d",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 10,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 10,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": []
+  },
+  {
+   "budget_id": "01a0fd26-ec18-7132-9336-cfd4e626d984",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 6000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 6500,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": -500,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 100750,
+    "currency": "EGP"
+   },
+   "over_limit": true,
+   "other_currencies": [
+    "USD"
+   ]
+  },
+  {
+   "budget_id": "01a0fd27-2f26-701a-894a-52c9abb3a429",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 10000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 1666,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 8334,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 25823,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": []
+  },
+  {
+   "budget_id": "01a0fd27-7778-753c-85b9-8e0c48f958aa",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 100000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 450,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 99550,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 6975,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": []
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] left progress list 
+GET /budgets params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fd26-c430-72b9-a70b-7452d91575d4",
+   "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+   "version": 1,
+   "change_seq": 6,
+   "created_at": "2026-10-02T15:06:11.807370Z",
+   "updated_at": "2026-10-02T15:06:11.807370Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "period_type": "monthly",
+   "amount_minor": 600000,
+   "currency": "EGP",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd26-c96f-7351-9813-e03f708871d6",
+   "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+   "version": 1,
+   "change_seq": 7,
+   "created_at": "2026-10-02T15:06:13.138186Z",
+   "updated_at": "2026-10-02T15:06:13.138186Z",
+   "deleted_at": null,
+   "category_id": null,
+   "period_type": "monthly",
+   "amount_minor": 900000,
+   "currency": "EGP",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd26-dbe0-74c6-85df-ba7fb2ec4e9d",
+   "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+   "version": 1,
+   "change_seq": 12,
+   "created_at": "2026-10-02T15:06:17.991717Z",
+   "updated_at": "2026-10-02T15:06:17.991717Z",
+   "deleted_at": null,
+   "category_id": "01a0fd26-d843-7117-8ab8-00b5585938cc",
+   "period_type": "monthly",
+   "amount_minor": 10,
+   "currency": "EGP",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd26-ec18-7132-9336-cfd4e626d984",
+   "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+   "version": 1,
+   "change_seq": 13,
+   "created_at": "2026-10-02T15:06:22.074946Z",
+   "updated_at": "2026-10-02T15:06:22.074946Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+   "period_type": "monthly",
+   "amount_minor": 6000,
+   "currency": "EGP",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd27-184e-7141-97ba-aa5e5938934b",
+   "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+   "version": 2,
+   "change_seq": 17,
+   "created_at": "2026-10-02T15:06:33.364267Z",
+   "updated_at": "2026-10-02T15:06:33.761827Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0",
+   "period_type": "monthly",
+   "amount_minor": 5,
+   "currency": "EGP",
+   "archived_at": "2026-10-02T15:06:33.760178Z"
+  },
+  {
+   "id": "01a0fd27-2f26-701a-894a-52c9abb3a429",
+   "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+   "version": 1,
+   "change_seq": 18,
+   "created_at": "2026-10-02T15:06:39.248722Z",
+   "updated_at": "2026-10-02T15:06:39.248722Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0",
+   "period_type": "monthly",
+   "amount_minor": 10000,
+   "currency": "EGP",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd27-7778-753c-85b9-8e0c48f958aa",
+   "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+   "version": 1,
+   "change_seq": 21,
+   "created_at": "2026-10-02T15:06:57.951711Z",
+   "updated_at": "2026-10-02T15:06:57.951711Z",
+   "deleted_at": null,
+   "category_id": "01a0fd27-74da-77ce-82ab-f9714309661d",
+   "period_type": "monthly",
+   "amount_minor": 100000,
+   "currency": "EGP",
+   "archived_at": null
+  },
+  {
+   "id": "01a0fd27-9394-7566-9a2b-f41419b89591",
+   "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+   "version": 4,
+   "change_seq": 25,
+   "created_at": "2026-10-02T15:07:04.931920Z",
+   "updated_at": "2026-10-02T15:07:08.200095Z",
+   "deleted_at": null,
+   "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+   "period_type": "monthly",
+   "amount_minor": 300,
+   "currency": "EGP",
+   "archived_at": "2026-10-02T15:07:08.199188Z"
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] in budget list 

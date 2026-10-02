@@ -1,0 +1,67 @@
+===== US4_Change,_archive_or_delete_a_budget_Scenario_1 US4 Change, archive or delete a budget — Scenario 1 2026-10-02T15:07:04.467803Z
+
+PUT /budgets/01a0fd27-9394-7566-9a2b-f41419b89591
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 100, "currency": "EGP", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-9394-7566-9a2b-f41419b89591",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 22,
+  "created_at": "2026-10-02T15:07:04.931920Z",
+  "updated_at": "2026-10-02T15:07:04.931920Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 100,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+PUT /budgets/01a0fd27-9394-7566-9a2b-f41419b89591
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 200, "currency": "EGP", "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fd27-9394-7566-9a2b-f41419b89591",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 2,
+  "change_seq": 23,
+  "created_at": "2026-10-02T15:07:04.931920Z",
+  "updated_at": "2026-10-02T15:07:05.301382Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 200,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] PUT -> v2 
+PATCH /budgets/01a0fd27-9394-7566-9a2b-f41419b89591
+> {"amount_minor": 300, "version": 2}
+< 200
+{
+ "data": {
+  "id": "01a0fd27-9394-7566-9a2b-f41419b89591",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 3,
+  "change_seq": 24,
+  "created_at": "2026-10-02T15:07:04.931920Z",
+  "updated_at": "2026-10-02T15:07:05.680558Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 300,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] PATCH -> v3 

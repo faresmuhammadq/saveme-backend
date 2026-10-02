@@ -20,8 +20,8 @@
     description: |
       Everything in the caller's own scope that changed after `cursor`, in the
       order it was committed: the profile, device sessions, the caller's own
-      categories (never platform categories) and the caller's own wallet
-      memberships. Later features add their types here inside v1; a client
+      categories (never platform categories), the caller's own wallet
+      memberships and, from v1.8, the caller's own budgets. Later features add their types here inside v1; a client
       skips any `type` it does not know.
 
       Each row is `{type, record}`, where `record` is exactly the resource the
@@ -271,6 +271,8 @@
       | `recurring_rule` | `upsert` | `PUT /wallets/{wallet_id}/recurring-rules/{id}` (v1.7) |
       | `recurring_rule` | `delete` | `DELETE /wallets/{wallet_id}/recurring-rules/{id}` (v1.7) |
       | `occurrence` | `upsert` | `PUT /wallets/{wallet_id}/occurrences/{id}` — confirm, skip or edit one; never creates (v1.7) |
+      | `budget` | `upsert` | `PUT /budgets/{id}` (v1.8) |
+      | `budget` | `delete` | `DELETE /budgets/{id}` (v1.8) |
 
       `data` is that write's body, verbatim. Archive, ownership transfer and
       partial (PATCH) edits are not batch operations; use their endpoints.
@@ -537,10 +539,11 @@ components:
           type: string
           description: |
             User feed: `profile`, `device_session`, `category`,
-            `wallet_member` (the caller's own memberships). Wallet feed:
+            `wallet_member` (the caller's own memberships), and from v1.8
+            `budget` (the caller's own budgets). Wallet feed:
             `wallet`, `wallet_member`, `category_reference`, `transaction`,
             and from v1.7 `recurring_rule`, `occurrence`.
-          enum: [profile, device_session, category, wallet_member, wallet, category_reference, transaction, recurring_rule, occurrence]
+          enum: [profile, device_session, category, wallet_member, wallet, category_reference, transaction, recurring_rule, occurrence, budget]
         record:
           anyOf:
             - $ref: './identity.yaml#/components/schemas/Profile'
@@ -552,6 +555,7 @@ components:
             - $ref: './transactions.yaml#/components/schemas/Transaction'
             - $ref: './recurring.yaml#/components/schemas/RecurringRule'
             - $ref: './recurring.yaml#/components/schemas/Occurrence'
+            - $ref: './budgets.yaml#/components/schemas/Budget'
 
     ChangeFeedMeta:
       type: object
@@ -602,11 +606,11 @@ components:
       properties:
         type:
           type: string
-          enum: [wallet, category, transaction, profile, recurring_rule, occurrence]
+          enum: [wallet, category, transaction, profile, recurring_rule, occurrence, budget]
         op:
           type: string
           enum: [upsert, delete, restore]
-          description: '`restore` is for `transaction` only; `delete` for `wallet`, `category`, `transaction` and `recurring_rule`; `profile` and `occurrence` take only `upsert`.'
+          description: '`restore` is for `transaction` only; `delete` for `wallet`, `category`, `transaction`, `recurring_rule` and `budget`; `profile` and `occurrence` take only `upsert`.'
         id:
           type: string
           format: uuid
@@ -627,6 +631,8 @@ components:
             - $ref: './recurring.yaml#/components/schemas/RecurringRuleWrite'
             - $ref: './recurring.yaml#/components/schemas/RuleVersionOnly'
             - $ref: './recurring.yaml#/components/schemas/OccurrenceWrite'
+            - $ref: './budgets.yaml#/components/schemas/BudgetWrite'
+            - $ref: './budgets.yaml#/components/schemas/BudgetVersionOnly'
 
     BatchItemResult:
       type: object
@@ -638,7 +644,7 @@ components:
       properties:
         type:
           type: string
-          enum: [wallet, category, transaction, profile, recurring_rule, occurrence]
+          enum: [wallet, category, transaction, profile, recurring_rule, occurrence, budget]
         id:
           type: string
           format: uuid
@@ -661,6 +667,7 @@ components:
             - $ref: './identity.yaml#/components/schemas/Profile'
             - $ref: './recurring.yaml#/components/schemas/RecurringRule'
             - $ref: './recurring.yaml#/components/schemas/Occurrence'
+            - $ref: './budgets.yaml#/components/schemas/Budget'
         problem:
           description: The single write's problem body when `conflict` or `rejected`; otherwise null. Pointers are rooted at the item's `data`.
           anyOf:

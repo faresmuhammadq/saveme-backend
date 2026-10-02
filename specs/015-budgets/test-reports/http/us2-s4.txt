@@ -1,0 +1,90 @@
+===== US2_See_how_far_into_my_budgets_I_am_Scenario_4 US2 See how far into my budgets I am — Scenario 4 2026-10-02T15:06:31.237985Z
+
+PUT /categories/01a0fd27-11c6-7471-a434-6dcc9fdf83bd
+> {"kind": "expense", "name": "own exp", "icon": "cup", "color": "#6D4C41", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-11c6-7471-a434-6dcc9fdf83bd",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 15,
+  "created_at": "2026-10-02T15:06:31.706916Z",
+  "updated_at": "2026-10-02T15:06:31.706916Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "own exp",
+  "icon": "cup",
+  "color": "#6D4C41",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fd26-afc1-7741-b49d-ddc54f8712f7/transactions/01a0fd27-13d7-75c5-b1ec-2cc466b275dc
+> {"kind": "expense", "date": "2026-10-01", "amount_minor": 7, "currency": "EGP", "category_id": "01a0fd27-11c6-7471-a434-6dcc9fdf83bd", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-13d7-75c5-b1ec-2cc466b275dc",
+  "wallet_id": "01a0fd26-afc1-7741-b49d-ddc54f8712f7",
+  "version": 1,
+  "change_seq": 22,
+  "created_at": "2026-10-02T15:06:32.340356Z",
+  "updated_at": "2026-10-02T15:06:32.340356Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-10-01",
+  "amount_minor": 7,
+  "currency": "EGP",
+  "category_id": "01a0fd27-11c6-7471-a434-6dcc9fdf83bd",
+  "counter_wallet_id": null,
+  "description": "E2E",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd26-c96f-7351-9813-e03f708871d6/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd26-c96f-7351-9813-e03f708871d6",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 900000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 7173,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 892827,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 111182,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": [
+   "USD"
+  ]
+ },
+ "meta": {}
+}
+
+CHECK [PASS] all-expenses = 6500 + 666 + 7 {"amount_minor": 7173, "currency": "EGP"}

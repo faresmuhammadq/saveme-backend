@@ -1,0 +1,100 @@
+===== TC-001 US1-1/2: create category budget 201 v1; replay 200 unchanged; GET 2026-10-02T14:59:20.278124Z
+
+PUT /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 600000, "currency": "EGP", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-02T14:59:20.756445Z",
+  "updated_at": "2026-10-02T14:59:20.756445Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 600000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] budget PUT -> 201 201 None []
+CHECK [PASS] version 1 
+CHECK [PASS] owner user_id 
+CHECK [PASS] members ['amount_minor', 'archived_at', 'category_id', 'change_seq', 'created_at', 'currency', 'deleted_at', 'id', 'period_type', 'updated_at', 'user_id', 'version']
+CHECK [PASS] no rollover / percentage member 
+CHECK [PASS] meta {} 
+PUT /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 600000, "currency": "EGP", "version": 0}
+< 200
+{
+ "data": {
+  "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-02T14:59:20.756445Z",
+  "updated_at": "2026-10-02T14:59:20.756445Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 600000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] budget PUT -> 200 200 None []
+CHECK [PASS] replay unchanged version/change_seq 
+GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+< 200
+{
+ "data": {
+  "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-02T14:59:20.756445Z",
+  "updated_at": "2026-10-02T14:59:20.756445Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 600000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] GET 200 equals write 
+PUT /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 5, "currency": "EGP", "version": 0}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fd20-844b-7033-b58a-e095df793a57",
+ "current": {
+  "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-02T14:59:20.756445Z",
+  "updated_at": "2026-10-02T14:59:20.756445Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 600000,
+  "currency": "EGP",
+  "archived_at": null
+ }
+}
+
+CHECK [PASS] create-again with version 0 different body -> 409 409 VERSION_CONFLICT

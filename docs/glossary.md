@@ -122,6 +122,7 @@ The user's own preferences and display identity.
 - **Notes**: carries `locale` (`ar` | `en`) and `timezone`, an IANA name. The timezone is applied only in read models and reports, never at write time (P-12, ADR-0011). Numerals are Western (0–9) regardless of locale (P-14). The locale is also the default language of the person's mails, and of API messages when a signed-in request names none. Since spec 008 it also carries:
   - `default_currency`: an ISO 4217 code, EGP by default. It is only the default offered for new wallets; each wallet keeps its own currency. It is **locked** while the person has recorded a live transaction, and the profile reports this as `default_currency_locked` (derived, never stored).
   - `budget_period_start_day` (1–28) and `budget_period_start_day_from`: the day [Budget Periods](#budget-period) begin, and the calendar date that day applies from. Periods already begun are never re-cut.
+  - **Budget start day history** (Identity, server-internal, not on the wire): the dated list of start days behind `budget_period_start_day`, appended by `PUT /me/profile` when the day changes; read by Budgeting to cut Budget Periods.
   - Written as a whole with `PUT /me/profile` carrying `version`, under the syncable write rules.
   - The **user scope counter** is `users.change_seq`; a profile, device session, category or membership write takes the next value under the person's row lock (ADR-0008 rules 2-5, ADR-0017).
 
@@ -288,7 +289,20 @@ One person's spending limit for one category in a repeating period.
   - **A budget is personal, not a household limit.** It caps its owner's own spending. Two partners sharing a wallet each keep their own budgets, and a budget never appears in a wallet feed.
   - Actual spending is summed from postings for the category within the period's dates; Budgeting reads that total through the Wallets & Ledger query services, never through its models (P-02). Transfers are excluded, and totals are never read from `balance_minor` (P-05).
   - `monthly` is the only period type in MVP.
-  - **Open, and owned by the Budgeting spec — not decided here**: how a transaction in a *shared* wallet is attributed to one member's budget (by the owning user of the category it references, or by the transaction's `created_by`); which currency a budget is denominated in when its owner holds wallets in more than one; whether an `income` category may carry a budget; and uniqueness per (user, category, period). This entry deliberately states the vocabulary and stops short of those rules.
+  - **Answers (spec 015, [ADR-0019](adr/0019-budget-spending-by-author-computed-on-read.md))**: spending is attributed by the transaction's `created_by` (a recurring rule's transactions: its author), in wallets the owner currently belongs to; a budget has one immutable currency and other currencies are listed, never summed; it names an expense category (own or platform, archived allowed) or none for all expenses; budgets may overlap; an archived category keeps counting; progress is served by Budgeting, computed on read, and no notification is sent.
+  - Fields: `category_id` (nullable, immutable), `period_type` (`monthly`, immutable), `amount_minor` (the limit), `currency` (immutable), `archived_at`.
+
+### Budget Progress
+
+One budget's spent, remaining, over-limit flag and projection for one Budget Period.
+
+- **Context**: Budgeting
+- **Role**: derived read model
+- **Persistence**: derived — computed on every read from postings; never stored or synced
+- **Sync**: no
+- **States**: `single-state`
+- **Referenced by**: reports (B13)
+- **Notes**: money members are `{amount_minor, currency}`; `projected_end` exists for the current Budget Period only; no percentage is returned.
 
 ### Budget Period
 
@@ -300,7 +314,7 @@ The calendar window a budget applies to.
 - **Sync**: no
 - **States**: `single-state`
 - **Referenced by**: budget progress and reports
-- **Notes**: **the bare word "Period" is never an entity name.** This is the budget window; a subscription's window is the *billing period*, which is a pair of fields on [Subscription](#subscription). Period membership is decided by the transaction's **calendar date**, so every member of a shared wallet sees identical totals regardless of timezone (P-12). Per-month rows with rollover are deferred.
+- **Notes**: a Budget Period containing a date is derived from the owner's [budget start day history](#profile); a period already begun keeps its dates after a start day change, and a transitional period may be shorter or longer than a month. **the bare word "Period" is never an entity name.** This is the budget window; a subscription's window is the *billing period*, which is a pair of fields on [Subscription](#subscription). Period membership is decided by the transaction's **calendar date**, so every member of a shared wallet sees identical totals regardless of timezone (P-12). Per-month rows with rollover are deferred.
 
 ---
 

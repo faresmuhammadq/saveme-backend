@@ -1,0 +1,316 @@
+===== TC-020 US3-4 / FR-011: a rule's transaction counts for the rule's author; scheduled occurrences never count 2026-10-02T15:01:04.908415Z
+
+PUT /wallets/01a0fd22-170c-76f8-a08c-856f165fe40b
+> {"type": "cash", "name": "Rules", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd22-170c-76f8-a08c-856f165fe40b",
+  "wallet_id": "01a0fd22-170c-76f8-a08c-856f165fe40b",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T15:01:05.592636Z",
+  "updated_at": "2026-10-02T15:01:05.592636Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "Rules",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] wallet Rules EGP created 201
+PUT /wallets/01a0fd22-170c-76f8-a08c-856f165fe40b/recurring-rules/01a0fd22-2a78-720f-9ccf-1cfbda822fd6
+> {"preset": "custom", "status": "active", "kind": "expense", "amount_minor": 450, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f", "counter_wallet_id": null, "description": "Rent", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 1, "start_date": "2026-10-01", "end_date": null, "occurrence_count": null, "payout_round": null, "payout_category_id": null, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd22-2a78-720f-9ccf-1cfbda822fd6",
+  "wallet_id": "01a0fd22-170c-76f8-a08c-856f165fe40b",
+  "version": 1,
+  "change_seq": 5,
+  "created_at": "2026-10-02T15:01:10.851587Z",
+  "updated_at": "2026-10-02T15:01:10.851587Z",
+  "deleted_at": null,
+  "preset": "custom",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 450,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+  "counter_wallet_id": null,
+  "description": "Rent",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "monthly",
+  "interval": 1,
+  "anchor_day": 1,
+  "start_date": "2026-10-01",
+  "end_date": null,
+  "occurrence_count": null,
+  "payout_round": null,
+  "payout_category_id": null,
+  "timezone": "Africa/Cairo",
+  "created_by": "01a0fd20-4272-72a6-ab95-7efae02f8c32"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] rule created 201 None []
+PUT /budgets/01a0fd22-2eae-7330-88c3-bb7a48a6ae11
+> {"category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f", "period_type": "monthly", "amount_minor": 100000, "currency": "EGP", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd22-2eae-7330-88c3-bb7a48a6ae11",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 1,
+  "change_seq": 38,
+  "created_at": "2026-10-02T15:01:11.752350Z",
+  "updated_at": "2026-10-02T15:01:11.752350Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+  "period_type": "monthly",
+  "amount_minor": 100000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] budget PUT -> 201 201 None []
+PUT /budgets/01a0fd22-3206-70c9-a816-6587e798fad7
+> {"category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f", "period_type": "monthly", "amount_minor": 100000, "currency": "EGP", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd22-3206-70c9-a816-6587e798fad7",
+  "user_id": "01a0fd20-4a33-730e-96fa-50173982fab3",
+  "version": 1,
+  "change_seq": 9,
+  "created_at": "2026-10-02T15:01:12.598808Z",
+  "updated_at": "2026-10-02T15:01:12.598808Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+  "period_type": "monthly",
+  "amount_minor": 100000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] budget PUT -> 201 201 None []
+GET /budgets/01a0fd22-2eae-7330-88c3-bb7a48a6ae11/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd22-2eae-7330-88c3-bb7a48a6ae11",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 100000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 4444,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 95556,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 68882,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fd22-170c-76f8-a08c-856f165fe40b/occurrences params={'limit': 50}
+< 200
+{
+ "data": [
+  {
+   "id": "01a0fd22-2e73-7049-9bfc-b65d54590077",
+   "wallet_id": "01a0fd22-170c-76f8-a08c-856f165fe40b",
+   "version": 1,
+   "change_seq": 6,
+   "created_at": "2026-10-02T15:01:10.899805Z",
+   "updated_at": "2026-10-02T15:01:10.899805Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fd22-2a78-720f-9ccf-1cfbda822fd6",
+   "ordinal": 1,
+   "is_payout": false,
+   "scheduled_date": "2026-10-01",
+   "date": "2026-10-01",
+   "status": "scheduled",
+   "kind": "expense",
+   "amount_minor": 450,
+   "currency": "EGP",
+   "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+   "counter_wallet_id": null,
+   "description": "Rent",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  },
+  {
+   "id": "01a0fd22-2e74-737d-b86b-905bb3471ee4",
+   "wallet_id": "01a0fd22-170c-76f8-a08c-856f165fe40b",
+   "version": 1,
+   "change_seq": 7,
+   "created_at": "2026-10-02T15:01:10.899805Z",
+   "updated_at": "2026-10-02T15:01:10.899805Z",
+   "deleted_at": null,
+   "recurring_rule_id": "01a0fd22-2a78-720f-9ccf-1cfbda822fd6",
+   "ordinal": 2,
+   "is_payout": false,
+   "scheduled_date": "2026-11-01",
+   "date": "2026-11-01",
+   "status": "scheduled",
+   "kind": "expense",
+   "amount_minor": 450,
+   "currency": "EGP",
+   "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+   "counter_wallet_id": null,
+   "description": "Rent",
+   "memo": null,
+   "counterparty": null,
+   "edited": false,
+   "transaction_id": null,
+   "auto_confirm_refusal": null
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] scheduled occurrences exist 2
+CHECK [PASS] scheduled occurrence not counted (A spent unchanged = 4444) 4444
+PUT /wallets/01a0fd22-170c-76f8-a08c-856f165fe40b/occurrences/01a0fd22-2e73-7049-9bfc-b65d54590077
+> {"status": "confirmed", "date": "2026-10-01", "amount_minor": 450, "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f", "description": "Rent", "memo": null, "counterparty": null, "transaction_id": "01a0fd22-39e0-73f7-a5a5-ca3ee4c66e77", "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fd22-2e73-7049-9bfc-b65d54590077",
+  "wallet_id": "01a0fd22-170c-76f8-a08c-856f165fe40b",
+  "version": 2,
+  "change_seq": 9,
+  "created_at": "2026-10-02T15:01:10.899805Z",
+  "updated_at": "2026-10-02T15:01:14.676254Z",
+  "deleted_at": null,
+  "recurring_rule_id": "01a0fd22-2a78-720f-9ccf-1cfbda822fd6",
+  "ordinal": 1,
+  "is_payout": false,
+  "scheduled_date": "2026-10-01",
+  "date": "2026-10-01",
+  "status": "confirmed",
+  "kind": "expense",
+  "amount_minor": 450,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+  "counter_wallet_id": null,
+  "description": "Rent",
+  "memo": null,
+  "counterparty": null,
+  "edited": false,
+  "transaction_id": "01a0fd22-39e0-73f7-a5a5-ca3ee4c66e77",
+  "auto_confirm_refusal": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] B confirms occurrence 200 None []
+GET /budgets/01a0fd22-2eae-7330-88c3-bb7a48a6ae11/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd22-2eae-7330-88c3-bb7a48a6ae11",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 100000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 4894,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 95106,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 75857,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] counts for author A (4444+450) {"amount_minor": 4894, "currency": "EGP"}
+GET /budgets/01a0fd22-3206-70c9-a816-6587e798fad7/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd22-3206-70c9-a816-6587e798fad7",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 100000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 100000,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] not for confirmer B {"amount_minor": 0, "currency": "EGP"}

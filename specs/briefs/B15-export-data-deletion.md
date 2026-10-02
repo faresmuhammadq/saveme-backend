@@ -47,3 +47,8 @@ The brief predates decisions ratified since. These collide with it; the ratified
 - **Export recurring rules and their occurrences** with the person's wallets: each rule with its template, schedule, `timezone` and `created_by`; each occurrence with its key (`recurring_rule_id`, `scheduled_date`, `is_payout`), `status`, effective values and `transaction_id`. The `auto_confirm_from` column is internal and not exported. Tombstones are exported as tombstones.
 - **A departing author's rules.** A rule's author is `created_by`; automatic confirmation acts with the author's authority and is refused as `not_permitted` once they are no longer a member of the wallet (spec 014 R-13, open question 5). B15 decides whether such a rule is transferred, ended or left to be confirmed by hand; until then it stays live and surfaces the refusal.
 - Transactions an occurrence produced are exported as transactions; their `recurring_rule_id` and `occurrence_id` may point at tombstones that were purged after 90 days.
+
+## Inherited from B8 (spec 015)
+
+- **Export budgets** with the person's other user-scoped records (category, currency, limit, period type, `archived_at`; tombstones as tombstones). Progress is derived and not exported.
+- **Purge budgets and `budget_start_days` with the account.** `budget_start_days` cascades on the user row; budgets (no cross-module FK) must be deleted by B15 explicitly.

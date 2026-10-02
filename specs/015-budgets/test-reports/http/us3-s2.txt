@@ -1,0 +1,280 @@
+===== US3_Budgets_in_a_shared_wallet_stay_personal_Scenario_2 US3 Budgets in a shared wallet stay personal — Scenario 2 2026-10-02T15:06:42.206522Z
+
+PUT /categories/01a0fd27-3c9e-72f2-97e4-557ed43bf782
+> {"kind": "expense", "name": "B groceries", "icon": "cup", "color": "#6D4C41", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-3c9e-72f2-97e4-557ed43bf782",
+  "user_id": "01a0fd26-7a25-73e9-b0c7-01aa1f388138",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-02T15:06:42.648383Z",
+  "updated_at": "2026-10-02T15:06:42.648383Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "name": "B groceries",
+  "icon": "cup",
+  "color": "#6D4C41",
+  "archived_at": null,
+  "in_use": false
+ },
+ "meta": {}
+}
+
+PUT /budgets/01a0fd27-3e88-7362-b08b-c24a9073f26b
+> {"category_id": "01a0fd27-3c9e-72f2-97e4-557ed43bf782", "period_type": "monthly", "amount_minor": 10000, "currency": "EGP", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-3e88-7362-b08b-c24a9073f26b",
+  "user_id": "01a0fd26-7a25-73e9-b0c7-01aa1f388138",
+  "version": 1,
+  "change_seq": 7,
+  "created_at": "2026-10-02T15:06:43.177184Z",
+  "updated_at": "2026-10-02T15:06:43.177184Z",
+  "deleted_at": null,
+  "category_id": "01a0fd27-3c9e-72f2-97e4-557ed43bf782",
+  "period_type": "monthly",
+  "amount_minor": 10000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd27-2f26-701a-894a-52c9abb3a429/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd27-2f26-701a-894a-52c9abb3a429",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 10000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 2366,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 7634,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 36673,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd26-c96f-7351-9813-e03f708871d6/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd26-c96f-7351-9813-e03f708871d6",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 900000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 8873,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 891127,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 137532,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": [
+   "USD"
+  ]
+ },
+ "meta": {}
+}
+
+GET /wallets/01a0fd26-b5cd-76aa-a8c8-7d81f5f37c94/transactions/01a0fd27-34c7-7563-949a-4fd6d4a41263
+< 200
+{
+ "data": {
+  "id": "01a0fd27-34c7-7563-949a-4fd6d4a41263",
+  "wallet_id": "01a0fd26-b5cd-76aa-a8c8-7d81f5f37c94",
+  "version": 1,
+  "change_seq": 5,
+  "created_at": "2026-10-02T15:06:40.696141Z",
+  "updated_at": "2026-10-02T15:06:40.696141Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-10-01",
+  "amount_minor": 700,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0",
+  "counter_wallet_id": null,
+  "description": "E2E",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fd26-b5cd-76aa-a8c8-7d81f5f37c94/transactions/01a0fd27-34c7-7563-949a-4fd6d4a41263
+> {"kind": "expense", "date": "2026-10-01", "amount_minor": 700, "currency": "EGP", "category_id": "01a0fd27-3c9e-72f2-97e4-557ed43bf782", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a0fd27-34c7-7563-949a-4fd6d4a41263",
+  "wallet_id": "01a0fd26-b5cd-76aa-a8c8-7d81f5f37c94",
+  "version": 2,
+  "change_seq": 9,
+  "created_at": "2026-10-02T15:06:40.696141Z",
+  "updated_at": "2026-10-02T15:06:44.914891Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-10-01",
+  "amount_minor": 700,
+  "currency": "EGP",
+  "category_id": "01a0fd27-3c9e-72f2-97e4-557ed43bf782",
+  "counter_wallet_id": null,
+  "description": "E2E",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] B re-categorised 200
+GET /budgets/01a0fd27-2f26-701a-894a-52c9abb3a429/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd27-2f26-701a-894a-52c9abb3a429",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 10000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 1666,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 8334,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 25823,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] A category budget loses it 
+GET /budgets/01a0fd26-c96f-7351-9813-e03f708871d6/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd26-c96f-7351-9813-e03f708871d6",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 900000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 8873,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 891127,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 137532,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": [
+   "USD"
+  ]
+ },
+ "meta": {}
+}
+
+CHECK [PASS] A all-expenses keeps it 
+GET /budgets/01a0fd27-3e88-7362-b08b-c24a9073f26b/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd27-3e88-7362-b08b-c24a9073f26b",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 10000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 10000,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] not in B's budget on B's category 

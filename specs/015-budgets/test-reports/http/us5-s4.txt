@@ -1,0 +1,202 @@
+===== US5_Budget_Periods_follow_my_salary_day_Scenario_4 US5 Budget Periods follow my salary day — Scenario 4 2026-10-02T15:07:24.767363Z
+
+PUT /wallets/01a0fd27-e2df-7142-9e9e-d1ccbc807961
+> {"type": "cash", "name": "QA015 E2E", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-e2df-7142-9e9e-d1ccbc807961",
+  "wallet_id": "01a0fd27-e2df-7142-9e9e-d1ccbc807961",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T15:07:25.294997Z",
+  "updated_at": "2026-10-02T15:07:25.294997Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "QA015 E2E",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+PUT /budgets/01a0fd27-e54e-73f3-bf71-d3af6640f809
+> {"category_id": null, "period_type": "monthly", "amount_minor": 10, "currency": "EGP", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-e54e-73f3-bf71-d3af6640f809",
+  "user_id": "01a0fd26-858f-730c-b004-72c33e01c049",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T15:07:26.026843Z",
+  "updated_at": "2026-10-02T15:07:26.026843Z",
+  "deleted_at": null,
+  "category_id": null,
+  "period_type": "monthly",
+  "amount_minor": 10,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fd27-e2df-7142-9e9e-d1ccbc807961/transactions/01a0fd27-e7f5-75ae-8090-a091d3082871
+> {"kind": "expense", "date": "2026-09-30", "amount_minor": 11, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-e7f5-75ae-8090-a091d3082871",
+  "wallet_id": "01a0fd27-e2df-7142-9e9e-d1ccbc807961",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T15:07:26.752298Z",
+  "updated_at": "2026-10-02T15:07:26.752298Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-09-30",
+  "amount_minor": 11,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "E2E",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fd26-858f-730c-b004-72c33e01c049",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+GET /me
+< 200
+{
+ "data": {
+  "account": {
+   "id": "01a0fd26-8176-713d-9ba5-b18abd23075e",
+   "email": "qa015-n-e1790953547@example.test",
+   "email_verified": true,
+   "state": "active",
+   "deletion_scheduled_for": null
+  },
+  "profile": {
+   "id": "01a0fd26-857e-709d-b296-215f8537c038",
+   "version": 2,
+   "change_seq": 4,
+   "created_at": "2026-10-02T15:05:55.327754Z",
+   "updated_at": "2026-10-02T15:07:19.253597Z",
+   "deleted_at": null,
+   "user_id": "01a0fd26-8176-713d-9ba5-b18abd23075e",
+   "display_name": null,
+   "locale": "en",
+   "timezone": "America/New_York",
+   "default_currency": "EGP",
+   "default_currency_locked": false,
+   "budget_period_start_day": 25,
+   "budget_period_start_day_from": "2026-10-25"
+  }
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fd26-b3d4-7330-bd07-6819e867929d/transactions/01a0fd27-ec5b-719a-b52a-951381c83a74
+> {"kind": "expense", "date": "2026-09-30", "amount_minor": 13, "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-ec5b-719a-b52a-951381c83a74",
+  "wallet_id": "01a0fd26-b3d4-7330-bd07-6819e867929d",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T15:07:27.795370Z",
+  "updated_at": "2026-10-02T15:07:27.795370Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-09-30",
+  "amount_minor": 13,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "E2E",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fd26-8176-713d-9ba5-b18abd23075e",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd27-e54e-73f3-bf71-d3af6640f809/progress params={'date': '2026-09-30'}
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd27-e54e-73f3-bf71-d3af6640f809",
+  "period": {
+   "start": "2026-09-01",
+   "end": "2026-09-30",
+   "days_in_period": 30,
+   "days_elapsed": null
+  },
+  "is_current": false,
+  "limit": {
+   "amount_minor": 10,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 11,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": -1,
+   "currency": "EGP"
+  },
+  "projected_end": null,
+  "over_limit": true,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd27-cd94-7052-97e1-caba112e5be1/progress params={'date': '2026-09-30'}
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd27-cd94-7052-97e1-caba112e5be1",
+  "period": {
+   "start": "2026-09-01",
+   "end": "2026-09-30",
+   "days_in_period": 30,
+   "days_elapsed": null
+  },
+  "is_current": false,
+  "limit": {
+   "amount_minor": 10,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 13,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": -3,
+   "currency": "EGP"
+  },
+  "projected_end": null,
+  "over_limit": true,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] Cairo-default: in 09-01..09-30 
+CHECK [PASS] New York: in 09-01..09-30 

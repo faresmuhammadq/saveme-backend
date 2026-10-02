@@ -1,0 +1,738 @@
+===== US6_Budgets_sync_like_every_user_record_Scenario_3 US6 Budgets sync like every user record — Scenario 3 2026-10-02T15:07:31.585979Z
+
+GET /sync/user/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fd26-8ab5-7697-b25b-cde253370912",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T15:05:58.333854Z",
+    "updated_at": "2026-10-02T15:07:31.942438Z",
+    "deleted_at": null,
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T15:05:58.324782Z",
+    "last_used_at": "2026-10-02T15:07:31.940870Z",
+    "ended_at": null,
+    "current": true
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fd26-b186-7326-a7da-a3d75b5c2108",
+    "wallet_id": "01a0fd26-afc1-7741-b49d-ddc54f8712f7",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T15:06:06.598672Z",
+    "updated_at": "2026-10-02T15:06:06.598672Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "display_name": null,
+    "role": "owner"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fd26-b3a9-70e3-bd9f-cb60d7bd99dc",
+    "wallet_id": "01a0fd26-b1b2-7180-b3e2-44533c8107f8",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T15:06:07.146230Z",
+    "updated_at": "2026-10-02T15:06:07.146230Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "display_name": null,
+    "role": "owner"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fd26-b7a3-734d-af2f-c74b73c4a3c8",
+    "wallet_id": "01a0fd26-b5cd-76aa-a8c8-7d81f5f37c94",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T15:06:08.163910Z",
+    "updated_at": "2026-10-02T15:06:08.163910Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "display_name": null,
+    "role": "owner"
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd26-c430-72b9-a70b-7452d91575d4",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 1,
+    "change_seq": 6,
+    "created_at": "2026-10-02T15:06:11.807370Z",
+    "updated_at": "2026-10-02T15:06:11.807370Z",
+    "deleted_at": null,
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "period_type": "monthly",
+    "amount_minor": 600000,
+    "currency": "EGP",
+    "archived_at": null
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd26-c96f-7351-9813-e03f708871d6",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 1,
+    "change_seq": 7,
+    "created_at": "2026-10-02T15:06:13.138186Z",
+    "updated_at": "2026-10-02T15:06:13.138186Z",
+    "deleted_at": null,
+    "category_id": null,
+    "period_type": "monthly",
+    "amount_minor": 900000,
+    "currency": "EGP",
+    "archived_at": null
+   }
+  },
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fd26-cd4f-71c9-9ba4-7f48ddce14d0",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 2,
+    "change_seq": 9,
+    "created_at": "2026-10-02T15:06:14.131937Z",
+    "updated_at": "2026-10-02T15:06:14.589377Z",
+    "deleted_at": "2026-10-02T15:06:14.585861Z",
+    "kind": "expense",
+    "name": "to delete",
+    "icon": "cup",
+    "color": "#6D4C41",
+    "archived_at": null,
+    "in_use": false
+   }
+  },
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fd26-d843-7117-8ab8-00b5585938cc",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 2,
+    "change_seq": 11,
+    "created_at": "2026-10-02T15:06:16.921641Z",
+    "updated_at": "2026-10-02T15:06:17.332425Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "archived one",
+    "icon": "cup",
+    "color": "#6D4C41",
+    "archived_at": "2026-10-02T15:06:17.323408Z",
+    "in_use": true
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd26-dbe0-74c6-85df-ba7fb2ec4e9d",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 1,
+    "change_seq": 12,
+    "created_at": "2026-10-02T15:06:17.991717Z",
+    "updated_at": "2026-10-02T15:06:17.991717Z",
+    "deleted_at": null,
+    "category_id": "01a0fd26-d843-7117-8ab8-00b5585938cc",
+    "period_type": "monthly",
+    "amount_minor": 10,
+    "currency": "EGP",
+    "archived_at": null
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd26-ec18-7132-9336-cfd4e626d984",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 1,
+    "change_seq": 13,
+    "created_at": "2026-10-02T15:06:22.074946Z",
+    "updated_at": "2026-10-02T15:06:22.074946Z",
+    "deleted_at": null,
+    "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+    "period_type": "monthly",
+    "amount_minor": 6000,
+    "currency": "EGP",
+    "archived_at": null
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fd26-fb4a-705e-abd1-d96b95fddd5f",
+    "wallet_id": "01a0fd26-f997-7402-aae5-e300003e4089",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T15:06:25.483266Z",
+    "updated_at": "2026-10-02T15:06:25.483266Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "display_name": null,
+    "role": "owner"
+   }
+  },
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fd27-11c6-7471-a434-6dcc9fdf83bd",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 1,
+    "change_seq": 15,
+    "created_at": "2026-10-02T15:06:31.706916Z",
+    "updated_at": "2026-10-02T15:06:31.706916Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "own exp",
+    "icon": "cup",
+    "color": "#6D4C41",
+    "archived_at": null,
+    "in_use": true
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd27-184e-7141-97ba-aa5e5938934b",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 2,
+    "change_seq": 17,
+    "created_at": "2026-10-02T15:06:33.364267Z",
+    "updated_at": "2026-10-02T15:06:33.761827Z",
+    "deleted_at": null,
+    "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0",
+    "period_type": "monthly",
+    "amount_minor": 5,
+    "currency": "EGP",
+    "archived_at": "2026-10-02T15:06:33.760178Z"
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd27-2f26-701a-894a-52c9abb3a429",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 1,
+    "change_seq": 18,
+    "created_at": "2026-10-02T15:06:39.248722Z",
+    "updated_at": "2026-10-02T15:06:39.248722Z",
+    "deleted_at": null,
+    "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0",
+    "period_type": "monthly",
+    "amount_minor": 10000,
+    "currency": "EGP",
+    "archived_at": null
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fd27-68ef-734f-b1af-c76c25326773",
+    "wallet_id": "01a0fd27-6706-7683-bbe7-1f6cf22bf35f",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T15:06:53.551569Z",
+    "updated_at": "2026-10-02T15:06:53.551569Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "display_name": null,
+    "role": "owner"
+   }
+  },
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fd27-74da-77ce-82ab-f9714309661d",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 1,
+    "change_seq": 20,
+    "created_at": "2026-10-02T15:06:57.208737Z",
+    "updated_at": "2026-10-02T15:06:57.208737Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "rent",
+    "icon": "cup",
+    "color": "#6D4C41",
+    "archived_at": null,
+    "in_use": true
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd27-7778-753c-85b9-8e0c48f958aa",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 1,
+    "change_seq": 21,
+    "created_at": "2026-10-02T15:06:57.951711Z",
+    "updated_at": "2026-10-02T15:06:57.951711Z",
+    "deleted_at": null,
+    "category_id": "01a0fd27-74da-77ce-82ab-f9714309661d",
+    "period_type": "monthly",
+    "amount_minor": 100000,
+    "currency": "EGP",
+    "archived_at": null
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd27-9394-7566-9a2b-f41419b89591",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 5,
+    "change_seq": 26,
+    "created_at": "2026-10-02T15:07:04.931920Z",
+    "updated_at": "2026-10-02T15:07:10.189540Z",
+    "deleted_at": "2026-10-02T15:07:10.188117Z",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "period_type": "monthly",
+    "amount_minor": 300,
+    "currency": "EGP",
+    "archived_at": "2026-10-02T15:07:08.199188Z"
+   }
+  },
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fd27-b08f-705d-87d9-0ef788cdbefc",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 1,
+    "change_seq": 27,
+    "created_at": "2026-10-02T15:07:12.389810Z",
+    "updated_at": "2026-10-02T15:07:12.389810Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "used live",
+    "icon": "cup",
+    "color": "#6D4C41",
+    "archived_at": null,
+    "in_use": true
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd27-b2dc-7411-86d8-f4c4869964eb",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 1,
+    "change_seq": 28,
+    "created_at": "2026-10-02T15:07:12.969628Z",
+    "updated_at": "2026-10-02T15:07:12.969628Z",
+    "deleted_at": null,
+    "category_id": "01a0fd27-b08f-705d-87d9-0ef788cdbefc",
+    "period_type": "monthly",
+    "amount_minor": 5,
+    "currency": "EGP",
+    "archived_at": null
+   }
+  },
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fd27-b83c-73d3-82af-07caa93db8b0",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 1,
+    "change_seq": 29,
+    "created_at": "2026-10-02T15:07:14.292479Z",
+    "updated_at": "2026-10-02T15:07:14.292479Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "used archived",
+    "icon": "cup",
+    "color": "#6D4C41",
+    "archived_at": null,
+    "in_use": true
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd27-ba2a-708e-98a4-c4ac9620ca14",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 2,
+    "change_seq": 31,
+    "created_at": "2026-10-02T15:07:14.797056Z",
+    "updated_at": "2026-10-02T15:07:15.219314Z",
+    "deleted_at": null,
+    "category_id": "01a0fd27-b83c-73d3-82af-07caa93db8b0",
+    "period_type": "monthly",
+    "amount_minor": 5,
+    "currency": "EGP",
+    "archived_at": "2026-10-02T15:07:15.218262Z"
+   }
+  },
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fd27-c141-76c5-8ae2-18da2d6889f7",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 1,
+    "change_seq": 32,
+    "created_at": "2026-10-02T15:07:16.551806Z",
+    "updated_at": "2026-10-02T15:07:16.551806Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "used tombstoned",
+    "icon": "cup",
+    "color": "#6D4C41",
+    "archived_at": null,
+    "in_use": true
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd27-c310-73b5-91b4-33512fe51727",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 2,
+    "change_seq": 34,
+    "created_at": "2026-10-02T15:07:17.149245Z",
+    "updated_at": "2026-10-02T15:07:17.553325Z",
+    "deleted_at": "2026-10-02T15:07:17.552445Z",
+    "category_id": "01a0fd27-c141-76c5-8ae2-18da2d6889f7",
+    "period_type": "monthly",
+    "amount_minor": 5,
+    "currency": "EGP",
+    "archived_at": null
+   }
+  },
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fd26-7a18-71cf-9817-bed3d7faba1a",
+    "version": 3,
+    "change_seq": 36,
+    "created_at": "2026-10-02T15:05:52.408763Z",
+    "updated_at": "2026-10-02T15:07:23.681147Z",
+    "deleted_at": null,
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "display_name": null,
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": true,
+    "budget_period_start_day": 15,
+    "budget_period_start_day_from": "2026-10-15"
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd27-f461-754f-bc41-404081dc56cf",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 2,
+    "change_seq": 39,
+    "created_at": "2026-10-02T15:07:29.759253Z",
+    "updated_at": "2026-10-02T15:07:31.137508Z",
+    "deleted_at": "2026-10-02T15:07:31.136367Z",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "period_type": "monthly",
+    "amount_minor": 4321,
+    "currency": "EGP",
+    "archived_at": null
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd27-f461-754f-bc41-4041b6aa47ac",
+    "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+    "version": 2,
+    "change_seq": 40,
+    "created_at": "2026-10-02T15:07:30.284011Z",
+    "updated_at": "2026-10-02T15:07:31.550804Z",
+    "deleted_at": "2026-10-02T15:07:31.549831Z",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "period_type": "monthly",
+    "amount_minor": 4321,
+    "currency": "EGP",
+    "archived_at": null
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmQyNi03MjNkLTcwZDAtOGUzNS1hMmRkMzI1ZThmMjciLCJyIjoiMDFhMGZkMjYtNzIzZC03MGQwLThlMzUtYTJkZDMyNWU4ZjI3IiwicCI6NDB9VzCzGfh-PQMM8J1MluWkmQ"
+ }
+}
+
+GET /budgets/01a0fd26-c430-72b9-a70b-7452d91575d4
+< 200
+{
+ "data": {
+  "id": "01a0fd26-c430-72b9-a70b-7452d91575d4",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-02T15:06:11.807370Z",
+  "updated_at": "2026-10-02T15:06:11.807370Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 600000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd26-c96f-7351-9813-e03f708871d6
+< 200
+{
+ "data": {
+  "id": "01a0fd26-c96f-7351-9813-e03f708871d6",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 7,
+  "created_at": "2026-10-02T15:06:13.138186Z",
+  "updated_at": "2026-10-02T15:06:13.138186Z",
+  "deleted_at": null,
+  "category_id": null,
+  "period_type": "monthly",
+  "amount_minor": 900000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd26-dbe0-74c6-85df-ba7fb2ec4e9d
+< 200
+{
+ "data": {
+  "id": "01a0fd26-dbe0-74c6-85df-ba7fb2ec4e9d",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 12,
+  "created_at": "2026-10-02T15:06:17.991717Z",
+  "updated_at": "2026-10-02T15:06:17.991717Z",
+  "deleted_at": null,
+  "category_id": "01a0fd26-d843-7117-8ab8-00b5585938cc",
+  "period_type": "monthly",
+  "amount_minor": 10,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd26-ec18-7132-9336-cfd4e626d984
+< 200
+{
+ "data": {
+  "id": "01a0fd26-ec18-7132-9336-cfd4e626d984",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 13,
+  "created_at": "2026-10-02T15:06:22.074946Z",
+  "updated_at": "2026-10-02T15:06:22.074946Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+  "period_type": "monthly",
+  "amount_minor": 6000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd27-184e-7141-97ba-aa5e5938934b
+< 200
+{
+ "data": {
+  "id": "01a0fd27-184e-7141-97ba-aa5e5938934b",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 2,
+  "change_seq": 17,
+  "created_at": "2026-10-02T15:06:33.364267Z",
+  "updated_at": "2026-10-02T15:06:33.761827Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0",
+  "period_type": "monthly",
+  "amount_minor": 5,
+  "currency": "EGP",
+  "archived_at": "2026-10-02T15:06:33.760178Z"
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd27-2f26-701a-894a-52c9abb3a429
+< 200
+{
+ "data": {
+  "id": "01a0fd27-2f26-701a-894a-52c9abb3a429",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 18,
+  "created_at": "2026-10-02T15:06:39.248722Z",
+  "updated_at": "2026-10-02T15:06:39.248722Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0",
+  "period_type": "monthly",
+  "amount_minor": 10000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd27-7778-753c-85b9-8e0c48f958aa
+< 200
+{
+ "data": {
+  "id": "01a0fd27-7778-753c-85b9-8e0c48f958aa",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 21,
+  "created_at": "2026-10-02T15:06:57.951711Z",
+  "updated_at": "2026-10-02T15:06:57.951711Z",
+  "deleted_at": null,
+  "category_id": "01a0fd27-74da-77ce-82ab-f9714309661d",
+  "period_type": "monthly",
+  "amount_minor": 100000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd27-9394-7566-9a2b-f41419b89591
+< 200
+{
+ "data": {
+  "id": "01a0fd27-9394-7566-9a2b-f41419b89591",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 5,
+  "change_seq": 26,
+  "created_at": "2026-10-02T15:07:04.931920Z",
+  "updated_at": "2026-10-02T15:07:10.189540Z",
+  "deleted_at": "2026-10-02T15:07:10.188117Z",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 300,
+  "currency": "EGP",
+  "archived_at": "2026-10-02T15:07:08.199188Z"
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd27-b2dc-7411-86d8-f4c4869964eb
+< 200
+{
+ "data": {
+  "id": "01a0fd27-b2dc-7411-86d8-f4c4869964eb",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 28,
+  "created_at": "2026-10-02T15:07:12.969628Z",
+  "updated_at": "2026-10-02T15:07:12.969628Z",
+  "deleted_at": null,
+  "category_id": "01a0fd27-b08f-705d-87d9-0ef788cdbefc",
+  "period_type": "monthly",
+  "amount_minor": 5,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd27-ba2a-708e-98a4-c4ac9620ca14
+< 200
+{
+ "data": {
+  "id": "01a0fd27-ba2a-708e-98a4-c4ac9620ca14",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 2,
+  "change_seq": 31,
+  "created_at": "2026-10-02T15:07:14.797056Z",
+  "updated_at": "2026-10-02T15:07:15.219314Z",
+  "deleted_at": null,
+  "category_id": "01a0fd27-b83c-73d3-82af-07caa93db8b0",
+  "period_type": "monthly",
+  "amount_minor": 5,
+  "currency": "EGP",
+  "archived_at": "2026-10-02T15:07:15.218262Z"
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd27-c310-73b5-91b4-33512fe51727
+< 200
+{
+ "data": {
+  "id": "01a0fd27-c310-73b5-91b4-33512fe51727",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 2,
+  "change_seq": 34,
+  "created_at": "2026-10-02T15:07:17.149245Z",
+  "updated_at": "2026-10-02T15:07:17.553325Z",
+  "deleted_at": "2026-10-02T15:07:17.552445Z",
+  "category_id": "01a0fd27-c141-76c5-8ae2-18da2d6889f7",
+  "period_type": "monthly",
+  "amount_minor": 5,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd27-f461-754f-bc41-404081dc56cf
+< 200
+{
+ "data": {
+  "id": "01a0fd27-f461-754f-bc41-404081dc56cf",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 2,
+  "change_seq": 39,
+  "created_at": "2026-10-02T15:07:29.759253Z",
+  "updated_at": "2026-10-02T15:07:31.137508Z",
+  "deleted_at": "2026-10-02T15:07:31.136367Z",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 4321,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd27-f461-754f-bc41-4041b6aa47ac
+< 200
+{
+ "data": {
+  "id": "01a0fd27-f461-754f-bc41-4041b6aa47ac",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 2,
+  "change_seq": 40,
+  "created_at": "2026-10-02T15:07:30.284011Z",
+  "updated_at": "2026-10-02T15:07:31.550804Z",
+  "deleted_at": "2026-10-02T15:07:31.549831Z",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 4321,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] 13 budget rows, each equal to GET 

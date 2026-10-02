@@ -5,13 +5,13 @@ namespace App\Modules\Identity\Application\Profiles;
 use App\Modules\Identity\Application\Events;
 use App\Modules\Identity\Domain\Events\ProfileUpdated;
 use App\Modules\Identity\Domain\Ports\AttributeCipher;
+use App\Modules\Identity\Domain\Ports\BudgetStartDayHistory;
 use App\Modules\Identity\Domain\Ports\ProfileRepository;
 use App\Modules\Identity\Domain\Preferences\BudgetStartDay;
 use App\Modules\Identity\Domain\Preferences\ProfileRecord;
 use App\Modules\Identity\Domain\Refusals\DefaultCurrencyLocked;
 use App\Modules\Identity\Domain\Refusals\ProfileVersionConflict;
 use Closure;
-use DateTimeImmutable;
 use DateTimeZone;
 use Illuminate\Support\Facades\DB;
 
@@ -27,6 +27,7 @@ final class SaveProfile
         private readonly Profiles $profiles,
         private readonly ProfileRepository $repository,
         private readonly AttributeCipher $cipher,
+        private readonly BudgetStartDayHistory $startDays,
     ) {}
 
     /**
@@ -58,11 +59,13 @@ final class SaveProfile
             ARRAY_FILTER_USE_BOTH,
         ));
 
-        $startDayFrom = $values['budget_period_start_day'] === $current->budgetPeriodStartDay
-            ? $current->budgetPeriodStartDayFrom
-            : BudgetStartDay::appliesFrom($values['budget_period_start_day'], new DateTimeImmutable('now', new DateTimeZone($values['timezone'])));
+        $today = now()->toDateTimeImmutable()->setTimezone(new DateTimeZone($values['timezone']));
+        $startDayChanged = $values['budget_period_start_day'] !== $current->budgetPeriodStartDay;
+        $startDayFrom = $startDayChanged
+            ? BudgetStartDay::appliesFrom($values['budget_period_start_day'], $today)
+            : $current->budgetPeriodStartDayFrom;
 
-        DB::transaction(function () use ($userId, $values, $version, $startDayFrom, $changed, $present): void {
+        DB::transaction(function () use ($userId, $values, $version, $startDayFrom, $startDayChanged, $today, $current, $changed, $present): void {
             $written = $this->repository->saveIfVersion($userId, $version, [
                 'display_name_ciphertext' => $values['display_name'] === null ? null : $this->cipher->seal($userId, $values['display_name']),
                 'locale' => $values['locale'],
@@ -74,6 +77,11 @@ final class SaveProfile
 
             if (! $written) {
                 throw new ProfileVersionConflict($present($this->profiles->find($userId), $this->profiles->isCurrencyLocked($userId)));
+            }
+
+            if ($startDayChanged && $startDayFrom !== null) {
+                // The history moves with the profile (spec 015, FR-007): same unit of work.
+                $this->startDays->record($userId, $current->budgetPeriodStartDay, $values['budget_period_start_day'], $startDayFrom, $today->format('Y-m-d'));
             }
 
             event(new ProfileUpdated(...Events::stamp(), userId: $userId, changedFields: $changed));

@@ -1,0 +1,260 @@
+===== TC-017 US6-1/2: batch budget upsert/delete equal single writes 2026-10-02T15:00:46.445909Z
+
+POST /sync/batch
+> {"items": [{"type": "budget", "op": "upsert", "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0", "data": {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 1234, "currency": "EGP", "version": 0}}, {"type": "budget", "op": "upsert", "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0", "data": {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 1234, "currency": "EGP", "version": 0}}, {"type": "budget", "op": "upsert", "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0", "data": {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 99, "currency": "EGP", "version": 1}}, {"type": "budget", "op": "upsert", "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0", "data": {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 1234, "currency": "USD", "version": 2}}, {"type": "budget", "op": "upsert", "id": "01a0fd21-ceee-74a7-9ee6-dd35a1ba1bd5", "data": {"category_id": "01a0fa05-c344-7014-a053-5688a2879949", "period_type": "monthly", "amount_minor": 1234, "currency": "EGP", "version": 0}}, {"type": "budget", "op": "delete", "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0", "data": {"version": 2}}, {"type": "budget", "op": "delete", "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0", "data": {"version": 3}}, {"type": "budget", "op": "upsert", "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0", "data": {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 1234, "currency": "EGP", "version": 3}}]}
+< 200
+{
+ "data": [
+  {
+   "type": "budget",
+   "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0",
+   "outcome": "applied",
+   "status": 201,
+   "record": {
+    "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0",
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "version": 1,
+    "change_seq": 31,
+    "created_at": "2026-10-02T15:00:46.984896Z",
+    "updated_at": "2026-10-02T15:00:46.984896Z",
+    "deleted_at": null,
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "period_type": "monthly",
+    "amount_minor": 1234,
+    "currency": "EGP",
+    "archived_at": null
+   },
+   "problem": null
+  },
+  {
+   "type": "budget",
+   "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0",
+   "outcome": "applied",
+   "status": 200,
+   "record": {
+    "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0",
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "version": 1,
+    "change_seq": 31,
+    "created_at": "2026-10-02T15:00:46.984896Z",
+    "updated_at": "2026-10-02T15:00:46.984896Z",
+    "deleted_at": null,
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "period_type": "monthly",
+    "amount_minor": 1234,
+    "currency": "EGP",
+    "archived_at": null
+   },
+   "problem": null
+  },
+  {
+   "type": "budget",
+   "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0",
+   "outcome": "applied",
+   "status": 200,
+   "record": {
+    "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0",
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "version": 2,
+    "change_seq": 32,
+    "created_at": "2026-10-02T15:00:46.984896Z",
+    "updated_at": "2026-10-02T15:00:47.111729Z",
+    "deleted_at": null,
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "period_type": "monthly",
+    "amount_minor": 99,
+    "currency": "EGP",
+    "archived_at": null
+   },
+   "problem": null
+  },
+  {
+   "type": "budget",
+   "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0",
+   "outcome": "rejected",
+   "status": 422,
+   "record": null,
+   "problem": {
+    "type": "http://saveme-backend.test/problems/validation-failed",
+    "title": "Validation failed",
+    "status": 422,
+    "detail": "Some of the information sent is not valid. Each problem is listed.",
+    "code": "VALIDATION_FAILED",
+    "request_id": "01a0fd21-cfcf-719c-8103-1c8135e73330",
+    "errors": [
+     {
+      "pointer": "/currency",
+      "code": "IMMUTABLE_FIELD",
+      "detail": "This field cannot be changed."
+     }
+    ]
+   }
+  },
+  {
+   "type": "budget",
+   "id": "01a0fd21-ceee-74a7-9ee6-dd35a1ba1bd5",
+   "outcome": "rejected",
+   "status": 422,
+   "record": null,
+   "problem": {
+    "type": "http://saveme-backend.test/problems/validation-failed",
+    "title": "Validation failed",
+    "status": 422,
+    "detail": "Some of the information sent is not valid. Each problem is listed.",
+    "code": "VALIDATION_FAILED",
+    "request_id": "01a0fd21-cfcf-719c-8103-1c8135e73330",
+    "errors": [
+     {
+      "pointer": "/category_id",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+     }
+    ]
+   }
+  },
+  {
+   "type": "budget",
+   "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0",
+   "outcome": "applied",
+   "status": 200,
+   "record": {
+    "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0",
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "version": 3,
+    "change_seq": 33,
+    "created_at": "2026-10-02T15:00:46.984896Z",
+    "updated_at": "2026-10-02T15:00:47.427553Z",
+    "deleted_at": "2026-10-02T15:00:47.426075Z",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "period_type": "monthly",
+    "amount_minor": 99,
+    "currency": "EGP",
+    "archived_at": null
+   },
+   "problem": null
+  },
+  {
+   "type": "budget",
+   "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0",
+   "outcome": "applied",
+   "status": 200,
+   "record": {
+    "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0",
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "version": 3,
+    "change_seq": 33,
+    "created_at": "2026-10-02T15:00:46.984896Z",
+    "updated_at": "2026-10-02T15:00:47.427553Z",
+    "deleted_at": "2026-10-02T15:00:47.426075Z",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "period_type": "monthly",
+    "amount_minor": 99,
+    "currency": "EGP",
+    "archived_at": null
+   },
+   "problem": null
+  },
+  {
+   "type": "budget",
+   "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0",
+   "outcome": "conflict",
+   "status": 409,
+   "record": null,
+   "problem": {
+    "type": "http://saveme-backend.test/problems/version-conflict",
+    "title": "Version conflict",
+    "status": 409,
+    "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+    "code": "VERSION_CONFLICT",
+    "request_id": "01a0fd21-cfcf-719c-8103-1c8135e73330",
+    "current": {
+     "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0",
+     "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+     "version": 3,
+     "change_seq": 33,
+     "created_at": "2026-10-02T15:00:46.984896Z",
+     "updated_at": "2026-10-02T15:00:47.427553Z",
+     "deleted_at": "2026-10-02T15:00:47.426075Z",
+     "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+     "period_type": "monthly",
+     "amount_minor": 99,
+     "currency": "EGP",
+     "archived_at": null
+    }
+   }
+  }
+ ],
+ "meta": {}
+}
+
+CHECK [PASS] batch 200 200
+statuses [201, 200, 200, 422, 422, 200, 200, 409]
+CHECK [PASS] create 201 
+CHECK [PASS] replay 200 version 1 
+CHECK [PASS] update 200 v2 
+CHECK [PASS] immutable 422 IMMUTABLE_FIELD /currency 
+CHECK [PASS] income category 422 
+CHECK [PASS] delete 200 tombstone 
+CHECK [PASS] delete again 200 tombstone 
+CHECK [PASS] upsert tombstone 409 conflict 
+POST /sync/batch
+> {"items": [{"type": "budget", "op": "archive", "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0", "data": {"version": 3}}]}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd21-d488-7122-990f-2a8da1eb4fcd",
+ "errors": [
+  {
+   "pointer": "/items/0/op",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+
+CHECK [PASS] archive op -> envelope 422 INVALID_ENUM_VALUE /items/0/op 422 [('/items/0/op', 'INVALID_ENUM_VALUE')]
+POST /sync/batch
+> {"items": [{"type": "budget", "op": "upsert", "id": "01a0fd21-d5bc-775e-9103-f9fe08c8afba", "wallet_id": "01a0fd20-751a-75d9-b305-9872952c3fd4", "data": {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 1234, "currency": "EGP", "version": 0}}]}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd21-d6c4-7202-a8a4-577e4488cdb2",
+ "errors": [
+  {
+   "pointer": "/items/0/wallet_id",
+   "code": "UNKNOWN_FIELD",
+   "detail": "This field is not accepted here."
+  }
+ ]
+}
+
+CHECK [PASS] wallet_id on budget item -> 422 UNKNOWN_FIELD 422 [('/items/0/wallet_id', 'UNKNOWN_FIELD')]
+GET /budgets/01a0fd21-ceee-74a7-9ee6-dd34669f7ef0
+< 200
+{
+ "data": {
+  "id": "01a0fd21-ceee-74a7-9ee6-dd34669f7ef0",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 3,
+  "change_seq": 33,
+  "created_at": "2026-10-02T15:00:46.984896Z",
+  "updated_at": "2026-10-02T15:00:47.427553Z",
+  "deleted_at": "2026-10-02T15:00:47.426075Z",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 99,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] single read equals batch tombstone 

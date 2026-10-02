@@ -1,0 +1,141 @@
+===== TC-000-setup Seed people, sign in, wallets 2026-10-02T14:59:01.774657Z
+
+seed: {"a": {"id": "01a0fd20-4272-72a6-ab95-7efae02f8c32", "email": "qa015-a-1790953141@example.test"}, "b": {"id": "01a0fd20-4a33-730e-96fa-50173982fab3", "email": "qa015-b-1790953141@example.test"}, "u": {"id": "01a0fd20-4de7-73c1-b866-0dd58de04783", "email": "qa015-u-1790953141@example.test"}, "n": {"id": "01a0fd20-51e1-7216-9a12-61322d4c195b", "email": "qa015-n-1790953141@example.test"}, "x": {"id": "01a0fd20-55c7-729b-8962-11b5950d5cb5", "email": "qa015-x-1790953141@example.test"}, "platform_expense": ["01a0fa05-c298-7250-b5b2-2c85cc436f70", "01a0fa05-c2ac-7075-acc2-8c0416d6c75f", "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0"], "platform_income": "01a0fa05-c344-7014-a053-5688a2879949", "retired_platform": null}
+POST /auth/login
+> {"email": "qa015-a-1790953141@example.test", "password": "[redacted]", "device": {"session_id": "01a0fd20-5a33-7258-9f41-e3a2bdd1ce4e", "device_id": "qa015-a-1790953141", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login a 200
+POST /auth/login
+> {"email": "qa015-b-1790953141@example.test", "password": "[redacted]", "device": {"session_id": "01a0fd20-5fad-70b2-af8b-fbd0ee09b1ec", "device_id": "qa015-b-1790953141", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login b 200
+POST /auth/login
+> {"email": "qa015-u-1790953141@example.test", "password": "[redacted]", "device": {"session_id": "01a0fd20-6500-7571-8daf-bacd077d8e8b", "device_id": "qa015-u-1790953141", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login u 200
+POST /auth/login
+> {"email": "qa015-n-1790953141@example.test", "password": "[redacted]", "device": {"session_id": "01a0fd20-6a5f-7416-876c-cf41a447b014", "device_id": "qa015-n-1790953141", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login n 200
+POST /auth/login
+> {"email": "qa015-x-1790953141@example.test", "password": "[redacted]", "device": {"session_id": "01a0fd20-6fa4-7557-98d3-18c3a8ed9390", "device_id": "qa015-x-1790953141", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+CHECK [PASS] login x 200
+PUT /wallets/01a0fd20-751a-75d9-b305-9872952c3fd4
+> {"type": "cash", "name": "A cash", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd20-751a-75d9-b305-9872952c3fd4",
+  "wallet_id": "01a0fd20-751a-75d9-b305-9872952c3fd4",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T14:59:18.466618Z",
+  "updated_at": "2026-10-02T14:59:18.466618Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "A cash",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] wallet A cash EGP created 201
+PUT /wallets/01a0fd20-7790-70de-b04a-ae5ea964414a
+> {"type": "cash", "name": "A dollars", "currency": "USD", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd20-7790-70de-b04a-ae5ea964414a",
+  "wallet_id": "01a0fd20-7790-70de-b04a-ae5ea964414a",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T14:59:19.005589Z",
+  "updated_at": "2026-10-02T14:59:19.005589Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "A dollars",
+  "currency": "USD",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] wallet A dollars USD created 201
+PUT /wallets/01a0fd20-79a8-7683-a87a-2de02af9234d
+> {"type": "cash", "name": "A bank", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd20-79a8-7683-a87a-2de02af9234d",
+  "wallet_id": "01a0fd20-79a8-7683-a87a-2de02af9234d",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T14:59:19.584872Z",
+  "updated_at": "2026-10-02T14:59:19.584872Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "A bank",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] wallet A bank EGP created 201
+PUT /wallets/01a0fd20-7bef-72dd-b756-7330dd9045a4
+> {"type": "cash", "name": "B cash", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd20-7bef-72dd-b756-7330dd9045a4",
+  "wallet_id": "01a0fd20-7bef-72dd-b756-7330dd9045a4",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T14:59:20.177182Z",
+  "updated_at": "2026-10-02T14:59:20.177182Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "B cash",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] wallet B cash EGP created 201

@@ -1,0 +1,39 @@
+===== US1_Set_a_monthly_limit_for_a_category_Scenario_6 US1 Set a monthly limit for a category — Scenario 6 2026-10-02T15:06:18.022907Z
+
+PUT /budgets/01a0fd26-de27-74b3-8d56-6cb00436f5b1
+> {"category_id": null, "period_type": "monthly", "amount_minor": 10, "currency": "EGP", "version": 0}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/email-not-verified",
+ "title": "Address not verified",
+ "status": 403,
+ "detail": "Verify your email address first. We can send the link again.",
+ "code": "EMAIL_NOT_VERIFIED",
+ "request_id": "01a0fd26-dec8-71b4-b9dd-993716c01e3e"
+}
+
+CHECK [PASS] PUT 403 EMAIL_NOT_VERIFIED 
+GET /budgets
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] read /budgets allowed 
+GET /budget-progress
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] read /budget-progress allowed 

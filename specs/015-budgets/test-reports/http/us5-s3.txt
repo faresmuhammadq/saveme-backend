@@ -1,0 +1,93 @@
+===== US5_Budget_Periods_follow_my_salary_day_Scenario_3 US5 Budget Periods follow my salary day — Scenario 3 2026-10-02T15:07:23.325824Z
+
+PUT /me/profile
+> {"display_name": null, "locale": "en", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 15, "version": 2}
+< 200
+{
+ "data": {
+  "id": "01a0fd26-7a18-71cf-9817-bed3d7faba1a",
+  "version": 3,
+  "change_seq": 36,
+  "created_at": "2026-10-02T15:05:52.408763Z",
+  "updated_at": "2026-10-02T15:07:23.681147Z",
+  "deleted_at": null,
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "display_name": null,
+  "locale": "en",
+  "timezone": "Africa/Cairo",
+  "default_currency": "EGP",
+  "default_currency_locked": true,
+  "budget_period_start_day": 15,
+  "budget_period_start_day_from": "2026-10-15"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] second change applies from 2026-10-15 
+GET /budgets/01a0fd26-c430-72b9-a70b-7452d91575d4/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd26-c430-72b9-a70b-7452d91575d4",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-14",
+   "days_in_period": 14,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 600000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 600000,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] period under way ends 2026-10-14 {"start": "2026-10-01", "end": "2026-10-14", "days_in_period": 14, "days_elapsed": 2}
+GET /budgets/01a0fd26-c430-72b9-a70b-7452d91575d4/progress params={'date': '2026-10-27'}
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd26-c430-72b9-a70b-7452d91575d4",
+  "period": {
+   "start": "2026-10-15",
+   "end": "2026-11-14",
+   "days_in_period": 31,
+   "days_elapsed": null
+  },
+  "is_current": false,
+  "limit": {
+   "amount_minor": 600000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 600000,
+   "currency": "EGP"
+  },
+  "projected_end": null,
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] 25 never takes effect: 10-27 -> 10-15..11-14 {"start": "2026-10-15", "end": "2026-11-14", "days_in_period": 31, "days_elapsed": null}

@@ -1,0 +1,115 @@
+===== TC-005 US1-6: unverified writes 403 EMAIL_NOT_VERIFIED; reads allowed 2026-10-02T14:59:29.176474Z
+
+PUT /budgets/01a0fd20-a118-7159-b6b0-9b510df5bf7a
+> {"category_id": null, "period_type": "monthly", "amount_minor": 5, "currency": "EGP", "version": 0}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/email-not-verified",
+ "title": "Address not verified",
+ "status": 403,
+ "detail": "Verify your email address first. We can send the link again.",
+ "code": "EMAIL_NOT_VERIFIED",
+ "request_id": "01a0fd20-a1c3-71ba-b26a-89a053325404"
+}
+
+CHECK [PASS] PUT unverified -> 403 EMAIL_NOT_VERIFIED 403 EMAIL_NOT_VERIFIED
+PATCH /budgets/01a0fd20-a118-7159-b6b0-9b510df5bf7a
+> {"amount_minor": 5, "version": 1}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/email-not-verified",
+ "title": "Address not verified",
+ "status": 403,
+ "detail": "Verify your email address first. We can send the link again.",
+ "code": "EMAIL_NOT_VERIFIED",
+ "request_id": "01a0fd20-a2fb-7136-b550-ae3757a92023"
+}
+
+CHECK [PASS] PATCH unverified -> 403 EMAIL_NOT_VERIFIED 403 EMAIL_NOT_VERIFIED
+DELETE /budgets/01a0fd20-a118-7159-b6b0-9b510df5bf7a
+> {"version": 1}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/email-not-verified",
+ "title": "Address not verified",
+ "status": 403,
+ "detail": "Verify your email address first. We can send the link again.",
+ "code": "EMAIL_NOT_VERIFIED",
+ "request_id": "01a0fd20-a454-7290-8d7e-8393f466b02b"
+}
+
+CHECK [PASS] DELETE unverified -> 403 EMAIL_NOT_VERIFIED 403 EMAIL_NOT_VERIFIED
+POST /budgets/01a0fd20-a118-7159-b6b0-9b510df5bf7a/archive
+> {"version": 1}
+< 403
+{
+ "type": "http://saveme-backend.test/problems/email-not-verified",
+ "title": "Address not verified",
+ "status": 403,
+ "detail": "Verify your email address first. We can send the link again.",
+ "code": "EMAIL_NOT_VERIFIED",
+ "request_id": "01a0fd20-a5e3-7057-ab46-7053a859c24f"
+}
+
+CHECK [PASS] POST unverified -> 403 EMAIL_NOT_VERIFIED 403 EMAIL_NOT_VERIFIED
+POST /sync/batch
+> {"items": [{"type": "budget", "op": "upsert", "id": "01a0fd20-a118-7159-b6b0-9b510df5bf7a", "data": {"category_id": null, "period_type": "monthly", "amount_minor": 5, "currency": "EGP", "version": 0}}]}
+< 200
+{
+ "data": [
+  {
+   "type": "budget",
+   "id": "01a0fd20-a118-7159-b6b0-9b510df5bf7a",
+   "outcome": "rejected",
+   "status": 403,
+   "record": null,
+   "problem": {
+    "type": "http://saveme-backend.test/problems/email-not-verified",
+    "title": "Address not verified",
+    "status": 403,
+    "detail": "Verify your email address first. We can send the link again.",
+    "code": "EMAIL_NOT_VERIFIED",
+    "request_id": "01a0fd20-a7b5-70f6-8776-d870c51cf088"
+   }
+  }
+ ],
+ "meta": {}
+}
+
+CHECK [PASS] batch item unverified -> EMAIL_NOT_VERIFIED 200 EMAIL_NOT_VERIFIED
+GET /budgets
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] GET /budgets unverified 200 200
+GET /budget-progress
+< 200
+{
+ "data": [],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 50
+ }
+}
+
+CHECK [PASS] GET /budget-progress unverified 200 200
+GET /budgets/01a0fd20-a118-7159-b6b0-9b510df5bf7a
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a0fd20-aca3-7306-a255-15a3e5a9eb57"
+}
+
+CHECK [PASS] GET unknown id 404 

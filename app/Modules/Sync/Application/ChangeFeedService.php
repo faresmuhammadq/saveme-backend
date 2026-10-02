@@ -2,6 +2,8 @@
 
 namespace App\Modules\Sync\Application;
 
+use App\Modules\Budgeting\Application\Sync\FeedRecord as BudgetingRecord;
+use App\Modules\Budgeting\Application\Sync\UserFeedQuery as BudgetingUserFeed;
 use App\Modules\Identity\Application\Sync\FeedRecord as IdentityRecord;
 use App\Modules\Identity\Application\Sync\UserFeedQuery as IdentityUserFeed;
 use App\Modules\Sync\Domain\Cursor\CursorRefusal;
@@ -31,6 +33,7 @@ final class ChangeFeedService
         private readonly IdentityUserFeed $identityFeed,
         private readonly WalletsUserFeed $walletsUserFeed,
         private readonly WalletFeedQuery $walletFeed,
+        private readonly BudgetingUserFeed $budgetingUserFeed,
         private readonly CursorSigner $signer,
     ) {}
 
@@ -48,6 +51,7 @@ final class ChangeFeedService
         $sources = [
             array_map(fn (IdentityRecord $row): FeedRow => new FeedRow($row->type, $row->position, $row->record), $this->identityFeed->page($readerId, $readerSessionId, $after, $limit)),
             array_map(fn (WalletsRecord $row): FeedRow => new FeedRow($row->type, $row->position, $row->record), $this->walletsUserFeed->page($readerId, $after, $limit)),
+            array_map(fn (BudgetingRecord $row): FeedRow => new FeedRow($row->type, $row->position, $row->record), $this->budgetingUserFeed->page($readerId, $after, $limit)),
         ];
 
         return $this->result(FeedKind::User, $readerId, $readerId, $sources, $after, $limit, $scope['counter'], $cursor === null);

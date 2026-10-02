@@ -2,6 +2,7 @@
 
 namespace App\Modules\Sync\Application;
 
+use App\Modules\Budgeting\Application\Sync\TombstonePurge as BudgetingPurge;
 use App\Modules\Identity\Application\Sync\TombstonePurge as IdentityPurge;
 use App\Modules\Wallets\Application\Sync\TombstonePurge as WalletsPurge;
 use DateTimeImmutable;
@@ -21,6 +22,7 @@ final class TombstonePurgeRun
     public function __construct(
         private readonly WalletsPurge $wallets,
         private readonly IdentityPurge $identity,
+        private readonly BudgetingPurge $budgeting,
     ) {}
 
     /**
@@ -37,7 +39,12 @@ final class TombstonePurgeRun
 
         $before = ($now ?? now()->toDateTimeImmutable())->modify("-{$days} days");
 
-        $removed = [...$this->wallets->purge($before), ...$this->prefixed($this->identity->purge($before))];
+        // Budgeting first: a category freed by a purged budget can go in the same run.
+        $removed = [
+            ...$this->prefixed('budgeting_', $this->budgeting->purge($before)),
+            ...$this->wallets->purge($before),
+            ...$this->prefixed('identity_', $this->identity->purge($before)),
+        ];
 
         Log::info('sync_tombstones_purged', ['retention_days' => $days, 'removed' => $removed]);
 
@@ -48,12 +55,12 @@ final class TombstonePurgeRun
      * @param  array<string, int>  $counts
      * @return array<string, int>
      */
-    private function prefixed(array $counts): array
+    private function prefixed(string $prefix, array $counts): array
     {
         $prefixed = [];
 
         foreach ($counts as $type => $count) {
-            $prefixed['identity_'.$type] = $count;
+            $prefixed[$prefix.$type] = $count;
         }
 
         return $prefixed;

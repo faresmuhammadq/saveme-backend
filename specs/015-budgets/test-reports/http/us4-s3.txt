@@ -1,0 +1,62 @@
+===== US4_Change,_archive_or_delete_a_budget_Scenario_3 US4 Change, archive or delete a budget — Scenario 3 2026-10-02T15:07:06.600685Z
+
+PUT /budgets/01a0fd27-9394-7566-9a2b-f41419b89591
+> {"category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f", "period_type": "monthly", "amount_minor": 300, "currency": "EGP", "version": 3}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd27-9c90-73b0-9202-9692d98c16bf",
+ "errors": [
+  {
+   "pointer": "/category_id",
+   "code": "IMMUTABLE_FIELD",
+   "detail": "This field cannot be changed."
+  }
+ ]
+}
+
+CHECK [PASS] /category_id IMMUTABLE_FIELD [('/category_id', 'IMMUTABLE_FIELD')]
+PUT /budgets/01a0fd27-9394-7566-9a2b-f41419b89591
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 300, "currency": "USD", "version": 3}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd27-9dfb-73de-9119-96f4191541b6",
+ "errors": [
+  {
+   "pointer": "/currency",
+   "code": "IMMUTABLE_FIELD",
+   "detail": "This field cannot be changed."
+  }
+ ]
+}
+
+CHECK [PASS] /currency IMMUTABLE_FIELD [('/currency', 'IMMUTABLE_FIELD')]
+PUT /budgets/01a0fd27-9394-7566-9a2b-f41419b89591
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "weekly", "amount_minor": 300, "currency": "EGP", "version": 3}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd27-9f92-70b8-8266-c02ae5328e07",
+ "errors": [
+  {
+   "pointer": "/period_type",
+   "code": "INVALID_ENUM_VALUE",
+   "detail": "This value is not one of the allowed options."
+  }
+ ]
+}
+
+CHECK [PASS] period_type change refused 422 at /period_type [('/period_type', 'INVALID_ENUM_VALUE')]

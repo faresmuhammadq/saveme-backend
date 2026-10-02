@@ -1,6 +1,13 @@
 <?php
 
 use App\Http\Api\Envelope;
+use App\Modules\Budgeting\Application\BudgetQueryService;
+use App\Modules\Budgeting\Application\BudgetService;
+use App\Modules\Budgeting\Application\Dto\SavedBudget;
+use App\Modules\Budgeting\Domain\BudgetProgress;
+use App\Modules\Budgeting\Domain\BudgetRecord;
+use App\Modules\Budgeting\Http\Resources\BudgetResource;
+use App\Modules\Budgeting\Infrastructure\Models\Budget;
 use App\Modules\Identity\Domain\Account\LinkKind;
 use App\Modules\Identity\Domain\Ports\LinkRepository;
 use App\Modules\Identity\Infrastructure\Models\Profile;
@@ -1037,4 +1044,121 @@ function recurringWorld(): array
     addMember($wallet->id, $viewer->id, 'viewer');
 
     return ['owner' => $owner, 'wallet' => $wallet, 'editor' => $editor, 'viewer' => $viewer];
+}
+
+/*
+|--------------------------------------------------------------------------
+| Budgets (spec 015)
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * A full budget write body (a platform Groceries-like expense category) with the given changes.
+ *
+ * @param  array<string, mixed>  $changes
+ * @return array<string, mixed>
+ */
+function budgetBody(array $changes = [], int $version = 0): array
+{
+    return [
+        'category_id' => platformCategoryId(),
+        'period_type' => 'monthly',
+        'amount_minor' => 600000,
+        'currency' => 'EGP',
+        'version' => $version,
+        ...$changes,
+    ];
+}
+
+/**
+ * The values a budget save takes, as the service receives them.
+ *
+ * @param  array<string, mixed>  $changes
+ * @return array{category_id: ?string, period_type: string, amount_minor: int, currency: string}
+ */
+function budgetValues(array $changes = []): array
+{
+    $values = [...budgetBody($changes)];
+    unset($values['version']);
+
+    return $values;
+}
+
+/**
+ * A person's budget through the factory (the owner's counter stamps it).
+ *
+ * @param  array<string, mixed>  $attributes
+ */
+function ownedBudget(string $userId, array $attributes = []): Budget
+{
+    return Budget::factory()->create(['user_id' => $userId, 'category_id' => platformCategoryId(), ...$attributes]);
+}
+
+/**
+ * How a read renders the budget, as the service's `present` closure.
+ *
+ * @return Closure(BudgetRecord): array<string, mixed>
+ */
+function presentBudget(): Closure
+{
+    return BudgetResource::toArray(...);
+}
+
+/**
+ * Saves a budget through the service.
+ *
+ * @param  array<string, mixed>  $body  a write body, `version` included
+ */
+function saveBudget(string $userId, string $budgetId, array $body): SavedBudget
+{
+    $values = $body;
+    unset($values['version']);
+
+    return app(BudgetService::class)->save($userId, $budgetId, $values, (int) ($body['version'] ?? 0), presentBudget());
+}
+
+/**
+ * Creates a budget through the service and returns its record.
+ *
+ * @param  array<string, mixed>  $changes
+ */
+function createBudget(string $userId, array $changes = []): BudgetRecord
+{
+    return saveBudget($userId, (string) Str::uuid7(), budgetBody($changes))->budget;
+}
+
+/**
+ * A budget call with a credential.
+ *
+ * @param  array<string, mixed>  $body
+ */
+function budgetCall(string $method, string $credential, string $uri, array $body = []): TestResponse
+{
+    return walletCall($method, $credential, $uri, $body);
+}
+
+/**
+ * Records an expense in a wallet through the ledger service.
+ *
+ * @param  array<string, mixed>  $changes
+ */
+function spend(string $userId, string $walletId, int $amount, array $changes = []): TransactionView
+{
+    return recordTransaction($userId, $walletId, transactionBody(['amount_minor' => $amount, ...$changes]));
+}
+
+/**
+ * Budget Progress of one budget through the query service, as the owner reads it.
+ */
+function budgetProgress(string $userId, string $budgetId, ?string $date = null): BudgetProgress
+{
+    return app(BudgetQueryService::class)->progressOf($userId, $budgetId, $date);
+}
+
+/**
+ * The id of the n-th seeded platform category of the kind (0 is `platformCategoryId()`).
+ */
+function nthPlatformCategoryId(int $position, string $kind = 'expense'): string
+{
+    return (string) Category::query()->whereNull('user_id')->where('kind', $kind)->orderBy('position')->skip($position)->value('id');
 }

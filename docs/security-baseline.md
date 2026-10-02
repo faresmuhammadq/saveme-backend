@@ -163,6 +163,7 @@ Four surfaces can be used to ask "does this address have an account here". Three
 | Manage their own sessions | allowed |
 | **Any write to any wallet** — including a recurring rule or one of its occurrences, and a rule's catch-up request | **refused** |
 | **Any write to their own categories** | **refused** |
+| **Any write to their own budgets** (save, change, archive, delete) | **refused** |
 
 The refusal is `403 EMAIL_NOT_VERIFIED` — its own code, so the app offers to send the verification again rather than showing a denial the person cannot act on.
 
@@ -195,6 +196,7 @@ There is no blanket claim here, because a blanket claim collapses under one ques
 | Reset and verification tokens | hash | by hash | nobody after issue |
 | Amount, balance | **none at rest** | yes | members of the wallet |
 | Note | **none at rest** | yes | members of the wallet |
+| Budget limit and progress (`amount_minor`, spent, remaining, projection) | **none at rest**, never logged | yes | the budget's owner only |
 | Wallet and category names | none at rest | yes | members of the wallet, and the category's owner |
 | Platform category names | none at rest | yes | every signed-in person |
 | Audit entries | none at rest, and they carry nothing protected | yes | operators only, and the read is recorded |

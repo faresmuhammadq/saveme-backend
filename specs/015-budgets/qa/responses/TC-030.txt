@@ -1,0 +1,698 @@
+===== TC-030 Exploratory probes: concurrency, version edge cases, limits, overflow, liability wallet 2026-10-02T15:03:03.353887Z
+
+POST /auth/login
+> {"email": "qa015-a-p1790953383@example.test", "password": "[redacted]", "device": {"session_id": "01a0fd24-0c5a-71e9-be14-3d01ccc007c5", "device_id": "qa015-a-p1790953383", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+POST /auth/login
+> {"email": "qa015-b-p1790953383@example.test", "password": "[redacted]", "device": {"session_id": "01a0fd24-139e-7508-9d97-26b2a4ca1fa8", "device_id": "qa015-b-p1790953383", "name": "QA", "platform": "android", "app_version": "1.0.0"}}
+< 200
+[login response, credential redacted]
+
+PUT /budgets/01a0fd24-1998-7633-acb6-ab011c70c40b
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 1000, "currency": "EGP"}
+< 201
+{
+ "data": {
+  "id": "01a0fd24-1998-7633-acb6-ab011c70c40b",
+  "user_id": "01a0fd23-f2fa-7229-83b4-5377a5bb94a2",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T15:03:17.277824Z",
+  "updated_at": "2026-10-02T15:03:17.277824Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 1000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] create with version omitted -> 201 201
+concurrent create 01a0fd24-1c45-7556-9457-1582eaa0b205: [200, 200, 200, 201] [None, None, None, None]
+CHECK [PASS] concurrent identical creates #0: one 201, rest 200 [200, 200, 200, 201]
+GET /budgets/01a0fd24-1c45-7556-9457-1582eaa0b205
+< 200
+{
+ "data": {
+  "id": "01a0fd24-1c45-7556-9457-1582eaa0b205",
+  "user_id": "01a0fd23-f2fa-7229-83b4-5377a5bb94a2",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T15:03:17.868901Z",
+  "updated_at": "2026-10-02T15:03:17.868901Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 1000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] version 1 after concurrent creates 
+concurrent create 01a0fd24-25d7-752e-93e2-4f60b2c529ab: [200, 200, 200, 201] [None, None, None, None]
+CHECK [PASS] concurrent identical creates #1: one 201, rest 200 [200, 200, 200, 201]
+GET /budgets/01a0fd24-25d7-752e-93e2-4f60b2c529ab
+< 200
+{
+ "data": {
+  "id": "01a0fd24-25d7-752e-93e2-4f60b2c529ab",
+  "user_id": "01a0fd23-f2fa-7229-83b4-5377a5bb94a2",
+  "version": 1,
+  "change_seq": 5,
+  "created_at": "2026-10-02T15:03:20.545342Z",
+  "updated_at": "2026-10-02T15:03:20.545342Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 1000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] version 1 after concurrent creates 
+concurrent create 01a0fd24-2ffd-75fb-8110-344c4864f204: [200, 200, 200, 201] [None, None, None, None]
+CHECK [PASS] concurrent identical creates #2: one 201, rest 200 [200, 200, 200, 201]
+GET /budgets/01a0fd24-2ffd-75fb-8110-344c4864f204
+< 200
+{
+ "data": {
+  "id": "01a0fd24-2ffd-75fb-8110-344c4864f204",
+  "user_id": "01a0fd23-f2fa-7229-83b4-5377a5bb94a2",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-02T15:03:22.935515Z",
+  "updated_at": "2026-10-02T15:03:22.935515Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 1000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] version 1 after concurrent creates 
+concurrent patch: [200, 409, 409, 409]
+CHECK [PASS] concurrent PATCH same version: one 200, rest 409 [200, 409, 409, 409]
+GET /budgets/01a0fd24-1998-7633-acb6-ab011c70c40b
+< 200
+{
+ "data": {
+  "id": "01a0fd24-1998-7633-acb6-ab011c70c40b",
+  "user_id": "01a0fd23-f2fa-7229-83b4-5377a5bb94a2",
+  "version": 2,
+  "change_seq": 7,
+  "created_at": "2026-10-02T15:03:17.277824Z",
+  "updated_at": "2026-10-02T15:03:25.058789Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 2000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] version 2 
+DELETE /budgets/01a0fd24-1998-7633-acb6-ab011c70c40b
+> {"version": 1}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fd24-4304-73d9-bd43-f53130fe94bc",
+ "current": {
+  "id": "01a0fd24-1998-7633-acb6-ab011c70c40b",
+  "user_id": "01a0fd23-f2fa-7229-83b4-5377a5bb94a2",
+  "version": 2,
+  "change_seq": 7,
+  "created_at": "2026-10-02T15:03:17.277824Z",
+  "updated_at": "2026-10-02T15:03:25.058789Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 2000,
+  "currency": "EGP",
+  "archived_at": null
+ }
+}
+
+CHECK [PASS] stale DELETE on live -> 409 with current 409
+POST /budgets/01a0fd24-1998-7633-acb6-ab011c70c40b/archive
+> {"version": 1}
+< 409
+{
+ "type": "http://saveme-backend.test/problems/version-conflict",
+ "title": "Version conflict",
+ "status": 409,
+ "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+ "code": "VERSION_CONFLICT",
+ "request_id": "01a0fd24-44cd-7160-a177-b98d0c27c4ee",
+ "current": {
+  "id": "01a0fd24-1998-7633-acb6-ab011c70c40b",
+  "user_id": "01a0fd23-f2fa-7229-83b4-5377a5bb94a2",
+  "version": 2,
+  "change_seq": 7,
+  "created_at": "2026-10-02T15:03:17.277824Z",
+  "updated_at": "2026-10-02T15:03:25.058789Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 2000,
+  "currency": "EGP",
+  "archived_at": null
+ }
+}
+
+CHECK [PASS] stale archive on live -> 409 409
+PATCH /budgets/01a0fd24-1998-7633-acb6-ab011c70c40b
+> {"amount_minor": 5, "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd24-4657-72aa-a911-1836911e75b8",
+ "errors": [
+  {
+   "pointer": "/version",
+   "code": "OUT_OF_RANGE",
+   "detail": "This value is too short, too long, or outside the allowed range."
+  }
+ ]
+}
+
+CHECK [PASS] PATCH version 0 -> 422 /version 422 [('/version', 'OUT_OF_RANGE')]
+POST /budgets/01a0fd24-1998-7633-acb6-ab011c70c40b/archive
+> {"version": 2, "x": 1}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd24-4817-712e-943b-e0451302b91a",
+ "errors": [
+  {
+   "pointer": "/x",
+   "code": "UNKNOWN_FIELD",
+   "detail": "This field is not accepted here."
+  }
+ ]
+}
+
+CHECK [PASS] archive unknown member -> UNKNOWN_FIELD 422 [('/x', 'UNKNOWN_FIELD')]
+PUT /budgets/01a0fd24-1998-7633-acb6-ab011c70c40b
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 1000, "currency": "EGP", "version": 2, "archived_at": "2026-10-01T00:00:00Z"}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd24-49db-7144-94ea-5cab9870c5eb",
+ "errors": [
+  {
+   "pointer": "/archived_at",
+   "code": "UNKNOWN_FIELD",
+   "detail": "This field is not accepted here."
+  }
+ ]
+}
+
+CHECK [PASS] server-owned archived_at in write -> UNKNOWN_FIELD 422 [('/archived_at', 'UNKNOWN_FIELD')]
+PUT /budgets/01a0fd24-4aaa-7597-837e-f0340b96ce67
+> {"category_id": null, "period_type": null, "amount_minor": 1000, "currency": "EGP", "version": 0}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/validation-failed",
+ "title": "Validation failed",
+ "status": 422,
+ "detail": "Some of the information sent is not valid. Each problem is listed.",
+ "code": "VALIDATION_FAILED",
+ "request_id": "01a0fd24-4bbd-70e8-90ac-603fcf9999ca",
+ "errors": [
+  {
+   "pointer": "/period_type",
+   "code": "REQUIRED",
+   "detail": "This field is required."
+  }
+ ]
+}
+
+CHECK [PASS] period_type null -> 422 422 [('/period_type', 'REQUIRED')]
+GET /budgets/01a0fd24-1998-7633-acb6-ab011c70c40b/progress params={'date': ''}
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd24-1998-7633-acb6-ab011c70c40b",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 2000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 2000,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] empty date = today (A-36) 200
+GET /budget-progress params={'limit': 500}
+< 200
+{
+ "data": [
+  {
+   "budget_id": "01a0fd24-1998-7633-acb6-ab011c70c40b",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 2000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 2000,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": []
+  },
+  {
+   "budget_id": "01a0fd24-1c45-7556-9457-1582eaa0b205",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 1000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 1000,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": []
+  },
+  {
+   "budget_id": "01a0fd24-25d7-752e-93e2-4f60b2c529ab",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 1000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 1000,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": []
+  },
+  {
+   "budget_id": "01a0fd24-2ffd-75fb-8110-344c4864f204",
+   "period": {
+    "start": "2026-10-01",
+    "end": "2026-10-31",
+    "days_in_period": 31,
+    "days_elapsed": 2
+   },
+   "is_current": true,
+   "limit": {
+    "amount_minor": 1000,
+    "currency": "EGP"
+   },
+   "spent": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "remaining": {
+    "amount_minor": 1000,
+    "currency": "EGP"
+   },
+   "projected_end": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "over_limit": false,
+   "other_currencies": []
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200
+ }
+}
+
+CHECK [PASS] limit 500 -> 400 or clamped 200 None {'next_cursor': None, 'has_more': False, 'limit': 200}
+GET /budgets/01a0fd24-1998-7633-acb6-ab011c70c40b/progress params={'date': '2026-10-02T00:00:00'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a0fd24-5130-73c4-99ab-33cccb5c552b"
+}
+
+CHECK [PASS] datetime in date -> 400 400
+POST /sync/batch
+> {"items": [{"type": "budget", "op": "upsert", "id": "01a0fd24-1998-7633-acb6-ab011c70c40b", "data": {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 1000, "currency": "EGP", "version": 2}}, {"type": "budget", "op": "delete", "id": "01a0fd24-1998-7633-acb6-ab011c70c40b", "data": {"version": 2}}]}
+< 200
+{
+ "data": [
+  {
+   "type": "budget",
+   "id": "01a0fd24-1998-7633-acb6-ab011c70c40b",
+   "outcome": "rejected",
+   "status": 404,
+   "record": null,
+   "problem": {
+    "type": "http://saveme-backend.test/problems/not-found",
+    "title": "Not found",
+    "status": 404,
+    "detail": "We could not find that.",
+    "code": "NOT_FOUND",
+    "request_id": "01a0fd24-5338-70fd-871c-d719624be77b"
+   }
+  },
+  {
+   "type": "budget",
+   "id": "01a0fd24-1998-7633-acb6-ab011c70c40b",
+   "outcome": "rejected",
+   "status": 404,
+   "record": null,
+   "problem": {
+    "type": "http://saveme-backend.test/problems/not-found",
+    "title": "Not found",
+    "status": 404,
+    "detail": "We could not find that.",
+    "code": "NOT_FOUND",
+    "request_id": "01a0fd24-5338-70fd-871c-d719624be77b"
+   }
+  }
+ ],
+ "meta": {}
+}
+
+CHECK [PASS] batch on another person's budget -> items 404 [404, 404]
+GET /sync/user/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fd23-ffd9-7036-ba96-d50b1fcd6f76",
+    "version": 1,
+    "change_seq": 1,
+    "created_at": "2026-10-02T15:03:10.042234Z",
+    "updated_at": "2026-10-02T15:03:10.042234Z",
+    "deleted_at": null,
+    "user_id": "01a0fd23-fbbb-70e8-840e-2f9d136b035e",
+    "display_name": null,
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": false,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  },
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fd24-139e-7508-9d97-26b2a4ca1fa8",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T15:03:16.506408Z",
+    "updated_at": "2026-10-02T15:03:32.013341Z",
+    "deleted_at": null,
+    "user_id": "01a0fd23-fbbb-70e8-840e-2f9d136b035e",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T15:03:16.497183Z",
+    "last_used_at": "2026-10-02T15:03:32.011786Z",
+    "ended_at": null,
+    "current": true
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmQyMy1mYmJiLTcwZTgtODQwZS0yZjlkMTM2YjAzNWUiLCJyIjoiMDFhMGZkMjMtZmJiYi03MGU4LTg0MGUtMmY5ZDEzNmIwMzVlIiwicCI6Mn1oy2z17lcxVt57UoTXQA8L"
+ }
+}
+
+CHECK [PASS] B user feed has no A budget 
+PUT /wallets/01a0fd24-565c-75b0-85f0-4e7791fb7e2f
+> {"type": "credit_card", "name": "Card", "currency": "KWD", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd24-565c-75b0-85f0-4e7791fb7e2f",
+  "wallet_id": "01a0fd24-565c-75b0-85f0-4e7791fb7e2f",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-02T15:03:32.772968Z",
+  "updated_at": "2026-10-02T15:03:32.772968Z",
+  "deleted_at": null,
+  "type": "credit_card",
+  "name": "Card",
+  "currency": "KWD",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+card wallet 201 None []
+PUT /budgets/01a0fd24-58f2-7736-9c3b-aaa0ee03910b
+> {"category_id": null, "period_type": "monthly", "amount_minor": 1, "currency": "KWD", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd24-58f2-7736-9c3b-aaa0ee03910b",
+  "user_id": "01a0fd23-f2fa-7229-83b4-5377a5bb94a2",
+  "version": 1,
+  "change_seq": 9,
+  "created_at": "2026-10-02T15:03:33.346128Z",
+  "updated_at": "2026-10-02T15:03:33.346128Z",
+  "deleted_at": null,
+  "category_id": null,
+  "period_type": "monthly",
+  "amount_minor": 1,
+  "currency": "KWD",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fd24-565c-75b0-85f0-4e7791fb7e2f/transactions/01a0fd24-5b05-70ac-8a32-7d09518e8cd4
+> {"kind": "expense", "date": "2026-10-02", "amount_minor": 4503599627370496, "currency": "KWD", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "big", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd24-5b05-70ac-8a32-7d09518e8cd4",
+  "wallet_id": "01a0fd24-565c-75b0-85f0-4e7791fb7e2f",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-02T15:03:34.007707Z",
+  "updated_at": "2026-10-02T15:03:34.007707Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-10-02",
+  "amount_minor": 4503599627370496,
+  "currency": "KWD",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "big",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fd23-f2fa-7229-83b4-5377a5bb94a2",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] big KWD expense recorded 201 None []
+GET /budgets/01a0fd24-58f2-7736-9c3b-aaa0ee03910b/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd24-58f2-7736-9c3b-aaa0ee03910b",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 1,
+   "currency": "KWD"
+  },
+  "spent": {
+   "amount_minor": 4503599627370496,
+   "currency": "KWD"
+  },
+  "remaining": {
+   "amount_minor": -4503599627370495,
+   "currency": "KWD"
+  },
+  "projected_end": null,
+  "over_limit": true,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] projection overflow -> projected_end null, spent exact {"budget_id": "01a0fd24-58f2-7736-9c3b-aaa0ee03910b", "period": {"start": "2026-10-01", "end": "2026-10-31", "days_in_period": 31, "days_elapsed": 2}, "is_current": true, "limit": {"amount_minor": 1, "currency": "KWD"}, "spent": {"amount_minor": 4503599627370496, "currency": "KWD"}, "remaining": {"amount_minor": -4503599627370495, "currency": "KWD"}, "projected_end": null, "over_limit": true, "other_currencies": []}
+CHECK [PASS] remaining = 1 - 2^52 
+PUT /wallets/01a0fd24-565c-75b0-85f0-4e7791fb7e2f/transactions/01a0fd24-5f96-7599-a5c0-c79924f8de02
+> {"kind": "expense", "date": "2026-10-31", "amount_minor": 7, "currency": "KWD", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "f", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd24-5f96-7599-a5c0-c79924f8de02",
+  "wallet_id": "01a0fd24-565c-75b0-85f0-4e7791fb7e2f",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-02T15:03:35.152108Z",
+  "updated_at": "2026-10-02T15:03:35.152108Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-10-31",
+  "amount_minor": 7,
+  "currency": "KWD",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "f",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fd23-f2fa-7229-83b4-5377a5bb94a2",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd24-58f2-7736-9c3b-aaa0ee03910b/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd24-58f2-7736-9c3b-aaa0ee03910b",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 1,
+   "currency": "KWD"
+  },
+  "spent": {
+   "amount_minor": 4503599627370503,
+   "currency": "KWD"
+  },
+  "remaining": {
+   "amount_minor": -4503599627370502,
+   "currency": "KWD"
+  },
+  "projected_end": null,
+  "over_limit": true,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] future-dated in-period expense counted 

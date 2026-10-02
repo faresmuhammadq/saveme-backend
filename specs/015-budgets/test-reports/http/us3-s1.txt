@@ -1,0 +1,206 @@
+===== US3_Budgets_in_a_shared_wallet_stay_personal_Scenario_1 US3 Budgets in a shared wallet stay personal — Scenario 1 2026-10-02T15:06:38.758576Z
+
+PUT /budgets/01a0fd27-2f26-701a-894a-52c9abb3a429
+> {"category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0", "period_type": "monthly", "amount_minor": 10000, "currency": "EGP", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-2f26-701a-894a-52c9abb3a429",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 18,
+  "created_at": "2026-10-02T15:06:39.248722Z",
+  "updated_at": "2026-10-02T15:06:39.248722Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0",
+  "period_type": "monthly",
+  "amount_minor": 10000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+PUT /budgets/01a0fd27-312d-77c6-896d-4c05814af22b
+> {"category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0", "period_type": "monthly", "amount_minor": 10000, "currency": "EGP", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-312d-77c6-896d-4c05814af22b",
+  "user_id": "01a0fd26-7a25-73e9-b0c7-01aa1f388138",
+  "version": 1,
+  "change_seq": 5,
+  "created_at": "2026-10-02T15:06:39.728471Z",
+  "updated_at": "2026-10-02T15:06:39.728471Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0",
+  "period_type": "monthly",
+  "amount_minor": 10000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd27-2f26-701a-894a-52c9abb3a429/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd27-2f26-701a-894a-52c9abb3a429",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 10000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 1666,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 8334,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 25823,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fd26-b5cd-76aa-a8c8-7d81f5f37c94/transactions/01a0fd27-34c7-7563-949a-4fd6d4a41263
+> {"kind": "expense", "date": "2026-10-01", "amount_minor": 700, "currency": "EGP", "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-34c7-7563-949a-4fd6d4a41263",
+  "wallet_id": "01a0fd26-b5cd-76aa-a8c8-7d81f5f37c94",
+  "version": 1,
+  "change_seq": 5,
+  "created_at": "2026-10-02T15:06:40.696141Z",
+  "updated_at": "2026-10-02T15:06:40.696141Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-10-01",
+  "amount_minor": 700,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0",
+  "counter_wallet_id": null,
+  "description": "E2E",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a0fd26-b5cd-76aa-a8c8-7d81f5f37c94/transactions/01a0fd27-36f9-7692-844e-7d1e53f07571
+> {"kind": "expense", "date": "2026-10-01", "amount_minor": 300, "currency": "EGP", "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0", "counter_wallet_id": null, "description": "E2E", "memo": null, "counterparty": null, "cleared": false, "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd27-36f9-7692-844e-7d1e53f07571",
+  "wallet_id": "01a0fd26-b5cd-76aa-a8c8-7d81f5f37c94",
+  "version": 1,
+  "change_seq": 7,
+  "created_at": "2026-10-02T15:06:41.298246Z",
+  "updated_at": "2026-10-02T15:06:41.298246Z",
+  "deleted_at": null,
+  "kind": "expense",
+  "date": "2026-10-01",
+  "amount_minor": 300,
+  "currency": "EGP",
+  "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0",
+  "counter_wallet_id": null,
+  "description": "E2E",
+  "memo": null,
+  "counterparty": null,
+  "cleared": false,
+  "created_by": "01a0fd26-7a25-73e9-b0c7-01aa1f388138",
+  "recurring_rule_id": null,
+  "occurrence_id": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd27-2f26-701a-894a-52c9abb3a429/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd27-2f26-701a-894a-52c9abb3a429",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 10000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 2366,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 7634,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 36673,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] A +700 only 
+GET /budgets/01a0fd27-312d-77c6-896d-4c05814af22b/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd27-312d-77c6-896d-4c05814af22b",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 10000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 300,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 9700,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 4650,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] B 300 only 

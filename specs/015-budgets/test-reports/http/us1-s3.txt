@@ -1,0 +1,24 @@
+===== US1_Set_a_monthly_limit_for_a_category_Scenario_3 US1 Set a monthly limit for a category — Scenario 3 2026-10-02T15:06:12.719731Z
+
+PUT /budgets/01a0fd26-c96f-7351-9813-e03f708871d6
+> {"category_id": null, "period_type": "monthly", "amount_minor": 900000, "currency": "EGP", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd26-c96f-7351-9813-e03f708871d6",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 7,
+  "created_at": "2026-10-02T15:06:13.138186Z",
+  "updated_at": "2026-10-02T15:06:13.138186Z",
+  "deleted_at": null,
+  "category_id": null,
+  "period_type": "monthly",
+  "amount_minor": 900000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] 201 null category 

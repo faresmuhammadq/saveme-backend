@@ -1,0 +1,72 @@
+===== US5_Budget_Periods_follow_my_salary_day_Scenario_5 US5 Budget Periods follow my salary day — Scenario 5 2026-10-02T15:07:28.549053Z
+
+GET /budgets/01a0fd27-cd94-7052-97e1-caba112e5be1/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd27-cd94-7052-97e1-caba112e5be1",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-24",
+   "days_in_period": 24,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 10,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 10,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd26-c430-72b9-a70b-7452d91575d4/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd26-c430-72b9-a70b-7452d91575d4",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-14",
+   "days_in_period": 14,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 600000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 600000,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] NY today 2026-10-02 in period, is_current 
+CHECK [PASS] Cairo today 2026-10-02 in period, is_current 

@@ -1,0 +1,103 @@
+===== US2_See_how_far_into_my_budgets_I_am_Scenario_3 US2 See how far into my budgets I am — Scenario 3 2026-10-02T15:06:30.082349Z
+
+GET /budgets/01a0fd26-ec18-7132-9336-cfd4e626d984/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd26-ec18-7132-9336-cfd4e626d984",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 6000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 6500,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": -500,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 100750,
+   "currency": "EGP"
+  },
+  "over_limit": true,
+  "other_currencies": [
+   "USD"
+  ]
+ },
+ "meta": {}
+}
+
+CHECK [PASS] projected = ceil(6500*dip/de) {"budget_id": "01a0fd26-ec18-7132-9336-cfd4e626d984", "period": {"start": "2026-10-01", "end": "2026-10-31", "days_in_period": 31, "days_elapsed": 2}, "is_current": true, "limit": {"amount_minor": 6000, "currency": "EGP"}, "spent": {"amount_minor": 6500, "currency": "EGP"}, "remaining": {"amount_minor": -500, "currency": "EGP"}, "projected_end": {"amount_minor": 100750, "currency": "EGP"}, "over_limit": true, "other_currencies": ["USD"]}
+GET /budgets/01a0fd26-ec18-7132-9336-cfd4e626d984/progress params={'date': '2026-09-10'}
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd26-ec18-7132-9336-cfd4e626d984",
+  "period": {
+   "start": "2026-09-01",
+   "end": "2026-09-30",
+   "days_in_period": 30,
+   "days_elapsed": null
+  },
+  "is_current": false,
+  "limit": {
+   "amount_minor": 6000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 444,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 5556,
+   "currency": "EGP"
+  },
+  "projected_end": null,
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] past null 
+GET /budgets/01a0fd26-ec18-7132-9336-cfd4e626d984/progress params={'date': '2026-12-10'}
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd26-ec18-7132-9336-cfd4e626d984",
+  "period": {
+   "start": "2026-12-01",
+   "end": "2026-12-31",
+   "days_in_period": 31,
+   "days_elapsed": null
+  },
+  "is_current": false,
+  "limit": {
+   "amount_minor": 6000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 6000,
+   "currency": "EGP"
+  },
+  "projected_end": null,
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] future null 

@@ -1,0 +1,488 @@
+===== TC-016 US6-3: user feed carries budget rows equal to GET; deletion row 2026-10-02T15:00:42.489551Z
+
+GET /sync/user/changes params={'limit': 200}
+< 200
+{
+ "data": [
+  {
+   "type": "profile",
+   "record": {
+    "id": "01a0fd20-4a25-7315-8750-f6fb433abdd4",
+    "version": 1,
+    "change_seq": 1,
+    "created_at": "2026-10-02T14:59:06.918288Z",
+    "updated_at": "2026-10-02T14:59:06.918288Z",
+    "deleted_at": null,
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "display_name": null,
+    "locale": "en",
+    "timezone": "Africa/Cairo",
+    "default_currency": "EGP",
+    "default_currency_locked": true,
+    "budget_period_start_day": 1,
+    "budget_period_start_day_from": null
+   }
+  },
+  {
+   "type": "device_session",
+   "record": {
+    "id": "01a0fd20-5a33-7258-9f41-e3a2bdd1ce4e",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T14:59:12.292855Z",
+    "updated_at": "2026-10-02T15:00:42.847047Z",
+    "deleted_at": null,
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "device_name": "QA",
+    "platform": "android",
+    "app_version": "1.0.0",
+    "state": "active",
+    "end_reason": null,
+    "signed_in_at": "2026-10-02T14:59:12.286523Z",
+    "last_used_at": "2026-10-02T15:00:42.845146Z",
+    "ended_at": null,
+    "current": true
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fd20-775d-7284-9b63-448ad065c80b",
+    "wallet_id": "01a0fd20-751a-75d9-b305-9872952c3fd4",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T14:59:18.494284Z",
+    "updated_at": "2026-10-02T14:59:18.494284Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "display_name": null,
+    "role": "owner"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fd20-7971-7082-a208-c517289a39ec",
+    "wallet_id": "01a0fd20-7790-70de-b04a-ae5ea964414a",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T14:59:19.026214Z",
+    "updated_at": "2026-10-02T14:59:19.026214Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "display_name": null,
+    "role": "owner"
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd20-851a-71b1-9169-c46d3d2b9ae5",
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "version": 1,
+    "change_seq": 7,
+    "created_at": "2026-10-02T14:59:22.477758Z",
+    "updated_at": "2026-10-02T14:59:22.477758Z",
+    "deleted_at": null,
+    "category_id": null,
+    "period_type": "monthly",
+    "amount_minor": 1000000,
+    "currency": "EGP",
+    "archived_at": null
+   }
+  },
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fd20-8916-7091-87d4-95d0a75fb096",
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "version": 2,
+    "change_seq": 9,
+    "created_at": "2026-10-02T14:59:23.469165Z",
+    "updated_at": "2026-10-02T14:59:23.928049Z",
+    "deleted_at": "2026-10-02T14:59:23.923785Z",
+    "kind": "expense",
+    "name": "A doomed",
+    "icon": "cup",
+    "color": "#6D4C41",
+    "archived_at": null,
+    "in_use": false
+   }
+  },
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fd20-8ce1-70d1-be40-1a29661edfdc",
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "version": 1,
+    "change_seq": 10,
+    "created_at": "2026-10-02T14:59:24.468861Z",
+    "updated_at": "2026-10-02T14:59:24.468861Z",
+    "deleted_at": null,
+    "kind": "income",
+    "name": "A income",
+    "icon": "cup",
+    "color": "#6D4C41",
+    "archived_at": null,
+    "in_use": false
+   }
+  },
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fd20-9abe-759e-a467-b5e60fc0420c",
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "version": 2,
+    "change_seq": 12,
+    "created_at": "2026-10-02T14:59:27.957532Z",
+    "updated_at": "2026-10-02T14:59:28.574594Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "A archived",
+    "icon": "cup",
+    "color": "#6D4C41",
+    "archived_at": "2026-10-02T14:59:28.570184Z",
+    "in_use": true
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "version": 5,
+    "change_seq": 17,
+    "created_at": "2026-10-02T14:59:20.756445Z",
+    "updated_at": "2026-10-02T14:59:43.087411Z",
+    "deleted_at": null,
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "period_type": "monthly",
+    "amount_minor": 600000,
+    "currency": "EGP",
+    "archived_at": null
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd20-df00-70d6-be9f-1d32c581b96c",
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "version": 1,
+    "change_seq": 18,
+    "created_at": "2026-10-02T14:59:45.480660Z",
+    "updated_at": "2026-10-02T14:59:45.480660Z",
+    "deleted_at": null,
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "period_type": "monthly",
+    "amount_minor": 10,
+    "currency": "KWD",
+    "archived_at": null
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd20-9f1a-731d-b229-f5a045a0d151",
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "version": 3,
+    "change_seq": 20,
+    "created_at": "2026-10-02T14:59:29.120134Z",
+    "updated_at": "2026-10-02T14:59:48.212143Z",
+    "deleted_at": null,
+    "category_id": "01a0fd20-9abe-759e-a467-b5e60fc0420c",
+    "period_type": "monthly",
+    "amount_minor": 222,
+    "currency": "EGP",
+    "archived_at": "2026-10-02T14:59:45.874959Z"
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd20-ed60-76f2-a23c-dd564a968420",
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "version": 2,
+    "change_seq": 22,
+    "created_at": "2026-10-02T14:59:49.122885Z",
+    "updated_at": "2026-10-02T14:59:49.595912Z",
+    "deleted_at": "2026-10-02T14:59:49.594156Z",
+    "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+    "period_type": "monthly",
+    "amount_minor": 100,
+    "currency": "EGP",
+    "archived_at": null
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd21-180c-77c5-aa1a-250f95e5288b",
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "version": 2,
+    "change_seq": 24,
+    "created_at": "2026-10-02T15:00:00.085493Z",
+    "updated_at": "2026-10-02T15:00:02.275412Z",
+    "deleted_at": null,
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "period_type": "monthly",
+    "amount_minor": 3000,
+    "currency": "EGP",
+    "archived_at": null
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fd20-7bbb-7300-8b39-c51942252563",
+    "wallet_id": "01a0fd20-79a8-7683-a87a-2de02af9234d",
+    "version": 2,
+    "change_seq": 8,
+    "created_at": "2026-10-02T14:59:19.612298Z",
+    "updated_at": "2026-10-02T15:00:09.014276Z",
+    "deleted_at": "2026-10-02T15:00:09.014276Z",
+    "member_user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "display_name": null,
+    "role": "owner"
+   }
+  },
+  {
+   "type": "wallet_member",
+   "record": {
+    "id": "01a0fd21-76a4-708f-9a98-ec38bd25e6ae",
+    "wallet_id": "01a0fd21-74bb-7017-b9be-8c7a4fa9e83d",
+    "version": 1,
+    "change_seq": 2,
+    "created_at": "2026-10-02T15:00:23.844781Z",
+    "updated_at": "2026-10-02T15:00:23.844781Z",
+    "deleted_at": null,
+    "member_user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "display_name": null,
+    "role": "owner"
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd21-839d-7411-89a2-693fc13e3ba9",
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "version": 1,
+    "change_seq": 27,
+    "created_at": "2026-10-02T15:00:27.690597Z",
+    "updated_at": "2026-10-02T15:00:27.690597Z",
+    "deleted_at": null,
+    "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0",
+    "period_type": "monthly",
+    "amount_minor": 100000,
+    "currency": "EGP",
+    "archived_at": null
+   }
+  },
+  {
+   "type": "category",
+   "record": {
+    "id": "01a0fd21-b2f9-7616-b27c-6a0292136ba1",
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "version": 1,
+    "change_seq": 28,
+    "created_at": "2026-10-02T15:00:39.706785Z",
+    "updated_at": "2026-10-02T15:00:39.706785Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "A budgeted",
+    "icon": "cup",
+    "color": "#6D4C41",
+    "archived_at": null,
+    "in_use": true
+   }
+  },
+  {
+   "type": "budget",
+   "record": {
+    "id": "01a0fd21-b4d3-705c-a0a6-72ddddc5cf19",
+    "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+    "version": 2,
+    "change_seq": 30,
+    "created_at": "2026-10-02T15:00:40.194787Z",
+    "updated_at": "2026-10-02T15:00:41.580745Z",
+    "deleted_at": "2026-10-02T15:00:41.579812Z",
+    "category_id": "01a0fd21-b2f9-7616-b27c-6a0292136ba1",
+    "period_type": "monthly",
+    "amount_minor": 5,
+    "currency": "EGP",
+    "archived_at": null
+   }
+  }
+ ],
+ "meta": {
+  "next_cursor": null,
+  "has_more": false,
+  "limit": 200,
+  "sync_cursor": "eyJ2IjoxLCJmIjoidSIsInMiOiIwMWEwZmQyMC00MjcyLTcyYTYtYWI5NS03ZWZhZTAyZjhjMzIiLCJyIjoiMDFhMGZkMjAtNDI3Mi03MmE2LWFiOTUtN2VmYWUwMmY4YzMyIiwicCI6MzB94gq-bFpwyNW6CyHfuJJhbA"
+ }
+}
+
+CHECK [PASS] budget rows present 8 of 18; types={'device_session', 'wallet_member', 'category', 'profile', 'budget'}
+GET /budgets/01a0fd20-851a-71b1-9169-c46d3d2b9ae5
+< 200
+{
+ "data": {
+  "id": "01a0fd20-851a-71b1-9169-c46d3d2b9ae5",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 1,
+  "change_seq": 7,
+  "created_at": "2026-10-02T14:59:22.477758Z",
+  "updated_at": "2026-10-02T14:59:22.477758Z",
+  "deleted_at": null,
+  "category_id": null,
+  "period_type": "monthly",
+  "amount_minor": 1000000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a
+< 200
+{
+ "data": {
+  "id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 5,
+  "change_seq": 17,
+  "created_at": "2026-10-02T14:59:20.756445Z",
+  "updated_at": "2026-10-02T14:59:43.087411Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 600000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd20-df00-70d6-be9f-1d32c581b96c
+< 200
+{
+ "data": {
+  "id": "01a0fd20-df00-70d6-be9f-1d32c581b96c",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 1,
+  "change_seq": 18,
+  "created_at": "2026-10-02T14:59:45.480660Z",
+  "updated_at": "2026-10-02T14:59:45.480660Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 10,
+  "currency": "KWD",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd20-9f1a-731d-b229-f5a045a0d151
+< 200
+{
+ "data": {
+  "id": "01a0fd20-9f1a-731d-b229-f5a045a0d151",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 3,
+  "change_seq": 20,
+  "created_at": "2026-10-02T14:59:29.120134Z",
+  "updated_at": "2026-10-02T14:59:48.212143Z",
+  "deleted_at": null,
+  "category_id": "01a0fd20-9abe-759e-a467-b5e60fc0420c",
+  "period_type": "monthly",
+  "amount_minor": 222,
+  "currency": "EGP",
+  "archived_at": "2026-10-02T14:59:45.874959Z"
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd20-ed60-76f2-a23c-dd564a968420
+< 200
+{
+ "data": {
+  "id": "01a0fd20-ed60-76f2-a23c-dd564a968420",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 2,
+  "change_seq": 22,
+  "created_at": "2026-10-02T14:59:49.122885Z",
+  "updated_at": "2026-10-02T14:59:49.595912Z",
+  "deleted_at": "2026-10-02T14:59:49.594156Z",
+  "category_id": "01a0fa05-c2ac-7075-acc2-8c0416d6c75f",
+  "period_type": "monthly",
+  "amount_minor": 100,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd21-180c-77c5-aa1a-250f95e5288b
+< 200
+{
+ "data": {
+  "id": "01a0fd21-180c-77c5-aa1a-250f95e5288b",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 2,
+  "change_seq": 24,
+  "created_at": "2026-10-02T15:00:00.085493Z",
+  "updated_at": "2026-10-02T15:00:02.275412Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 3000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd21-839d-7411-89a2-693fc13e3ba9
+< 200
+{
+ "data": {
+  "id": "01a0fd21-839d-7411-89a2-693fc13e3ba9",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 1,
+  "change_seq": 27,
+  "created_at": "2026-10-02T15:00:27.690597Z",
+  "updated_at": "2026-10-02T15:00:27.690597Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0",
+  "period_type": "monthly",
+  "amount_minor": 100000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+GET /budgets/01a0fd21-b4d3-705c-a0a6-72ddddc5cf19
+< 200
+{
+ "data": {
+  "id": "01a0fd21-b4d3-705c-a0a6-72ddddc5cf19",
+  "user_id": "01a0fd20-4272-72a6-ab95-7efae02f8c32",
+  "version": 2,
+  "change_seq": 30,
+  "created_at": "2026-10-02T15:00:40.194787Z",
+  "updated_at": "2026-10-02T15:00:41.580745Z",
+  "deleted_at": "2026-10-02T15:00:41.579812Z",
+  "category_id": "01a0fd21-b2f9-7616-b27c-6a0292136ba1",
+  "period_type": "monthly",
+  "amount_minor": 5,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] each budget row equals GET /budgets/{id} 
+CHECK [PASS] tombstone row present 
+CHECK [PASS] one row per budget (latest) 
+CHECK [PASS] user-scope rows (excluding wallet_member, stamped by wallet counters) in change_seq order [1, 2, 7, 9, 10, 12, 17, 18, 20, 22, 24, 27, 28, 30]

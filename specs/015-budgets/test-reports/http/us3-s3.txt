@@ -1,0 +1,107 @@
+===== US3_Budgets_in_a_shared_wallet_stay_personal_Scenario_3 US3 Budgets in a shared wallet stay personal — Scenario 3 2026-10-02T15:06:46.294686Z
+
+GET /budgets/01a0fd27-312d-77c6-896d-4c05814af22b/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd27-312d-77c6-896d-4c05814af22b",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 10000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 300,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 9700,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 4650,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] B has 300 before leaving 
+GET /budgets/01a0fd27-312d-77c6-896d-4c05814af22b/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd27-312d-77c6-896d-4c05814af22b",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 10000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 10000,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] B 0 after leaving 
+GET /budgets/01a0fd27-312d-77c6-896d-4c05814af22b/progress
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd27-312d-77c6-896d-4c05814af22b",
+  "period": {
+   "start": "2026-10-01",
+   "end": "2026-10-31",
+   "days_in_period": 31,
+   "days_elapsed": 2
+  },
+  "is_current": true,
+  "limit": {
+   "amount_minor": 10000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 300,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 9700,
+   "currency": "EGP"
+  },
+  "projected_end": {
+   "amount_minor": 4650,
+   "currency": "EGP"
+  },
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] B 300 again after rejoining (live membership counts) 

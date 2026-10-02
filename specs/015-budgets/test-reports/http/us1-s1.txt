@@ -1,0 +1,27 @@
+===== US1_Set_a_monthly_limit_for_a_category_Scenario_1 US1 Set a monthly limit for a category — Scenario 1 2026-10-02T15:06:11.376524Z
+
+PUT /budgets/01a0fd26-c430-72b9-a70b-7452d91575d4
+> {"category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "period_type": "monthly", "amount_minor": 600000, "currency": "EGP", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a0fd26-c430-72b9-a70b-7452d91575d4",
+  "user_id": "01a0fd26-723d-70d0-8e35-a2dd325e8f27",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-02T15:06:11.807370Z",
+  "updated_at": "2026-10-02T15:06:11.807370Z",
+  "deleted_at": null,
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "period_type": "monthly",
+  "amount_minor": 600000,
+  "currency": "EGP",
+  "archived_at": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] 201 
+CHECK [PASS] owner 
+CHECK [PASS] version 1 
+CHECK [PASS] fields 

@@ -5,6 +5,7 @@ namespace App\Modules\Identity\Infrastructure;
 use App\Modules\Identity\Domain\Ports\AddressLookup;
 use App\Modules\Identity\Domain\Ports\AttributeCipher;
 use App\Modules\Identity\Domain\Ports\AuditStore;
+use App\Modules\Identity\Domain\Ports\BudgetStartDayHistory;
 use App\Modules\Identity\Domain\Ports\ChangeSequence;
 use App\Modules\Identity\Domain\Ports\FailureCounter;
 use App\Modules\Identity\Domain\Ports\LinkRepository;
@@ -19,6 +20,7 @@ use App\Modules\Identity\Infrastructure\Crypto\Keyring;
 use App\Modules\Identity\Infrastructure\Crypto\SodiumAttributeCipher;
 use App\Modules\Identity\Infrastructure\Models\DeviceSession;
 use App\Modules\Identity\Infrastructure\Repositories\EloquentAuditStore;
+use App\Modules\Identity\Infrastructure\Repositories\EloquentBudgetStartDayHistory;
 use App\Modules\Identity\Infrastructure\Repositories\EloquentFailureCounter;
 use App\Modules\Identity\Infrastructure\Repositories\EloquentLinkRepository;
 use App\Modules\Identity\Infrastructure\Repositories\EloquentProfileRepository;
@@ -50,6 +52,7 @@ class IdentityPersistenceServiceProvider extends ServiceProvider
         AuditStore::class => EloquentAuditStore::class,
         ChangeSequence::class => UserRowChangeSequence::class,
         UserScope::class => EloquentUserScope::class,
+        BudgetStartDayHistory::class => EloquentBudgetStartDayHistory::class,
     ];
 
     public function register(): void

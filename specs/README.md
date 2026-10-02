@@ -130,7 +130,7 @@ Left for the glossary itself: since categories ride the user feed, a member of a
 
 Found while validating the glossary (spec 002) with a fresh-context reader. None block A2–A5; each belongs to the feature named.
 
-**Budgeting**
+**Budgeting** — all six answered by spec 015 ([ADR-0019](../docs/adr/0019-budget-spending-by-author-computed-on-read.md)): author attribution, one currency per budget, expense categories only with overlap allowed, archived categories keep counting, progress served by Budgeting, no notifications.
 
 - How is a transaction in a **shared** wallet attributed to one member's budget — by the owning user of the category it references, or by the transaction's `created_by`? These diverge as soon as one partner recategorises the other's transaction.
 - What currency is a budget denominated in when its owner holds wallets in more than one? Postings balance per currency and FX is out of scope, so aggregating "spending across their wallets" is undefined.

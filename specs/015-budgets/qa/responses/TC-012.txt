@@ -1,0 +1,275 @@
+===== TC-012 Past period via ?date= uses current limit; projected null; date validation 2026-10-02T15:00:09.748561Z
+
+GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress params={'date': '2026-09-15'}
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+  "period": {
+   "start": "2026-09-01",
+   "end": "2026-09-30",
+   "days_in_period": 30,
+   "days_elapsed": null
+  },
+  "is_current": false,
+  "limit": {
+   "amount_minor": 600000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 3333,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 596667,
+   "currency": "EGP"
+  },
+  "projected_end": null,
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] Sep period 09-01..09-30, not current, days_elapsed null, projected null {"budget_id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a", "period": {"start": "2026-09-01", "end": "2026-09-30", "days_in_period": 30, "days_elapsed": null}, "is_current": false, "limit": {"amount_minor": 600000, "currency": "EGP"}, "spent": {"amount_minor": 3333, "currency": "EGP"}, "remaining": {"amount_minor": 596667, "currency": "EGP"}, "projected_end": null, "over_limit": false, "other_currencies": []}
+CHECK [PASS] past uses current limit 600000 
+GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress params={'date': '2026-11-15'}
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+  "period": {
+   "start": "2026-11-01",
+   "end": "2026-11-30",
+   "days_in_period": 30,
+   "days_elapsed": null
+  },
+  "is_current": false,
+  "limit": {
+   "amount_minor": 600000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 600000,
+   "currency": "EGP"
+  },
+  "projected_end": null,
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] future period: projected null, spent 0 
+GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress params={'date': '2026-02-30'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a0fd21-447f-7051-9816-a1d19694f3c3"
+}
+
+CHECK [PASS] /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress date=2026-02-30 -> 400 INVALID_QUERY_PARAMETER 400 INVALID_QUERY_PARAMETER
+GET /budget-progress params={'date': '2026-02-30'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a0fd21-461b-70aa-be44-f6acea49bcab"
+}
+
+CHECK [PASS] /budget-progress date=2026-02-30 -> 400 INVALID_QUERY_PARAMETER 400 INVALID_QUERY_PARAMETER
+GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress params={'date': '1899-12-31'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a0fd21-47f7-71e6-b8a6-e876c91df125"
+}
+
+CHECK [PASS] /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress date=1899-12-31 -> 400 INVALID_QUERY_PARAMETER 400 INVALID_QUERY_PARAMETER
+GET /budget-progress params={'date': '1899-12-31'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a0fd21-49b2-703a-b559-683aa554c3ad"
+}
+
+CHECK [PASS] /budget-progress date=1899-12-31 -> 400 INVALID_QUERY_PARAMETER 400 INVALID_QUERY_PARAMETER
+GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress params={'date': '3000-01-01'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a0fd21-4be8-7120-82d9-3b0d0221321c"
+}
+
+CHECK [PASS] /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress date=3000-01-01 -> 400 INVALID_QUERY_PARAMETER 400 INVALID_QUERY_PARAMETER
+GET /budget-progress params={'date': '3000-01-01'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a0fd21-4d81-7135-8f81-6438b4993dd9"
+}
+
+CHECK [PASS] /budget-progress date=3000-01-01 -> 400 INVALID_QUERY_PARAMETER 400 INVALID_QUERY_PARAMETER
+GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress params={'date': '2026-10'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a0fd21-4f6f-710f-9f1c-36c95e3508a8"
+}
+
+CHECK [PASS] /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress date=2026-10 -> 400 INVALID_QUERY_PARAMETER 400 INVALID_QUERY_PARAMETER
+GET /budget-progress params={'date': '2026-10'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a0fd21-5101-7094-8d0e-667cfa406625"
+}
+
+CHECK [PASS] /budget-progress date=2026-10 -> 400 INVALID_QUERY_PARAMETER 400 INVALID_QUERY_PARAMETER
+GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress params={'date': 'today'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a0fd21-52ab-708b-ab6a-1b309f347fc3"
+}
+
+CHECK [PASS] /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress date=today -> 400 INVALID_QUERY_PARAMETER 400 INVALID_QUERY_PARAMETER
+GET /budget-progress params={'date': 'today'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a0fd21-53fb-7327-8a3d-0354f9be92ac"
+}
+
+CHECK [PASS] /budget-progress date=today -> 400 INVALID_QUERY_PARAMETER 400 INVALID_QUERY_PARAMETER
+GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress params={'date': '20261002'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a0fd21-5555-7194-96df-ccc16d39de22"
+}
+
+CHECK [PASS] /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress date=20261002 -> 400 INVALID_QUERY_PARAMETER 400 INVALID_QUERY_PARAMETER
+GET /budget-progress params={'date': '20261002'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a0fd21-56dc-73e7-9619-d0a158c70c3f"
+}
+
+CHECK [PASS] /budget-progress date=20261002 -> 400 INVALID_QUERY_PARAMETER 400 INVALID_QUERY_PARAMETER
+GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress params={'date': '1900-01-01'}
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+  "period": {
+   "start": "1900-01-01",
+   "end": "1900-01-31",
+   "days_in_period": 31,
+   "days_elapsed": null
+  },
+  "is_current": false,
+  "limit": {
+   "amount_minor": 600000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 600000,
+   "currency": "EGP"
+  },
+  "projected_end": null,
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] date=1900-01-01 accepted 200
+GET /budgets/01a0fd20-7e56-7101-bd4b-4e2be46cac0a/progress params={'date': '2999-12-31'}
+< 200
+{
+ "data": {
+  "budget_id": "01a0fd20-7e56-7101-bd4b-4e2be46cac0a",
+  "period": {
+   "start": "2999-12-01",
+   "end": "2999-12-31",
+   "days_in_period": 31,
+   "days_elapsed": null
+  },
+  "is_current": false,
+  "limit": {
+   "amount_minor": 600000,
+   "currency": "EGP"
+  },
+  "spent": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "remaining": {
+   "amount_minor": 600000,
+   "currency": "EGP"
+  },
+  "projected_end": null,
+  "over_limit": false,
+  "other_currencies": []
+ },
+ "meta": {}
+}
+
+CHECK [PASS] date=2999-12-31 accepted 200

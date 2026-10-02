@@ -25,3 +25,7 @@ The brief predates decisions ratified since. These collide with it; the ratified
 - **Due-ness is derived; compute it, there is no stored state to listen for.** An occurrence is due when it is `scheduled` and dated on or before the rule's today, where "today" is the date in the rule's stored IANA `timezone` (not the device's, not the server's). Spec 014 adds no event and no "due" write; a reminder job reads the scheduled occurrences and evaluates due-ness at send time.
 - The hourly job `wallets:materialise-occurrences` keeps occurrences materialised and confirms automatic rules; a reminder for an occurrence it is about to confirm automatically is the product's call, not a backend requirement.
 - A refused automatic confirmation sets `auto_confirm_refusal` on the occurrence (`not_permitted`, `counter_wallet_unavailable`, `currency_mismatch`); that is the signal worth notifying, not a retry.
+
+## Inherited from B8 (spec 015)
+
+- **`BudgetExceeded` and any overrun push are B16's.** Spec 015 publishes no event and stores no threshold or "notified" state; progress is computed on read, so detecting an overrun needs its own trigger (for example a job that evaluates `BudgetQueryService` for budgets near their limit).

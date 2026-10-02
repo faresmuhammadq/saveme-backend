@@ -27,3 +27,8 @@ The brief predates decisions ratified since. These collide with it; the ratified
 - **"Due" and "missed" are derived** (scheduled and dated on or before the rule's today, in the rule's stored `timezone`; missed is due while a later non-payout occurrence of the same rule is also due). Compute them; they are never stored.
 - A gam'eya's **payout** is an income occurrence (`is_payout: true`) worth the sum of the scheduled contributions; a forecast counts it on the payout round's date. A skipped occurrence is a decision about one round, not a change to the series.
 - Confirmed occurrences are ordinary transactions and are already in every actual total; do not add them again from the occurrence table.
+
+## Inherited from B8 (spec 015)
+
+- **Budget-vs-actual goes through Budgeting's `BudgetQueryService`**, not a second computation. Same attribution (the owner's own `created_by` expenses in wallets they currently belong to), same one-currency-per-budget rule (never sum currencies; list others) and same Budget Period rules (owner's budget start day history; calendar-date membership).
+- Progress is computed on read from postings; there is no stored figure to reconcile with.

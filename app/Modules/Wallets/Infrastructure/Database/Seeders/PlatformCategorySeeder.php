@@ -37,7 +37,7 @@ class PlatformCategorySeeder extends Seeder
             ['system_key' => 'health', 'kind' => 'expense', 'names' => ['en' => 'Health', 'ar' => 'صحة وعلاج'], 'icon' => 'health', 'color' => '#C62828', 'position' => 8],
             ['system_key' => 'education', 'kind' => 'expense', 'names' => ['en' => 'Education', 'ar' => 'تعليم'], 'icon' => 'school', 'color' => '#283593', 'position' => 9],
             ['system_key' => 'clothing', 'kind' => 'expense', 'names' => ['en' => 'Clothing', 'ar' => 'ملابس'], 'icon' => 'shirt', 'color' => '#AD1457', 'position' => 10],
-            ['system_key' => 'household', 'kind' => 'expense', 'names' => ['en' => 'Household', 'ar' => 'مستلزمات البيت'], 'icon' => 'sofa', 'color' => '#5D4037', 'position' => 11],
+            ['system_key' => 'household', 'kind' => 'expense', 'names' => ['en' => 'Home supplies', 'ar' => 'مستلزمات البيت'], 'icon' => 'sofa', 'color' => '#5D4037', 'position' => 11],
             ['system_key' => 'personal_care', 'kind' => 'expense', 'names' => ['en' => 'Personal care', 'ar' => 'عناية شخصية'], 'icon' => 'care', 'color' => '#8E24AA', 'position' => 12],
             ['system_key' => 'entertainment', 'kind' => 'expense', 'names' => ['en' => 'Entertainment', 'ar' => 'ترفيه'], 'icon' => 'ticket', 'color' => '#7B1FA2', 'position' => 13],
             ['system_key' => 'subscriptions', 'kind' => 'expense', 'names' => ['en' => 'Subscriptions', 'ar' => 'اشتراكات'], 'icon' => 'repeat', 'color' => '#3949AB', 'position' => 14],

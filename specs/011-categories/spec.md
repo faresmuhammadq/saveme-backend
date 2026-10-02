@@ -223,7 +223,7 @@ Both kinds of Category share one identifier space, so a posting's category leg i
 | 8 | `health` | expense | Health | صحة وعلاج | `health` | `#C62828` |
 | 9 | `education` | expense | Education | تعليم | `school` | `#283593` |
 | 10 | `clothing` | expense | Clothing | ملابس | `shirt` | `#AD1457` |
-| 11 | `household` | expense | Household | مستلزمات البيت | `sofa` | `#5D4037` |
+| 11 | `household` | expense | Home supplies | مستلزمات البيت | `sofa` | `#5D4037` |
 | 12 | `personal_care` | expense | Personal care | عناية شخصية | `care` | `#8E24AA` |
 | 13 | `entertainment` | expense | Entertainment | ترفيه | `ticket` | `#7B1FA2` |
 | 14 | `subscriptions` | expense | Subscriptions | اشتراكات | `repeat` | `#3949AB` |

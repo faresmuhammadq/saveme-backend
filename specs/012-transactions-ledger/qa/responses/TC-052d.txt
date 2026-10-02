@@ -1,0 +1,58 @@
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faac-6550-778e-a056-342718b36645
+> {"kind":"expense"}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faac-6639-73f1-bd84-0787f47143ed",
+  "errors": [
+    {
+      "pointer": "/date",
+      "code": "REQUIRED",
+      "detail": "This field is required."
+    },
+    {
+      "pointer": "/amount_minor",
+      "code": "REQUIRED",
+      "detail": "This field is required."
+    },
+    {
+      "pointer": "/currency",
+      "code": "REQUIRED",
+      "detail": "This field is required."
+    },
+    {
+      "pointer": "/category_id",
+      "code": "REQUIRED",
+      "detail": "This field is required."
+    },
+    {
+      "pointer": "/counter_wallet_id",
+      "code": "REQUIRED",
+      "detail": "This field is required."
+    },
+    {
+      "pointer": "/description",
+      "code": "REQUIRED",
+      "detail": "This field is required."
+    },
+    {
+      "pointer": "/memo",
+      "code": "REQUIRED",
+      "detail": "This field is required."
+    },
+    {
+      "pointer": "/counterparty",
+      "code": "REQUIRED",
+      "detail": "This field is required."
+    },
+    {
+      "pointer": "/cleared",
+      "code": "REQUIRED",
+      "detail": "This field is required."
+    }
+  ]
+}

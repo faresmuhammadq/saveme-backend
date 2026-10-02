@@ -1,0 +1,72 @@
+PUT /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions/01a0fab3-3ff1-7747-8a2d-77ba8fc67e10
+> {"kind":"expense","date":"2026-09-05","amount_minor":"10.00","currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fab3-40f1-7213-b957-7f93d858149f",
+  "errors": [
+    {
+      "pointer": "/amount_minor",
+      "code": "AMOUNT_NOT_INTEGER",
+      "detail": "Amounts must be whole numbers of minor units."
+    }
+  ]
+}
+PUT /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions/01a0fab3-4206-7036-b421-601269110bcf
+> {"kind":"expense","date":"2026-09-05","amount_minor":1.5,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fab3-42d6-73dd-af31-7e669319703c",
+  "errors": [
+    {
+      "pointer": "/amount_minor",
+      "code": "AMOUNT_NOT_INTEGER",
+      "detail": "Amounts must be whole numbers of minor units."
+    }
+  ]
+}
+PUT /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions/01a0fab3-43f1-7169-9ac1-e5465017edfb
+> {"kind":"expense","date":"2026-09-05","amount_minor":0,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fab3-44ce-72fc-9b0a-fcdf0693a74f",
+  "errors": [
+    {
+      "pointer": "/amount_minor",
+      "code": "OUT_OF_RANGE",
+      "detail": "This value is too short, too long, or outside the allowed range."
+    }
+  ]
+}
+PUT /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions/01a0fab3-4603-704a-8c8e-4145ec911899
+> {"kind":"expense","date":"2026-09-05","amount_minor":-1,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fab3-46e2-7035-9ef3-b553ea326216",
+  "errors": [
+    {
+      "pointer": "/amount_minor",
+      "code": "OUT_OF_RANGE",
+      "detail": "This value is too short, too long, or outside the allowed range."
+    }
+  ]
+}

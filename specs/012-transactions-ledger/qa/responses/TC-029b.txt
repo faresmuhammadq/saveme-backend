@@ -1,0 +1,18 @@
+PATCH /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faa5-ce3f-76de-b847-7548f3748548
+> {"date":"2026-03-01T10:00:00Z","version":2}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faa9-207d-70e7-9190-2d87ed915b5c",
+  "errors": [
+    {
+      "pointer": "/date",
+      "code": "DATE_NOT_CALENDAR_DATE",
+      "detail": "Use a date in the form YYYY-MM-DD, with no time."
+    }
+  ]
+}

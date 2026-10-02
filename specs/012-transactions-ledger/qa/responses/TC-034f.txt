@@ -1,0 +1,10 @@
+GET /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions?search=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+< 400
+{
+  "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+  "title": "Invalid query parameter",
+  "status": 400,
+  "detail": "A query parameter cannot be used as sent.",
+  "code": "INVALID_QUERY_PARAMETER",
+  "request_id": "01a0faa9-ba87-7165-9c3d-2bcd8f53e540"
+}

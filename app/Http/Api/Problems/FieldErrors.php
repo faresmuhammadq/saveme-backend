@@ -42,6 +42,9 @@ final class FieldErrors
         'isocurrency' => ErrorCode::InvalidCurrency,
         'minorunits' => ErrorCode::AmountNotInteger,
         'notblank' => ErrorCode::OutOfRange,
+        'afterorequal' => ErrorCode::OutOfRange,
+        'beforeorequal' => ErrorCode::OutOfRange,
+        'calendardate' => ErrorCode::DateNotCalendarDate,
     ];
 
     /**

@@ -1,0 +1,70 @@
+PUT /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions/01a0fab4-dd2d-749a-a53c-127a69c9d15b
+> {"kind":"expense","date":"2026-09-09","amount_minor":2000,"currency":"EGP","category_id":"01a0fab3-2998-7714-85cb-245aa2cbd16f","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 201
+{
+  "data": {
+    "id": "01a0fab4-dd2d-749a-a53c-127a69c9d15b",
+    "wallet_id": "01a0fab2-bac5-721b-a337-3163d405172a",
+    "version": 1,
+    "change_seq": 26,
+    "created_at": "2026-10-02T03:42:32.743873Z",
+    "updated_at": "2026-10-02T03:42:32.743873Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-09-09",
+    "amount_minor": 2000,
+    "currency": "EGP",
+    "category_id": "01a0fab3-2998-7714-85cb-245aa2cbd16f",
+    "counter_wallet_id": null,
+    "description": null,
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  },
+  "meta": {}
+}
+PATCH /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions/01a0fab4-dd2d-749a-a53c-127a69c9d15b
+> {"amount_minor":2500,"version":1}
+< 200
+{
+  "data": {
+    "id": "01a0fab4-dd2d-749a-a53c-127a69c9d15b",
+    "wallet_id": "01a0fab2-bac5-721b-a337-3163d405172a",
+    "version": 2,
+    "change_seq": 30,
+    "created_at": "2026-10-02T03:42:32.743873Z",
+    "updated_at": "2026-10-02T03:42:33.305235Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-09-09",
+    "amount_minor": 2500,
+    "currency": "EGP",
+    "category_id": "01a0fab3-2998-7714-85cb-245aa2cbd16f",
+    "counter_wallet_id": null,
+    "description": null,
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  },
+  "meta": {}
+}
+PATCH /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions/01a0fab4-dd2d-749a-a53c-127a69c9d15b
+> {"category_id":"01a0fab3-2e8a-7751-ac05-83cee7e15ef3","version":2}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fab4-e291-7150-b897-34ea32ede50f",
+  "errors": [
+    {
+      "pointer": "/category_id",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}

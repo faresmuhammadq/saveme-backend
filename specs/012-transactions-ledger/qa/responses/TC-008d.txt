@@ -1,0 +1,11 @@
+PATCH /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faa5-c982-7407-b4c5-ac2c640e31b0
+> {"cleared":true,"version":1}
+< 403
+{
+  "type": "http://saveme-backend.test/problems/email-not-verified",
+  "title": "Address not verified",
+  "status": 403,
+  "detail": "Verify your email address first. We can send the link again.",
+  "code": "EMAIL_NOT_VERIFIED",
+  "request_id": "01a0faa6-4b49-712f-9255-a6e22981ade1"
+}

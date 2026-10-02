@@ -33,8 +33,8 @@ interface CategoryRepository
 
     /**
      * Whether the id is held by anything the caller may not overwrite: a
-     * platform category, another person's category, a wallet, or a category
-     * reference (P-06 rule 3).
+     * platform category, another person's category, a wallet, a category
+     * reference, or a transaction (P-06 rule 3).
      */
     public function isHeldByOther(string $categoryId, string $ownerId): bool;
 

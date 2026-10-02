@@ -1,0 +1,9 @@
+Checked wallet balances; 0 drifted and repaired.
+01a0faa4-f4f0-7150-baac-3fa62ca41f9e expected=503000 cached=503000
+01a0faa4-fb6a-72b6-bdd7-528fa3c04a72 expected=30000 cached=30000
+01a0faa4-fde8-75f5-b35d-d28ec7e93883 expected=0 cached=0
+01a0faa5-0058-74cb-aead-72bab0c9bcb4 expected=0 cached=0
+01a0faa5-5686-77b0-8e51-b35dcadc436b expected=47000 cached=47000
+01a0faa5-58e1-70e3-8feb-339044d2214a expected=0 cached=0
+01a0faaa-9686-7542-932f-66a7eab0cb81 expected=4900 cached=4900
+unbalanced=0

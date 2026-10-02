@@ -1,0 +1,90 @@
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faa5-d79f-72a3-8041-6cc3174b1796
+> {"kind":"expense","date":"2026-09-10","amount_minor":"250.00","currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faa5-d899-72e8-8965-f83fc192ff1c",
+  "errors": [
+    {
+      "pointer": "/amount_minor",
+      "code": "AMOUNT_NOT_INTEGER",
+      "detail": "Amounts must be whole numbers of minor units."
+    }
+  ]
+}
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faa5-d79f-72a3-8041-6cc3174b1796
+> {"kind":"expense","date":"2026-09-10","amount_minor":12.5,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faa5-da9c-72e0-b781-f20816be7f04",
+  "errors": [
+    {
+      "pointer": "/amount_minor",
+      "code": "AMOUNT_NOT_INTEGER",
+      "detail": "Amounts must be whole numbers of minor units."
+    }
+  ]
+}
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faa5-d79f-72a3-8041-6cc3174b1796
+> {"kind":"expense","date":"2026-09-10","amount_minor":0,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faa5-dcba-7308-b6cb-a660bd6fef93",
+  "errors": [
+    {
+      "pointer": "/amount_minor",
+      "code": "OUT_OF_RANGE",
+      "detail": "This value is too short, too long, or outside the allowed range."
+    }
+  ]
+}
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faa5-d79f-72a3-8041-6cc3174b1796
+> {"kind":"expense","date":"2026-09-10","amount_minor":-5,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faa5-de5a-7238-bd19-bf723e55a40d",
+  "errors": [
+    {
+      "pointer": "/amount_minor",
+      "code": "OUT_OF_RANGE",
+      "detail": "This value is too short, too long, or outside the allowed range."
+    }
+  ]
+}
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faa5-d79f-72a3-8041-6cc3174b1796
+> {"kind":"expense","date":"2026-09-10","amount_minor":9007199254740992,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faa5-e010-71a9-8ec6-5ff21ca4f8b7",
+  "errors": [
+    {
+      "pointer": "/amount_minor",
+      "code": "OUT_OF_RANGE",
+      "detail": "This value is too short, too long, or outside the allowed range."
+    }
+  ]
+}

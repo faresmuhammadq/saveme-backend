@@ -1,0 +1,18 @@
+PATCH /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faa7-03e6-71c6-9e99-019f024ed2c4
+> {"counter_wallet_id":"01a0faa4-fb6a-72b6-bdd7-528fa3c04a72","version":1}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faa8-631b-7032-9334-fdb1239c4363",
+  "errors": [
+    {
+      "pointer": "/counter_wallet_id",
+      "code": "UNKNOWN_FIELD",
+      "detail": "This field is not accepted here."
+    }
+  ]
+}

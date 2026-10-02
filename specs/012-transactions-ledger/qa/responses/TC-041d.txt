@@ -1,0 +1,25 @@
+PATCH /wallets/01a0faaa-9686-7542-932f-66a7eab0cb81
+> {"opening_balance_minor":5000,"version":1}
+< 200
+{
+  "data": {
+    "id": "01a0faaa-9686-7542-932f-66a7eab0cb81",
+    "wallet_id": "01a0faaa-9686-7542-932f-66a7eab0cb81",
+    "version": 2,
+    "change_seq": 8,
+    "created_at": "2026-10-02T03:31:19.267689Z",
+    "updated_at": "2026-10-02T03:31:22.024381Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA Lock",
+    "currency": "EGP",
+    "opening_balance_minor": 5000,
+    "balance_minor": 5000,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+  },
+  "meta": {}
+}

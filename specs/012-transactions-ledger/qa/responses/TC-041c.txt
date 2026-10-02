@@ -1,0 +1,18 @@
+PATCH /wallets/01a0faaa-9686-7542-932f-66a7eab0cb81
+> {"currency":"USD","version":1}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "The currency can't change once the wallet has transactions.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faaa-a0a9-7220-a194-5140538a37cf",
+  "errors": [
+    {
+      "pointer": "/currency",
+      "code": "IMMUTABLE_FIELD",
+      "detail": "This field cannot be changed."
+    }
+  ]
+}

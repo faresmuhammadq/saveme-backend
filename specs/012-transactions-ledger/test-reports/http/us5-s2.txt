@@ -1,0 +1,31 @@
+GET /categories/01a0fab3-2998-7714-85cb-245aa2cbd16f
+< 200
+{
+  "data": {
+    "id": "01a0fab3-2998-7714-85cb-245aa2cbd16f",
+    "user_id": "01a0faa4-43f0-7253-929d-7405749ecc34",
+    "version": 1,
+    "change_seq": 1771,
+    "created_at": "2026-10-02T03:40:41.260804Z",
+    "updated_at": "2026-10-02T03:40:41.260804Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "E2E Taxi",
+    "icon": "tag",
+    "color": "#C62828",
+    "archived_at": null,
+    "in_use": true
+  },
+  "meta": {}
+}
+DELETE /categories/01a0fab3-2998-7714-85cb-245aa2cbd16f
+> {"version":1}
+< 409
+{
+  "type": "http://saveme-backend.test/problems/category-in-use",
+  "title": "Category in use",
+  "status": 409,
+  "detail": "This category is used by your records, so it can't be deleted. Archive it instead.",
+  "code": "CATEGORY_IN_USE",
+  "request_id": "01a0fab5-5c38-72d0-bfcb-5a66a0da1035"
+}

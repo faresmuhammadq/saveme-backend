@@ -1,0 +1,10 @@
+GET /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/not-a-uuid
+< 422
+{
+  "type": "http://saveme-backend.test/problems/invalid-id",
+  "title": "Invalid identifier",
+  "status": 422,
+  "detail": "The identifier is not valid.",
+  "code": "INVALID_ID",
+  "request_id": "01a0faa9-cb4a-7119-b090-b59b0d49a3e7"
+}

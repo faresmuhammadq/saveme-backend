@@ -1,0 +1,26 @@
+GET /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/category-references
+< 200
+{
+  "data": [
+    {
+      "id": "01a0faa6-3c32-71ad-b9bc-49fce38c3866",
+      "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+      "version": 1,
+      "change_seq": 13,
+      "created_at": "2026-10-02T03:26:33.522860Z",
+      "updated_at": "2026-10-02T03:26:33.522860Z",
+      "deleted_at": null,
+      "category_id": "01a0faa5-0457-771a-b851-70e67be21d5e",
+      "owner_user_id": "01a0faa4-43f0-7253-929d-7405749ecc34",
+      "kind": "expense",
+      "name": "A Coffee",
+      "icon": "tag",
+      "color": "#C62828"
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50
+  }
+}

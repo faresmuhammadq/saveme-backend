@@ -63,6 +63,7 @@ enum ErrorCode: string
     case ExportInProgress = 'EXPORT_IN_PROGRESS';
     case EmailAlreadyRegistered = 'EMAIL_ALREADY_REGISTERED';
     case CategoryInUse = 'CATEGORY_IN_USE';
+    case CurrencyMismatch = 'CURRENCY_MISMATCH';
 
     /**
      * The single HTTP status this code is served with.
@@ -81,7 +82,8 @@ enum ErrorCode: string
             self::InvalidCurrency,
             self::DateNotCalendarDate,
             self::InstantNotUtc,
-            self::ImmutableField => 422,
+            self::ImmutableField,
+            self::CurrencyMismatch => 422,
             self::MalformedJson,
             self::InvalidQueryParameter,
             self::InvalidCursor,
@@ -179,6 +181,7 @@ enum ErrorCode: string
             self::ExportInProgress => 'Export already in progress',
             self::EmailAlreadyRegistered => 'Email already registered',
             self::CategoryInUse => 'Category in use',
+            self::CurrencyMismatch => 'Currency mismatch',
         };
     }
 
@@ -208,6 +211,7 @@ enum ErrorCode: string
             self::DateNotCalendarDate,
             self::InstantNotUtc,
             self::ImmutableField,
+            self::CurrencyMismatch,
             self::VerificationTokenInvalid,
             self::ResetTokenInvalid,
             self::TwoFactorRequired,
@@ -257,6 +261,7 @@ enum ErrorCode: string
             self::DateNotCalendarDate,
             self::InstantNotUtc,
             self::ImmutableField,
+            self::CurrencyMismatch,
         ], true);
     }
 }

@@ -1,0 +1,158 @@
+PUT /wallets/01a0fab2-bd39-7261-b850-94f5f98a6a5a/transactions/01a0fab4-5064-7551-a1aa-84ed1e9e5b05
+> {"kind":"transfer","date":"2026-09-08","amount_minor":10000,"currency":"EGP","category_id":null,"counter_wallet_id":"01a0fab2-bfe9-75a5-b15e-11ca180934f6","description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 201
+{
+  "data": {
+    "id": "01a0fab4-5064-7551-a1aa-84ed1e9e5b05",
+    "wallet_id": "01a0fab2-bd39-7261-b850-94f5f98a6a5a",
+    "version": 1,
+    "change_seq": 6,
+    "created_at": "2026-10-02T03:41:56.699967Z",
+    "updated_at": "2026-10-02T03:41:56.699967Z",
+    "deleted_at": null,
+    "kind": "transfer",
+    "date": "2026-09-08",
+    "amount_minor": 10000,
+    "currency": "EGP",
+    "category_id": null,
+    "counter_wallet_id": "01a0fab2-bfe9-75a5-b15e-11ca180934f6",
+    "description": null,
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  },
+  "meta": {}
+}
+GET /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions/01a0fab4-4a76-708a-9a9b-c14f93c2a434
+< 200
+{
+  "data": {
+    "id": "01a0fab4-4a76-708a-9a9b-c14f93c2a434",
+    "wallet_id": "01a0fab2-bac5-721b-a337-3163d405172a",
+    "version": 1,
+    "change_seq": 16,
+    "created_at": "2026-10-02T03:41:55.185106Z",
+    "updated_at": "2026-10-02T03:41:55.185106Z",
+    "deleted_at": null,
+    "kind": "transfer",
+    "date": "2026-09-07",
+    "amount_minor": 50000,
+    "currency": "EGP",
+    "category_id": null,
+    "counter_wallet_id": "01a0fab2-bd39-7261-b850-94f5f98a6a5a",
+    "description": "ATM",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  },
+  "meta": {}
+}
+GET /wallets/01a0fab2-bd39-7261-b850-94f5f98a6a5a/transactions/01a0fab4-4a76-708a-9a9b-c14f93c2a434
+< 200
+{
+  "data": {
+    "id": "01a0fab4-4a76-708a-9a9b-c14f93c2a434",
+    "wallet_id": "01a0fab2-bac5-721b-a337-3163d405172a",
+    "version": 1,
+    "change_seq": 16,
+    "created_at": "2026-10-02T03:41:55.185106Z",
+    "updated_at": "2026-10-02T03:41:55.185106Z",
+    "deleted_at": null,
+    "kind": "transfer",
+    "date": "2026-09-07",
+    "amount_minor": 50000,
+    "currency": "EGP",
+    "category_id": null,
+    "counter_wallet_id": "01a0fab2-bd39-7261-b850-94f5f98a6a5a",
+    "description": "ATM",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  },
+  "meta": {}
+}
+GET /wallets/01a0fab2-bd39-7261-b850-94f5f98a6a5a/transactions
+< 200
+{
+  "data": [
+    {
+      "id": "01a0fab4-5064-7551-a1aa-84ed1e9e5b05",
+      "wallet_id": "01a0fab2-bd39-7261-b850-94f5f98a6a5a",
+      "version": 1,
+      "change_seq": 6,
+      "created_at": "2026-10-02T03:41:56.699967Z",
+      "updated_at": "2026-10-02T03:41:56.699967Z",
+      "deleted_at": null,
+      "kind": "transfer",
+      "date": "2026-09-08",
+      "amount_minor": 10000,
+      "currency": "EGP",
+      "category_id": null,
+      "counter_wallet_id": "01a0fab2-bfe9-75a5-b15e-11ca180934f6",
+      "description": null,
+      "memo": null,
+      "counterparty": null,
+      "cleared": false,
+      "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+    },
+    {
+      "id": "01a0fab4-4a76-708a-9a9b-c14f93c2a434",
+      "wallet_id": "01a0fab2-bac5-721b-a337-3163d405172a",
+      "version": 1,
+      "change_seq": 16,
+      "created_at": "2026-10-02T03:41:55.185106Z",
+      "updated_at": "2026-10-02T03:41:55.185106Z",
+      "deleted_at": null,
+      "kind": "transfer",
+      "date": "2026-09-07",
+      "amount_minor": 50000,
+      "currency": "EGP",
+      "category_id": null,
+      "counter_wallet_id": "01a0fab2-bd39-7261-b850-94f5f98a6a5a",
+      "description": "ATM",
+      "memo": null,
+      "counterparty": null,
+      "cleared": false,
+      "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50
+  }
+}
+GET /wallets/01a0fab2-bfe9-75a5-b15e-11ca180934f6/transactions
+< 200
+{
+  "data": [
+    {
+      "id": "01a0fab4-5064-7551-a1aa-84ed1e9e5b05",
+      "wallet_id": "01a0fab2-bd39-7261-b850-94f5f98a6a5a",
+      "version": 1,
+      "change_seq": 6,
+      "created_at": "2026-10-02T03:41:56.699967Z",
+      "updated_at": "2026-10-02T03:41:56.699967Z",
+      "deleted_at": null,
+      "kind": "transfer",
+      "date": "2026-09-08",
+      "amount_minor": 10000,
+      "currency": "EGP",
+      "category_id": null,
+      "counter_wallet_id": "01a0fab2-bfe9-75a5-b15e-11ca180934f6",
+      "description": null,
+      "memo": null,
+      "counterparty": null,
+      "cleared": false,
+      "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50
+  }
+}

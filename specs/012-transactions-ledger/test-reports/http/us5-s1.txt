@@ -1,0 +1,42 @@
+GET /wallets/01a0fab2-bd39-7261-b850-94f5f98a6a5a
+< 200
+{
+  "data": {
+    "id": "01a0fab2-bd39-7261-b850-94f5f98a6a5a",
+    "wallet_id": "01a0fab2-bd39-7261-b850-94f5f98a6a5a",
+    "version": 1,
+    "change_seq": 9,
+    "created_at": "2026-10-02T03:40:13.515872Z",
+    "updated_at": "2026-10-02T03:40:13.515872Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA E2E Bank",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": -10000,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+PATCH /wallets/01a0fab2-bd39-7261-b850-94f5f98a6a5a
+> {"currency":"USD","version":1}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "The currency can't change once the wallet has transactions.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fab5-5863-70cb-a485-584305b39594",
+  "errors": [
+    {
+      "pointer": "/currency",
+      "code": "IMMUTABLE_FIELD",
+      "detail": "This field cannot be changed."
+    }
+  ]
+}

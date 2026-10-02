@@ -1,0 +1,36 @@
+201
+200
+200
+200
+GET /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions?filter%5Bdate%5D=2026-09-25
+< 200
+{
+  "data": [
+    {
+      "id": "01a0faad-8085-7142-a707-667b634a01b0",
+      "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+      "version": 1,
+      "change_seq": 64,
+      "created_at": "2026-10-02T03:34:30.357161Z",
+      "updated_at": "2026-10-02T03:34:30.357161Z",
+      "deleted_at": null,
+      "kind": "expense",
+      "date": "2026-09-25",
+      "amount_minor": 111,
+      "currency": "EGP",
+      "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+      "counter_wallet_id": null,
+      "description": null,
+      "memo": null,
+      "counterparty": null,
+      "cleared": false,
+      "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50
+  }
+}
+Checked wallet balances; 0 drifted and repaired.

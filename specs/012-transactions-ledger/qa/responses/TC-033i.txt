@@ -1,0 +1,10 @@
+GET /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions?cursor=garbage
+< 400
+{
+  "type": "http://saveme-backend.test/problems/invalid-cursor",
+  "title": "Invalid cursor",
+  "status": 400,
+  "detail": "The page cursor is not valid. Start again from the first page.",
+  "code": "INVALID_CURSOR",
+  "request_id": "01a0faa9-b0a9-73ea-9b44-0ad7fd49fc35"
+}

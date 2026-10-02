@@ -5,8 +5,9 @@ use App\Modules\Wallets\Application\TransactionQueryService;
 
 /*
  * The default currency locks once the person has recorded a live transaction
- * (spec 008, FR-010; owner decision 2026-09-27). Transactions arrive in B6;
- * until then the query service is bound to a fake here.
+ * (spec 008, FR-010; owner decision 2026-09-27). The query service is bound to
+ * a fake here to isolate the profile rules; the ledger's own answer is tested
+ * in tests/Feature/Wallets/Transactions/DefaultCurrencyLockTest.php (spec 012).
  */
 
 function transactionsRecorded(bool $recorded): void
@@ -67,6 +68,6 @@ test('without recorded transactions the currency changes', function () {
     saveProfile($this->credential, profileBody(['default_currency' => 'USD']))->assertOk()->assertJsonPath('data.default_currency', 'USD');
 });
 
-test('until the ledger exists, nobody is locked', function () {
+test('with no recorded transaction in the ledger, nobody is locked', function () {
     $this->withHeaders(asCredential($this->credential))->get('/api/v1/me')->assertJsonPath('data.profile.default_currency_locked', false);
 });

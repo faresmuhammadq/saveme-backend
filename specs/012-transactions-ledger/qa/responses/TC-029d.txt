@@ -1,0 +1,26 @@
+PATCH /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faa5-ce3f-76de-b847-7548f3748548
+> {"date":"2999-12-31","version":2}
+< 200
+{
+  "data": {
+    "id": "01a0faa5-ce3f-76de-b847-7548f3748548",
+    "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+    "version": 3,
+    "change_seq": 40,
+    "created_at": "2026-10-02T03:26:05.898511Z",
+    "updated_at": "2026-10-02T03:29:44.190634Z",
+    "deleted_at": null,
+    "kind": "income",
+    "date": "2999-12-31",
+    "amount_minor": 500000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c344-7014-a053-5688a2879949",
+    "counter_wallet_id": null,
+    "description": "Salary Sept",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  },
+  "meta": {}
+}

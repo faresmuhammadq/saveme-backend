@@ -1,0 +1,179 @@
+PUT /wallets/01a0faac-df0d-70b6-be0c-52bf649acc4a
+> {"type":"cash","name":"QA Doomed","currency":"EGP","opening_balance_minor":0,"icon":"wallet","color":"#1A2B3C","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faac-df0d-70b6-be0c-52bf649acc4a",
+    "wallet_id": "01a0faac-df0d-70b6-be0c-52bf649acc4a",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T03:33:49.025141Z",
+    "updated_at": "2026-10-02T03:33:49.025141Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA Doomed",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0faac-e228-7558-a352-c0a2af55e130
+> {"type":"cash","name":"QA Doomed2","currency":"EGP","opening_balance_minor":0,"icon":"wallet","color":"#1A2B3C","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faac-e228-7558-a352-c0a2af55e130",
+    "wallet_id": "01a0faac-e228-7558-a352-c0a2af55e130",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T03:33:49.675039Z",
+    "updated_at": "2026-10-02T03:33:49.675039Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA Doomed2",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0faac-df0d-70b6-be0c-52bf649acc4a/transactions/01a0faac-e48d-736e-8cfd-8ec261603d98
+> {"kind":"transfer","date":"2026-09-24","amount_minor":1000,"currency":"EGP","category_id":null,"counter_wallet_id":"01a0faa4-f4f0-7150-baac-3fa62ca41f9e","description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faac-e48d-736e-8cfd-8ec261603d98",
+    "wallet_id": "01a0faac-df0d-70b6-be0c-52bf649acc4a",
+    "version": 1,
+    "change_seq": 4,
+    "created_at": "2026-10-02T03:33:50.624510Z",
+    "updated_at": "2026-10-02T03:33:50.624510Z",
+    "deleted_at": null,
+    "kind": "transfer",
+    "date": "2026-09-24",
+    "amount_minor": 1000,
+    "currency": "EGP",
+    "category_id": null,
+    "counter_wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+    "description": null,
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faac-e4e4-7673-b722-89fd672bc17a
+> {"kind":"transfer","date":"2026-09-24","amount_minor":300,"currency":"EGP","category_id":null,"counter_wallet_id":"01a0faac-df0d-70b6-be0c-52bf649acc4a","description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faac-e4e4-7673-b722-89fd672bc17a",
+    "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+    "version": 1,
+    "change_seq": 58,
+    "created_at": "2026-10-02T03:33:51.268747Z",
+    "updated_at": "2026-10-02T03:33:51.268747Z",
+    "deleted_at": null,
+    "kind": "transfer",
+    "date": "2026-09-24",
+    "amount_minor": 300,
+    "currency": "EGP",
+    "category_id": null,
+    "counter_wallet_id": "01a0faac-df0d-70b6-be0c-52bf649acc4a",
+    "description": null,
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0faac-df0d-70b6-be0c-52bf649acc4a/transactions/01a0faac-e547-7761-aebf-973ad95d2f7b
+> {"kind":"expense","date":"2026-09-24","amount_minor":50,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faac-e547-7761-aebf-973ad95d2f7b",
+    "wallet_id": "01a0faac-df0d-70b6-be0c-52bf649acc4a",
+    "version": 1,
+    "change_seq": 8,
+    "created_at": "2026-10-02T03:33:51.832946Z",
+    "updated_at": "2026-10-02T03:33:51.832946Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-09-24",
+    "amount_minor": 50,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": null,
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0faac-df0d-70b6-be0c-52bf649acc4a/transactions/01a0faac-e59d-7028-9ddd-156ab4c02174
+> {"kind":"transfer","date":"2026-09-24","amount_minor":70,"currency":"EGP","category_id":null,"counter_wallet_id":"01a0faac-e228-7558-a352-c0a2af55e130","description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faac-e59d-7028-9ddd-156ab4c02174",
+    "wallet_id": "01a0faac-df0d-70b6-be0c-52bf649acc4a",
+    "version": 1,
+    "change_seq": 10,
+    "created_at": "2026-10-02T03:33:52.395148Z",
+    "updated_at": "2026-10-02T03:33:52.395148Z",
+    "deleted_at": null,
+    "kind": "transfer",
+    "date": "2026-09-24",
+    "amount_minor": 70,
+    "currency": "EGP",
+    "category_id": null,
+    "counter_wallet_id": "01a0faac-e228-7558-a352-c0a2af55e130",
+    "description": null,
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  },
+  "meta": {}
+}
+DELETE /wallets/01a0faac-df0d-70b6-be0c-52bf649acc4a
+> {"version":1}
+< 200
+{
+  "data": {
+    "id": "01a0faac-df0d-70b6-be0c-52bf649acc4a",
+    "wallet_id": "01a0faac-df0d-70b6-be0c-52bf649acc4a",
+    "version": 2,
+    "change_seq": 14,
+    "created_at": "2026-10-02T03:33:49.025141Z",
+    "updated_at": "2026-10-02T03:33:53.707566Z",
+    "deleted_at": "2026-10-02T03:33:53.649635Z",
+    "type": "cash",
+    "name": "QA Doomed",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": -820,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+  },
+  "meta": {}
+}

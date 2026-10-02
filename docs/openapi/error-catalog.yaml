@@ -78,6 +78,7 @@ components:
         - INSTANT_NOT_UTC
         - INVALID_ID
         - IMMUTABLE_FIELD
+        - CURRENCY_MISMATCH
 
 x-error-catalog:
   VALIDATION_FAILED:
@@ -349,6 +350,13 @@ x-error-catalog:
     meaning: 'The member cannot be changed after the record is created.'
     retryable: after-change
     since: v1.0
+  CURRENCY_MISMATCH:
+    status: 422
+    level: [field]
+    title: 'Currency mismatch'
+    meaning: 'The currency differs from the wallet''s, or a transfer joins wallets of different currencies. Cross-currency transactions are not supported.'
+    retryable: after-change
+    since: v1.5
 
   # Reserved by the security and privacy baseline (spec 004). These are the
   # refusals the baseline requires; the endpoints that return them are built by

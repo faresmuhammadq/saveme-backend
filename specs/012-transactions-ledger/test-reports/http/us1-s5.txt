@@ -1,0 +1,18 @@
+PUT /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions/01a0fab3-49e9-7026-80a0-7b9e9831e0b5
+> {"kind":"expense","date":"2026-09-05","amount_minor":100,"currency":"USD","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fab3-4aca-70c0-91e9-a98a23393b5b",
+  "errors": [
+    {
+      "pointer": "/currency",
+      "code": "CURRENCY_MISMATCH",
+      "detail": "The currency must match the wallet's. Cross-currency transactions are not supported."
+    }
+  ]
+}

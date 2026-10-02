@@ -5,15 +5,22 @@ use App\Modules\Identity\Domain\Account\LinkKind;
 use App\Modules\Identity\Domain\Ports\LinkRepository;
 use App\Modules\Identity\Infrastructure\Models\Profile;
 use App\Modules\Identity\Infrastructure\Models\User;
+use App\Modules\Shared\Domain\Errors\Refusal;
 use App\Modules\Wallets\Application\Categories\CategoryUsage;
 use App\Modules\Wallets\Application\Categories\CategoryUsageQuery;
 use App\Modules\Wallets\Application\Categories\Dto\CategoryView;
 use App\Modules\Wallets\Application\Dto\WalletView;
+use App\Modules\Wallets\Application\Transactions\Dto\TransactionView;
+use App\Modules\Wallets\Application\Transactions\TransactionService;
 use App\Modules\Wallets\Domain\Ports\PostingTotals;
 use App\Modules\Wallets\Domain\Ports\ScopeSequence;
 use App\Modules\Wallets\Http\Resources\CategoryResource;
+use App\Modules\Wallets\Http\Resources\TransactionResource;
 use App\Modules\Wallets\Http\Resources\WalletResource;
 use App\Modules\Wallets\Infrastructure\Models\Category;
+use App\Modules\Wallets\Infrastructure\Models\CategoryReference;
+use App\Modules\Wallets\Infrastructure\Models\Posting;
+use App\Modules\Wallets\Infrastructure\Models\Transaction;
 use App\Modules\Wallets\Infrastructure\Models\Wallet;
 use App\Modules\Wallets\Infrastructure\Models\WalletMember;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -446,6 +453,11 @@ function fakePostings(int $sum = 0, bool $hasAny = false): void
         {
             return $this->hasAny;
         }
+
+        public function lockedAmong(array $walletIds): array
+        {
+            return $this->hasAny ? $walletIds : [];
+        }
     });
 }
 
@@ -508,7 +520,7 @@ function presentCategory(): Closure
 }
 
 /**
- * Registers a usage participant (as B6 will) that calls the given categories used.
+ * Registers a usage participant that replaces the ledger's and calls the given categories used.
  *
  * @param  list<string>  $usedIds
  */
@@ -531,4 +543,206 @@ function fakeCategoryUsage(array $usedIds): void
     };
 
     app()->bind(CategoryUsageQuery::class, fn () => new CategoryUsageQuery([$participant]));
+}
+
+/*
+|--------------------------------------------------------------------------
+| Transactions (spec 012)
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * The id of a seeded platform category of the kind.
+ */
+function platformCategoryId(string $kind = 'expense'): string
+{
+    return (string) Category::query()->whereNull('user_id')->where('kind', $kind)->orderBy('position')->value('id');
+}
+
+/**
+ * A full expense write body (a platform category) with the given changes.
+ *
+ * @param  array<string, mixed>  $changes
+ * @return array<string, mixed>
+ */
+function transactionBody(array $changes = [], int $version = 0): array
+{
+    return [
+        'kind' => 'expense',
+        'date' => '2026-10-01',
+        'amount_minor' => 2500,
+        'currency' => 'EGP',
+        'category_id' => platformCategoryId(),
+        'counter_wallet_id' => null,
+        'description' => 'Lunch',
+        'memo' => null,
+        'counterparty' => null,
+        'cleared' => false,
+        'version' => $version,
+        ...$changes,
+    ];
+}
+
+/**
+ * A full income write body (a platform category) with the given changes.
+ *
+ * @param  array<string, mixed>  $changes
+ * @return array<string, mixed>
+ */
+function incomeBody(array $changes = [], int $version = 0): array
+{
+    return transactionBody(['kind' => 'income', 'category_id' => platformCategoryId('income'), 'description' => 'Salary', ...$changes], $version);
+}
+
+/**
+ * A full transfer write body to the destination wallet.
+ *
+ * @param  array<string, mixed>  $changes
+ * @return array<string, mixed>
+ */
+function transferBody(string $counterWalletId, array $changes = [], int $version = 0): array
+{
+    return transactionBody(['kind' => 'transfer', 'category_id' => null, 'counter_wallet_id' => $counterWalletId, 'description' => 'Move', ...$changes], $version);
+}
+
+/**
+ * The values a transaction save takes, as the service receives them.
+ *
+ * @param  array<string, mixed>  $body
+ * @return array<string, mixed>
+ */
+function transactionValues(array $body): array
+{
+    unset($body['version']);
+
+    return $body;
+}
+
+/**
+ * How a read renders the transaction, as the service's `present` closure.
+ *
+ * @return Closure(TransactionView): array<string, mixed>
+ */
+function presentTransaction(): Closure
+{
+    return TransactionResource::toArray(...);
+}
+
+/**
+ * Saves a transaction through the service.
+ *
+ * @param  array<string, mixed>  $body  a write body, `version` included
+ */
+function saveTransaction(string $userId, string $walletId, string $transactionId, array $body): TransactionView
+{
+    return app(TransactionService::class)->save($userId, $walletId, $transactionId, transactionValues($body), (int) ($body['version'] ?? 0), presentTransaction())->view;
+}
+
+/**
+ * Records a new expense (or what the body says) through the service.
+ *
+ * @param  array<string, mixed>  $body
+ */
+function recordTransaction(string $userId, string $walletId, array $body = []): TransactionView
+{
+    return saveTransaction($userId, $walletId, (string) Str::uuid7(), $body === [] ? transactionBody() : $body);
+}
+
+/**
+ * A transaction call with a credential, forgetting the guard afterwards.
+ *
+ * @param  array<string, mixed>  $body
+ */
+function transactionCall(string $method, string $credential, string $walletId, string $transactionId, array $body = []): TestResponse
+{
+    return walletCall($method, $credential, '/wallets/'.$walletId.'/transactions/'.$transactionId, $body);
+}
+
+/**
+ * A wallet's cached balance, read from the row.
+ */
+function walletBalance(string $walletId): int
+{
+    return (int) Wallet::query()->whereKey($walletId)->value('balance_minor');
+}
+
+/**
+ * Every change_seq in a wallet's scope that a transaction write stamps: the
+ * wallet's own, the memberships', the references' and the transactions'
+ * (a transfer's counter stamp in the destination's scope).
+ *
+ * @return list<int>
+ */
+function transactionScopeSequences(string $walletId): array
+{
+    return [
+        (int) Wallet::query()->whereKey($walletId)->value('change_seq'),
+        ...WalletMember::query()->where('wallet_id', $walletId)->pluck('change_seq')->map(fn ($seq): int => (int) $seq)->all(),
+        ...CategoryReference::query()->where('wallet_id', $walletId)->pluck('change_seq')->map(fn ($seq): int => (int) $seq)->all(),
+        ...Transaction::query()->where('wallet_id', $walletId)->pluck('change_seq')->map(fn ($seq): int => (int) $seq)->all(),
+        ...Transaction::query()->where('counter_wallet_id', $walletId)->pluck('counter_change_seq')->map(fn ($seq): int => (int) $seq)->all(),
+    ];
+}
+
+/**
+ * The wallet's change_seq is the highest in its scope and no two records
+ * share a value (spec 012, R-5).
+ */
+function expectTransactionScopeIntact(string $walletId): void
+{
+    $sequences = transactionScopeSequences($walletId);
+    $wallet = array_shift($sequences);
+
+    expect(array_unique($sequences))->toHaveCount(count($sequences))
+        ->and($wallet)->toBeGreaterThan(max($sequences));
+}
+
+/**
+ * Every live transaction has exactly two postings summing to zero with one
+ * target each, a tombstone has none, and the wallet's cache is opening +
+ * Σ postings (spec 012, P-04, P-05).
+ */
+function expectLedgerIntact(): void
+{
+    foreach (Transaction::query()->get() as $transaction) {
+        $postings = Posting::query()->where('transaction_id', $transaction->id)->get();
+
+        if ($transaction->deleted_at !== null) {
+            expect($postings)->toHaveCount(0);
+
+            continue;
+        }
+
+        expect($postings)->toHaveCount(2)
+            ->and((int) $postings->sum('amount_minor'))->toBe(0)
+            ->and($postings->every(fn (Posting $posting): bool => ($posting->wallet_id === null) !== ($posting->category_id === null)))->toBeTrue();
+    }
+
+    foreach (Wallet::query()->whereNull('deleted_at')->get() as $wallet) {
+        expect($wallet->balance_minor)->toBe($wallet->opening_balance_minor + (int) Posting::query()->where('wallet_id', $wallet->id)->sum('amount_minor'));
+    }
+}
+
+/**
+ * The refusal an action throws, or null when it succeeds.
+ */
+function refusalOf(Closure $action): ?Refusal
+{
+    try {
+        $action();
+    } catch (Refusal $refusal) {
+        return $refusal;
+    }
+
+    return null;
+}
+
+/**
+ * The field errors of a refusal as `pointer CODE` strings.
+ *
+ * @return list<string>
+ */
+function fieldErrorsOf(?Refusal $refusal): array
+{
+    return array_map(fn ($error): string => $error->pointer.' '.$error->code->value, $refusal->fieldErrors ?? []);
 }

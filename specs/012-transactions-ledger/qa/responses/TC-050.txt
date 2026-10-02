@@ -1,0 +1,126 @@
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faac-4b5c-7144-94b8-a66ede1e762e
+> {"postings":[],"kind":"expense","date":"2026-09-10","amount_minor":100,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faac-4c4e-726c-a51d-66399a5e2e23",
+  "errors": [
+    {
+      "pointer": "/postings",
+      "code": "UNKNOWN_FIELD",
+      "detail": "This field is not accepted here."
+    }
+  ]
+}
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faac-4b5c-7144-94b8-a66ede1e762e
+> {"wallet_id":"01a0faa4-f4f0-7150-baac-3fa62ca41f9e","kind":"expense","date":"2026-09-10","amount_minor":100,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faac-4de9-7029-a69a-2e165c268d9b",
+  "errors": [
+    {
+      "pointer": "/wallet_id",
+      "code": "UNKNOWN_FIELD",
+      "detail": "This field is not accepted here."
+    }
+  ]
+}
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faac-4b5c-7144-94b8-a66ede1e762e
+> {"created_by":"01a0faa4-f4f0-7150-baac-3fa62ca41f9e","kind":"expense","date":"2026-09-10","amount_minor":100,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faac-4fc6-703d-9a31-03e15954198c",
+  "errors": [
+    {
+      "pointer": "/created_by",
+      "code": "UNKNOWN_FIELD",
+      "detail": "This field is not accepted here."
+    }
+  ]
+}
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faac-4b5c-7144-94b8-a66ede1e762e
+> {"change_seq":1,"kind":"expense","date":"2026-09-10","amount_minor":100,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faac-516e-7259-b2d1-9538ad3b15f2",
+  "errors": [
+    {
+      "pointer": "/change_seq",
+      "code": "UNKNOWN_FIELD",
+      "detail": "This field is not accepted here."
+    }
+  ]
+}
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faac-4b5c-7144-94b8-a66ede1e762e
+> {"created_at":"2026-01-01T00:00:00Z","kind":"expense","date":"2026-09-10","amount_minor":100,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faac-5328-70ca-a7f5-57157c965c4b",
+  "errors": [
+    {
+      "pointer": "/created_at",
+      "code": "UNKNOWN_FIELD",
+      "detail": "This field is not accepted here."
+    }
+  ]
+}
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faac-4b5c-7144-94b8-a66ede1e762e
+> {"updated_at":"2026-01-01T00:00:00Z","kind":"expense","date":"2026-09-10","amount_minor":100,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faac-54c8-72d4-bd18-be471a91c56b",
+  "errors": [
+    {
+      "pointer": "/updated_at",
+      "code": "UNKNOWN_FIELD",
+      "detail": "This field is not accepted here."
+    }
+  ]
+}
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faac-4b5c-7144-94b8-a66ede1e762e
+> {"deleted_at":null,"kind":"expense","date":"2026-09-10","amount_minor":100,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faac-566b-7253-9b3e-376cad45a739",
+  "errors": [
+    {
+      "pointer": "/deleted_at",
+      "code": "UNKNOWN_FIELD",
+      "detail": "This field is not accepted here."
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+GET /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e
+< 200
+{
+  "data": {
+    "id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+    "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+    "version": 1,
+    "change_seq": 45,
+    "created_at": "2026-10-02T03:25:10.206984Z",
+    "updated_at": "2026-10-02T03:25:10.206984Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA Cash",
+    "currency": "EGP",
+    "opening_balance_minor": 100000,
+    "balance_minor": 503000,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+  },
+  "meta": {}
+}

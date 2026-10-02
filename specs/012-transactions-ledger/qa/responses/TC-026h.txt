@@ -1,0 +1,18 @@
+PATCH /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faa5-c982-7407-b4c5-ac2c640e31b0
+> {"deleted_at":null,"memo":"x","version":5}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faa8-cdb2-73c1-b6d4-9f97b1e34e58",
+  "errors": [
+    {
+      "pointer": "/memo",
+      "code": "UNKNOWN_FIELD",
+      "detail": "This field is not accepted here."
+    }
+  ]
+}

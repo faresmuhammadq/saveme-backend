@@ -1,0 +1,10 @@
+GET /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions
+< 401
+{
+  "type": "http://saveme-backend.test/problems/unauthenticated",
+  "title": "Unauthenticated",
+  "status": 401,
+  "detail": "Please sign in again.",
+  "code": "UNAUTHENTICATED",
+  "request_id": "01a0faa6-5266-71f9-9610-b47981e50959"
+}

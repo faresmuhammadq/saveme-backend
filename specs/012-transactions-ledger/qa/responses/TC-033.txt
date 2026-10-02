@@ -1,0 +1,183 @@
+GET /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions?filter%5Bdate%5D=gte:2026-09-10&filter%5Bdate%5D=lte:2026-09-13
+< 200
+{
+  "data": [
+    {
+      "id": "01a0faa6-405d-7354-835f-0c417137e98e",
+      "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+      "version": 1,
+      "change_seq": 16,
+      "created_at": "2026-10-02T03:26:35.108097Z",
+      "updated_at": "2026-10-02T03:26:35.108097Z",
+      "deleted_at": null,
+      "kind": "expense",
+      "date": "2026-09-13",
+      "amount_minor": 12000,
+      "currency": "EGP",
+      "category_id": "01a0faa5-0b0a-730f-8bec-68e6b9064459",
+      "counter_wallet_id": null,
+      "description": "Gym fee",
+      "memo": null,
+      "counterparty": null,
+      "cleared": false,
+      "created_by": "01a0faa4-47f5-71a5-ba6b-fcb727dbd4cd"
+    },
+    {
+      "id": "01a0faa6-3a0c-765a-9928-2a3a13e30a78",
+      "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+      "version": 2,
+      "change_seq": 36,
+      "created_at": "2026-10-02T03:26:33.452793Z",
+      "updated_at": "2026-10-02T03:29:40.641641Z",
+      "deleted_at": null,
+      "kind": "expense",
+      "date": "2026-09-12",
+      "amount_minor": 5000,
+      "currency": "EGP",
+      "category_id": "01a0faa5-0457-771a-b851-70e67be21d5e",
+      "counter_wallet_id": null,
+      "description": "Flat white",
+      "memo": null,
+      "counterparty": null,
+      "cleared": false,
+      "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+    },
+    {
+      "id": "01a0faa5-c982-7407-b4c5-ac2c640e31b0",
+      "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+      "version": 5,
+      "change_seq": 32,
+      "created_at": "2026-10-02T03:26:04.708225Z",
+      "updated_at": "2026-10-02T03:29:20.587538Z",
+      "deleted_at": null,
+      "kind": "expense",
+      "date": "2026-09-10",
+      "amount_minor": 20000,
+      "currency": "EGP",
+      "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+      "counter_wallet_id": null,
+      "description": "Carrefour",
+      "memo": "weekly shop",
+      "counterparty": null,
+      "cleared": false,
+      "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+    },
+    {
+      "id": "01a0faa5-ce3f-76de-b847-7548f3748548",
+      "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+      "version": 4,
+      "change_seq": 42,
+      "created_at": "2026-10-02T03:26:05.898511Z",
+      "updated_at": "2026-10-02T03:29:44.783824Z",
+      "deleted_at": null,
+      "kind": "income",
+      "date": "2026-09-01",
+      "amount_minor": 500000,
+      "currency": "EGP",
+      "category_id": "01a0fa05-c344-7014-a053-5688a2879949",
+      "counter_wallet_id": null,
+      "description": "Salary Sept",
+      "memo": null,
+      "counterparty": null,
+      "cleared": false,
+      "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+    },
+    {
+      "id": "01a0faa9-9329-7510-a465-0f824f21edc4",
+      "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+      "version": 1,
+      "change_seq": 44,
+      "created_at": "2026-10-02T03:30:12.938693Z",
+      "updated_at": "2026-10-02T03:30:12.938693Z",
+      "deleted_at": null,
+      "kind": "expense",
+      "date": "2026-08-20",
+      "amount_minor": 3000,
+      "currency": "EGP",
+      "category_id": "01a0faa5-0457-771a-b851-70e67be21d5e",
+      "counter_wallet_id": null,
+      "description": null,
+      "memo": "Lunch with CARREFOUR team",
+      "counterparty": "Ahmed 50%",
+      "cleared": true,
+      "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50
+  }
+}
+--- retest after fix ---
+GET /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions?filter%5Bdate%5D=gte:2026-09-10&filter%5Bdate%5D=lte:2026-09-13
+< 200
+{
+  "data": [
+    {
+      "id": "01a0faa6-405d-7354-835f-0c417137e98e",
+      "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+      "version": 1,
+      "change_seq": 16,
+      "created_at": "2026-10-02T03:26:35.108097Z",
+      "updated_at": "2026-10-02T03:26:35.108097Z",
+      "deleted_at": null,
+      "kind": "expense",
+      "date": "2026-09-13",
+      "amount_minor": 12000,
+      "currency": "EGP",
+      "category_id": "01a0faa5-0b0a-730f-8bec-68e6b9064459",
+      "counter_wallet_id": null,
+      "description": "Gym fee",
+      "memo": null,
+      "counterparty": null,
+      "cleared": false,
+      "created_by": "01a0faa4-47f5-71a5-ba6b-fcb727dbd4cd"
+    },
+    {
+      "id": "01a0faa6-3a0c-765a-9928-2a3a13e30a78",
+      "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+      "version": 2,
+      "change_seq": 36,
+      "created_at": "2026-10-02T03:26:33.452793Z",
+      "updated_at": "2026-10-02T03:29:40.641641Z",
+      "deleted_at": null,
+      "kind": "expense",
+      "date": "2026-09-12",
+      "amount_minor": 5000,
+      "currency": "EGP",
+      "category_id": "01a0faa5-0457-771a-b851-70e67be21d5e",
+      "counter_wallet_id": null,
+      "description": "Flat white",
+      "memo": null,
+      "counterparty": null,
+      "cleared": false,
+      "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+    },
+    {
+      "id": "01a0faa5-c982-7407-b4c5-ac2c640e31b0",
+      "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+      "version": 5,
+      "change_seq": 32,
+      "created_at": "2026-10-02T03:26:04.708225Z",
+      "updated_at": "2026-10-02T03:29:20.587538Z",
+      "deleted_at": null,
+      "kind": "expense",
+      "date": "2026-09-10",
+      "amount_minor": 20000,
+      "currency": "EGP",
+      "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+      "counter_wallet_id": null,
+      "description": "Carrefour",
+      "memo": "weekly shop",
+      "counterparty": null,
+      "cleared": false,
+      "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50
+  }
+}

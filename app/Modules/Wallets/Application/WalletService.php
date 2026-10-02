@@ -27,6 +27,7 @@ use App\Modules\Wallets\Domain\Ports\WalletRepository;
 use App\Modules\Wallets\Domain\Refusals\OwnershipTargetInvalid;
 use App\Modules\Wallets\Domain\Refusals\WalletNotFound;
 use App\Modules\Wallets\Domain\Refusals\WalletVersionConflict;
+use App\Modules\Wallets\Domain\Transactions\Ports\TransactionRepository;
 use App\Modules\Wallets\Domain\Wallets\WalletRecord;
 use App\Modules\Wallets\Domain\Wallets\WalletRules;
 use App\Modules\Wallets\Domain\Wallets\WalletType;
@@ -58,6 +59,7 @@ final class WalletService
         private readonly MembershipRepository $members,
         private readonly ScopeSequence $sequence,
         private readonly PostingTotals $postings,
+        private readonly TransactionRepository $transactions,
         private readonly WalletAuthorizer $authorizer,
         private readonly EntitlementService $entitlements,
         private readonly AuditLog $audit,
@@ -75,7 +77,7 @@ final class WalletService
         $values['name'] = trim($values['name']);
 
         if ($this->wallets->find($walletId) === null) {
-            if ($version > 0) {
+            if ($version > 0 || $this->transactions->exists($walletId)) {
                 throw new WalletNotFound;
             }
 

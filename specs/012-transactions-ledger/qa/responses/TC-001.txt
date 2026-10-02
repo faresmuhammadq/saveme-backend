@@ -1,0 +1,26 @@
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faa5-c982-7407-b4c5-ac2c640e31b0
+> {"kind":"expense","date":"2026-09-10","amount_minor":25000,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":"Carrefour","memo":null,"counterparty":null,"cleared":false,"version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faa5-c982-7407-b4c5-ac2c640e31b0",
+    "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+    "version": 1,
+    "change_seq": 8,
+    "created_at": "2026-10-02T03:26:04.708225Z",
+    "updated_at": "2026-10-02T03:26:04.708225Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-09-10",
+    "amount_minor": 25000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": "Carrefour",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  },
+  "meta": {}
+}

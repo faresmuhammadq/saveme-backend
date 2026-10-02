@@ -1,0 +1,11 @@
+DELETE /categories/01a0faa5-06b0-74b2-92ea-95a9d61873de
+> {"version":1}
+< 409
+{
+  "type": "http://saveme-backend.test/problems/category-in-use",
+  "title": "Category in use",
+  "status": 409,
+  "detail": "This category is used by your records, so it can't be deleted. Archive it instead.",
+  "code": "CATEGORY_IN_USE",
+  "request_id": "01a0faaa-b42d-7290-8343-081935cd2c7e"
+}

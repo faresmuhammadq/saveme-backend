@@ -6,11 +6,17 @@ use App\Modules\Wallets\Domain\Categories\Ports\CategoryReferenceRepository;
 use App\Modules\Wallets\Domain\Categories\Ports\CategoryRepository;
 use App\Modules\Wallets\Domain\Categories\Ports\UserScopeSequence as UserScopeSequencePort;
 use App\Modules\Wallets\Domain\Ports\MembershipRepository;
+use App\Modules\Wallets\Domain\Ports\PostingTotals;
 use App\Modules\Wallets\Domain\Ports\ScopeSequence;
 use App\Modules\Wallets\Domain\Ports\WalletRepository;
+use App\Modules\Wallets\Domain\Transactions\Ports\PostingRepository;
+use App\Modules\Wallets\Domain\Transactions\Ports\TransactionRepository;
+use App\Modules\Wallets\Infrastructure\Ledger\EloquentPostingTotals;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentCategoryReferenceRepository;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentCategoryRepository;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentMembershipRepository;
+use App\Modules\Wallets\Infrastructure\Repositories\EloquentPostingRepository;
+use App\Modules\Wallets\Infrastructure\Repositories\EloquentTransactionRepository;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentWalletRepository;
 use App\Modules\Wallets\Infrastructure\Sync\UserScopeSequence;
 use App\Modules\Wallets\Infrastructure\Sync\WalletScopeSequence;
@@ -32,5 +38,8 @@ class WalletsPersistenceServiceProvider extends ServiceProvider
         CategoryRepository::class => EloquentCategoryRepository::class,
         CategoryReferenceRepository::class => EloquentCategoryReferenceRepository::class,
         UserScopeSequencePort::class => UserScopeSequence::class,
+        TransactionRepository::class => EloquentTransactionRepository::class,
+        PostingRepository::class => EloquentPostingRepository::class,
+        PostingTotals::class => EloquentPostingTotals::class,
     ];
 }

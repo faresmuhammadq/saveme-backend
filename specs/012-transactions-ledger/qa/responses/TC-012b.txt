@@ -1,0 +1,31 @@
+GET /wallets/01a0faa5-5686-77b0-8e51-b35dcadc436b/transactions
+< 200
+{
+  "data": [
+    {
+      "id": "01a0faa7-03e6-71c6-9e99-019f024ed2c4",
+      "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+      "version": 1,
+      "change_seq": 20,
+      "created_at": "2026-10-02T03:27:25.187276Z",
+      "updated_at": "2026-10-02T03:27:25.187276Z",
+      "deleted_at": null,
+      "kind": "transfer",
+      "date": "2026-09-14",
+      "amount_minor": 50000,
+      "currency": "EGP",
+      "category_id": null,
+      "counter_wallet_id": "01a0faa5-5686-77b0-8e51-b35dcadc436b",
+      "description": "ATM",
+      "memo": null,
+      "counterparty": null,
+      "cleared": false,
+      "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50
+  }
+}

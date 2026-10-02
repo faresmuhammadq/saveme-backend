@@ -1,0 +1,18 @@
+PATCH /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faa6-3a0c-765a-9928-2a3a13e30a78
+> {"category_id":"01a0faa5-0d27-70b8-9e34-4895528bd930","version":2}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faa9-185f-72d7-b8ba-9f3538128cdf",
+  "errors": [
+    {
+      "pointer": "/category_id",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}

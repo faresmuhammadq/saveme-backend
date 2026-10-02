@@ -29,3 +29,10 @@ The brief predates decisions ratified since. These collide with it; the ratified
 - **Refuse a reference to a tombstoned category**, and enforce R-02's "own category or platform category only". A platform category is referenced directly, never copied.
 - **Archived categories**: same decision as B6 (recommended allowed).
 - Reports built on rules group platform categories by `system_key`, always scoped (ADR-0014 rules 5-6).
+
+## Inherited from B6 (spec 012)
+
+- **Create transactions through `TransactionService`** (`save` with a client-generated or server-minted UUIDv7), never by writing the tables: it owns the postings, the balance recompute, the sequence stamps, the category references and the events. A confirmed occurrence is a transaction like any other, recorded as the rule's author (`created_by`).
+- **Lock order** is `TransactionService`'s (spec 012 FR-011, R-4): categories first (share), then wallets in ascending id. A rule that fires into a shared wallet or makes a transfer follows it by calling the service.
+- **Transfers** are one record with `counter_wallet_id` (ADR-0015): a recurring transfer rule needs T-02 in the source and T-03 in the destination at the moment it fires, and a destination that was deleted or left is a refusal to surface, not a retry.
+- A deleted wallet tombstones its income and expense and the transfers whose other wallet is already deleted; a transfer to a live wallet stays live (spec 012 FR-015).

@@ -1,0 +1,26 @@
+DELETE /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions/01a0fab4-4a76-708a-9a9b-c14f93c2a434
+> {"version":1}
+< 200
+{
+  "data": {
+    "id": "01a0fab4-4a76-708a-9a9b-c14f93c2a434",
+    "wallet_id": "01a0fab2-bac5-721b-a337-3163d405172a",
+    "version": 2,
+    "change_seq": 18,
+    "created_at": "2026-10-02T03:41:55.185106Z",
+    "updated_at": "2026-10-02T03:42:05.509051Z",
+    "deleted_at": "2026-10-02T03:42:05.508087Z",
+    "kind": "transfer",
+    "date": "2026-09-07",
+    "amount_minor": 50000,
+    "currency": "EGP",
+    "category_id": null,
+    "counter_wallet_id": "01a0fab2-bd39-7261-b850-94f5f98a6a5a",
+    "description": "ATM",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  },
+  "meta": {}
+}

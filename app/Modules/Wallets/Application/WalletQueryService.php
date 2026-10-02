@@ -41,8 +41,10 @@ final class WalletQueryService
             $next = ['value' => $this->wallets->sortValue($last, $sort), 'id' => $last->id];
         }
 
+        $locked = array_flip($this->postings->lockedAmong(array_map(fn (array $row): string => $row['wallet']->id, $page)));
+
         return [
-            'items' => array_map(fn (array $row): WalletView => new WalletView($row['wallet'], $row['role'], $this->postings->hasAny($row['wallet']->id)), $page),
+            'items' => array_map(fn (array $row): WalletView => new WalletView($row['wallet'], $row['role'], isset($locked[$row['wallet']->id])), $page),
             'next' => $next,
         ];
     }

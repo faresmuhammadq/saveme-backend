@@ -1,0 +1,10 @@
+GET /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions?filter%5Bamount_minor%5D=gt:1
+< 400
+{
+  "type": "http://saveme-backend.test/problems/filter-field-not-supported",
+  "title": "Filter field not supported",
+  "status": 400,
+  "detail": "This list cannot be filtered by that field.",
+  "code": "FILTER_FIELD_NOT_SUPPORTED",
+  "request_id": "01a0faa9-abfc-72d6-aeeb-c9e550ef1721"
+}

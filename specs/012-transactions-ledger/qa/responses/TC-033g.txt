@@ -1,0 +1,10 @@
+GET /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions?filter%5Bkind%5D=gt:expense
+< 400
+{
+  "type": "http://saveme-backend.test/problems/filter-operator-not-supported",
+  "title": "Filter operator not supported",
+  "status": 400,
+  "detail": "That filter operator is not allowed for this field.",
+  "code": "FILTER_OPERATOR_NOT_SUPPORTED",
+  "request_id": "01a0faa9-adae-72c1-a2b1-35c2cc99f736"
+}

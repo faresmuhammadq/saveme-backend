@@ -159,7 +159,7 @@ A container of money with a balance — the core primitive.
 - **Sync**: yes — wallet scope (it *is* the scope: its `change_seq` counter orders the whole feed)
 - **States**: `active` → `archived`; either → `tombstoned`
 - **Referenced by**: Wallet Member, Transaction, Posting, Recurring Rule, Category Reference, Invitation
-- **Notes**: "Wallet" is the **only** term for a money container (P-01). `type` is a fixed enum — `cash`, `checking`, `savings` (حصالة), `credit_card`, `loan`, `investment` — with behavioural semantics per type. Liability types (`credit_card`, `loan`) are stored **negative** and displayed as the amount owed. `currency` is immutable once any posting references the wallet (**currency locked**: derived, never stored, true once any posting references the wallet; reported as `currency_locked`). `archived_at` is the instant the `archived` state was entered. The wallet's `change_seq` is the scope counter and moves on any write inside the scope, including membership writes; its `version` moves only when the wallet's own fields change. `balance_minor` is a **cache**: truth is `opening_balance_minor + Σ postings` and no invariant, authorization decision or report total may read the cache (P-05, ADR-0005). A negative balance is never blocked at write time.
+- **Notes**: "Wallet" is the **only** term for a money container (P-01). `type` is a fixed enum — `cash`, `checking`, `savings` (حصالة), `credit_card`, `loan`, `investment` — with behavioural semantics per type. Liability types (`credit_card`, `loan`) are stored **negative** and displayed as the amount owed. `currency` is immutable once any transaction has posted to the wallet (**currency locked**: derived, never stored, true once any transaction, live or tombstoned, posts or posted to the wallet; reported as `currency_locked`). `archived_at` is the instant the `archived` state was entered. The wallet's `change_seq` is the scope counter and moves on any write inside the scope, including membership writes; its `version` moves only when the wallet's own fields change. `balance_minor` is a **cache**: truth is `opening_balance_minor + Σ postings` and no invariant, authorization decision or report total may read the cache (P-05, ADR-0005). A negative balance is never blocked at write time.
 
 ### Wallet Member
 
@@ -213,7 +213,9 @@ A money-movement event — what the user actually records.
 - **States**: `live` → `live (v+1)` on edit → `tombstoned` on delete → `live` again on an explicit undelete
 - **Referenced by**: Posting, Occurrence (which one it confirmed into), Report
 - **Notes**:
-  - Carries a calendar `date` (`YYYY-MM-DD`, no timezone), a positive amount in minor units with its currency, a description, an optional memo, a `cleared` flag and `created_by`.
+  - Carries a calendar `date` (`YYYY-MM-DD`, no timezone), a positive `amount_minor` with its `currency`, an **optional** `description` (≤ 100 characters), an optional `memo` (≤ 1000), an optional **counterparty** (a free-text person name, for debts, ≤ 100), a `cleared` flag and `created_by` (never changes). `kind` is immutable.
+  - A **transfer** is a Transaction whose two postings both reference wallets: money out of `wallet_id` into `counter_wallet_id`. It is one record, listed in both wallets and carried on both wallet feeds ([ADR-0015](adr/0015-transfers-on-two-wallet-feeds.md)).
+  - The **counter wallet** (`counter_wallet_id`) is a transfer's destination; it is null for income and expense and never changes after creation.
   - **Exactly one category in MVP.** The ledger permits several category legs, so splits are a later contract change, not a data migration.
   - `kind` — `income`, `expense`, `transfer` — is a **derived cache** over the postings. A transaction whose postings all reference wallets is a `transfer` and is excluded from every spending and income aggregation.
   - All postings of one transaction share a single currency in MVP; cross-currency is rejected (P-04).

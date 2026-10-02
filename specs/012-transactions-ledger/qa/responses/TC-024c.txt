@@ -1,0 +1,18 @@
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faa7-03e6-71c6-9e99-019f024ed2c4
+> {"kind":"transfer","date":"2026-09-14","amount_minor":50000,"currency":"EGP","category_id":null,"counter_wallet_id":"01a0faa4-fb6a-72b6-bdd7-528fa3c04a72","description":"ATM","memo":null,"counterparty":null,"cleared":false,"version":1}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faa8-60f4-70da-9a6d-b87ce3b8df55",
+  "errors": [
+    {
+      "pointer": "/counter_wallet_id",
+      "code": "IMMUTABLE_FIELD",
+      "detail": "This field cannot be changed."
+    }
+  ]
+}

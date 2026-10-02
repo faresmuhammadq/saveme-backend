@@ -1,0 +1,26 @@
+PUT /wallets/01a0faa5-5686-77b0-8e51-b35dcadc436b/transactions/01a0faac-d157-75f6-95f0-27387bfbe393
+> {"kind":"expense","date":"2026-09-23","amount_minor":1000,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faac-d157-75f6-95f0-27387bfbe393",
+    "wallet_id": "01a0faa5-5686-77b0-8e51-b35dcadc436b",
+    "version": 1,
+    "change_seq": 23,
+    "created_at": "2026-10-02T03:33:45.396097Z",
+    "updated_at": "2026-10-02T03:33:45.396097Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-09-23",
+    "amount_minor": 1000,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": null,
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  },
+  "meta": {}
+}

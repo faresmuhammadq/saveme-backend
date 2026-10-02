@@ -1,0 +1,52 @@
+PATCH /wallets/01a0faaa-9686-7542-932f-66a7eab0cb81/transactions/01a0faab-bce4-70e2-b30d-313d1edd114d
+> {"category_id":"01a0faa5-06b0-74b2-92ea-95a9d61873de","version":1}
+< 200
+{
+  "data": {
+    "id": "01a0faab-bce4-70e2-b30d-313d1edd114d",
+    "wallet_id": "01a0faaa-9686-7542-932f-66a7eab0cb81",
+    "version": 2,
+    "change_seq": 13,
+    "created_at": "2026-10-02T03:32:34.661439Z",
+    "updated_at": "2026-10-02T03:32:35.772895Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-09-22",
+    "amount_minor": 100,
+    "currency": "EGP",
+    "category_id": "01a0faa5-06b0-74b2-92ea-95a9d61873de",
+    "counter_wallet_id": null,
+    "description": null,
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  },
+  "meta": {}
+}
+GET /wallets/01a0faaa-9686-7542-932f-66a7eab0cb81/category-references
+< 200
+{
+  "data": [
+    {
+      "id": "01a0faab-c383-73c0-af6a-02159380cd88",
+      "wallet_id": "01a0faaa-9686-7542-932f-66a7eab0cb81",
+      "version": 1,
+      "change_seq": 14,
+      "created_at": "2026-10-02T03:32:35.843733Z",
+      "updated_at": "2026-10-02T03:32:35.843733Z",
+      "deleted_at": null,
+      "category_id": "01a0faa5-06b0-74b2-92ea-95a9d61873de",
+      "owner_user_id": "01a0faa4-43f0-7253-929d-7405749ecc34",
+      "kind": "expense",
+      "name": "A Rent",
+      "icon": "tag",
+      "color": "#C62828"
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50
+  }
+}

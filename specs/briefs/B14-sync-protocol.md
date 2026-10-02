@@ -30,3 +30,11 @@ The brief predates decisions ratified since. These collide with it; the ratified
 | Tombstones for 30 days | ADR-0008 rule 12 and the security baseline: at least **90** days | 90 |
 | `POST /sync/batch` | ADR-0008 rule 7: push is per-entity `PUT`; spec 003 put batch writes out of scope | A batch is a new decision needing a superseding ADR |
 | Membership loss as a change row | ADR-0008 rule 15: revocation appears in the user feed | Already defined |
+
+## Inherited from B6 (spec 012)
+
+- **The `Transaction` resource is the feed row** (spec 012 contract, `docs/openapi/paths/transactions.yaml`): `id`, `wallet_id`, `version`, `change_seq`, timestamps, `deleted_at` and the writable members. Postings are never part of it (P-04 rule 6).
+- **A transfer rides two wallet feeds** (ADR-0015): select a wallet's feed rows by `change_seq` where `wallet_id` is the wallet **or** by `counter_change_seq` where `counter_wallet_id` is the wallet. Both stamps are taken under the respective wallet's lock; the server never exposes `counter_change_seq`, and the row on the wire is identical in both feeds (its `change_seq` is the source scope's, opaque to the client and never compared across wallets). Indexes for both selections exist (`transactions_wallet_change_seq_index`, `transactions_counter_wallet_change_seq_index`).
+- **Both wallets of a transfer are immutable**, so a record never leaves a feed it was on; there is no "exit" row to emit.
+- **A wallet deletion stamps** each transaction it tombstones with the deleted wallet's next `change_seq` (the destination's column when the deleted wallet is the destination); transfers to a live wallet stay live.
+- Tombstones are kept at least 90 days (ADR-0008 rule 12); `postings` rows of a tombstone are already removed, and the cascade on purge only concerns the transaction row.

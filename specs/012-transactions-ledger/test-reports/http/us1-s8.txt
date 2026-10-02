@@ -1,0 +1,33 @@
+PUT /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions/01a0fab3-6107-7264-b086-1074f8457513
+> {"kind":"expense","date":"2026-09-05","amount_minor":100,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 403
+{
+  "type": "http://saveme-backend.test/problems/forbidden",
+  "title": "Forbidden",
+  "status": 403,
+  "detail": "Your role in this wallet does not allow this.",
+  "code": "FORBIDDEN",
+  "request_id": "01a0fab3-61d6-735a-91fd-6272021d04eb"
+}
+PUT /wallets/01a0fab2-bd39-7261-b850-94f5f98a6a5a/transactions/01a0fab3-6107-7264-b086-1074f8457513
+> {"kind":"expense","date":"2026-09-05","amount_minor":100,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 404
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0fab3-6405-722f-871b-b3c7c8b1d78f"
+}
+PUT /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions/01a0fab3-6107-7264-b086-1074f8457513
+> {"kind":"expense","date":"2026-09-05","amount_minor":100,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 403
+{
+  "type": "http://saveme-backend.test/problems/email-not-verified",
+  "title": "Address not verified",
+  "status": 403,
+  "detail": "Verify your email address first. We can send the link again.",
+  "code": "EMAIL_NOT_VERIFIED",
+  "request_id": "01a0fab3-660f-700f-ad9f-d5105ab2dc1b"
+}

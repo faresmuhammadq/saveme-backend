@@ -1,0 +1,18 @@
+PUT /me/profile
+> {"display_name":null,"locale":"en","timezone":"Africa/Cairo","budget_period_start_day":1,"version":1,"default_currency":"USD"}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faab-9943-70fc-8f67-c42209a563bb",
+  "errors": [
+    {
+      "pointer": "/default_currency",
+      "code": "IMMUTABLE_FIELD",
+      "detail": "The default currency can't change once you have recorded transactions."
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+PUT /wallets/01a0faa4-fde8-75f5-b35d-d28ec7e93883/transactions/01a0faa7-1c8a-7012-bb7e-b9141cc26ff0
+> {"kind":"transfer","date":"2026-09-14","amount_minor":100,"currency":"EGP","category_id":null,"counter_wallet_id":"01a0faa4-f4f0-7150-baac-3fa62ca41f9e","description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 403
+{
+  "type": "http://saveme-backend.test/problems/forbidden",
+  "title": "Forbidden",
+  "status": 403,
+  "detail": "Your role in this wallet does not allow this.",
+  "code": "FORBIDDEN",
+  "request_id": "01a0faa7-2357-708a-8d01-e511be7815bb"
+}

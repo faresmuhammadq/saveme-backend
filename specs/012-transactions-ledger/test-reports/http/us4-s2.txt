@@ -1,0 +1,102 @@
+GET /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions?filter%5Bdate%5D=gte:2026-09-01&filter%5Bdate%5D=lte:2026-09-05&filter%5Bkind%5D=in:income,expense
+< 200
+{
+  "data": [
+    {
+      "id": "01a0fab3-30f6-757f-a68c-9380a783f0a2",
+      "wallet_id": "01a0fab2-bac5-721b-a337-3163d405172a",
+      "version": 4,
+      "change_seq": 24,
+      "created_at": "2026-10-02T03:40:43.106105Z",
+      "updated_at": "2026-10-02T03:42:31.659371Z",
+      "deleted_at": null,
+      "kind": "expense",
+      "date": "2026-09-05",
+      "amount_minor": 30000,
+      "currency": "EGP",
+      "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+      "counter_wallet_id": null,
+      "description": "Carrefour",
+      "memo": null,
+      "counterparty": null,
+      "cleared": false,
+      "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+    },
+    {
+      "id": "01a0fab3-35b7-7600-a7ca-b2c683508ef8",
+      "wallet_id": "01a0fab2-bac5-721b-a337-3163d405172a",
+      "version": 1,
+      "change_seq": 10,
+      "created_at": "2026-10-02T03:40:44.417950Z",
+      "updated_at": "2026-10-02T03:40:44.417950Z",
+      "deleted_at": null,
+      "kind": "income",
+      "date": "2026-09-01",
+      "amount_minor": 900000,
+      "currency": "EGP",
+      "category_id": "01a0fa05-c344-7014-a053-5688a2879949",
+      "counter_wallet_id": null,
+      "description": "Salary",
+      "memo": null,
+      "counterparty": null,
+      "cleared": false,
+      "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50
+  }
+}
+GET /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions?filter%5Bcategory_id%5D=01a0fab3-275d-73f5-a4d2-3cea5fb331dc
+< 200
+{
+  "data": [
+    {
+      "id": "01a0fab3-5c91-7404-ba79-f7786a996bfd",
+      "wallet_id": "01a0fab2-bac5-721b-a337-3163d405172a",
+      "version": 1,
+      "change_seq": 12,
+      "created_at": "2026-10-02T03:40:54.287759Z",
+      "updated_at": "2026-10-02T03:40:54.287759Z",
+      "deleted_at": null,
+      "kind": "expense",
+      "date": "2026-09-06",
+      "amount_minor": 4000,
+      "currency": "EGP",
+      "category_id": "01a0fab3-275d-73f5-a4d2-3cea5fb331dc",
+      "counter_wallet_id": null,
+      "description": null,
+      "memo": null,
+      "counterparty": null,
+      "cleared": false,
+      "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50
+  }
+}
+GET /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions?filter%5Bmemo%5D=x
+< 400
+{
+  "type": "http://saveme-backend.test/problems/filter-field-not-supported",
+  "title": "Filter field not supported",
+  "status": 400,
+  "detail": "This list cannot be filtered by that field.",
+  "code": "FILTER_FIELD_NOT_SUPPORTED",
+  "request_id": "01a0fab5-4828-734b-bc77-fa7bae208174"
+}
+GET /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions?filter%5Bcategory_id%5D=gt:01a0fab3-275d-73f5-a4d2-3cea5fb331dc
+< 400
+{
+  "type": "http://saveme-backend.test/problems/filter-operator-not-supported",
+  "title": "Filter operator not supported",
+  "status": 400,
+  "detail": "That filter operator is not allowed for this field.",
+  "code": "FILTER_OPERATOR_NOT_SUPPORTED",
+  "request_id": "01a0fab5-49aa-71c9-b8af-99cb4ce52015"
+}

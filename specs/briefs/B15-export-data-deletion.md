@@ -29,3 +29,10 @@ The brief predates decisions ratified since. These collide with it; the ratified
 | XLSX | No spreadsheet package installed; the baseline says "spreadsheet-openable" | CSV needs nothing; XLSX is a new dependency |
 | One active export per user | Reserved: `409 EXPORT_IN_PROGRESS` | Use it |
 | Anonymised audit trail | Audit entries carry no protected values; departed members become a stable anonymous marker | Compatible |
+
+## Inherited from B6 (spec 012)
+
+- **Transactions are kept** when their author leaves a shared wallet or deletes their account: they belong to the wallet's history, which the other members keep. `created_by` has no foreign key (users belong to Identity) and is **anonymised** to the stable departed-member marker; it is never rewritten to another person.
+- A person's export includes the transactions in wallets they were a member of with their own `created_by` marked as theirs; amounts, descriptions, memos and counterparties are protected attributes (security baseline) and are not logged by the export job.
+- Postings are derived data; export the transactions, not the postings.
+- Account deletion's default-currency lock (`hasLiveTransactionsRecordedBy`) stops mattering once the account is gone; no ledger row is deleted for it.

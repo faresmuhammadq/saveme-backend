@@ -1,0 +1,23 @@
+PUT /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions/01a0fab3-30f6-757f-a68c-9380a783f0a2
+> {"kind":"transfer","date":"2026-09-05","amount_minor":30000,"currency":"EGP","category_id":null,"counter_wallet_id":"01a0fab2-bd39-7261-b850-94f5f98a6a5a","description":null,"memo":null,"counterparty":null,"cleared":false,"version":2}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fab4-ce72-7257-9ea7-8b047fde08b5",
+  "errors": [
+    {
+      "pointer": "/kind",
+      "code": "IMMUTABLE_FIELD",
+      "detail": "This field cannot be changed."
+    },
+    {
+      "pointer": "/counter_wallet_id",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}

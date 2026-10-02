@@ -8,6 +8,7 @@ use App\Modules\Wallets\Domain\Categories\PlatformCategoryRecord;
 use App\Modules\Wallets\Domain\Categories\Ports\CategoryRepository;
 use App\Modules\Wallets\Infrastructure\Models\Category;
 use App\Modules\Wallets\Infrastructure\Models\CategoryReference;
+use App\Modules\Wallets\Infrastructure\Models\Transaction;
 use App\Modules\Wallets\Infrastructure\Models\Wallet;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -50,7 +51,8 @@ final class EloquentCategoryRepository implements CategoryRepository
             ->where(fn (Builder $query) => $query->whereNull('user_id')->orWhere('user_id', '<>', $ownerId))
             ->exists()
             || Wallet::query()->whereKey($categoryId)->exists()
-            || CategoryReference::query()->whereKey($categoryId)->exists();
+            || CategoryReference::query()->whereKey($categoryId)->exists()
+            || Transaction::query()->whereKey($categoryId)->exists();
     }
 
     public function insert(string $categoryId, string $ownerId, array $values, int $changeSeq): void

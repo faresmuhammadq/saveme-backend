@@ -1,0 +1,11 @@
+PUT /wallets/01a0faa5-5686-77b0-8e51-b35dcadc436b/transactions/01a0faa7-1c8a-7012-bb7e-b9141cc26ff0
+> {"kind":"transfer","date":"2026-09-14","amount_minor":100,"currency":"EGP","category_id":null,"counter_wallet_id":"01a0faa4-fb6a-72b6-bdd7-528fa3c04a72","description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 404
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0faa7-27d7-7139-8d47-98b70cc32b53"
+}

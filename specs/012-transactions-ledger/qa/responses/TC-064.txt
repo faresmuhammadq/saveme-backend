@@ -1,0 +1,170 @@
+PATCH (concurrent 1)
+< 200
+{
+  "data": {
+    "id": "01a0faa7-03e6-71c6-9e99-019f024ed2c4",
+    "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+    "version": 2,
+    "change_seq": 62,
+    "created_at": "2026-10-02T03:27:25.187276Z",
+    "updated_at": "2026-10-02T03:34:27.292529Z",
+    "deleted_at": null,
+    "kind": "transfer",
+    "date": "2026-09-14",
+    "amount_minor": 50001,
+    "currency": "EGP",
+    "category_id": null,
+    "counter_wallet_id": "01a0faa5-5686-77b0-8e51-b35dcadc436b",
+    "description": "ATM",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  },
+  "meta": {}
+}
+PATCH (concurrent 2)
+< 409
+{
+  "type": "http://saveme-backend.test/problems/version-conflict",
+  "title": "Version conflict",
+  "status": 409,
+  "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+  "code": "VERSION_CONFLICT",
+  "request_id": "01a0faad-77ed-73f9-bfc7-eb6c8659fab8",
+  "current": {
+    "id": "01a0faa7-03e6-71c6-9e99-019f024ed2c4",
+    "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+    "version": 2,
+    "change_seq": 62,
+    "created_at": "2026-10-02T03:27:25.187276Z",
+    "updated_at": "2026-10-02T03:34:27.292529Z",
+    "deleted_at": null,
+    "kind": "transfer",
+    "date": "2026-09-14",
+    "amount_minor": 50001,
+    "currency": "EGP",
+    "category_id": null,
+    "counter_wallet_id": "01a0faa5-5686-77b0-8e51-b35dcadc436b",
+    "description": "ATM",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  }
+}
+PATCH (concurrent 3)
+< 409
+{
+  "type": "http://saveme-backend.test/problems/version-conflict",
+  "title": "Version conflict",
+  "status": 409,
+  "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+  "code": "VERSION_CONFLICT",
+  "request_id": "01a0faad-7b55-73c5-9467-e40db9130967",
+  "current": {
+    "id": "01a0faa7-03e6-71c6-9e99-019f024ed2c4",
+    "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+    "version": 2,
+    "change_seq": 62,
+    "created_at": "2026-10-02T03:27:25.187276Z",
+    "updated_at": "2026-10-02T03:34:27.292529Z",
+    "deleted_at": null,
+    "kind": "transfer",
+    "date": "2026-09-14",
+    "amount_minor": 50001,
+    "currency": "EGP",
+    "category_id": null,
+    "counter_wallet_id": "01a0faa5-5686-77b0-8e51-b35dcadc436b",
+    "description": "ATM",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  }
+}
+PATCH (concurrent 4)
+< 409
+{
+  "type": "http://saveme-backend.test/problems/version-conflict",
+  "title": "Version conflict",
+  "status": 409,
+  "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+  "code": "VERSION_CONFLICT",
+  "request_id": "01a0faad-7973-7369-a190-e9857abd7ad9",
+  "current": {
+    "id": "01a0faa7-03e6-71c6-9e99-019f024ed2c4",
+    "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+    "version": 2,
+    "change_seq": 62,
+    "created_at": "2026-10-02T03:27:25.187276Z",
+    "updated_at": "2026-10-02T03:34:27.292529Z",
+    "deleted_at": null,
+    "kind": "transfer",
+    "date": "2026-09-14",
+    "amount_minor": 50001,
+    "currency": "EGP",
+    "category_id": null,
+    "counter_wallet_id": "01a0faa5-5686-77b0-8e51-b35dcadc436b",
+    "description": "ATM",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  }
+}
+PATCH (concurrent 5)
+< 409
+{
+  "type": "http://saveme-backend.test/problems/version-conflict",
+  "title": "Version conflict",
+  "status": 409,
+  "detail": "Someone changed this in the meantime. Review the latest version and try again.",
+  "code": "VERSION_CONFLICT",
+  "request_id": "01a0faad-7d25-702e-a61d-22cf31a93c0e",
+  "current": {
+    "id": "01a0faa7-03e6-71c6-9e99-019f024ed2c4",
+    "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+    "version": 2,
+    "change_seq": 62,
+    "created_at": "2026-10-02T03:27:25.187276Z",
+    "updated_at": "2026-10-02T03:34:27.292529Z",
+    "deleted_at": null,
+    "kind": "transfer",
+    "date": "2026-09-14",
+    "amount_minor": 50001,
+    "currency": "EGP",
+    "category_id": null,
+    "counter_wallet_id": "01a0faa5-5686-77b0-8e51-b35dcadc436b",
+    "description": "ATM",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  }
+}
+GET /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faa7-03e6-71c6-9e99-019f024ed2c4
+< 200
+{
+  "data": {
+    "id": "01a0faa7-03e6-71c6-9e99-019f024ed2c4",
+    "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+    "version": 2,
+    "change_seq": 62,
+    "created_at": "2026-10-02T03:27:25.187276Z",
+    "updated_at": "2026-10-02T03:34:27.292529Z",
+    "deleted_at": null,
+    "kind": "transfer",
+    "date": "2026-09-14",
+    "amount_minor": 50001,
+    "currency": "EGP",
+    "category_id": null,
+    "counter_wallet_id": "01a0faa5-5686-77b0-8e51-b35dcadc436b",
+    "description": "ATM",
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  },
+  "meta": {}
+}

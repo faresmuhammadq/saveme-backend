@@ -3,8 +3,9 @@
 namespace App\Modules\Wallets\Application\Categories;
 
 /**
- * Asks every registered participant whether a category is in use. With no
- * participant (until B6) nothing is in use.
+ * Asks every registered participant whether a category is in use: the
+ * ledger's transactions today, recurring rules and budgets as they arrive.
+ * With no participant nothing is in use.
  */
 final class CategoryUsageQuery
 {

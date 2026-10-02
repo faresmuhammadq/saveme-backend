@@ -1,0 +1,327 @@
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e
+> {"type":"cash","name":"QA Cash","currency":"EGP","opening_balance_minor":100000,"icon":"wallet","color":"#1A2B3C","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+    "wallet_id": "01a0faa4-f4f0-7150-baac-3fa62ca41f9e",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T03:25:10.206984Z",
+    "updated_at": "2026-10-02T03:25:10.206984Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA Cash",
+    "currency": "EGP",
+    "opening_balance_minor": 100000,
+    "balance_minor": 100000,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0faa4-f755-7468-a34a-7b6c9510df91
+> {"type":"bank","name":"QA Checking","currency":"EGP","opening_balance_minor":0,"icon":"wallet","color":"#1A2B3C","version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faa4-f81d-727f-8672-ac3769788d5c",
+  "errors": [
+    {
+      "pointer": "/type",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}
+PUT /wallets/01a0faa4-f95c-70f6-b95f-8beba2ab472b
+> {"type":"bank","name":"QA USD","currency":"USD","opening_balance_minor":0,"icon":"wallet","color":"#1A2B3C","version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faa4-fa55-707d-b2f8-e71df59c9201",
+  "errors": [
+    {
+      "pointer": "/type",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}
+PUT /wallets/01a0faa4-fb6a-72b6-bdd7-528fa3c04a72
+> {"type":"cash","name":"QA B Wallet","currency":"EGP","opening_balance_minor":20000,"icon":"wallet","color":"#1A2B3C","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faa4-fb6a-72b6-bdd7-528fa3c04a72",
+    "wallet_id": "01a0faa4-fb6a-72b6-bdd7-528fa3c04a72",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T03:25:11.855867Z",
+    "updated_at": "2026-10-02T03:25:11.855867Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA B Wallet",
+    "currency": "EGP",
+    "opening_balance_minor": 20000,
+    "balance_minor": 20000,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0faa4-fde8-75f5-b35d-d28ec7e93883
+> {"type":"cash","name":"QA C Wallet","currency":"EGP","opening_balance_minor":0,"icon":"wallet","color":"#1A2B3C","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faa4-fde8-75f5-b35d-d28ec7e93883",
+    "wallet_id": "01a0faa4-fde8-75f5-b35d-d28ec7e93883",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T03:25:12.488814Z",
+    "updated_at": "2026-10-02T03:25:12.488814Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA C Wallet",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0faa5-0058-74cb-aead-72bab0c9bcb4
+> {"type":"cash","name":"QA B Private","currency":"EGP","opening_balance_minor":0,"icon":"wallet","color":"#1A2B3C","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faa5-0058-74cb-aead-72bab0c9bcb4",
+    "wallet_id": "01a0faa5-0058-74cb-aead-72bab0c9bcb4",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T03:25:13.094492Z",
+    "updated_at": "2026-10-02T03:25:13.094492Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA B Private",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+PUT /categories/01a0faa5-0457-771a-b851-70e67be21d5e
+> {"kind":"expense","name":"A Coffee","icon":"tag","color":"#C62828","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faa5-0457-771a-b851-70e67be21d5e",
+    "user_id": "01a0faa4-43f0-7253-929d-7405749ecc34",
+    "version": 1,
+    "change_seq": 1760,
+    "created_at": "2026-10-02T03:25:14.160065Z",
+    "updated_at": "2026-10-02T03:25:14.160065Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "A Coffee",
+    "icon": "tag",
+    "color": "#C62828",
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}
+PUT /categories/01a0faa5-06b0-74b2-92ea-95a9d61873de
+> {"kind":"expense","name":"A Rent","icon":"tag","color":"#C62828","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faa5-06b0-74b2-92ea-95a9d61873de",
+    "user_id": "01a0faa4-43f0-7253-929d-7405749ecc34",
+    "version": 1,
+    "change_seq": 1761,
+    "created_at": "2026-10-02T03:25:14.690172Z",
+    "updated_at": "2026-10-02T03:25:14.690172Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "A Rent",
+    "icon": "tag",
+    "color": "#C62828",
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}
+PUT /categories/01a0faa5-08c4-710c-b76f-aff05ecd5b54
+> {"kind":"income","name":"A Freelance","icon":"tag","color":"#C62828","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faa5-08c4-710c-b76f-aff05ecd5b54",
+    "user_id": "01a0faa4-43f0-7253-929d-7405749ecc34",
+    "version": 1,
+    "change_seq": 1762,
+    "created_at": "2026-10-02T03:25:15.273085Z",
+    "updated_at": "2026-10-02T03:25:15.273085Z",
+    "deleted_at": null,
+    "kind": "income",
+    "name": "A Freelance",
+    "icon": "tag",
+    "color": "#C62828",
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}
+PUT /categories/01a0faa5-0b0a-730f-8bec-68e6b9064459
+> {"kind":"expense","name":"B Gym","icon":"tag","color":"#C62828","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faa5-0b0a-730f-8bec-68e6b9064459",
+    "user_id": "01a0faa4-47f5-71a5-ba6b-fcb727dbd4cd",
+    "version": 1,
+    "change_seq": 1763,
+    "created_at": "2026-10-02T03:25:15.804737Z",
+    "updated_at": "2026-10-02T03:25:15.804737Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "B Gym",
+    "icon": "tag",
+    "color": "#C62828",
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}
+PUT /categories/01a0faa5-0d27-70b8-9e34-4895528bd930
+> {"kind":"expense","name":"C Books","icon":"tag","color":"#C62828","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faa5-0d27-70b8-9e34-4895528bd930",
+    "user_id": "01a0faa4-4813-7347-a080-6751bed7a60a",
+    "version": 1,
+    "change_seq": 1764,
+    "created_at": "2026-10-02T03:25:16.384998Z",
+    "updated_at": "2026-10-02T03:25:16.384998Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "C Books",
+    "icon": "tag",
+    "color": "#C62828",
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}
+PUT /wallets/01a0faa5-34b7-7158-aca3-6334fd0897b8
+> {"type":"bank_account","name":"QA Checking","currency":"EGP","opening_balance_minor":0,"icon":"wallet","color":"#1A2B3C","version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faa5-3590-7313-9265-4a205eb4ec50",
+  "errors": [
+    {
+      "pointer": "/type",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}
+PUT /wallets/01a0faa5-36a1-74f6-b66f-228b96b26609
+> {"type":"bank_account","name":"QA USD","currency":"USD","opening_balance_minor":0,"icon":"wallet","color":"#1A2B3C","version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faa5-377d-725b-8459-9bedee841e05",
+  "errors": [
+    {
+      "pointer": "/type",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}
+PUT /wallets/01a0faa5-5686-77b0-8e51-b35dcadc436b
+> {"type":"checking","name":"QA Checking","currency":"EGP","opening_balance_minor":0,"icon":"wallet","color":"#1A2B3C","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faa5-5686-77b0-8e51-b35dcadc436b",
+    "wallet_id": "01a0faa5-5686-77b0-8e51-b35dcadc436b",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T03:25:35.171479Z",
+    "updated_at": "2026-10-02T03:25:35.171479Z",
+    "deleted_at": null,
+    "type": "checking",
+    "name": "QA Checking",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0faa5-58e1-70e3-8feb-339044d2214a
+> {"type":"checking","name":"QA USD","currency":"USD","opening_balance_minor":0,"icon":"wallet","color":"#1A2B3C","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faa5-58e1-70e3-8feb-339044d2214a",
+    "wallet_id": "01a0faa5-58e1-70e3-8feb-339044d2214a",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T03:25:35.747174Z",
+    "updated_at": "2026-10-02T03:25:35.747174Z",
+    "deleted_at": null,
+    "type": "checking",
+    "name": "QA USD",
+    "currency": "USD",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}

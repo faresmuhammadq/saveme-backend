@@ -34,13 +34,14 @@ final readonly class CollectionQuery
     /**
      * @param  array<string, list<string>>  $filterable  field → allowed operators
      * @param  list<string>  $sortable
+     * @param  string  $binding  anything else the cursor must be bound to, such as a search term
      */
-    public static function from(Request $request, array $filterable, array $sortable, string $defaultSort, int $defaultLimit = 50): self
+    public static function from(Request $request, array $filterable, array $sortable, string $defaultSort, int $defaultLimit = 50, string $binding = ''): self
     {
         $filters = self::filters($request, $filterable);
         [$sort, $descending] = self::sort($request->query('sort', $defaultSort), $sortable);
         $limit = self::limit($request->query('limit'), $defaultLimit);
-        $fingerprint = hash('sha256', $request->path().'|'.json_encode($filters).'|'.$sort.'|'.(int) $descending);
+        $fingerprint = hash('sha256', $request->path().'|'.json_encode($filters).'|'.$sort.'|'.(int) $descending.($binding === '' ? '' : '|'.$binding));
 
         return new self($filters, $sort, $descending, $limit, self::cursor($request->query('cursor'), $fingerprint), $fingerprint);
     }
@@ -77,11 +78,11 @@ final readonly class CollectionQuery
      */
     private static function filters(Request $request, array $filterable): array
     {
-        $given = $request->query('filter', []);
-
-        if (! is_array($given)) {
+        if (! is_array($request->query('filter', []))) {
             throw new ApiRefusal(ErrorCode::InvalidQueryParameter);
         }
+
+        $given = self::givenFilters($request);
 
         $filters = [];
         foreach ($given as $field => $expressions) {
@@ -107,6 +108,38 @@ final readonly class CollectionQuery
         }
 
         return $filters;
+    }
+
+    /**
+     * Every `filter[field]` expression as sent, read from the raw query
+     * string: PHP keeps only the last of a repeated `filter[date]`, but the
+     * grammar ANDs repeated fields (`filter[date]=gte:…&filter[date]=lte:…`),
+     * and a dropped condition would answer a plausible page of wrong rows.
+     * `filter[field][]` is accepted too.
+     *
+     * @return array<string, list<mixed>>
+     */
+    private static function givenFilters(Request $request): array
+    {
+        $given = [];
+        $raw = $request->server->get('QUERY_STRING');
+
+        foreach (explode('&', is_string($raw) ? $raw : '') as $pair) {
+            [$key, $value] = array_pad(explode('=', $pair, 2), 2, '');
+            $key = urldecode($key);
+
+            if (! str_starts_with($key, 'filter[')) {
+                continue;
+            }
+
+            if (preg_match('/^filter\[([^\[\]]*)\](?:\[\d*\])?$/', $key, $match) !== 1) {
+                throw new ApiRefusal(ErrorCode::InvalidQueryParameter);
+            }
+
+            $given[$match[1]][] = urldecode($value);
+        }
+
+        return $given;
     }
 
     /**

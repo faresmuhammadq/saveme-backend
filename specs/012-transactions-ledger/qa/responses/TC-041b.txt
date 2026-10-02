@@ -1,0 +1,76 @@
+PUT /wallets/01a0faaa-9686-7542-932f-66a7eab0cb81/transactions/01a0faaa-9933-73a5-bb32-8fffc10dad58
+> {"kind":"expense","date":"2026-09-20","amount_minor":100,"currency":"EGP","category_id":"01a0fa05-c298-7250-b5b2-2c85cc436f70","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 201
+{
+  "data": {
+    "id": "01a0faaa-9933-73a5-bb32-8fffc10dad58",
+    "wallet_id": "01a0faaa-9686-7542-932f-66a7eab0cb81",
+    "version": 1,
+    "change_seq": 4,
+    "created_at": "2026-10-02T03:31:20.002560Z",
+    "updated_at": "2026-10-02T03:31:20.002560Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "date": "2026-09-20",
+    "amount_minor": 100,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": null,
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  },
+  "meta": {}
+}
+DELETE /wallets/01a0faaa-9686-7542-932f-66a7eab0cb81/transactions/01a0faaa-9933-73a5-bb32-8fffc10dad58
+> {"version":1}
+< 200
+{
+  "data": {
+    "id": "01a0faaa-9933-73a5-bb32-8fffc10dad58",
+    "wallet_id": "01a0faaa-9686-7542-932f-66a7eab0cb81",
+    "version": 2,
+    "change_seq": 6,
+    "created_at": "2026-10-02T03:31:20.002560Z",
+    "updated_at": "2026-10-02T03:31:20.627445Z",
+    "deleted_at": "2026-10-02T03:31:20.625784Z",
+    "kind": "expense",
+    "date": "2026-09-20",
+    "amount_minor": 100,
+    "currency": "EGP",
+    "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+    "counter_wallet_id": null,
+    "description": null,
+    "memo": null,
+    "counterparty": null,
+    "cleared": false,
+    "created_by": "01a0faa4-43f0-7253-929d-7405749ecc34"
+  },
+  "meta": {}
+}
+GET /wallets/01a0faaa-9686-7542-932f-66a7eab0cb81
+< 200
+{
+  "data": {
+    "id": "01a0faaa-9686-7542-932f-66a7eab0cb81",
+    "wallet_id": "01a0faaa-9686-7542-932f-66a7eab0cb81",
+    "version": 1,
+    "change_seq": 7,
+    "created_at": "2026-10-02T03:31:19.267689Z",
+    "updated_at": "2026-10-02T03:31:19.267689Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA Lock",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": true,
+    "my_role": "owner"
+  },
+  "meta": {}
+}

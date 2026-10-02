@@ -1,0 +1,56 @@
+GET /categories
+< 200
+{
+  "data": [
+    {
+      "id": "01a0faa5-0457-771a-b851-70e67be21d5e",
+      "user_id": "01a0faa4-43f0-7253-929d-7405749ecc34",
+      "version": 1,
+      "change_seq": 1760,
+      "created_at": "2026-10-02T03:25:14.160065Z",
+      "updated_at": "2026-10-02T03:25:14.160065Z",
+      "deleted_at": null,
+      "kind": "expense",
+      "name": "A Coffee",
+      "icon": "tag",
+      "color": "#C62828",
+      "archived_at": null,
+      "in_use": true
+    },
+    {
+      "id": "01a0faa5-06b0-74b2-92ea-95a9d61873de",
+      "user_id": "01a0faa4-43f0-7253-929d-7405749ecc34",
+      "version": 1,
+      "change_seq": 1761,
+      "created_at": "2026-10-02T03:25:14.690172Z",
+      "updated_at": "2026-10-02T03:25:14.690172Z",
+      "deleted_at": null,
+      "kind": "expense",
+      "name": "A Rent",
+      "icon": "tag",
+      "color": "#C62828",
+      "archived_at": null,
+      "in_use": false
+    },
+    {
+      "id": "01a0faa5-08c4-710c-b76f-aff05ecd5b54",
+      "user_id": "01a0faa4-43f0-7253-929d-7405749ecc34",
+      "version": 1,
+      "change_seq": 1762,
+      "created_at": "2026-10-02T03:25:15.273085Z",
+      "updated_at": "2026-10-02T03:25:15.273085Z",
+      "deleted_at": null,
+      "kind": "income",
+      "name": "A Freelance",
+      "icon": "tag",
+      "color": "#C62828",
+      "archived_at": null,
+      "in_use": false
+    }
+  ],
+  "meta": {
+    "next_cursor": null,
+    "has_more": false,
+    "limit": 50
+  }
+}

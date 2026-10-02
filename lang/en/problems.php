@@ -66,6 +66,7 @@ return [
         'INSTANT_NOT_UTC' => 'Use a UTC time ending in Z.',
         'INVALID_ID' => 'The identifier is not valid.',
         'IMMUTABLE_FIELD' => 'This field cannot be changed.',
+        'CURRENCY_MISMATCH' => 'The currency must match the wallet\'s. Cross-currency transactions are not supported.',
     ],
 
 ];

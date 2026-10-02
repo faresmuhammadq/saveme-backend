@@ -1,0 +1,20 @@
+GET /wallets/01a0fab2-bd39-7261-b850-94f5f98a6a5a/transactions
+< 404
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0fab5-4f5f-72b3-b8f9-e4cc7ea598de"
+}
+GET /wallets/01a0fab2-bd39-7261-b850-94f5f98a6a5a/transactions/01a0fab4-5064-7551-a1aa-84ed1e9e5b05
+< 404
+{
+  "type": "http://saveme-backend.test/problems/not-found",
+  "title": "Not found",
+  "status": 404,
+  "detail": "We could not find that.",
+  "code": "NOT_FOUND",
+  "request_id": "01a0fab5-52e6-7175-972f-fbeac2f322b5"
+}

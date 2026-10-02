@@ -138,8 +138,11 @@ components:
     UnprocessableEntity:
       description: |
         Codes: VALIDATION_FAILED (one entry per offending input in `errors`,
-        each with a JSON Pointer and its own field-level code), INVALID_ID
-        (the path identifier is not a UUIDv7).
+        each with a JSON Pointer and its own field-level code, among them
+        REQUIRED, UNKNOWN_FIELD, INVALID_TYPE, INVALID_ENUM_VALUE,
+        OUT_OF_RANGE, AMOUNT_NOT_INTEGER, INVALID_CURRENCY,
+        DATE_NOT_CALENDAR_DATE, IMMUTABLE_FIELD and CURRENCY_MISMATCH),
+        INVALID_ID (the path identifier is not a UUIDv7).
       headers:
         X-Request-Id:
           $ref: './headers.yaml#/components/headers/XRequestId'

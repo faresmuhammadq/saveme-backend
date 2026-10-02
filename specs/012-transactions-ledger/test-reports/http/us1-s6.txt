@@ -1,0 +1,114 @@
+PUT /categories/01a0fab3-4c70-728b-9685-e38ffd371c2d
+> {"kind":"expense","name":"E2E Gone","icon":"tag","color":"#C62828","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0fab3-4c70-728b-9685-e38ffd371c2d",
+    "user_id": "01a0faa4-43f0-7253-929d-7405749ecc34",
+    "version": 1,
+    "change_seq": 1774,
+    "created_at": "2026-10-02T03:40:50.080921Z",
+    "updated_at": "2026-10-02T03:40:50.080921Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "E2E Gone",
+    "icon": "tag",
+    "color": "#C62828",
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}
+DELETE /categories/01a0fab3-4c70-728b-9685-e38ffd371c2d
+> {"version":1}
+< 200
+{
+  "data": {
+    "id": "01a0fab3-4c70-728b-9685-e38ffd371c2d",
+    "user_id": "01a0faa4-43f0-7253-929d-7405749ecc34",
+    "version": 2,
+    "change_seq": 1775,
+    "created_at": "2026-10-02T03:40:50.080921Z",
+    "updated_at": "2026-10-02T03:40:50.536487Z",
+    "deleted_at": "2026-10-02T03:40:50.532749Z",
+    "kind": "expense",
+    "name": "E2E Gone",
+    "icon": "tag",
+    "color": "#C62828",
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}
+PUT /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions/01a0fab3-50ca-72d8-8f2d-dbb4c23a729e
+> {"kind":"expense","date":"2026-09-05","amount_minor":100,"currency":"EGP","category_id":"01a0fab3-2c55-761c-b55d-e49f5f649c71","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fab3-5199-72dd-b786-b8deeb79bfe2",
+  "errors": [
+    {
+      "pointer": "/category_id",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}
+PUT /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions/01a0fab3-5369-753a-a205-f94033dacbcc
+> {"kind":"expense","date":"2026-09-05","amount_minor":100,"currency":"EGP","category_id":"01a0fab3-4c70-728b-9685-e38ffd371c2d","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fab3-5452-71c6-9fa3-b922b5061b9e",
+  "errors": [
+    {
+      "pointer": "/category_id",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}
+PUT /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions/01a0fab3-5600-7669-a59d-0fa0bd2fe1d2
+> {"kind":"expense","date":"2026-09-05","amount_minor":100,"currency":"EGP","category_id":"01a0fab3-506f-7461-a608-c37507ea5aa7","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fab3-56d7-72ed-899c-7157d9308c91",
+  "errors": [
+    {
+      "pointer": "/category_id",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}
+PUT /wallets/01a0fab2-bac5-721b-a337-3163d405172a/transactions/01a0fab3-5862-75b5-8289-b3ad665643e5
+> {"kind":"expense","date":"2026-09-05","amount_minor":100,"currency":"EGP","category_id":"01a0fa05-c344-7014-a053-5688a2879949","counter_wallet_id":null,"description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0fab3-5925-71db-8930-4a2e6c24d915",
+  "errors": [
+    {
+      "pointer": "/category_id",
+      "code": "INVALID_ENUM_VALUE",
+      "detail": "This value is not one of the allowed options."
+    }
+  ]
+}

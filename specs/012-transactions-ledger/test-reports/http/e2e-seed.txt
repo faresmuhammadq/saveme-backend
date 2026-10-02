@@ -1,0 +1,213 @@
+PUT /wallets/01a0fab2-bac5-721b-a337-3163d405172a
+> {"type":"cash","name":"QA E2E Cash","currency":"EGP","opening_balance_minor":100000,"icon":"wallet","color":"#1A2B3C","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0fab2-bac5-721b-a337-3163d405172a",
+    "wallet_id": "01a0fab2-bac5-721b-a337-3163d405172a",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T03:40:12.805675Z",
+    "updated_at": "2026-10-02T03:40:12.805675Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA E2E Cash",
+    "currency": "EGP",
+    "opening_balance_minor": 100000,
+    "balance_minor": 100000,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0fab2-bd39-7261-b850-94f5f98a6a5a
+> {"type":"cash","name":"QA E2E Bank","currency":"EGP","opening_balance_minor":0,"icon":"wallet","color":"#1A2B3C","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0fab2-bd39-7261-b850-94f5f98a6a5a",
+    "wallet_id": "01a0fab2-bd39-7261-b850-94f5f98a6a5a",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T03:40:13.515872Z",
+    "updated_at": "2026-10-02T03:40:13.515872Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA E2E Bank",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0fab2-bfe9-75a5-b15e-11ca180934f6
+> {"type":"cash","name":"QA E2E Household","currency":"EGP","opening_balance_minor":0,"icon":"wallet","color":"#1A2B3C","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0fab2-bfe9-75a5-b15e-11ca180934f6",
+    "wallet_id": "01a0fab2-bfe9-75a5-b15e-11ca180934f6",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T03:40:14.229694Z",
+    "updated_at": "2026-10-02T03:40:14.229694Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA E2E Household",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0fab2-c2dd-739d-9726-a4b92c1b7878
+> {"type":"cash","name":"QA E2E C","currency":"EGP","opening_balance_minor":0,"icon":"wallet","color":"#1A2B3C","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0fab2-c2dd-739d-9726-a4b92c1b7878",
+    "wallet_id": "01a0fab2-c2dd-739d-9726-a4b92c1b7878",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T03:40:14.912885Z",
+    "updated_at": "2026-10-02T03:40:14.912885Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA E2E C",
+    "currency": "EGP",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+PUT /wallets/01a0fab2-c561-741a-af94-c882e08ec3f3
+> {"type":"cash","name":"QA E2E USD","currency":"USD","opening_balance_minor":0,"icon":"wallet","color":"#1A2B3C","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0fab2-c561-741a-af94-c882e08ec3f3",
+    "wallet_id": "01a0fab2-c561-741a-af94-c882e08ec3f3",
+    "version": 1,
+    "change_seq": 3,
+    "created_at": "2026-10-02T03:40:15.546795Z",
+    "updated_at": "2026-10-02T03:40:15.546795Z",
+    "deleted_at": null,
+    "type": "cash",
+    "name": "QA E2E USD",
+    "currency": "USD",
+    "opening_balance_minor": 0,
+    "balance_minor": 0,
+    "icon": "wallet",
+    "color": "#1A2B3C",
+    "archived_at": null,
+    "currency_locked": false,
+    "my_role": "owner"
+  },
+  "meta": {}
+}
+01a0fab2-bfe9-75a5-b15e-11ca180934f6 editor
+01a0fab2-c2dd-739d-9726-a4b92c1b7878 viewer
+01a0fab2-bac5-721b-a337-3163d405172a editor
+01a0fab2-bac5-721b-a337-3163d405172a viewer
+PUT /categories/01a0fab3-275d-73f5-a4d2-3cea5fb331dc
+> {"kind":"expense","name":"E2E Dining","icon":"tag","color":"#C62828","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0fab3-275d-73f5-a4d2-3cea5fb331dc",
+    "user_id": "01a0faa4-43f0-7253-929d-7405749ecc34",
+    "version": 1,
+    "change_seq": 1770,
+    "created_at": "2026-10-02T03:40:40.599255Z",
+    "updated_at": "2026-10-02T03:40:40.599255Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "E2E Dining",
+    "icon": "tag",
+    "color": "#C62828",
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}
+PUT /categories/01a0fab3-2998-7714-85cb-245aa2cbd16f
+> {"kind":"expense","name":"E2E Taxi","icon":"tag","color":"#C62828","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0fab3-2998-7714-85cb-245aa2cbd16f",
+    "user_id": "01a0faa4-43f0-7253-929d-7405749ecc34",
+    "version": 1,
+    "change_seq": 1771,
+    "created_at": "2026-10-02T03:40:41.260804Z",
+    "updated_at": "2026-10-02T03:40:41.260804Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "E2E Taxi",
+    "icon": "tag",
+    "color": "#C62828",
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}
+PUT /categories/01a0fab3-2c55-761c-b55d-e49f5f649c71
+> {"kind":"expense","name":"E2E B Pets","icon":"tag","color":"#C62828","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0fab3-2c55-761c-b55d-e49f5f649c71",
+    "user_id": "01a0faa4-47f5-71a5-ba6b-fcb727dbd4cd",
+    "version": 1,
+    "change_seq": 1772,
+    "created_at": "2026-10-02T03:40:41.862891Z",
+    "updated_at": "2026-10-02T03:40:41.862891Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "E2E B Pets",
+    "icon": "tag",
+    "color": "#C62828",
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}
+PUT /categories/01a0fab3-2e8a-7751-ac05-83cee7e15ef3
+> {"kind":"expense","name":"E2E C Toys","icon":"tag","color":"#C62828","version":0}
+< 201
+{
+  "data": {
+    "id": "01a0fab3-2e8a-7751-ac05-83cee7e15ef3",
+    "user_id": "01a0faa4-4813-7347-a080-6751bed7a60a",
+    "version": 1,
+    "change_seq": 1773,
+    "created_at": "2026-10-02T03:40:42.470659Z",
+    "updated_at": "2026-10-02T03:40:42.470659Z",
+    "deleted_at": null,
+    "kind": "expense",
+    "name": "E2E C Toys",
+    "icon": "tag",
+    "color": "#C62828",
+    "archived_at": null,
+    "in_use": false
+  },
+  "meta": {}
+}

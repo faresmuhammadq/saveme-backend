@@ -1,0 +1,575 @@
+# Transactions ledger (spec 012, brief B6). Every operation sits under
+# /api/v1, inherits the root's bearer scheme and runs through the shared
+# runtime, so each also documents the shared refusals it can produce.
+#
+# Frozen for the C6 client. Authorization follows the permission matrix in
+# specs/010-wallets-membership/spec.md §6 (rows T-01, T-02, T-03) — the only
+# copy of it (P-08 rule 5). A caller who is not an active member of the path
+# wallet gets 404 NOT_FOUND, never 403. Every write sits behind the
+# verification gate (403 EMAIL_NOT_VERIFIED).
+#
+# Postings are never part of any request or response (P-04 rule 6).
+#
+# Field code CURRENCY_MISMATCH is new in v1.5.
+
+/wallets/{id}/transactions:
+  get:
+    operationId: listTransactions
+    tags: [Wallets & Ledger]
+    summary: List the wallet's live transactions, transfers into it included.
+    description: |
+      Any active member may read it (row T-01). Returns the live
+      transactions whose `wallet_id` is this wallet and the live transfers
+      whose `counter_wallet_id` is this wallet. Tombstones are not listed
+      (read one by id, or, from B14, through the feed).
+
+      Sorted by `-date` unless `sort` says otherwise; `created_at` is the
+      other sortable field. Every sort is stabilised by `id`.
+
+      Filters (anything else is refused, never ignored):
+
+      - `date`: eq, gt, gte, lt, lte, with `YYYY-MM-DD` values;
+      - `category_id`: eq, in (at most 50 values);
+      - `kind`: eq, in (`income`, `expense`, `transfer`).
+
+      `search` matches a literal, case-insensitive substring of
+      `description`, `memo` or `counterparty`; `%` and `_` are not
+      wildcards. A cursor is valid only with the same filters, sort and
+      search.
+    x-filterable: [date, category_id, kind]
+    x-sortable: [date, created_at]
+    parameters:
+      - &walletId
+        $ref: '../components/parameters.yaml#/components/parameters/ResourceId'
+      - $ref: '../components/parameters.yaml#/components/parameters/Cursor'
+      - $ref: '../components/parameters.yaml#/components/parameters/Limit'
+      - $ref: '../components/parameters.yaml#/components/parameters/Filter'
+      - $ref: '../components/parameters.yaml#/components/parameters/Sort'
+      - $ref: '#/components/parameters/Search'
+      - &acceptLanguage
+        $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - &correlationId
+        $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - &clientPlatform
+        $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - &clientVersion
+        $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'A page of transactions. None is 200 with `data: []`, never 404.'
+        headers: &successHeaders
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Transaction'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/wallets/{id}/transactions/{tid}:
+  get:
+    operationId: getTransaction
+    tags: [Wallets & Ledger]
+    summary: Read one transaction, live or tombstoned.
+    description: |
+      Any active member of the path wallet may read it (row T-01). A transfer
+      is found under either of its two wallets; any other transaction only
+      under its own. A tombstone is returned with `deleted_at` set. A
+      transaction of another wallet, another kind of record, an unknown id, a
+      non-member, or a deleted path wallet is 404 NOT_FOUND.
+    parameters:
+      - *walletId
+      - &transactionId
+        $ref: '#/components/parameters/TransactionId'
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: The transaction.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: &transactionEnvelope
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Transaction'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  put:
+    operationId: upsertTransaction
+    tags: [Wallets & Ledger]
+    summary: Record or save the whole transaction, addressed by the client-generated identifier.
+    description: |
+      A create, not a POST: the client generates `tid` offline and the same
+      write may arrive twice. `version` is omitted or 0 to create, and
+      carries the client's last-seen value to save. A new transaction belongs
+      to the path wallet (`wallet_id`); for a transfer that is the source.
+
+      **Transfers** are one record: `kind: transfer`, `counter_wallet_id` =
+      the destination, `category_id: null`. Money moves out of `wallet_id`
+      into `counter_wallet_id`. The caller needs row T-02 (owner or editor)
+      in **both** wallets (row T-03). Never two linked records.
+
+      The server derives the postings (never sent, never returned), and
+      recomputes every touched wallet's `balance_minor` in the same unit of
+      work.
+
+      Outcomes, in this order of precedence:
+
+      - not verified → 403 EMAIL_NOT_VERIFIED;
+      - malformed id → 422 INVALID_ID; malformed body → 422 VALIDATION_FAILED;
+      - caller not an active member of the path wallet, path wallet deleted,
+        `tid` held by a transaction that does not touch the path wallet or
+        by any other kind of record, or a version above 0 for an unknown
+        `tid` → 404 NOT_FOUND, nothing disclosed or overwritten;
+      - caller is a viewer of the path wallet → 403 FORBIDDEN;
+      - the transaction is tombstoned → 409 VERSION_CONFLICT with the
+        tombstone in `current`, even for an identical body (restore is a
+        PATCH, see below);
+      - body identical to the stored transaction → 200, nothing changed;
+      - stale version → 409 VERSION_CONFLICT with the stored transaction in
+        `current`; nothing merged;
+      - caller is a viewer of a transfer's other wallet (the destination,
+        or the source when the path names the destination) → 403 FORBIDDEN;
+      - state rules → 422 VALIDATION_FAILED, one entry each:
+        - a different `kind` → IMMUTABLE_FIELD at `/kind`;
+        - a transfer's different `counter_wallet_id` → IMMUTABLE_FIELD at
+          `/counter_wallet_id`;
+        - `currency` not the wallet's → field code CURRENCY_MISMATCH at
+          `/currency`;
+        - a transfer between wallets of different currencies → field code
+          CURRENCY_MISMATCH at `/counter_wallet_id` (cross-currency is out
+          of MVP);
+        - category not the caller's own or a platform one (unless unchanged
+          from the stored transaction), deleted, unknown, or of the other
+          kind; or any category on a transfer → INVALID_ENUM_VALUE at
+          `/category_id`;
+        - destination not a live wallet the caller is a member of, or the
+          source itself; any destination on an income or expense; a
+          transfer whose other wallet has been deleted → INVALID_ENUM_VALUE
+          at `/counter_wallet_id`;
+        - category missing on an income or expense, destination missing on
+          a transfer → REQUIRED at that member;
+      - otherwise 201 (created) or 200 (saved), version + 1.
+
+      `amount_minor` is positive (zero or negative is OUT_OF_RANGE); the
+      direction comes from `kind`. A balance going negative is never refused.
+      Archived wallets and archived categories are accepted.
+    parameters:
+      - *walletId
+      - *transactionId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/TransactionWrite'
+    responses:
+      '200':
+        description: Saved, or an identical replay returning the transaction unchanged.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *transactionEnvelope
+      '201':
+        description: Recorded.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *transactionEnvelope
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  patch:
+    operationId: patchTransaction
+    tags: [Wallets & Ledger]
+    summary: Save some editable fields, or restore a tombstoned transaction.
+    description: |
+      Two shapes, both carrying the last-seen `version`:
+
+      - **Edit**: any non-empty subset of `date`, `amount_minor`,
+        `category_id`, `description`, `memo`, `counterparty`, `cleared`.
+        Members absent are unchanged. The outcomes of a whole save apply,
+        except that a PATCH never creates: an unknown `tid` is 404
+        NOT_FOUND. `kind`, `currency` and `counter_wallet_id` are not
+        patchable and are refused as UNKNOWN_FIELD. A body carrying only
+        `version` is 422 with REQUIRED at the body root (pointer "").
+        An edit of a tombstone is 409 VERSION_CONFLICT with the tombstone
+        in `current` — never an implicit restore.
+      - **Restore** (undelete): exactly `{ "deleted_at": null, "version":
+        <current> }`, authorised like an edit (row T-02, and T-03 for a
+        transfer). The transaction is live again at version + 1, its
+        postings are re-derived and every touched balance recomputed. The
+        state rules are re-checked against the stored record (a transfer
+        whose other wallet has been deleted cannot be restored:
+        INVALID_ENUM_VALUE at `/counter_wallet_id`). Restoring a live
+        transaction returns it unchanged. A stale version is 409
+        VERSION_CONFLICT. Any other member beside `deleted_at` is
+        UNKNOWN_FIELD; a non-null `deleted_at` is INVALID_TYPE at
+        `/deleted_at` (deletion is DELETE).
+    parameters:
+      - *walletId
+      - *transactionId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/TransactionPatch'
+              - $ref: '#/components/schemas/TransactionRestore'
+    responses:
+      '200':
+        description: Saved or restored, or nothing to change.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *transactionEnvelope
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  delete:
+    operationId: deleteTransaction
+    tags: [Wallets & Ledger]
+    summary: Delete the transaction. A tombstone, never a removal.
+    description: |
+      Tombstones the transaction and removes its postings from every
+      balance, recomputing each touched wallet in the same unit of work.
+      Deleting a transfer removes both of its effects together. Returns the
+      tombstone. Deleting an already deleted transaction returns its
+      tombstone with nothing changed, whatever version is sent. A stale
+      version on a live transaction is 409 VERSION_CONFLICT. A transfer whose
+      other wallet has been deleted can still be deleted through its live
+      wallet. It can be restored with PATCH `{ "deleted_at": null, "version":
+      n }`.
+    parameters:
+      - *walletId
+      - *transactionId
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/VersionOnly'
+    responses:
+      '200':
+        description: The tombstone.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *transactionEnvelope
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+components:
+  parameters:
+    TransactionId:
+      name: tid
+      in: path
+      required: true
+      description: |
+        The transaction identifier, generated by the client so a record can
+        be created offline and the write retried safely. Lowercase hyphenated
+        UUIDv7; anything else is 422 INVALID_ID.
+      schema:
+        type: string
+        format: uuid
+        pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$'
+
+    Search:
+      name: search
+      in: query
+      required: false
+      description: |
+        A literal, case-insensitive substring of `description`, `memo` or
+        `counterparty`. 1–100 characters after trimming; anything else is 400
+        INVALID_QUERY_PARAMETER. Not a query language: `%` and `_` match
+        themselves.
+      schema:
+        type: string
+        minLength: 1
+        maxLength: 100
+
+  schemas:
+    TransactionKind:
+      type: string
+      description: |
+        `income` and `expense` move money between the wallet and a category;
+        `transfer` moves it between two wallets and is excluded from every
+        spending and income total. Never changes after creation.
+      enum: [income, expense, transfer]
+
+    PositiveMinorUnits:
+      type: integer
+      description: A positive count of minor units in the transaction's currency. Never a decimal string or a float; the direction comes from `kind`.
+      minimum: 1
+      maximum: 9007199254740991
+
+    Currency:
+      type: string
+      pattern: '^[A-Z]{3}$'
+      description: ISO 4217 alpha-3, uppercase. Must equal the wallet's currency (both wallets' for a transfer).
+
+    CalendarDate:
+      type: string
+      format: date
+      description: '`YYYY-MM-DD`, no time, no offset, 1900-01-01 to 2999-12-31. Backdated and future dates are accepted.'
+
+    Description:
+      type: [string, 'null']
+      maxLength: 100
+      description: Optional one-line label shown in lists. Trimmed; blank is stored as null.
+
+    Memo:
+      type: [string, 'null']
+      maxLength: 1000
+      description: Optional longer note. Trimmed; blank is stored as null.
+
+    Counterparty:
+      type: [string, 'null']
+      maxLength: 100
+      description: Optional person name, for debts. Free text, never resolved to an account. Trimmed; blank is stored as null.
+
+    Transaction:
+      description: |
+        A money-movement event. Wallet-scoped and syncable; this is also the
+        change-feed row B14 serves (spec 003, ADR-0008). A transfer is one
+        record (ADR-0015): `wallet_id` is the source, `counter_wallet_id` the
+        destination, and the identical record appears in both wallets' lists
+        and feeds. `change_seq` comes from `wallet_id`'s scope. Postings are
+        never exposed.
+      allOf:
+        - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
+        - $ref: '../components/schemas.yaml#/components/schemas/WalletScoped'
+        - type: object
+          required: [kind, date, amount_minor, currency, category_id, counter_wallet_id, description, memo, counterparty, cleared, created_by]
+          properties:
+            kind:
+              $ref: '#/components/schemas/TransactionKind'
+            date:
+              $ref: '#/components/schemas/CalendarDate'
+            amount_minor:
+              $ref: '#/components/schemas/PositiveMinorUnits'
+            currency:
+              $ref: '#/components/schemas/Currency'
+            category_id:
+              type: [string, 'null']
+              format: uuid
+              description: |
+                Income or expense: the category (the recorder's own, a platform
+                one, or — after another member's edit — whichever was kept).
+                Resolve it in the person's own categories, then the platform
+                set, then the wallet's category references. Null for a transfer.
+            counter_wallet_id:
+              type: [string, 'null']
+              format: uuid
+              description: Transfer only — the destination wallet. Null otherwise. Never changes.
+            description:
+              $ref: '#/components/schemas/Description'
+            memo:
+              $ref: '#/components/schemas/Memo'
+            counterparty:
+              $ref: '#/components/schemas/Counterparty'
+            cleared:
+              type: boolean
+              description: Whether the person has reconciled it. Has no effect on balances.
+            created_by:
+              type: string
+              format: uuid
+              description: Read-only. The person who first recorded it.
+
+    TransactionWrite:
+      type: object
+      description: |
+        The whole writable transaction plus the last-seen version. `id` comes
+        from the path, `wallet_id` from the path at creation. `postings`,
+        `wallet_id`, `created_by`, `deleted_at`, `change_seq`, `created_at`
+        and `updated_at` are refused with UNKNOWN_FIELD.
+      required: [kind, date, amount_minor, currency, category_id, counter_wallet_id, description, memo, counterparty, cleared]
+      additionalProperties: false
+      properties:
+        kind:
+          $ref: '#/components/schemas/TransactionKind'
+        date:
+          $ref: '#/components/schemas/CalendarDate'
+        amount_minor:
+          $ref: '#/components/schemas/PositiveMinorUnits'
+        currency:
+          $ref: '#/components/schemas/Currency'
+        category_id:
+          type: [string, 'null']
+          format: uuid
+          description: Required for income and expense; null for a transfer.
+        counter_wallet_id:
+          type: [string, 'null']
+          format: uuid
+          description: Required for a transfer (the destination); null otherwise.
+        description:
+          $ref: '#/components/schemas/Description'
+        memo:
+          $ref: '#/components/schemas/Memo'
+        counterparty:
+          $ref: '#/components/schemas/Counterparty'
+        cleared:
+          type: boolean
+        version:
+          type: integer
+          minimum: 0
+          description: The client's last-seen version. Omitted or 0 means create.
+
+    TransactionPatch:
+      type: object
+      description: Some editable members plus the last-seen version. At least one editable member is required.
+      required: [version]
+      minProperties: 2
+      additionalProperties: false
+      properties:
+        date:
+          $ref: '#/components/schemas/CalendarDate'
+        amount_minor:
+          $ref: '#/components/schemas/PositiveMinorUnits'
+        category_id:
+          type: string
+          format: uuid
+        description:
+          $ref: '#/components/schemas/Description'
+        memo:
+          $ref: '#/components/schemas/Memo'
+        counterparty:
+          $ref: '#/components/schemas/Counterparty'
+        cleared:
+          type: boolean
+        version:
+          type: integer
+          minimum: 1
+
+    TransactionRestore:
+      type: object
+      description: Restores (undeletes) a tombstoned transaction. Exactly these two members.
+      required: [deleted_at, version]
+      additionalProperties: false
+      properties:
+        deleted_at:
+          type: 'null'
+        version:
+          type: integer
+          minimum: 1
+          description: The tombstone's current version.
+
+    VersionOnly:
+      type: object
+      required: [version]
+      additionalProperties: false
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          description: The client's last-seen version of the transaction.

@@ -26,3 +26,11 @@ The brief predates decisions ratified since. These collide with it; the ratified
 - A budget may name a person's category or a platform one (the id is used directly). B8 decides the scope rules for a platform category's budget; its progress is a total, so it is **always scoped and grouped by `system_key`** (ADR-0014 rules 5-6, spec 011 FR-027 and FR-028).
 - Categories are flat in MVP (`parent_id` is reserved and always null); do not design roll-ups over a hierarchy.
 - **Lock order** (spec 011 FR-023, ADR-0014 rule 10): lock category rows first (`CategoryRepository::findForShare`, or update), then wallet rows, several wallets in ascending id. Never lock a wallet and then a category: a rename of a category republishes to its wallets and would deadlock with you.  A budget does not publish a Category Reference (it has no wallet scope), so it normally takes no wallet lock.
+
+## Inherited from B6 (spec 012)
+
+- **Listen** to `TransactionPosted` (`change` is `recorded`, `amended` or `restored`) and `TransactionVoided`, and to `WalletDeleted`: a wallet deletion tombstones its transactions **without** a `TransactionVoided` per record (spec 012 FR-027), so a budget re-derives from the ledger when a wallet it spans is deleted.
+- **A backdated or re-categorised edit re-cuts both periods**: `TransactionPosted` carries `date`, `previous_date`, `category_id` and `previous_category_id` (null on `recorded` and `restored`), so the old period is not left stale. The events carry no amount and no text; read amounts from the postings through the ledger's query service.
+- **Exclude transfers** (`kind = transfer`, postings that all reference wallets) from every budget total; income and expense postings only (glossary, ADR-0012).
+- **Platform categories are scoped and grouped by `system_key`** (ADR-0014 rules 5-6); a transaction references the platform category directly, never a copy.
+- Totals are summed from postings, never from `wallets.balance_minor` (P-05).

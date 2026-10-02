@@ -3,6 +3,7 @@
 use App\Modules\Wallets\Http\Controllers\CategoryController;
 use App\Modules\Wallets\Http\Controllers\CategoryReferenceController;
 use App\Modules\Wallets\Http\Controllers\PlatformCategoryController;
+use App\Modules\Wallets\Http\Controllers\TransactionController;
 use App\Modules\Wallets\Http\Controllers\WalletController;
 use App\Modules\Wallets\Http\Controllers\WalletMembersController;
 use Illuminate\Support\Facades\Route;
@@ -47,5 +48,21 @@ Route::name('categories.')->middleware('auth:api')->group(function (): void {
         Route::patch('categories/{id}', [CategoryController::class, 'patch'])->name('patch');
         Route::delete('categories/{id}', [CategoryController::class, 'destroy'])->name('destroy');
         Route::post('categories/{id}/archive', [CategoryController::class, 'archive'])->name('archive');
+    });
+});
+
+/*
+| Transactions (spec 012). Reads need a signed-in caller; every write is also
+| behind the verification gate. The contract is docs/openapi/paths/transactions.yaml.
+*/
+
+Route::name('transactions.')->middleware('auth:api')->group(function (): void {
+    Route::get('wallets/{id}/transactions', [TransactionController::class, 'index'])->name('index');
+    Route::get('wallets/{id}/transactions/{tid}', [TransactionController::class, 'show'])->name('show');
+
+    Route::middleware('address.verified')->group(function (): void {
+        Route::put('wallets/{id}/transactions/{tid}', [TransactionController::class, 'upsert'])->name('upsert');
+        Route::patch('wallets/{id}/transactions/{tid}', [TransactionController::class, 'patch'])->name('patch');
+        Route::delete('wallets/{id}/transactions/{tid}', [TransactionController::class, 'destroy'])->name('destroy');
     });
 });

@@ -1,0 +1,18 @@
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions/01a0faa7-1c8a-7012-bb7e-b9141cc26ff0
+> {"kind":"transfer","date":"2026-09-14","amount_minor":100,"currency":"EGP","category_id":null,"counter_wallet_id":"01a0faa5-58e1-70e3-8feb-339044d2214a","description":null,"memo":null,"counterparty":null,"cleared":false,"version":0}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "Some of the information sent is not valid. Each problem is listed.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faa7-1d5f-72f3-b570-841865f912da",
+  "errors": [
+    {
+      "pointer": "/counter_wallet_id",
+      "code": "CURRENCY_MISMATCH",
+      "detail": "The currency must match the wallet's. Cross-currency transactions are not supported."
+    }
+  ]
+}

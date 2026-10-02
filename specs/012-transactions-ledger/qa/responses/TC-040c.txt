@@ -1,0 +1,18 @@
+PUT /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e
+> {"type":"cash","name":"QA Cash","currency":"USD","opening_balance_minor":100000,"icon":"wallet","color":"#1A2B3C","version":1}
+< 422
+{
+  "type": "http://saveme-backend.test/problems/validation-failed",
+  "title": "Validation failed",
+  "status": 422,
+  "detail": "The currency can't change once the wallet has transactions.",
+  "code": "VALIDATION_FAILED",
+  "request_id": "01a0faaa-9515-73cc-875a-8dd1bb06eea8",
+  "errors": [
+    {
+      "pointer": "/currency",
+      "code": "IMMUTABLE_FIELD",
+      "detail": "This field cannot be changed."
+    }
+  ]
+}

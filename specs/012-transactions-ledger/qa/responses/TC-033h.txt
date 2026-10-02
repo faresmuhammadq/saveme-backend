@@ -1,0 +1,10 @@
+GET /wallets/01a0faa4-f4f0-7150-baac-3fa62ca41f9e/transactions?sort=amount_minor
+< 400
+{
+  "type": "http://saveme-backend.test/problems/sort-field-not-supported",
+  "title": "Sort field not supported",
+  "status": 400,
+  "detail": "This list cannot be sorted by that field.",
+  "code": "SORT_FIELD_NOT_SUPPORTED",
+  "request_id": "01a0faa9-af26-739a-8c73-fcb6c3b59e3b"
+}

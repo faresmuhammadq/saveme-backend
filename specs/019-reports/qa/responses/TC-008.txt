@@ -1,0 +1,1087 @@
+===== TC-008 Access: 401, 422 INVALID_ID before 404, 404 non-member/left/deleted, 406, 426, 405, unverified allowed, precedence 2026-10-04T21:11:10.794139Z
+
+no credential: 401 {"type":"http:\/\/saveme-backend.test\/problems\/unauthenticated","title":"Unauthenticated","status":401,"detail":"Please sign in again.","code":"UNAUTHENTICATED","request_id":"01a108c1-a4fe-7269-8e05-7b30b4a0b91c"}
+CHECK [PASS] no credential -> 401 UNAUTHENTICATED 
+CHECK [PASS] bad token 401 3d/reports/summary 
+CHECK [PASS] Accept text/html -> 406 3d/reports/summary 406
+CHECK [PASS] old client -> 426 3d/reports/summary 426
+CHECK [PASS] POST -> 405 + Allow GET 3d/reports/summary 405 GET, HEAD
+CHECK [PASS] PUT -> 405 + Allow GET 3d/reports/summary 405 GET, HEAD
+CHECK [PASS] PATCH -> 405 + Allow GET 3d/reports/summary 405 GET, HEAD
+CHECK [PASS] DELETE -> 405 + Allow GET 3d/reports/summary 405 GET, HEAD
+CHECK [PASS] Content-Language / X-Request-Id headers 3d/reports/summary 
+CHECK [PASS] Idempotency-Key harmless 3d/reports/summary 
+CHECK [PASS] bad token 401 eports/by-category 
+CHECK [PASS] Accept text/html -> 406 eports/by-category 406
+CHECK [PASS] old client -> 426 eports/by-category 426
+CHECK [PASS] POST -> 405 + Allow GET eports/by-category 405 GET, HEAD
+CHECK [PASS] PUT -> 405 + Allow GET eports/by-category 405 GET, HEAD
+CHECK [PASS] PATCH -> 405 + Allow GET eports/by-category 405 GET, HEAD
+CHECK [PASS] DELETE -> 405 + Allow GET eports/by-category 405 GET, HEAD
+CHECK [PASS] Content-Language / X-Request-Id headers eports/by-category 
+CHECK [PASS] Idempotency-Key harmless eports/by-category 
+CHECK [PASS] bad token 401 a43d/reports/trend 
+CHECK [PASS] Accept text/html -> 406 a43d/reports/trend 406
+CHECK [PASS] old client -> 426 a43d/reports/trend 426
+CHECK [PASS] POST -> 405 + Allow GET a43d/reports/trend 405 GET, HEAD
+CHECK [PASS] PUT -> 405 + Allow GET a43d/reports/trend 405 GET, HEAD
+CHECK [PASS] PATCH -> 405 + Allow GET a43d/reports/trend 405 GET, HEAD
+CHECK [PASS] DELETE -> 405 + Allow GET a43d/reports/trend 405 GET, HEAD
+CHECK [PASS] Content-Language / X-Request-Id headers a43d/reports/trend 
+CHECK [PASS] Idempotency-Key harmless a43d/reports/trend 
+CHECK [PASS] bad token 401 /reports/summary 
+CHECK [PASS] Accept text/html -> 406 /reports/summary 406
+CHECK [PASS] old client -> 426 /reports/summary 426
+CHECK [PASS] POST -> 405 + Allow GET /reports/summary 405 GET, HEAD
+CHECK [PASS] PUT -> 405 + Allow GET /reports/summary 405 GET, HEAD
+CHECK [PASS] PATCH -> 405 + Allow GET /reports/summary 405 GET, HEAD
+CHECK [PASS] DELETE -> 405 + Allow GET /reports/summary 405 GET, HEAD
+CHECK [PASS] Content-Language / X-Request-Id headers /reports/summary 
+CHECK [PASS] Idempotency-Key harmless /reports/summary 
+CHECK [PASS] bad token 401 eports/by-category 
+CHECK [PASS] Accept text/html -> 406 eports/by-category 406
+CHECK [PASS] old client -> 426 eports/by-category 426
+CHECK [PASS] POST -> 405 + Allow GET eports/by-category 405 GET, HEAD
+CHECK [PASS] PUT -> 405 + Allow GET eports/by-category 405 GET, HEAD
+CHECK [PASS] PATCH -> 405 + Allow GET eports/by-category 405 GET, HEAD
+CHECK [PASS] DELETE -> 405 + Allow GET eports/by-category 405 GET, HEAD
+CHECK [PASS] Content-Language / X-Request-Id headers eports/by-category 
+CHECK [PASS] Idempotency-Key harmless eports/by-category 
+CHECK [PASS] bad token 401 /reports/trend 
+CHECK [PASS] Accept text/html -> 406 /reports/trend 406
+CHECK [PASS] old client -> 426 /reports/trend 426
+CHECK [PASS] POST -> 405 + Allow GET /reports/trend 405 GET, HEAD
+CHECK [PASS] PUT -> 405 + Allow GET /reports/trend 405 GET, HEAD
+CHECK [PASS] PATCH -> 405 + Allow GET /reports/trend 405 GET, HEAD
+CHECK [PASS] DELETE -> 405 + Allow GET /reports/trend 405 GET, HEAD
+CHECK [PASS] Content-Language / X-Request-Id headers /reports/trend 
+CHECK [PASS] Idempotency-Key harmless /reports/trend 
+GET /wallets/not-a-uuid/reports/summary
+< 422
+{
+ "type": "http://saveme-backend.test/problems/invalid-id",
+ "title": "Invalid identifier",
+ "status": 422,
+ "detail": "The identifier is not valid.",
+ "code": "INVALID_ID",
+ "request_id": "01a108c1-b49f-702c-9d3a-41a593687dc0"
+}
+
+CHECK [PASS] summary: bad id -> 422 INVALID_ID 422 INVALID_ID
+GET /wallets/not-a-uuid/reports/summary params={'months': '99', 'from': 'x'}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/invalid-id",
+ "title": "Invalid identifier",
+ "status": 422,
+ "detail": "The identifier is not valid.",
+ "code": "INVALID_ID",
+ "request_id": "01a108c1-b515-7234-a548-a4279ade81ed"
+}
+
+CHECK [PASS] summary: bad id + bad query -> 422 (id first) 
+GET /wallets/01a108bc-13a5-7080-8cb1-431367b672a5/reports/summary
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-b58e-7300-b070-677a3bc77570"
+}
+
+CHECK [PASS] summary: non-member -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-13a5-7080-8cb1-431367b672a5/reports/summary params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-b5fe-71c1-813c-291166ac2f0f"
+}
+
+CHECK [PASS] summary: non-member + bad query -> 404 (before 400) 
+GET /wallets/01a108bc-11f2-739f-ba7e-4cfd4cbee422/reports/summary
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-b670-70fc-a02e-e8eee2580a79"
+}
+
+CHECK [PASS] summary: left member (P) -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-11f2-739f-ba7e-4cfd4cbee422/reports/summary params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-b6e5-7242-ac25-bbdd66d5c67a"
+}
+
+CHECK [PASS] summary: left member (P) + bad query -> 404 (before 400) 
+GET /wallets/01a108bc-1278-7330-ae93-07a2af1fd0c0/reports/summary
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-b741-728d-b55e-8bffd56cb4c9"
+}
+
+CHECK [PASS] summary: left member (LEFTW) -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-1278-7330-ae93-07a2af1fd0c0/reports/summary params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-b7b1-7386-82aa-5002fee8b817"
+}
+
+CHECK [PASS] summary: left member (LEFTW) + bad query -> 404 (before 400) 
+GET /wallets/01a108bc-115f-773b-a731-2cc8d5ddc1f2/reports/summary
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-b825-724e-ab09-2687da21ee17"
+}
+
+CHECK [PASS] summary: deleted wallet -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-115f-773b-a731-2cc8d5ddc1f2/reports/summary params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-b8ad-7295-882b-868548ad322b"
+}
+
+CHECK [PASS] summary: deleted wallet + bad query -> 404 (before 400) 
+GET /wallets/01a108bc-130f-745d-955b-f01f79bb6b57/reports/summary
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-b928-70f8-a252-f1bb44ccbd1d"
+}
+
+CHECK [PASS] summary: other user wallet -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-130f-745d-955b-f01f79bb6b57/reports/summary params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-b99d-72c8-931e-fb4902d9341c"
+}
+
+CHECK [PASS] summary: other user wallet + bad query -> 404 (before 400) 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-ba10-7030-a752-6d4d9ddfbef3"
+}
+
+CHECK [PASS] summary: outsider -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-ba82-7036-8c37-e1ca7fa6e919"
+}
+
+CHECK [PASS] summary: outsider + bad query -> 404 (before 400) 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-baf8-73e5-83ee-6453fb31348c"
+}
+
+CHECK [PASS] summary: unverified non-member -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-bb50-7064-af04-4e544d5d1cfc"
+}
+
+CHECK [PASS] summary: unverified non-member + bad query -> 404 (before 400) 
+GET /wallets/01a108c1-bb97-7173-a4a8-bb998be7e0ca/reports/summary
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-bbc7-71b9-8c89-ac29e99fe4b2"
+}
+
+CHECK [PASS] summary: unknown uuid -> 404 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'date': 'x'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a108c1-bc42-73d6-a014-8053b21e03b3"
+}
+
+CHECK [PASS] summary: member + bad query -> 400 
+GET /wallets/not-a-uuid/reports/by-category
+< 422
+{
+ "type": "http://saveme-backend.test/problems/invalid-id",
+ "title": "Invalid identifier",
+ "status": 422,
+ "detail": "The identifier is not valid.",
+ "code": "INVALID_ID",
+ "request_id": "01a108c1-bcbf-713a-b483-7704871b94f9"
+}
+
+CHECK [PASS] by-category: bad id -> 422 INVALID_ID 422 INVALID_ID
+GET /wallets/not-a-uuid/reports/by-category params={'months': '99', 'from': 'x'}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/invalid-id",
+ "title": "Invalid identifier",
+ "status": 422,
+ "detail": "The identifier is not valid.",
+ "code": "INVALID_ID",
+ "request_id": "01a108c1-bd2e-714f-90ac-af5ceb80d4e6"
+}
+
+CHECK [PASS] by-category: bad id + bad query -> 422 (id first) 
+GET /wallets/01a108bc-13a5-7080-8cb1-431367b672a5/reports/by-category
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-bd9c-7254-8170-3365d9905ecb"
+}
+
+CHECK [PASS] by-category: non-member -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-13a5-7080-8cb1-431367b672a5/reports/by-category params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-be12-725f-9b27-5ce367f04454"
+}
+
+CHECK [PASS] by-category: non-member + bad query -> 404 (before 400) 
+GET /wallets/01a108bc-11f2-739f-ba7e-4cfd4cbee422/reports/by-category
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-be73-7310-8a4f-e6b73bb68264"
+}
+
+CHECK [PASS] by-category: left member (P) -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-11f2-739f-ba7e-4cfd4cbee422/reports/by-category params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-bf0a-7047-ba6f-586a61cf67ea"
+}
+
+CHECK [PASS] by-category: left member (P) + bad query -> 404 (before 400) 
+GET /wallets/01a108bc-1278-7330-ae93-07a2af1fd0c0/reports/by-category
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-bf83-71e1-82dd-7f56752a1f2f"
+}
+
+CHECK [PASS] by-category: left member (LEFTW) -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-1278-7330-ae93-07a2af1fd0c0/reports/by-category params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-c008-71c5-9f6c-d1a38f265c17"
+}
+
+CHECK [PASS] by-category: left member (LEFTW) + bad query -> 404 (before 400) 
+GET /wallets/01a108bc-115f-773b-a731-2cc8d5ddc1f2/reports/by-category
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-c07c-7205-a8cf-e06145d6da55"
+}
+
+CHECK [PASS] by-category: deleted wallet -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-115f-773b-a731-2cc8d5ddc1f2/reports/by-category params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-c0f7-70ba-b42c-b00a82e52897"
+}
+
+CHECK [PASS] by-category: deleted wallet + bad query -> 404 (before 400) 
+GET /wallets/01a108bc-130f-745d-955b-f01f79bb6b57/reports/by-category
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-c17b-72c6-ae44-46e8c920689d"
+}
+
+CHECK [PASS] by-category: other user wallet -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-130f-745d-955b-f01f79bb6b57/reports/by-category params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-c1f3-72ae-be01-7ce8f8b8458b"
+}
+
+CHECK [PASS] by-category: other user wallet + bad query -> 404 (before 400) 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/by-category
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-c26b-70ed-b5f9-18eede44dc2a"
+}
+
+CHECK [PASS] by-category: outsider -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/by-category params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-c2fe-7228-8c2f-95a9359c09e5"
+}
+
+CHECK [PASS] by-category: outsider + bad query -> 404 (before 400) 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/by-category
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-c37d-7087-b450-62eae6a40bf0"
+}
+
+CHECK [PASS] by-category: unverified non-member -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/by-category params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-c3f8-70b7-8988-c3a38facdfa0"
+}
+
+CHECK [PASS] by-category: unverified non-member + bad query -> 404 (before 400) 
+GET /wallets/01a108c1-c446-7327-bafe-6c99f04b8245/reports/by-category
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-c47a-72ad-8547-ffadbe88e5c2"
+}
+
+CHECK [PASS] by-category: unknown uuid -> 404 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/by-category params={'date': 'x'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a108c1-c4ef-71e5-90ee-a426c3094a08"
+}
+
+CHECK [PASS] by-category: member + bad query -> 400 
+GET /wallets/not-a-uuid/reports/trend
+< 422
+{
+ "type": "http://saveme-backend.test/problems/invalid-id",
+ "title": "Invalid identifier",
+ "status": 422,
+ "detail": "The identifier is not valid.",
+ "code": "INVALID_ID",
+ "request_id": "01a108c1-c566-73e4-8ec0-3647d2698d81"
+}
+
+CHECK [PASS] trend: bad id -> 422 INVALID_ID 422 INVALID_ID
+GET /wallets/not-a-uuid/reports/trend params={'months': '99', 'from': 'x'}
+< 422
+{
+ "type": "http://saveme-backend.test/problems/invalid-id",
+ "title": "Invalid identifier",
+ "status": 422,
+ "detail": "The identifier is not valid.",
+ "code": "INVALID_ID",
+ "request_id": "01a108c1-c5e9-711d-90ab-d345355917b2"
+}
+
+CHECK [PASS] trend: bad id + bad query -> 422 (id first) 
+GET /wallets/01a108bc-13a5-7080-8cb1-431367b672a5/reports/trend
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-c65b-73d7-8fcd-928a63c0b3d8"
+}
+
+CHECK [PASS] trend: non-member -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-13a5-7080-8cb1-431367b672a5/reports/trend params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-c6d7-72ff-9914-77860d452a00"
+}
+
+CHECK [PASS] trend: non-member + bad query -> 404 (before 400) 
+GET /wallets/01a108bc-11f2-739f-ba7e-4cfd4cbee422/reports/trend
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-c752-713e-87e4-33d667732235"
+}
+
+CHECK [PASS] trend: left member (P) -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-11f2-739f-ba7e-4cfd4cbee422/reports/trend params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-c7ba-7135-8c8d-ac82b6906e2b"
+}
+
+CHECK [PASS] trend: left member (P) + bad query -> 404 (before 400) 
+GET /wallets/01a108bc-1278-7330-ae93-07a2af1fd0c0/reports/trend
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-c853-7158-bba5-7e63254f51b4"
+}
+
+CHECK [PASS] trend: left member (LEFTW) -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-1278-7330-ae93-07a2af1fd0c0/reports/trend params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-c8cd-7342-82ae-0810d2275c82"
+}
+
+CHECK [PASS] trend: left member (LEFTW) + bad query -> 404 (before 400) 
+GET /wallets/01a108bc-115f-773b-a731-2cc8d5ddc1f2/reports/trend
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-c961-7252-9c6c-8517b3303393"
+}
+
+CHECK [PASS] trend: deleted wallet -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-115f-773b-a731-2cc8d5ddc1f2/reports/trend params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-c9d2-7129-8758-3e1dec389528"
+}
+
+CHECK [PASS] trend: deleted wallet + bad query -> 404 (before 400) 
+GET /wallets/01a108bc-130f-745d-955b-f01f79bb6b57/reports/trend
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-ca36-70b4-a0a4-e9cec560eb61"
+}
+
+CHECK [PASS] trend: other user wallet -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-130f-745d-955b-f01f79bb6b57/reports/trend params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-cad0-715b-82e7-dbc56f36d5e4"
+}
+
+CHECK [PASS] trend: other user wallet + bad query -> 404 (before 400) 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/trend
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-cb4e-70a5-a8ee-6dd000d8dcca"
+}
+
+CHECK [PASS] trend: outsider -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/trend params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-cbd3-739c-9616-1c7e7219f768"
+}
+
+CHECK [PASS] trend: outsider + bad query -> 404 (before 400) 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/trend
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-cc4b-72a3-99da-bd6298d25a2d"
+}
+
+CHECK [PASS] trend: unverified non-member -> 404 NOT_FOUND 404 NOT_FOUND
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/trend params={'months': '99', 'from': 'x'}
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-ccd0-72e8-b579-a648b2b01668"
+}
+
+CHECK [PASS] trend: unverified non-member + bad query -> 404 (before 400) 
+GET /wallets/01a108c1-cd1d-70db-8d55-cb8e8005aa91/reports/trend
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c1-cd51-709e-ac45-07b2c4fb7436"
+}
+
+CHECK [PASS] trend: unknown uuid -> 404 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/trend params={'months': '99'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a108c1-cdc8-72f0-ab82-532ce0a819b0"
+}
+
+CHECK [PASS] trend: member + bad query -> 400 
+GET /wallets/01a108bc-10e1-74f4-bbcc-dc09c3ee3393/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-10e1-74f4-bbcc-dc09c3ee3393",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 3000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 3000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 2500,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 6000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 11500,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] archived wallet reported 200 
+PUT /wallets/01a108c1-ce95-755b-853c-e365806f2ebb
+> {"type": "cash", "name": "VW", "currency": "EGP", "opening_balance_minor": 0, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a108c1-ce95-755b-853c-e365806f2ebb",
+  "wallet_id": "01a108c1-ce95-755b-853c-e365806f2ebb",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-04T21:11:21.635920Z",
+  "updated_at": "2026-10-04T21:11:21.635920Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "VW",
+  "currency": "EGP",
+  "opening_balance_minor": 0,
+  "balance_minor": 0,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a108c1-ce95-755b-853c-e365806f2ebb/invitations/01a108c1-cf38-77ef-bacc-78d078e5cf40
+> {"role": "viewer", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a108c1-cf38-77ef-bacc-78d078e5cf40",
+  "wallet_id": "01a108c1-ce95-755b-853c-e365806f2ebb",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-04T21:11:21.794144Z",
+  "updated_at": "2026-10-04T21:11:21.794144Z",
+  "deleted_at": null,
+  "role": "viewer",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a108bb-ef9d-713d-8bd4-ddc490181244",
+  "status": "pending",
+  "expires_at": "2026-10-11T21:11:21.790677Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=RBXaEtB2LM9dn7LndMMeWV-wQMxZORpDztm0OcMGwBg"
+ }
+}
+
+POST /invitations/accept
+> {"token": "RBXaEtB2LM9dn7LndMMeWV-wQMxZORpDztm0OcMGwBg"}
+< 200
+{
+ "data": {
+  "id": "01a108c1-d0a0-7386-8e3a-d6f187c19afa",
+  "wallet_id": "01a108c1-ce95-755b-853c-e365806f2ebb",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-04T21:11:22.016583Z",
+  "updated_at": "2026-10-04T21:11:22.016583Z",
+  "deleted_at": null,
+  "member_user_id": "01a108bc-022c-71f8-b853-f4bb80cb370c",
+  "display_name": "Xavier QA",
+  "role": "viewer"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] x accepts viewer invite 200 None
+GET /wallets/01a108c1-ce95-755b-853c-e365806f2ebb/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c1-ce95-755b-853c-e365806f2ebb",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] viewer reads wallet report 200
+GET /reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": null,
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {
+  "excluded_wallets": []
+ }
+}
+
+CHECK [PASS] unverified user reads cross-wallet report (no verification gate) 200 None
+GET /wallets/01a108c1-ce95-755b-853c-e365806f2ebb/reports/trend
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c1-ce95-755b-853c-e365806f2ebb",
+  "currency": "EGP",
+  "periods": [
+   {
+    "label": "2026-05-01",
+    "from": "2026-05-01",
+    "to": "2026-05-31"
+   },
+   {
+    "label": "2026-06-01",
+    "from": "2026-06-01",
+    "to": "2026-06-30"
+   },
+   {
+    "label": "2026-07-01",
+    "from": "2026-07-01",
+    "to": "2026-07-31"
+   },
+   {
+    "label": "2026-08-01",
+    "from": "2026-08-01",
+    "to": "2026-08-31"
+   },
+   {
+    "label": "2026-09-01",
+    "from": "2026-09-01",
+    "to": "2026-09-30"
+   },
+   {
+    "label": "2026-10-01",
+    "from": "2026-10-01",
+    "to": "2026-10-31"
+   }
+  ],
+  "income": [
+   {
+    "label": "2026-05-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-06-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-07-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-08-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-09-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-10-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   }
+  ],
+  "expenses": [
+   {
+    "label": "2026-05-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-06-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-07-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-08-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-09-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-10-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   }
+  ],
+  "net": [
+   {
+    "label": "2026-05-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-06-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-07-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-08-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-09-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-10-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   }
+  ],
+  "planned_income": null,
+  "planned_expenses": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] viewer trend 

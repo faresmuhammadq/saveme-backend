@@ -1,0 +1,14 @@
+===== US4-6 Left wallet no longer counts 2026-10-04T21:13:30.709147Z
+
+GET /wallets/01a108c3-9c8d-72f1-b42d-2b3a9097b4d8/reports/summary
+< 404
+{
+ "type": "http://saveme-backend.test/problems/not-found",
+ "title": "Not found",
+ "status": 404,
+ "detail": "We could not find that.",
+ "code": "NOT_FOUND",
+ "request_id": "01a108c3-c782-73b2-8ae3-83122e9c9ea7"
+}
+
+CHECK [PASS] left partner wallet: report 404, not in covering 

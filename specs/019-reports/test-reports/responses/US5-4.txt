@@ -1,0 +1,102 @@
+===== US5-4 Payout counts as planned income 2026-10-04T21:13:31.936966Z
+
+PUT /wallets/01a108c3-9a9c-713e-aaca-3e46a4fae4bc/recurring-rules/01a108c3-cc21-707c-8512-69fd212107b7
+> {"preset": "gameya", "status": "active", "kind": "expense", "amount_minor": 100000, "amount_basis": "per_occurrence", "currency": "EGP", "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70", "counter_wallet_id": null, "description": "Gameya", "memo": null, "counterparty": null, "auto_confirm": false, "frequency": "monthly", "interval": 1, "anchor_day": 15, "start_date": "2026-10-15", "end_date": null, "occurrence_count": 3, "payout_round": 1, "payout_category_id": "01a0fa05-c344-7014-a053-5688a2879949", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a108c3-cc21-707c-8512-69fd212107b7",
+  "wallet_id": "01a108c3-9a9c-713e-aaca-3e46a4fae4bc",
+  "version": 1,
+  "change_seq": 8,
+  "created_at": "2026-10-04T21:13:32.101350Z",
+  "updated_at": "2026-10-04T21:13:32.101350Z",
+  "deleted_at": null,
+  "preset": "gameya",
+  "status": "active",
+  "kind": "expense",
+  "amount_minor": 100000,
+  "amount_basis": "per_occurrence",
+  "currency": "EGP",
+  "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+  "counter_wallet_id": null,
+  "description": "Gameya",
+  "memo": null,
+  "counterparty": null,
+  "auto_confirm": false,
+  "frequency": "monthly",
+  "interval": 1,
+  "anchor_day": 15,
+  "start_date": "2026-10-15",
+  "end_date": null,
+  "occurrence_count": 3,
+  "payout_round": 1,
+  "payout_category_id": "01a0fa05-c344-7014-a053-5688a2879949",
+  "timezone": "Africa/Cairo",
+  "created_by": "01a108c3-7dd5-73f0-8b86-9998ce35cef3"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] gameya rule 201 []
+GET /wallets/01a108c3-9a9c-713e-aaca-3e46a4fae4bc/reports/summary params={'include_planned': 'true'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c3-9a9c-713e-aaca-3e46a4fae4bc",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 200000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 50000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 150000,
+   "currency": "EGP"
+  },
+  "planned": {
+   "income": {
+    "amount_minor": 300000,
+    "currency": "EGP"
+   },
+   "expenses": {
+    "amount_minor": 100000,
+    "currency": "EGP"
+   },
+   "transfers_in": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "transfers_out": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   }
+  }
+ },
+ "meta": {}
+}
+
+CHECK [PASS] payout 300000 planned income, round 100000 planned expense {'income': {'amount_minor': 300000, 'currency': 'EGP'}, 'expenses': {'amount_minor': 100000, 'currency': 'EGP'}, 'transfers_in': {'amount_minor': 0, 'currency': 'EGP'}, 'transfers_out': {'amount_minor': 0, 'currency': 'EGP'}}

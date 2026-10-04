@@ -1179,6 +1179,70 @@ function nthPlatformCategoryId(int $position, string $kind = 'expense'): string
 
 /*
 |--------------------------------------------------------------------------
+| Reports (spec 019)
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * A report read with a credential, the path and query under /api/v1.
+ */
+function reportCall(string $credential, string $uri): TestResponse
+{
+    return walletCall('GET', $credential, $uri);
+}
+
+/**
+ * The summary scenario of spec 019: a cash wallet (opening 1,000.00) with
+ * October income 10,000.00, expenses 3,000.00 and 500.00, a September expense
+ * of 200.00 and a 2,000.00 transfer to a bank wallet. Needs the clock frozen in
+ * October 2026.
+ *
+ * @return array{cash: Wallet, bank: Wallet}
+ */
+function reportScenario(string $userId): array
+{
+    $cash = ownedWallet($userId, ['opening_balance_minor' => 100000]);
+    $bank = ownedWallet($userId, ['opening_balance_minor' => 0]);
+    recordTransaction($userId, $cash->id, incomeBody(['amount_minor' => 1000000, 'date' => '2026-10-02']));
+    spend($userId, $cash->id, 300000, ['date' => '2026-10-03']);
+    spend($userId, $cash->id, 50000, ['date' => '2026-10-04']);
+    spend($userId, $cash->id, 20000, ['date' => '2026-09-20']);
+    recordTransaction($userId, $cash->id, transferBody($bank->id, ['amount_minor' => 200000, 'date' => '2026-10-05']));
+
+    return ['cash' => $cash, 'bank' => $bank];
+}
+
+/**
+ * The refusals every report read shares: not signed in (401), not acceptable
+ * (406), an old client (426) and any method but GET and HEAD (405 with Allow).
+ */
+function assertReportSharedRefusals(string $credential, string $uri): void
+{
+    test()->withHeaders(jsonHeaders())->getJson('/api/v1'.$uri)->assertValidResponse(401);
+
+    test()->call('GET', '/api/v1'.$uri, [], [], [], test()->transformHeadersToServerVars([...asCredential($credential), 'Accept' => 'text/html']))->assertStatus(406);
+
+    test()->withHeaders([...asCredential($credential), 'X-Client-Version' => '0.0.1'])->getJson('/api/v1'.$uri)->assertStatus(426);
+
+    foreach (['POST', 'PUT', 'PATCH', 'DELETE'] as $method) {
+        $response = walletCall($method, $credential, $uri)->assertStatus(405)->assertJsonPath('code', 'METHOD_NOT_ALLOWED');
+
+        expect($response->headers->get('Allow'))->toContain('GET')->toContain('HEAD');
+    }
+}
+
+/**
+ * Money on the wire.
+ *
+ * @return array{amount_minor: int, currency: string}
+ */
+function wireMoney(int $minor, string $currency = 'EGP'): array
+{
+    return ['amount_minor' => $minor, 'currency' => $currency];
+}
+
+/*
+|--------------------------------------------------------------------------
 | Sharing helpers (spec 016)
 |--------------------------------------------------------------------------
 */

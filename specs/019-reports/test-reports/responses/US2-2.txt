@@ -1,0 +1,3 @@
+===== US2-2 Platform label = system_key; own category label = id, system_key null 2026-10-04T21:13:27.489334Z
+
+CHECK [PASS] labels 

@@ -36,4 +36,9 @@ interface ProfileRepository
     public function localeOf(string $userId): string;
 
     public function timezoneOf(string $userId): string;
+
+    /**
+     * The profile's default currency (ISO 4217); the column default, EGP, without a profile.
+     */
+    public function defaultCurrencyOf(string $userId): string;
 }

@@ -1,0 +1,106 @@
+===== US5-5 Balances never include planned 2026-10-04T21:13:32.281532Z
+
+GET /wallets/01a108c3-9a9c-713e-aaca-3e46a4fae4bc/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c3-9a9c-713e-aaca-3e46a4fae4bc",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 200000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 50000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 150000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+GET /wallets/01a108c3-9a9c-713e-aaca-3e46a4fae4bc/reports/summary params={'include_planned': 'true'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c3-9a9c-713e-aaca-3e46a4fae4bc",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 200000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 50000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 150000,
+   "currency": "EGP"
+  },
+  "planned": {
+   "income": {
+    "amount_minor": 300000,
+    "currency": "EGP"
+   },
+   "expenses": {
+    "amount_minor": 100000,
+    "currency": "EGP"
+   },
+   "transfers_in": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   },
+   "transfers_out": {
+    "amount_minor": 0,
+    "currency": "EGP"
+   }
+  }
+ },
+ "meta": {}
+}
+
+CHECK [PASS] balances equal; actual figures equal 

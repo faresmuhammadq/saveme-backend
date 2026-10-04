@@ -15,9 +15,11 @@ use App\Modules\Wallets\Domain\Ports\WalletRepository;
 use App\Modules\Wallets\Domain\Recurring\Ports\OccurrenceRepository;
 use App\Modules\Wallets\Domain\Recurring\Ports\RecurringRuleRepository;
 use App\Modules\Wallets\Domain\Recurring\Ports\StampBlock;
+use App\Modules\Wallets\Domain\Reports\Ports\LedgerReportReader;
 use App\Modules\Wallets\Domain\Transactions\Ports\PostingRepository;
 use App\Modules\Wallets\Domain\Transactions\Ports\TransactionRepository;
 use App\Modules\Wallets\Infrastructure\Ledger\EloquentPostingTotals;
+use App\Modules\Wallets\Infrastructure\Reports\SqlLedgerReportReader;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentActivityLog;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentCategoryReferenceRepository;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentCategoryRepository;
@@ -58,5 +60,6 @@ class WalletsPersistenceServiceProvider extends ServiceProvider
         OccurrenceRepository::class => EloquentOccurrenceRepository::class,
         StampBlock::class => WalletScopeSequence::class,
         ActivityLog::class => EloquentActivityLog::class,
+        LedgerReportReader::class => SqlLedgerReportReader::class,
     ];
 }

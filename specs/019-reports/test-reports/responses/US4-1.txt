@@ -1,0 +1,463 @@
+===== US4-1 Covers every live wallet the caller belongs to in the currency (archived included, any role) 2026-10-04T21:13:28.824080Z
+
+PUT /wallets/01a108c3-bff8-7004-a90e-32eabe97a5eb
+> {"type": "cash", "name": "cash", "currency": "EGP", "opening_balance_minor": 1000, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a108c3-bff8-7004-a90e-32eabe97a5eb",
+  "wallet_id": "01a108c3-bff8-7004-a90e-32eabe97a5eb",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-04T21:13:28.944856Z",
+  "updated_at": "2026-10-04T21:13:28.944856Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "cash",
+  "currency": "EGP",
+  "opening_balance_minor": 1000,
+  "balance_minor": 1000,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] wallet cash EGP 201 None
+GET /wallets/01a108c3-bff8-7004-a90e-32eabe97a5eb
+< 200
+{
+ "data": {
+  "id": "01a108c3-bff8-7004-a90e-32eabe97a5eb",
+  "wallet_id": "01a108c3-bff8-7004-a90e-32eabe97a5eb",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-04T21:13:28.944856Z",
+  "updated_at": "2026-10-04T21:13:28.944856Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "cash",
+  "currency": "EGP",
+  "opening_balance_minor": 1000,
+  "balance_minor": 1000,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+POST /wallets/01a108c3-bff8-7004-a90e-32eabe97a5eb/archive
+> {"version": 1}
+< 200
+{
+ "data": {
+  "id": "01a108c3-bff8-7004-a90e-32eabe97a5eb",
+  "wallet_id": "01a108c3-bff8-7004-a90e-32eabe97a5eb",
+  "version": 2,
+  "change_seq": 4,
+  "created_at": "2026-10-04T21:13:28.944856Z",
+  "updated_at": "2026-10-04T21:13:29.163917Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "cash",
+  "currency": "EGP",
+  "opening_balance_minor": 1000,
+  "balance_minor": 1000,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": "2026-10-04T21:13:29.163668Z",
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+PUT /wallets/01a108c3-c15e-70ec-b3e0-36ab196a1ccd
+> {"type": "cash", "name": "cash", "currency": "EGP", "opening_balance_minor": 2000, "icon": "wallet", "color": "#2E7D32", "version": 0}
+< 201
+{
+ "data": {
+  "id": "01a108c3-c15e-70ec-b3e0-36ab196a1ccd",
+  "wallet_id": "01a108c3-c15e-70ec-b3e0-36ab196a1ccd",
+  "version": 1,
+  "change_seq": 3,
+  "created_at": "2026-10-04T21:13:29.294945Z",
+  "updated_at": "2026-10-04T21:13:29.294945Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "cash",
+  "currency": "EGP",
+  "opening_balance_minor": 2000,
+  "balance_minor": 2000,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": false,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] wallet cash EGP 201 None
+PUT /wallets/01a108c3-c15e-70ec-b3e0-36ab196a1ccd/invitations/01a108c3-c1e1-71fb-b48a-7a6c6537bdb9
+> {"role": "viewer", "invitee_email": null}
+< 201
+{
+ "data": {
+  "id": "01a108c3-c1e1-71fb-b48a-7a6c6537bdb9",
+  "wallet_id": "01a108c3-c15e-70ec-b3e0-36ab196a1ccd",
+  "version": 1,
+  "change_seq": 4,
+  "created_at": "2026-10-04T21:13:29.492580Z",
+  "updated_at": "2026-10-04T21:13:29.492580Z",
+  "deleted_at": null,
+  "role": "viewer",
+  "channel": "link",
+  "invitee_email": null,
+  "invited_by": "01a108c3-8945-7151-9a5d-46edad1b4bf5",
+  "status": "pending",
+  "expires_at": "2026-10-11T21:13:29.488396Z"
+ },
+ "meta": {
+  "share_url": "http://saveme-backend.test/invite?token=nnTsy7Fh1eZbPyRVLEYpE4Ni6u7yx8tsuWfmcs9KHfM"
+ }
+}
+
+POST /invitations/accept
+> {"token": "nnTsy7Fh1eZbPyRVLEYpE4Ni6u7yx8tsuWfmcs9KHfM"}
+< 200
+{
+ "data": {
+  "id": "01a108c3-c375-70a8-8189-1846640c6573",
+  "wallet_id": "01a108c3-c15e-70ec-b3e0-36ab196a1ccd",
+  "version": 1,
+  "change_seq": 6,
+  "created_at": "2026-10-04T21:13:29.717187Z",
+  "updated_at": "2026-10-04T21:13:29.717187Z",
+  "deleted_at": null,
+  "member_user_id": "01a108c3-7dd5-73f0-8b86-9998ce35cef3",
+  "display_name": "Eman E2E",
+  "role": "viewer"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] accept 
+GET /reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": null,
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 1010000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 575000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 435000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 50000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 84160,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 469160,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {
+  "excluded_wallets": [
+   {
+    "wallet_id": "01a108c3-9bcc-7425-9930-1756f6af8220",
+    "currency": "USD"
+   }
+  ]
+ }
+}
+
+GET /wallets/01a108c3-9a0b-730d-873b-0ae7b2917120/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c3-9a0b-730d-873b-0ae7b2917120",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 1000000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 557000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 443000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 200000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 80000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 323000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+GET /wallets/01a108c3-9a9c-713e-aaca-3e46a4fae4bc/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c3-9a9c-713e-aaca-3e46a4fae4bc",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 200000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 50000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 150000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+GET /wallets/01a108c3-9b24-7205-8ede-df10e63f5396/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c3-9b24-7205-8ede-df10e63f5396",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 15000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": -15000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -15000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+GET /wallets/01a108c3-a9a2-72be-90c3-3cf093e41cab/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c3-a9a2-72be-90c3-3cf093e41cab",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 10000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 3000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 7000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 1160,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 8160,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+GET /wallets/01a108c3-bff8-7004-a90e-32eabe97a5eb/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c3-bff8-7004-a90e-32eabe97a5eb",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 1000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 1000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+GET /wallets/01a108c3-c15e-70ec-b3e0-36ab196a1ccd/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c3-c15e-70ec-b3e0-36ab196a1ccd",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 2000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 2000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] 200 + wallet_id null 
+CHECK [PASS] income = sum of wallet reports 
+CHECK [PASS] expenses = sum 
+CHECK [PASS] balance_end = sum (archived and viewer wallets in) 

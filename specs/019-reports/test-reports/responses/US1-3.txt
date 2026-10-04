@@ -1,0 +1,73 @@
+===== US1-3 Balances from opening + postings; identity; 100000 opening, 20000 last period expense 2026-10-04T21:13:24.718003Z
+
+CHECK [PASS] balance_start 80000 
+CHECK [PASS] balance_end 80000+1000000-exp-200000 
+GET /wallets/01a108c3-9a0b-730d-873b-0ae7b2917120
+< 200
+{
+ "data": {
+  "id": "01a108c3-9a0b-730d-873b-0ae7b2917120",
+  "wallet_id": "01a108c3-9a0b-730d-873b-0ae7b2917120",
+  "version": 1,
+  "change_seq": 31,
+  "created_at": "2026-10-04T21:13:19.237808Z",
+  "updated_at": "2026-10-04T21:13:19.237808Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "cash",
+  "currency": "EGP",
+  "opening_balance_minor": 100000,
+  "balance_minor": 323000,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": true,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a108c3-9a0b-730d-873b-0ae7b2917120/reports/summary params={'from': '2026-01-01', 'to': '2026-12-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c3-9a0b-730d-873b-0ae7b2917120",
+  "range": {
+   "from": "2026-01-01",
+   "to": "2026-12-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 1000000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 577000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 423000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 200000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 100000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 323000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] balance_end (to later) equals wallet balance 

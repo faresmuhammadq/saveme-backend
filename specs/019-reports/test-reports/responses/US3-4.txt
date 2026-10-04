@@ -1,0 +1,179 @@
+===== US3-4 Empty bucket zero not omitted 2026-10-04T21:13:28.212335Z
+
+GET /wallets/01a108c3-a9a2-72be-90c3-3cf093e41cab/reports/trend params={'months': 6}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c3-a9a2-72be-90c3-3cf093e41cab",
+  "currency": "EGP",
+  "periods": [
+   {
+    "label": "2026-05-01",
+    "from": "2026-05-01",
+    "to": "2026-05-31"
+   },
+   {
+    "label": "2026-06-01",
+    "from": "2026-06-01",
+    "to": "2026-06-30"
+   },
+   {
+    "label": "2026-07-01",
+    "from": "2026-07-01",
+    "to": "2026-07-31"
+   },
+   {
+    "label": "2026-08-01",
+    "from": "2026-08-01",
+    "to": "2026-08-31"
+   },
+   {
+    "label": "2026-09-01",
+    "from": "2026-09-01",
+    "to": "2026-09-30"
+   },
+   {
+    "label": "2026-10-01",
+    "from": "2026-10-01",
+    "to": "2026-10-24"
+   }
+  ],
+  "income": [
+   {
+    "label": "2026-05-01",
+    "value": {
+     "amount_minor": 1000,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-06-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-07-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-08-01",
+    "value": {
+     "amount_minor": 700,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-09-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-10-01",
+    "value": {
+     "amount_minor": 10000,
+     "currency": "EGP"
+    }
+   }
+  ],
+  "expenses": [
+   {
+    "label": "2026-05-01",
+    "value": {
+     "amount_minor": 400,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-06-01",
+    "value": {
+     "amount_minor": 50,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-07-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-08-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-09-01",
+    "value": {
+     "amount_minor": 90,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-10-01",
+    "value": {
+     "amount_minor": 3000,
+     "currency": "EGP"
+    }
+   }
+  ],
+  "net": [
+   {
+    "label": "2026-05-01",
+    "value": {
+     "amount_minor": 600,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-06-01",
+    "value": {
+     "amount_minor": -50,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-07-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-08-01",
+    "value": {
+     "amount_minor": 700,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-09-01",
+    "value": {
+     "amount_minor": -90,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-10-01",
+    "value": {
+     "amount_minor": 7000,
+     "currency": "EGP"
+    }
+   }
+  ],
+  "planned_income": null,
+  "planned_expenses": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] July zero 

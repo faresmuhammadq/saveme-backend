@@ -1,0 +1,3 @@
+===== US4-5 Internal transfer nowhere; boundary transfer counts 2026-10-04T21:13:30.709048Z
+
+CHECK [PASS] transfers_out = 50000 (bank to partner wallet she left), transfers_in 0; the 200000 cash->bank in neither {'amount_minor': 0, 'currency': 'EGP'} {'amount_minor': 50000, 'currency': 'EGP'}

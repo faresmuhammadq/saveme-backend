@@ -1,0 +1,3 @@
+===== US2-4 Transfers in neither list 2026-10-04T21:13:27.611473Z
+
+CHECK [PASS] no transfer amounts 

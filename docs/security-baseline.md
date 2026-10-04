@@ -332,6 +332,12 @@ A useful test: read the error message as though you were an attacker holding a l
 
 **Owned by**: every feature, checked per endpoint.
 
+## Report reads
+
+Reports (spec 019, [ADR-0022](adr/0022-reports-are-wallet-views-computed-on-read.md)) are financial attributes. A wallet report is readable by the active members of that wallet (matrix row W-01, in the Wallets specification), and a non-member gets a not-found. A cross-wallet report is readable by a person over their own live memberships only. Reads are not behind the verification gate. No figure is ever written to a log line, and no statement runs over a wallet id the caller may not read.
+
+**Owned by**: Reporting.
+
 ## What a person sees and controls
 
 A person can list every device signed into their account and end any of them. The rules for what a session is and what ending one does are in [Device sessions](#device-sessions) and are not repeated here.

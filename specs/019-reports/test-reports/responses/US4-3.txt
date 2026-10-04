@@ -1,0 +1,73 @@
+===== US4-3 currency=USD covers only USD wallets 2026-10-04T21:13:30.592586Z
+
+GET /reports/summary params={'currency': 'USD'}
+< 200
+{
+ "data": {
+  "wallet_id": null,
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "USD",
+  "income": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "expenses": {
+   "amount_minor": 100,
+   "currency": "USD"
+  },
+  "net": {
+   "amount_minor": -100,
+   "currency": "USD"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "balance_start": {
+   "amount_minor": 5000,
+   "currency": "USD"
+  },
+  "balance_end": {
+   "amount_minor": 4900,
+   "currency": "USD"
+  },
+  "planned": null
+ },
+ "meta": {
+  "excluded_wallets": [
+   {
+    "wallet_id": "01a108c3-9a0b-730d-873b-0ae7b2917120",
+    "currency": "EGP"
+   },
+   {
+    "wallet_id": "01a108c3-9a9c-713e-aaca-3e46a4fae4bc",
+    "currency": "EGP"
+   },
+   {
+    "wallet_id": "01a108c3-9b24-7205-8ede-df10e63f5396",
+    "currency": "EGP"
+   },
+   {
+    "wallet_id": "01a108c3-a9a2-72be-90c3-3cf093e41cab",
+    "currency": "EGP"
+   },
+   {
+    "wallet_id": "01a108c3-bff8-7004-a90e-32eabe97a5eb",
+    "currency": "EGP"
+   },
+   {
+    "wallet_id": "01a108c3-c15e-70ec-b3e0-36ab196a1ccd",
+    "currency": "EGP"
+   }
+  ]
+ }
+}
+
+CHECK [PASS] USD expense 100 {'excluded_wallets': [{'wallet_id': '01a108c3-9a0b-730d-873b-0ae7b2917120', 'currency': 'EGP'}, {'wallet_id': '01a108c3-9a9c-713e-aaca-3e46a4fae4bc', 'currency': 'EGP'}, {'wallet_id': '01a108c3-9b24-7205-8ede-df10e63f5396', 'currency': 'EGP'}, {'wallet_id': '01a108c3-a9a2-72be-90c3-3cf093e41cab', 'currency': 'EGP'}, {'wallet_id': '01a108c3-bff8-7004-a90e-32eabe97a5eb', 'currency': 'EGP'}, {'wallet_id': '01a108c3-c15e-70ec-b3e0-36ab196a1ccd', 'currency': 'EGP'}]}

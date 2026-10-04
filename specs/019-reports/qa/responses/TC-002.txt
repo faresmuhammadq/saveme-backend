@@ -1,0 +1,3474 @@
+===== TC-002 Wallet summary: explicit ranges, edges, balances, truth vs cached balance (US1 3,4,6; edge cases) 2026-10-04T21:10:25.978056Z
+
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'from': '2026-10-01', 'to': '2026-10-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 1300000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 388911,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 911089,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 4000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 200000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -2477,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 712612,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CASH 2026-10-01..2026-10-31: 200 200
+CHECK [PASS] CASH 2026-10-01..2026-10-31: figures 
+CHECK [PASS] CASH 2026-10-01..2026-10-31: range 
+CHECK [PASS] CASH 2026-10-01..2026-10-31: identity 
+CHECK [PASS] CASH 2026-10-01..2026-10-31: net 
+CHECK [PASS] CASH 2026-10-01..2026-10-31: no percentages 
+CHECK [PASS] CASH 2026-10-01..2026-10-31: planned null 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'from': '2026-09-01', 'to': '2026-09-30'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-09-01",
+   "to": "2026-09-30"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 7000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 97777,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": -90777,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 88300,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -2477,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CASH 2026-09-01..2026-09-30: 200 200
+CHECK [PASS] CASH 2026-09-01..2026-09-30: figures 
+CHECK [PASS] CASH 2026-09-01..2026-09-30: range 
+CHECK [PASS] CASH 2026-09-01..2026-09-30: identity 
+CHECK [PASS] CASH 2026-09-01..2026-09-30: net 
+CHECK [PASS] CASH 2026-09-01..2026-09-30: no percentages 
+CHECK [PASS] CASH 2026-09-01..2026-09-30: planned null 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'from': '2026-10-02', 'to': '2026-10-02'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-10-02",
+   "to": "2026-10-02"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 300000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 300000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 200000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 997523,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 797523,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CASH 2026-10-02..2026-10-02: 200 200
+CHECK [PASS] CASH 2026-10-02..2026-10-02: figures 
+CHECK [PASS] CASH 2026-10-02..2026-10-02: range 
+CHECK [PASS] CASH 2026-10-02..2026-10-02: identity 
+CHECK [PASS] CASH 2026-10-02..2026-10-02: net 
+CHECK [PASS] CASH 2026-10-02..2026-10-02: no percentages 
+CHECK [PASS] CASH 2026-10-02..2026-10-02: planned null 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'from': '2026-10-03', 'to': '2026-10-03'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-10-03",
+   "to": "2026-10-03"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 75000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": -75000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 4000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 797523,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 726523,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CASH 2026-10-03..2026-10-03: 200 200
+CHECK [PASS] CASH 2026-10-03..2026-10-03: figures 
+CHECK [PASS] CASH 2026-10-03..2026-10-03: range 
+CHECK [PASS] CASH 2026-10-03..2026-10-03: identity 
+CHECK [PASS] CASH 2026-10-03..2026-10-03: net 
+CHECK [PASS] CASH 2026-10-03..2026-10-03: no percentages 
+CHECK [PASS] CASH 2026-10-03..2026-10-03: planned null 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'from': '2026-10-31', 'to': '2026-10-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-10-31",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 1111,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": -1111,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 713723,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 712612,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CASH 2026-10-31..2026-10-31: 200 200
+CHECK [PASS] CASH 2026-10-31..2026-10-31: figures 
+CHECK [PASS] CASH 2026-10-31..2026-10-31: range 
+CHECK [PASS] CASH 2026-10-31..2026-10-31: identity 
+CHECK [PASS] CASH 2026-10-31..2026-10-31: net 
+CHECK [PASS] CASH 2026-10-31..2026-10-31: no percentages 
+CHECK [PASS] CASH 2026-10-31..2026-10-31: planned null 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'from': '2026-11-01', 'to': '2026-11-01'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-11-01",
+   "to": "2026-11-01"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 2222,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": -2222,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 712612,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 710390,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CASH 2026-11-01..2026-11-01: 200 200
+CHECK [PASS] CASH 2026-11-01..2026-11-01: figures 
+CHECK [PASS] CASH 2026-11-01..2026-11-01: range 
+CHECK [PASS] CASH 2026-11-01..2026-11-01: identity 
+CHECK [PASS] CASH 2026-11-01..2026-11-01: net 
+CHECK [PASS] CASH 2026-11-01..2026-11-01: no percentages 
+CHECK [PASS] CASH 2026-11-01..2026-11-01: planned null 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'from': '2026-09-30', 'to': '2026-10-01'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-09-30",
+   "to": "2026-10-01"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 1007000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 1007000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -9477,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 997523,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CASH 2026-09-30..2026-10-01: 200 200
+CHECK [PASS] CASH 2026-09-30..2026-10-01: figures 
+CHECK [PASS] CASH 2026-09-30..2026-10-01: range 
+CHECK [PASS] CASH 2026-09-30..2026-10-01: identity 
+CHECK [PASS] CASH 2026-09-30..2026-10-01: net 
+CHECK [PASS] CASH 2026-09-30..2026-10-01: no percentages 
+CHECK [PASS] CASH 2026-09-30..2026-10-01: planned null 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'from': '2026-04-30', 'to': '2026-05-01'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-04-30",
+   "to": "2026-05-01"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 7700,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": -7700,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 100000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 92300,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CASH 2026-04-30..2026-05-01: 200 200
+CHECK [PASS] CASH 2026-04-30..2026-05-01: figures 
+CHECK [PASS] CASH 2026-04-30..2026-05-01: range 
+CHECK [PASS] CASH 2026-04-30..2026-05-01: identity 
+CHECK [PASS] CASH 2026-04-30..2026-05-01: net 
+CHECK [PASS] CASH 2026-04-30..2026-05-01: no percentages 
+CHECK [PASS] CASH 2026-04-30..2026-05-01: planned null 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'from': '2020-01-01', 'to': '2020-01-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2020-01-01",
+   "to": "2020-01-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 100000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 100000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CASH 2020-01-01..2020-01-31: 200 200
+CHECK [PASS] CASH 2020-01-01..2020-01-31: figures 
+CHECK [PASS] CASH 2020-01-01..2020-01-31: range 
+CHECK [PASS] CASH 2020-01-01..2020-01-31: identity 
+CHECK [PASS] CASH 2020-01-01..2020-01-31: net 
+CHECK [PASS] CASH 2020-01-01..2020-01-31: no percentages 
+CHECK [PASS] CASH 2020-01-01..2020-01-31: planned null 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'from': '2026-01-01', 'to': '2026-12-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-01-01",
+   "to": "2026-12-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 1312000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 505610,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 806390,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 4000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 200000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 100000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 710390,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CASH 2026-01-01..2026-12-31: 200 200
+CHECK [PASS] CASH 2026-01-01..2026-12-31: figures 
+CHECK [PASS] CASH 2026-01-01..2026-12-31: range 
+CHECK [PASS] CASH 2026-01-01..2026-12-31: identity 
+CHECK [PASS] CASH 2026-01-01..2026-12-31: net 
+CHECK [PASS] CASH 2026-01-01..2026-12-31: no percentages 
+CHECK [PASS] CASH 2026-01-01..2026-12-31: planned null 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'from': '2026-10-05', 'to': '2026-10-05'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-10-05",
+   "to": "2026-10-05"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 800,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": -800,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 714523,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 713723,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CASH 2026-10-05..2026-10-05: 200 200
+CHECK [PASS] CASH 2026-10-05..2026-10-05: figures 
+CHECK [PASS] CASH 2026-10-05..2026-10-05: range 
+CHECK [PASS] CASH 2026-10-05..2026-10-05: identity 
+CHECK [PASS] CASH 2026-10-05..2026-10-05: net 
+CHECK [PASS] CASH 2026-10-05..2026-10-05: no percentages 
+CHECK [PASS] CASH 2026-10-05..2026-10-05: planned null 
+GET /wallets/01a108bc-0f5a-76d2-98e7-3544ccd5f1d7/reports/summary params={'from': '2026-10-01', 'to': '2026-10-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0f5a-76d2-98e7-3544ccd5f1d7",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 800000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 15000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 785000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 209000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 132500,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 44000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 905500,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] BANK 2026-10-01..2026-10-31: 200 200
+CHECK [PASS] BANK 2026-10-01..2026-10-31: figures 
+CHECK [PASS] BANK 2026-10-01..2026-10-31: range 
+CHECK [PASS] BANK 2026-10-01..2026-10-31: identity 
+CHECK [PASS] BANK 2026-10-01..2026-10-31: net 
+CHECK [PASS] BANK 2026-10-01..2026-10-31: no percentages 
+CHECK [PASS] BANK 2026-10-01..2026-10-31: planned null 
+GET /wallets/01a108bc-0f5a-76d2-98e7-3544ccd5f1d7/reports/summary params={'from': '2026-09-01', 'to': '2026-09-30'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0f5a-76d2-98e7-3544ccd5f1d7",
+  "range": {
+   "from": "2026-09-01",
+   "to": "2026-09-30"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 6000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": -6000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 50000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 44000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] BANK 2026-09-01..2026-09-30: 200 200
+CHECK [PASS] BANK 2026-09-01..2026-09-30: figures 
+CHECK [PASS] BANK 2026-09-01..2026-09-30: range 
+CHECK [PASS] BANK 2026-09-01..2026-09-30: identity 
+CHECK [PASS] BANK 2026-09-01..2026-09-30: net 
+CHECK [PASS] BANK 2026-09-01..2026-09-30: no percentages 
+CHECK [PASS] BANK 2026-09-01..2026-09-30: planned null 
+GET /wallets/01a108bc-0f5a-76d2-98e7-3544ccd5f1d7/reports/summary params={'from': '2026-10-02', 'to': '2026-10-02'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0f5a-76d2-98e7-3544ccd5f1d7",
+  "range": {
+   "from": "2026-10-02",
+   "to": "2026-10-02"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 800000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 800000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 209000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 44000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 1053000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] BANK 2026-10-02..2026-10-02: 200 200
+CHECK [PASS] BANK 2026-10-02..2026-10-02: figures 
+CHECK [PASS] BANK 2026-10-02..2026-10-02: range 
+CHECK [PASS] BANK 2026-10-02..2026-10-02: identity 
+CHECK [PASS] BANK 2026-10-02..2026-10-02: net 
+CHECK [PASS] BANK 2026-10-02..2026-10-02: no percentages 
+CHECK [PASS] BANK 2026-10-02..2026-10-02: planned null 
+GET /wallets/01a108bc-0f5a-76d2-98e7-3544ccd5f1d7/reports/summary params={'from': '2026-10-03', 'to': '2026-10-03'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0f5a-76d2-98e7-3544ccd5f1d7",
+  "range": {
+   "from": "2026-10-03",
+   "to": "2026-10-03"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 32500,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 1053000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 1020500,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] BANK 2026-10-03..2026-10-03: 200 200
+CHECK [PASS] BANK 2026-10-03..2026-10-03: figures 
+CHECK [PASS] BANK 2026-10-03..2026-10-03: range 
+CHECK [PASS] BANK 2026-10-03..2026-10-03: identity 
+CHECK [PASS] BANK 2026-10-03..2026-10-03: net 
+CHECK [PASS] BANK 2026-10-03..2026-10-03: no percentages 
+CHECK [PASS] BANK 2026-10-03..2026-10-03: planned null 
+GET /wallets/01a108bc-0f5a-76d2-98e7-3544ccd5f1d7/reports/summary params={'from': '2026-10-31', 'to': '2026-10-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0f5a-76d2-98e7-3544ccd5f1d7",
+  "range": {
+   "from": "2026-10-31",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 905500,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 905500,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] BANK 2026-10-31..2026-10-31: 200 200
+CHECK [PASS] BANK 2026-10-31..2026-10-31: figures 
+CHECK [PASS] BANK 2026-10-31..2026-10-31: range 
+CHECK [PASS] BANK 2026-10-31..2026-10-31: identity 
+CHECK [PASS] BANK 2026-10-31..2026-10-31: net 
+CHECK [PASS] BANK 2026-10-31..2026-10-31: no percentages 
+CHECK [PASS] BANK 2026-10-31..2026-10-31: planned null 
+GET /wallets/01a108bc-0f5a-76d2-98e7-3544ccd5f1d7/reports/summary params={'from': '2026-11-01', 'to': '2026-11-01'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0f5a-76d2-98e7-3544ccd5f1d7",
+  "range": {
+   "from": "2026-11-01",
+   "to": "2026-11-01"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 905500,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 905500,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] BANK 2026-11-01..2026-11-01: 200 200
+CHECK [PASS] BANK 2026-11-01..2026-11-01: figures 
+CHECK [PASS] BANK 2026-11-01..2026-11-01: range 
+CHECK [PASS] BANK 2026-11-01..2026-11-01: identity 
+CHECK [PASS] BANK 2026-11-01..2026-11-01: net 
+CHECK [PASS] BANK 2026-11-01..2026-11-01: no percentages 
+CHECK [PASS] BANK 2026-11-01..2026-11-01: planned null 
+GET /wallets/01a108bc-0f5a-76d2-98e7-3544ccd5f1d7/reports/summary params={'from': '2026-09-30', 'to': '2026-10-01'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0f5a-76d2-98e7-3544ccd5f1d7",
+  "range": {
+   "from": "2026-09-30",
+   "to": "2026-10-01"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 44000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 44000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] BANK 2026-09-30..2026-10-01: 200 200
+CHECK [PASS] BANK 2026-09-30..2026-10-01: figures 
+CHECK [PASS] BANK 2026-09-30..2026-10-01: range 
+CHECK [PASS] BANK 2026-09-30..2026-10-01: identity 
+CHECK [PASS] BANK 2026-09-30..2026-10-01: net 
+CHECK [PASS] BANK 2026-09-30..2026-10-01: no percentages 
+CHECK [PASS] BANK 2026-09-30..2026-10-01: planned null 
+GET /wallets/01a108bc-0f5a-76d2-98e7-3544ccd5f1d7/reports/summary params={'from': '2026-04-30', 'to': '2026-05-01'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0f5a-76d2-98e7-3544ccd5f1d7",
+  "range": {
+   "from": "2026-04-30",
+   "to": "2026-05-01"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 50000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 50000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] BANK 2026-04-30..2026-05-01: 200 200
+CHECK [PASS] BANK 2026-04-30..2026-05-01: figures 
+CHECK [PASS] BANK 2026-04-30..2026-05-01: range 
+CHECK [PASS] BANK 2026-04-30..2026-05-01: identity 
+CHECK [PASS] BANK 2026-04-30..2026-05-01: net 
+CHECK [PASS] BANK 2026-04-30..2026-05-01: no percentages 
+CHECK [PASS] BANK 2026-04-30..2026-05-01: planned null 
+GET /wallets/01a108bc-0f5a-76d2-98e7-3544ccd5f1d7/reports/summary params={'from': '2020-01-01', 'to': '2020-01-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0f5a-76d2-98e7-3544ccd5f1d7",
+  "range": {
+   "from": "2020-01-01",
+   "to": "2020-01-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 50000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 50000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] BANK 2020-01-01..2020-01-31: 200 200
+CHECK [PASS] BANK 2020-01-01..2020-01-31: figures 
+CHECK [PASS] BANK 2020-01-01..2020-01-31: range 
+CHECK [PASS] BANK 2020-01-01..2020-01-31: identity 
+CHECK [PASS] BANK 2020-01-01..2020-01-31: net 
+CHECK [PASS] BANK 2020-01-01..2020-01-31: no percentages 
+CHECK [PASS] BANK 2020-01-01..2020-01-31: planned null 
+GET /wallets/01a108bc-0f5a-76d2-98e7-3544ccd5f1d7/reports/summary params={'from': '2026-01-01', 'to': '2026-12-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0f5a-76d2-98e7-3544ccd5f1d7",
+  "range": {
+   "from": "2026-01-01",
+   "to": "2026-12-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 800000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 21000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 779000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 209000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 132500,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 50000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 905500,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] BANK 2026-01-01..2026-12-31: 200 200
+CHECK [PASS] BANK 2026-01-01..2026-12-31: figures 
+CHECK [PASS] BANK 2026-01-01..2026-12-31: range 
+CHECK [PASS] BANK 2026-01-01..2026-12-31: identity 
+CHECK [PASS] BANK 2026-01-01..2026-12-31: net 
+CHECK [PASS] BANK 2026-01-01..2026-12-31: no percentages 
+CHECK [PASS] BANK 2026-01-01..2026-12-31: planned null 
+GET /wallets/01a108bc-0f5a-76d2-98e7-3544ccd5f1d7/reports/summary params={'from': '2026-10-05', 'to': '2026-10-05'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0f5a-76d2-98e7-3544ccd5f1d7",
+  "range": {
+   "from": "2026-10-05",
+   "to": "2026-10-05"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 905500,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 905500,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] BANK 2026-10-05..2026-10-05: 200 200
+CHECK [PASS] BANK 2026-10-05..2026-10-05: figures 
+CHECK [PASS] BANK 2026-10-05..2026-10-05: range 
+CHECK [PASS] BANK 2026-10-05..2026-10-05: identity 
+CHECK [PASS] BANK 2026-10-05..2026-10-05: net 
+CHECK [PASS] BANK 2026-10-05..2026-10-05: no percentages 
+CHECK [PASS] BANK 2026-10-05..2026-10-05: planned null 
+GET /wallets/01a108bc-0fe4-76c9-9505-db3406551041/reports/summary params={'from': '2026-10-01', 'to': '2026-10-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0fe4-76c9-9505-db3406551041",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 420000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": -420000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 100000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -30000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -350000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CARD 2026-10-01..2026-10-31: 200 200
+CHECK [PASS] CARD 2026-10-01..2026-10-31: figures 
+CHECK [PASS] CARD 2026-10-01..2026-10-31: range 
+CHECK [PASS] CARD 2026-10-01..2026-10-31: identity 
+CHECK [PASS] CARD 2026-10-01..2026-10-31: net 
+CHECK [PASS] CARD 2026-10-01..2026-10-31: no percentages 
+CHECK [PASS] CARD 2026-10-01..2026-10-31: planned null 
+GET /wallets/01a108bc-0fe4-76c9-9505-db3406551041/reports/summary params={'from': '2026-09-01', 'to': '2026-09-30'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0fe4-76c9-9505-db3406551041",
+  "range": {
+   "from": "2026-09-01",
+   "to": "2026-09-30"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -30000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -30000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CARD 2026-09-01..2026-09-30: 200 200
+CHECK [PASS] CARD 2026-09-01..2026-09-30: figures 
+CHECK [PASS] CARD 2026-09-01..2026-09-30: range 
+CHECK [PASS] CARD 2026-09-01..2026-09-30: identity 
+CHECK [PASS] CARD 2026-09-01..2026-09-30: net 
+CHECK [PASS] CARD 2026-09-01..2026-09-30: no percentages 
+CHECK [PASS] CARD 2026-09-01..2026-09-30: planned null 
+GET /wallets/01a108bc-0fe4-76c9-9505-db3406551041/reports/summary params={'from': '2026-10-02', 'to': '2026-10-02'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0fe4-76c9-9505-db3406551041",
+  "range": {
+   "from": "2026-10-02",
+   "to": "2026-10-02"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -30000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -30000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CARD 2026-10-02..2026-10-02: 200 200
+CHECK [PASS] CARD 2026-10-02..2026-10-02: figures 
+CHECK [PASS] CARD 2026-10-02..2026-10-02: range 
+CHECK [PASS] CARD 2026-10-02..2026-10-02: identity 
+CHECK [PASS] CARD 2026-10-02..2026-10-02: net 
+CHECK [PASS] CARD 2026-10-02..2026-10-02: no percentages 
+CHECK [PASS] CARD 2026-10-02..2026-10-02: planned null 
+GET /wallets/01a108bc-0fe4-76c9-9505-db3406551041/reports/summary params={'from': '2026-10-03', 'to': '2026-10-03'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0fe4-76c9-9505-db3406551041",
+  "range": {
+   "from": "2026-10-03",
+   "to": "2026-10-03"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 420000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": -420000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -30000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -450000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CARD 2026-10-03..2026-10-03: 200 200
+CHECK [PASS] CARD 2026-10-03..2026-10-03: figures 
+CHECK [PASS] CARD 2026-10-03..2026-10-03: range 
+CHECK [PASS] CARD 2026-10-03..2026-10-03: identity 
+CHECK [PASS] CARD 2026-10-03..2026-10-03: net 
+CHECK [PASS] CARD 2026-10-03..2026-10-03: no percentages 
+CHECK [PASS] CARD 2026-10-03..2026-10-03: planned null 
+GET /wallets/01a108bc-0fe4-76c9-9505-db3406551041/reports/summary params={'from': '2026-10-31', 'to': '2026-10-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0fe4-76c9-9505-db3406551041",
+  "range": {
+   "from": "2026-10-31",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -350000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -350000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CARD 2026-10-31..2026-10-31: 200 200
+CHECK [PASS] CARD 2026-10-31..2026-10-31: figures 
+CHECK [PASS] CARD 2026-10-31..2026-10-31: range 
+CHECK [PASS] CARD 2026-10-31..2026-10-31: identity 
+CHECK [PASS] CARD 2026-10-31..2026-10-31: net 
+CHECK [PASS] CARD 2026-10-31..2026-10-31: no percentages 
+CHECK [PASS] CARD 2026-10-31..2026-10-31: planned null 
+GET /wallets/01a108bc-0fe4-76c9-9505-db3406551041/reports/summary params={'from': '2026-11-01', 'to': '2026-11-01'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0fe4-76c9-9505-db3406551041",
+  "range": {
+   "from": "2026-11-01",
+   "to": "2026-11-01"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -350000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -350000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CARD 2026-11-01..2026-11-01: 200 200
+CHECK [PASS] CARD 2026-11-01..2026-11-01: figures 
+CHECK [PASS] CARD 2026-11-01..2026-11-01: range 
+CHECK [PASS] CARD 2026-11-01..2026-11-01: identity 
+CHECK [PASS] CARD 2026-11-01..2026-11-01: net 
+CHECK [PASS] CARD 2026-11-01..2026-11-01: no percentages 
+CHECK [PASS] CARD 2026-11-01..2026-11-01: planned null 
+GET /wallets/01a108bc-0fe4-76c9-9505-db3406551041/reports/summary params={'from': '2026-09-30', 'to': '2026-10-01'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0fe4-76c9-9505-db3406551041",
+  "range": {
+   "from": "2026-09-30",
+   "to": "2026-10-01"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -30000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -30000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CARD 2026-09-30..2026-10-01: 200 200
+CHECK [PASS] CARD 2026-09-30..2026-10-01: figures 
+CHECK [PASS] CARD 2026-09-30..2026-10-01: range 
+CHECK [PASS] CARD 2026-09-30..2026-10-01: identity 
+CHECK [PASS] CARD 2026-09-30..2026-10-01: net 
+CHECK [PASS] CARD 2026-09-30..2026-10-01: no percentages 
+CHECK [PASS] CARD 2026-09-30..2026-10-01: planned null 
+GET /wallets/01a108bc-0fe4-76c9-9505-db3406551041/reports/summary params={'from': '2026-04-30', 'to': '2026-05-01'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0fe4-76c9-9505-db3406551041",
+  "range": {
+   "from": "2026-04-30",
+   "to": "2026-05-01"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -30000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -30000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CARD 2026-04-30..2026-05-01: 200 200
+CHECK [PASS] CARD 2026-04-30..2026-05-01: figures 
+CHECK [PASS] CARD 2026-04-30..2026-05-01: range 
+CHECK [PASS] CARD 2026-04-30..2026-05-01: identity 
+CHECK [PASS] CARD 2026-04-30..2026-05-01: net 
+CHECK [PASS] CARD 2026-04-30..2026-05-01: no percentages 
+CHECK [PASS] CARD 2026-04-30..2026-05-01: planned null 
+GET /wallets/01a108bc-0fe4-76c9-9505-db3406551041/reports/summary params={'from': '2020-01-01', 'to': '2020-01-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0fe4-76c9-9505-db3406551041",
+  "range": {
+   "from": "2020-01-01",
+   "to": "2020-01-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -30000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -30000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CARD 2020-01-01..2020-01-31: 200 200
+CHECK [PASS] CARD 2020-01-01..2020-01-31: figures 
+CHECK [PASS] CARD 2020-01-01..2020-01-31: range 
+CHECK [PASS] CARD 2020-01-01..2020-01-31: identity 
+CHECK [PASS] CARD 2020-01-01..2020-01-31: net 
+CHECK [PASS] CARD 2020-01-01..2020-01-31: no percentages 
+CHECK [PASS] CARD 2020-01-01..2020-01-31: planned null 
+GET /wallets/01a108bc-0fe4-76c9-9505-db3406551041/reports/summary params={'from': '2026-01-01', 'to': '2026-12-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0fe4-76c9-9505-db3406551041",
+  "range": {
+   "from": "2026-01-01",
+   "to": "2026-12-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 420000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": -420000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 100000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -30000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -350000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CARD 2026-01-01..2026-12-31: 200 200
+CHECK [PASS] CARD 2026-01-01..2026-12-31: figures 
+CHECK [PASS] CARD 2026-01-01..2026-12-31: range 
+CHECK [PASS] CARD 2026-01-01..2026-12-31: identity 
+CHECK [PASS] CARD 2026-01-01..2026-12-31: net 
+CHECK [PASS] CARD 2026-01-01..2026-12-31: no percentages 
+CHECK [PASS] CARD 2026-01-01..2026-12-31: planned null 
+GET /wallets/01a108bc-0fe4-76c9-9505-db3406551041/reports/summary params={'from': '2026-10-05', 'to': '2026-10-05'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0fe4-76c9-9505-db3406551041",
+  "range": {
+   "from": "2026-10-05",
+   "to": "2026-10-05"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -350000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -350000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CARD 2026-10-05..2026-10-05: 200 200
+CHECK [PASS] CARD 2026-10-05..2026-10-05: figures 
+CHECK [PASS] CARD 2026-10-05..2026-10-05: range 
+CHECK [PASS] CARD 2026-10-05..2026-10-05: identity 
+CHECK [PASS] CARD 2026-10-05..2026-10-05: net 
+CHECK [PASS] CARD 2026-10-05..2026-10-05: no percentages 
+CHECK [PASS] CARD 2026-10-05..2026-10-05: planned null 
+GET /wallets/01a108bc-10e1-74f4-bbcc-dc09c3ee3393/reports/summary params={'from': '2026-10-01', 'to': '2026-10-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-10e1-74f4-bbcc-dc09c3ee3393",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 3000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 3000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 2500,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 6000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 11500,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] ARCH 2026-10-01..2026-10-31: 200 200
+CHECK [PASS] ARCH 2026-10-01..2026-10-31: figures 
+CHECK [PASS] ARCH 2026-10-01..2026-10-31: range 
+CHECK [PASS] ARCH 2026-10-01..2026-10-31: identity 
+CHECK [PASS] ARCH 2026-10-01..2026-10-31: net 
+CHECK [PASS] ARCH 2026-10-01..2026-10-31: no percentages 
+CHECK [PASS] ARCH 2026-10-01..2026-10-31: planned null 
+GET /wallets/01a108bc-10e1-74f4-bbcc-dc09c3ee3393/reports/summary params={'from': '2026-09-01', 'to': '2026-09-30'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-10e1-74f4-bbcc-dc09c3ee3393",
+  "range": {
+   "from": "2026-09-01",
+   "to": "2026-09-30"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 1000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": -1000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 7000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 6000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] ARCH 2026-09-01..2026-09-30: 200 200
+CHECK [PASS] ARCH 2026-09-01..2026-09-30: figures 
+CHECK [PASS] ARCH 2026-09-01..2026-09-30: range 
+CHECK [PASS] ARCH 2026-09-01..2026-09-30: identity 
+CHECK [PASS] ARCH 2026-09-01..2026-09-30: net 
+CHECK [PASS] ARCH 2026-09-01..2026-09-30: no percentages 
+CHECK [PASS] ARCH 2026-09-01..2026-09-30: planned null 
+GET /wallets/01a108bc-10e1-74f4-bbcc-dc09c3ee3393/reports/summary params={'from': '2026-10-02', 'to': '2026-10-02'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-10e1-74f4-bbcc-dc09c3ee3393",
+  "range": {
+   "from": "2026-10-02",
+   "to": "2026-10-02"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 3000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 3000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 6000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 9000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] ARCH 2026-10-02..2026-10-02: 200 200
+CHECK [PASS] ARCH 2026-10-02..2026-10-02: figures 
+CHECK [PASS] ARCH 2026-10-02..2026-10-02: range 
+CHECK [PASS] ARCH 2026-10-02..2026-10-02: identity 
+CHECK [PASS] ARCH 2026-10-02..2026-10-02: net 
+CHECK [PASS] ARCH 2026-10-02..2026-10-02: no percentages 
+CHECK [PASS] ARCH 2026-10-02..2026-10-02: planned null 
+GET /wallets/01a108bc-10e1-74f4-bbcc-dc09c3ee3393/reports/summary params={'from': '2026-10-03', 'to': '2026-10-03'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-10e1-74f4-bbcc-dc09c3ee3393",
+  "range": {
+   "from": "2026-10-03",
+   "to": "2026-10-03"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 2500,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 9000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 11500,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] ARCH 2026-10-03..2026-10-03: 200 200
+CHECK [PASS] ARCH 2026-10-03..2026-10-03: figures 
+CHECK [PASS] ARCH 2026-10-03..2026-10-03: range 
+CHECK [PASS] ARCH 2026-10-03..2026-10-03: identity 
+CHECK [PASS] ARCH 2026-10-03..2026-10-03: net 
+CHECK [PASS] ARCH 2026-10-03..2026-10-03: no percentages 
+CHECK [PASS] ARCH 2026-10-03..2026-10-03: planned null 
+GET /wallets/01a108bc-10e1-74f4-bbcc-dc09c3ee3393/reports/summary params={'from': '2026-10-31', 'to': '2026-10-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-10e1-74f4-bbcc-dc09c3ee3393",
+  "range": {
+   "from": "2026-10-31",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 11500,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 11500,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] ARCH 2026-10-31..2026-10-31: 200 200
+CHECK [PASS] ARCH 2026-10-31..2026-10-31: figures 
+CHECK [PASS] ARCH 2026-10-31..2026-10-31: range 
+CHECK [PASS] ARCH 2026-10-31..2026-10-31: identity 
+CHECK [PASS] ARCH 2026-10-31..2026-10-31: net 
+CHECK [PASS] ARCH 2026-10-31..2026-10-31: no percentages 
+CHECK [PASS] ARCH 2026-10-31..2026-10-31: planned null 
+GET /wallets/01a108bc-10e1-74f4-bbcc-dc09c3ee3393/reports/summary params={'from': '2026-11-01', 'to': '2026-11-01'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-10e1-74f4-bbcc-dc09c3ee3393",
+  "range": {
+   "from": "2026-11-01",
+   "to": "2026-11-01"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 11500,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 11500,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] ARCH 2026-11-01..2026-11-01: 200 200
+CHECK [PASS] ARCH 2026-11-01..2026-11-01: figures 
+CHECK [PASS] ARCH 2026-11-01..2026-11-01: range 
+CHECK [PASS] ARCH 2026-11-01..2026-11-01: identity 
+CHECK [PASS] ARCH 2026-11-01..2026-11-01: net 
+CHECK [PASS] ARCH 2026-11-01..2026-11-01: no percentages 
+CHECK [PASS] ARCH 2026-11-01..2026-11-01: planned null 
+GET /wallets/01a108bc-10e1-74f4-bbcc-dc09c3ee3393/reports/summary params={'from': '2026-09-30', 'to': '2026-10-01'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-10e1-74f4-bbcc-dc09c3ee3393",
+  "range": {
+   "from": "2026-09-30",
+   "to": "2026-10-01"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 6000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 6000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] ARCH 2026-09-30..2026-10-01: 200 200
+CHECK [PASS] ARCH 2026-09-30..2026-10-01: figures 
+CHECK [PASS] ARCH 2026-09-30..2026-10-01: range 
+CHECK [PASS] ARCH 2026-09-30..2026-10-01: identity 
+CHECK [PASS] ARCH 2026-09-30..2026-10-01: net 
+CHECK [PASS] ARCH 2026-09-30..2026-10-01: no percentages 
+CHECK [PASS] ARCH 2026-09-30..2026-10-01: planned null 
+GET /wallets/01a108bc-10e1-74f4-bbcc-dc09c3ee3393/reports/summary params={'from': '2026-04-30', 'to': '2026-05-01'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-10e1-74f4-bbcc-dc09c3ee3393",
+  "range": {
+   "from": "2026-04-30",
+   "to": "2026-05-01"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 7000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 7000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] ARCH 2026-04-30..2026-05-01: 200 200
+CHECK [PASS] ARCH 2026-04-30..2026-05-01: figures 
+CHECK [PASS] ARCH 2026-04-30..2026-05-01: range 
+CHECK [PASS] ARCH 2026-04-30..2026-05-01: identity 
+CHECK [PASS] ARCH 2026-04-30..2026-05-01: net 
+CHECK [PASS] ARCH 2026-04-30..2026-05-01: no percentages 
+CHECK [PASS] ARCH 2026-04-30..2026-05-01: planned null 
+GET /wallets/01a108bc-10e1-74f4-bbcc-dc09c3ee3393/reports/summary params={'from': '2020-01-01', 'to': '2020-01-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-10e1-74f4-bbcc-dc09c3ee3393",
+  "range": {
+   "from": "2020-01-01",
+   "to": "2020-01-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 7000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 7000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] ARCH 2020-01-01..2020-01-31: 200 200
+CHECK [PASS] ARCH 2020-01-01..2020-01-31: figures 
+CHECK [PASS] ARCH 2020-01-01..2020-01-31: range 
+CHECK [PASS] ARCH 2020-01-01..2020-01-31: identity 
+CHECK [PASS] ARCH 2020-01-01..2020-01-31: net 
+CHECK [PASS] ARCH 2020-01-01..2020-01-31: no percentages 
+CHECK [PASS] ARCH 2020-01-01..2020-01-31: planned null 
+GET /wallets/01a108bc-10e1-74f4-bbcc-dc09c3ee3393/reports/summary params={'from': '2026-01-01', 'to': '2026-12-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-10e1-74f4-bbcc-dc09c3ee3393",
+  "range": {
+   "from": "2026-01-01",
+   "to": "2026-12-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 3000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 1000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 2000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 2500,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 7000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 11500,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] ARCH 2026-01-01..2026-12-31: 200 200
+CHECK [PASS] ARCH 2026-01-01..2026-12-31: figures 
+CHECK [PASS] ARCH 2026-01-01..2026-12-31: range 
+CHECK [PASS] ARCH 2026-01-01..2026-12-31: identity 
+CHECK [PASS] ARCH 2026-01-01..2026-12-31: net 
+CHECK [PASS] ARCH 2026-01-01..2026-12-31: no percentages 
+CHECK [PASS] ARCH 2026-01-01..2026-12-31: planned null 
+GET /wallets/01a108bc-10e1-74f4-bbcc-dc09c3ee3393/reports/summary params={'from': '2026-10-05', 'to': '2026-10-05'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-10e1-74f4-bbcc-dc09c3ee3393",
+  "range": {
+   "from": "2026-10-05",
+   "to": "2026-10-05"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 11500,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 11500,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] ARCH 2026-10-05..2026-10-05: 200 200
+CHECK [PASS] ARCH 2026-10-05..2026-10-05: figures 
+CHECK [PASS] ARCH 2026-10-05..2026-10-05: range 
+CHECK [PASS] ARCH 2026-10-05..2026-10-05: identity 
+CHECK [PASS] ARCH 2026-10-05..2026-10-05: net 
+CHECK [PASS] ARCH 2026-10-05..2026-10-05: no percentages 
+CHECK [PASS] ARCH 2026-10-05..2026-10-05: planned null 
+GET /wallets/01a108bc-1062-7033-940d-842166c31fc9/reports/summary params={'from': '2026-10-01', 'to': '2026-10-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-1062-7033-940d-842166c31fc9",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "USD",
+  "income": {
+   "amount_minor": 5000,
+   "currency": "USD"
+  },
+  "expenses": {
+   "amount_minor": 1500,
+   "currency": "USD"
+  },
+  "net": {
+   "amount_minor": 3500,
+   "currency": "USD"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "balance_start": {
+   "amount_minor": 20000,
+   "currency": "USD"
+  },
+  "balance_end": {
+   "amount_minor": 23500,
+   "currency": "USD"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] USDW 2026-10-01..2026-10-31: 200 200
+CHECK [PASS] USDW 2026-10-01..2026-10-31: figures 
+CHECK [PASS] USDW 2026-10-01..2026-10-31: range 
+CHECK [PASS] USDW 2026-10-01..2026-10-31: identity 
+CHECK [PASS] USDW 2026-10-01..2026-10-31: net 
+CHECK [PASS] USDW 2026-10-01..2026-10-31: no percentages 
+CHECK [PASS] USDW 2026-10-01..2026-10-31: planned null 
+GET /wallets/01a108bc-1062-7033-940d-842166c31fc9/reports/summary params={'from': '2026-09-01', 'to': '2026-09-30'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-1062-7033-940d-842166c31fc9",
+  "range": {
+   "from": "2026-09-01",
+   "to": "2026-09-30"
+  },
+  "currency": "USD",
+  "income": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "balance_start": {
+   "amount_minor": 20000,
+   "currency": "USD"
+  },
+  "balance_end": {
+   "amount_minor": 20000,
+   "currency": "USD"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] USDW 2026-09-01..2026-09-30: 200 200
+CHECK [PASS] USDW 2026-09-01..2026-09-30: figures 
+CHECK [PASS] USDW 2026-09-01..2026-09-30: range 
+CHECK [PASS] USDW 2026-09-01..2026-09-30: identity 
+CHECK [PASS] USDW 2026-09-01..2026-09-30: net 
+CHECK [PASS] USDW 2026-09-01..2026-09-30: no percentages 
+CHECK [PASS] USDW 2026-09-01..2026-09-30: planned null 
+GET /wallets/01a108bc-1062-7033-940d-842166c31fc9/reports/summary params={'from': '2026-10-02', 'to': '2026-10-02'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-1062-7033-940d-842166c31fc9",
+  "range": {
+   "from": "2026-10-02",
+   "to": "2026-10-02"
+  },
+  "currency": "USD",
+  "income": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "expenses": {
+   "amount_minor": 1500,
+   "currency": "USD"
+  },
+  "net": {
+   "amount_minor": -1500,
+   "currency": "USD"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "balance_start": {
+   "amount_minor": 20000,
+   "currency": "USD"
+  },
+  "balance_end": {
+   "amount_minor": 18500,
+   "currency": "USD"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] USDW 2026-10-02..2026-10-02: 200 200
+CHECK [PASS] USDW 2026-10-02..2026-10-02: figures 
+CHECK [PASS] USDW 2026-10-02..2026-10-02: range 
+CHECK [PASS] USDW 2026-10-02..2026-10-02: identity 
+CHECK [PASS] USDW 2026-10-02..2026-10-02: net 
+CHECK [PASS] USDW 2026-10-02..2026-10-02: no percentages 
+CHECK [PASS] USDW 2026-10-02..2026-10-02: planned null 
+GET /wallets/01a108bc-1062-7033-940d-842166c31fc9/reports/summary params={'from': '2026-10-03', 'to': '2026-10-03'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-1062-7033-940d-842166c31fc9",
+  "range": {
+   "from": "2026-10-03",
+   "to": "2026-10-03"
+  },
+  "currency": "USD",
+  "income": {
+   "amount_minor": 5000,
+   "currency": "USD"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "net": {
+   "amount_minor": 5000,
+   "currency": "USD"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "balance_start": {
+   "amount_minor": 18500,
+   "currency": "USD"
+  },
+  "balance_end": {
+   "amount_minor": 23500,
+   "currency": "USD"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] USDW 2026-10-03..2026-10-03: 200 200
+CHECK [PASS] USDW 2026-10-03..2026-10-03: figures 
+CHECK [PASS] USDW 2026-10-03..2026-10-03: range 
+CHECK [PASS] USDW 2026-10-03..2026-10-03: identity 
+CHECK [PASS] USDW 2026-10-03..2026-10-03: net 
+CHECK [PASS] USDW 2026-10-03..2026-10-03: no percentages 
+CHECK [PASS] USDW 2026-10-03..2026-10-03: planned null 
+GET /wallets/01a108bc-1062-7033-940d-842166c31fc9/reports/summary params={'from': '2026-10-31', 'to': '2026-10-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-1062-7033-940d-842166c31fc9",
+  "range": {
+   "from": "2026-10-31",
+   "to": "2026-10-31"
+  },
+  "currency": "USD",
+  "income": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "balance_start": {
+   "amount_minor": 23500,
+   "currency": "USD"
+  },
+  "balance_end": {
+   "amount_minor": 23500,
+   "currency": "USD"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] USDW 2026-10-31..2026-10-31: 200 200
+CHECK [PASS] USDW 2026-10-31..2026-10-31: figures 
+CHECK [PASS] USDW 2026-10-31..2026-10-31: range 
+CHECK [PASS] USDW 2026-10-31..2026-10-31: identity 
+CHECK [PASS] USDW 2026-10-31..2026-10-31: net 
+CHECK [PASS] USDW 2026-10-31..2026-10-31: no percentages 
+CHECK [PASS] USDW 2026-10-31..2026-10-31: planned null 
+GET /wallets/01a108bc-1062-7033-940d-842166c31fc9/reports/summary params={'from': '2026-11-01', 'to': '2026-11-01'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-1062-7033-940d-842166c31fc9",
+  "range": {
+   "from": "2026-11-01",
+   "to": "2026-11-01"
+  },
+  "currency": "USD",
+  "income": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "balance_start": {
+   "amount_minor": 23500,
+   "currency": "USD"
+  },
+  "balance_end": {
+   "amount_minor": 23500,
+   "currency": "USD"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] USDW 2026-11-01..2026-11-01: 200 200
+CHECK [PASS] USDW 2026-11-01..2026-11-01: figures 
+CHECK [PASS] USDW 2026-11-01..2026-11-01: range 
+CHECK [PASS] USDW 2026-11-01..2026-11-01: identity 
+CHECK [PASS] USDW 2026-11-01..2026-11-01: net 
+CHECK [PASS] USDW 2026-11-01..2026-11-01: no percentages 
+CHECK [PASS] USDW 2026-11-01..2026-11-01: planned null 
+GET /wallets/01a108bc-1062-7033-940d-842166c31fc9/reports/summary params={'from': '2026-09-30', 'to': '2026-10-01'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-1062-7033-940d-842166c31fc9",
+  "range": {
+   "from": "2026-09-30",
+   "to": "2026-10-01"
+  },
+  "currency": "USD",
+  "income": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "balance_start": {
+   "amount_minor": 20000,
+   "currency": "USD"
+  },
+  "balance_end": {
+   "amount_minor": 20000,
+   "currency": "USD"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] USDW 2026-09-30..2026-10-01: 200 200
+CHECK [PASS] USDW 2026-09-30..2026-10-01: figures 
+CHECK [PASS] USDW 2026-09-30..2026-10-01: range 
+CHECK [PASS] USDW 2026-09-30..2026-10-01: identity 
+CHECK [PASS] USDW 2026-09-30..2026-10-01: net 
+CHECK [PASS] USDW 2026-09-30..2026-10-01: no percentages 
+CHECK [PASS] USDW 2026-09-30..2026-10-01: planned null 
+GET /wallets/01a108bc-1062-7033-940d-842166c31fc9/reports/summary params={'from': '2026-04-30', 'to': '2026-05-01'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-1062-7033-940d-842166c31fc9",
+  "range": {
+   "from": "2026-04-30",
+   "to": "2026-05-01"
+  },
+  "currency": "USD",
+  "income": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "balance_start": {
+   "amount_minor": 20000,
+   "currency": "USD"
+  },
+  "balance_end": {
+   "amount_minor": 20000,
+   "currency": "USD"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] USDW 2026-04-30..2026-05-01: 200 200
+CHECK [PASS] USDW 2026-04-30..2026-05-01: figures 
+CHECK [PASS] USDW 2026-04-30..2026-05-01: range 
+CHECK [PASS] USDW 2026-04-30..2026-05-01: identity 
+CHECK [PASS] USDW 2026-04-30..2026-05-01: net 
+CHECK [PASS] USDW 2026-04-30..2026-05-01: no percentages 
+CHECK [PASS] USDW 2026-04-30..2026-05-01: planned null 
+GET /wallets/01a108bc-1062-7033-940d-842166c31fc9/reports/summary params={'from': '2020-01-01', 'to': '2020-01-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-1062-7033-940d-842166c31fc9",
+  "range": {
+   "from": "2020-01-01",
+   "to": "2020-01-31"
+  },
+  "currency": "USD",
+  "income": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "balance_start": {
+   "amount_minor": 20000,
+   "currency": "USD"
+  },
+  "balance_end": {
+   "amount_minor": 20000,
+   "currency": "USD"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] USDW 2020-01-01..2020-01-31: 200 200
+CHECK [PASS] USDW 2020-01-01..2020-01-31: figures 
+CHECK [PASS] USDW 2020-01-01..2020-01-31: range 
+CHECK [PASS] USDW 2020-01-01..2020-01-31: identity 
+CHECK [PASS] USDW 2020-01-01..2020-01-31: net 
+CHECK [PASS] USDW 2020-01-01..2020-01-31: no percentages 
+CHECK [PASS] USDW 2020-01-01..2020-01-31: planned null 
+GET /wallets/01a108bc-1062-7033-940d-842166c31fc9/reports/summary params={'from': '2026-01-01', 'to': '2026-12-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-1062-7033-940d-842166c31fc9",
+  "range": {
+   "from": "2026-01-01",
+   "to": "2026-12-31"
+  },
+  "currency": "USD",
+  "income": {
+   "amount_minor": 5000,
+   "currency": "USD"
+  },
+  "expenses": {
+   "amount_minor": 1500,
+   "currency": "USD"
+  },
+  "net": {
+   "amount_minor": 3500,
+   "currency": "USD"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "balance_start": {
+   "amount_minor": 20000,
+   "currency": "USD"
+  },
+  "balance_end": {
+   "amount_minor": 23500,
+   "currency": "USD"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] USDW 2026-01-01..2026-12-31: 200 200
+CHECK [PASS] USDW 2026-01-01..2026-12-31: figures 
+CHECK [PASS] USDW 2026-01-01..2026-12-31: range 
+CHECK [PASS] USDW 2026-01-01..2026-12-31: identity 
+CHECK [PASS] USDW 2026-01-01..2026-12-31: net 
+CHECK [PASS] USDW 2026-01-01..2026-12-31: no percentages 
+CHECK [PASS] USDW 2026-01-01..2026-12-31: planned null 
+GET /wallets/01a108bc-1062-7033-940d-842166c31fc9/reports/summary params={'from': '2026-10-05', 'to': '2026-10-05'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-1062-7033-940d-842166c31fc9",
+  "range": {
+   "from": "2026-10-05",
+   "to": "2026-10-05"
+  },
+  "currency": "USD",
+  "income": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "balance_start": {
+   "amount_minor": 23500,
+   "currency": "USD"
+  },
+  "balance_end": {
+   "amount_minor": 23500,
+   "currency": "USD"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] USDW 2026-10-05..2026-10-05: 200 200
+CHECK [PASS] USDW 2026-10-05..2026-10-05: figures 
+CHECK [PASS] USDW 2026-10-05..2026-10-05: range 
+CHECK [PASS] USDW 2026-10-05..2026-10-05: identity 
+CHECK [PASS] USDW 2026-10-05..2026-10-05: net 
+CHECK [PASS] USDW 2026-10-05..2026-10-05: no percentages 
+CHECK [PASS] USDW 2026-10-05..2026-10-05: planned null 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d
+< 200
+{
+ "data": {
+  "id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "version": 1,
+  "change_seq": 71,
+  "created_at": "2026-10-04T21:05:04.839667Z",
+  "updated_at": "2026-10-04T21:05:04.839667Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "CASH",
+  "currency": "EGP",
+  "opening_balance_minor": 100000,
+  "balance_minor": 710390,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": true,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'from': '2026-01-01', 'to': '2026-12-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-01-01",
+   "to": "2026-12-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 1312000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 505610,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 806390,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 4000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 200000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 100000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 710390,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CASH: balance_end (full history) == wallet balance_minor 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'from': '2020-01-01', 'to': '2020-01-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2020-01-01",
+   "to": "2020-01-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 100000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 100000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CASH: range before everything -> opening at both ends 
+GET /wallets/01a108bc-0f5a-76d2-98e7-3544ccd5f1d7
+< 200
+{
+ "data": {
+  "id": "01a108bc-0f5a-76d2-98e7-3544ccd5f1d7",
+  "wallet_id": "01a108bc-0f5a-76d2-98e7-3544ccd5f1d7",
+  "version": 1,
+  "change_seq": 23,
+  "created_at": "2026-10-04T21:05:04.975636Z",
+  "updated_at": "2026-10-04T21:05:04.975636Z",
+  "deleted_at": null,
+  "type": "checking",
+  "name": "BANK",
+  "currency": "EGP",
+  "opening_balance_minor": 50000,
+  "balance_minor": 905500,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": true,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a108bc-0f5a-76d2-98e7-3544ccd5f1d7/reports/summary params={'from': '2026-01-01', 'to': '2026-12-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0f5a-76d2-98e7-3544ccd5f1d7",
+  "range": {
+   "from": "2026-01-01",
+   "to": "2026-12-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 800000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 21000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 779000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 209000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 132500,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 50000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 905500,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] BANK: balance_end (full history) == wallet balance_minor 
+GET /wallets/01a108bc-0f5a-76d2-98e7-3544ccd5f1d7/reports/summary params={'from': '2020-01-01', 'to': '2020-01-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0f5a-76d2-98e7-3544ccd5f1d7",
+  "range": {
+   "from": "2020-01-01",
+   "to": "2020-01-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 50000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 50000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] BANK: range before everything -> opening at both ends 
+GET /wallets/01a108bc-0fe4-76c9-9505-db3406551041
+< 200
+{
+ "data": {
+  "id": "01a108bc-0fe4-76c9-9505-db3406551041",
+  "wallet_id": "01a108bc-0fe4-76c9-9505-db3406551041",
+  "version": 1,
+  "change_seq": 7,
+  "created_at": "2026-10-04T21:05:05.103547Z",
+  "updated_at": "2026-10-04T21:05:05.103547Z",
+  "deleted_at": null,
+  "type": "credit_card",
+  "name": "CARD",
+  "currency": "EGP",
+  "opening_balance_minor": -30000,
+  "balance_minor": -350000,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": true,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a108bc-0fe4-76c9-9505-db3406551041/reports/summary params={'from': '2026-01-01', 'to': '2026-12-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0fe4-76c9-9505-db3406551041",
+  "range": {
+   "from": "2026-01-01",
+   "to": "2026-12-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 420000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": -420000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 100000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -30000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -350000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CARD: balance_end (full history) == wallet balance_minor 
+GET /wallets/01a108bc-0fe4-76c9-9505-db3406551041/reports/summary params={'from': '2020-01-01', 'to': '2020-01-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0fe4-76c9-9505-db3406551041",
+  "range": {
+   "from": "2020-01-01",
+   "to": "2020-01-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -30000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -30000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CARD: range before everything -> opening at both ends 
+GET /wallets/01a108bc-10e1-74f4-bbcc-dc09c3ee3393
+< 200
+{
+ "data": {
+  "id": "01a108bc-10e1-74f4-bbcc-dc09c3ee3393",
+  "wallet_id": "01a108bc-10e1-74f4-bbcc-dc09c3ee3393",
+  "version": 2,
+  "change_seq": 10,
+  "created_at": "2026-10-04T21:05:05.357119Z",
+  "updated_at": "2026-10-04T21:05:15.318418Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "ARCH",
+  "currency": "EGP",
+  "opening_balance_minor": 7000,
+  "balance_minor": 11500,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": "2026-10-04T21:05:15.318217Z",
+  "currency_locked": true,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a108bc-10e1-74f4-bbcc-dc09c3ee3393/reports/summary params={'from': '2026-01-01', 'to': '2026-12-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-10e1-74f4-bbcc-dc09c3ee3393",
+  "range": {
+   "from": "2026-01-01",
+   "to": "2026-12-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 3000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 1000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 2000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 2500,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 7000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 11500,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] ARCH: balance_end (full history) == wallet balance_minor 
+GET /wallets/01a108bc-10e1-74f4-bbcc-dc09c3ee3393/reports/summary params={'from': '2020-01-01', 'to': '2020-01-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-10e1-74f4-bbcc-dc09c3ee3393",
+  "range": {
+   "from": "2020-01-01",
+   "to": "2020-01-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 7000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 7000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] ARCH: range before everything -> opening at both ends 
+GET /wallets/01a108bc-1062-7033-940d-842166c31fc9
+< 200
+{
+ "data": {
+  "id": "01a108bc-1062-7033-940d-842166c31fc9",
+  "wallet_id": "01a108bc-1062-7033-940d-842166c31fc9",
+  "version": 1,
+  "change_seq": 10,
+  "created_at": "2026-10-04T21:05:05.230853Z",
+  "updated_at": "2026-10-04T21:05:05.230853Z",
+  "deleted_at": null,
+  "type": "savings",
+  "name": "USDW",
+  "currency": "USD",
+  "opening_balance_minor": 20000,
+  "balance_minor": 23500,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": true,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a108bc-1062-7033-940d-842166c31fc9/reports/summary params={'from': '2026-01-01', 'to': '2026-12-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-1062-7033-940d-842166c31fc9",
+  "range": {
+   "from": "2026-01-01",
+   "to": "2026-12-31"
+  },
+  "currency": "USD",
+  "income": {
+   "amount_minor": 5000,
+   "currency": "USD"
+  },
+  "expenses": {
+   "amount_minor": 1500,
+   "currency": "USD"
+  },
+  "net": {
+   "amount_minor": 3500,
+   "currency": "USD"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "balance_start": {
+   "amount_minor": 20000,
+   "currency": "USD"
+  },
+  "balance_end": {
+   "amount_minor": 23500,
+   "currency": "USD"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] USDW: balance_end (full history) == wallet balance_minor 
+GET /wallets/01a108bc-1062-7033-940d-842166c31fc9/reports/summary params={'from': '2020-01-01', 'to': '2020-01-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-1062-7033-940d-842166c31fc9",
+  "range": {
+   "from": "2020-01-01",
+   "to": "2020-01-31"
+  },
+  "currency": "USD",
+  "income": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "net": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "balance_start": {
+   "amount_minor": 20000,
+   "currency": "USD"
+  },
+  "balance_end": {
+   "amount_minor": 20000,
+   "currency": "USD"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] USDW: range before everything -> opening at both ends 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 1300000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 388911,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 911089,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 4000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 200000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -2477,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 712612,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 1300000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 388911,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 911089,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 4000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 200000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -2477,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 712612,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'from': '2026-01-01', 'to': '2026-12-31'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-01-01",
+   "to": "2026-12-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 1312000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 505610,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 806390,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 4000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 200000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 100000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 710390,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] corrupted balance_minor does not change the summary 
+CHECK [PASS] full-history balance_end still model truth (not the cache) 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d
+< 200
+{
+ "data": {
+  "id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "version": 1,
+  "change_seq": 71,
+  "created_at": "2026-10-04T21:05:04.839667Z",
+  "updated_at": "2026-10-04T21:05:04.839667Z",
+  "deleted_at": null,
+  "type": "cash",
+  "name": "CASH",
+  "currency": "EGP",
+  "opening_balance_minor": 100000,
+  "balance_minor": 710390,
+  "icon": "wallet",
+  "color": "#2E7D32",
+  "archived_at": null,
+  "currency_locked": true,
+  "my_role": "owner"
+ },
+ "meta": {}
+}
+
+CHECK [PASS] wallet balance_minor restored 

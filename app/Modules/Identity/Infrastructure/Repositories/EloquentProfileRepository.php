@@ -93,4 +93,9 @@ final class EloquentProfileRepository implements ProfileRepository
     {
         return (string) (Profile::query()->where('user_id', $userId)->value('timezone') ?? config('identity.default_timezone'));
     }
+
+    public function defaultCurrencyOf(string $userId): string
+    {
+        return (string) (Profile::query()->where('user_id', $userId)->value('default_currency') ?? 'EGP');
+    }
 }

@@ -1,0 +1,335 @@
+===== US3-2 months=12 date=2026-03-15 ends at March 2026-10-04T21:13:27.742547Z
+
+GET /wallets/01a108c3-a9a2-72be-90c3-3cf093e41cab/reports/trend params={'months': 12, 'date': '2026-03-15'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c3-a9a2-72be-90c3-3cf093e41cab",
+  "currency": "EGP",
+  "periods": [
+   {
+    "label": "2025-04-01",
+    "from": "2025-04-01",
+    "to": "2025-04-30"
+   },
+   {
+    "label": "2025-05-01",
+    "from": "2025-05-01",
+    "to": "2025-05-31"
+   },
+   {
+    "label": "2025-06-01",
+    "from": "2025-06-01",
+    "to": "2025-06-30"
+   },
+   {
+    "label": "2025-07-01",
+    "from": "2025-07-01",
+    "to": "2025-07-31"
+   },
+   {
+    "label": "2025-08-01",
+    "from": "2025-08-01",
+    "to": "2025-08-31"
+   },
+   {
+    "label": "2025-09-01",
+    "from": "2025-09-01",
+    "to": "2025-09-30"
+   },
+   {
+    "label": "2025-10-01",
+    "from": "2025-10-01",
+    "to": "2025-10-31"
+   },
+   {
+    "label": "2025-11-01",
+    "from": "2025-11-01",
+    "to": "2025-11-30"
+   },
+   {
+    "label": "2025-12-01",
+    "from": "2025-12-01",
+    "to": "2025-12-31"
+   },
+   {
+    "label": "2026-01-01",
+    "from": "2026-01-01",
+    "to": "2026-01-31"
+   },
+   {
+    "label": "2026-02-01",
+    "from": "2026-02-01",
+    "to": "2026-02-28"
+   },
+   {
+    "label": "2026-03-01",
+    "from": "2026-03-01",
+    "to": "2026-03-31"
+   }
+  ],
+  "income": [
+   {
+    "label": "2025-04-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-05-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-06-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-07-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-08-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-09-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-10-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-11-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-12-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-01-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-02-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-03-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   }
+  ],
+  "expenses": [
+   {
+    "label": "2025-04-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-05-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-06-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-07-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-08-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-09-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-10-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-11-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-12-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-01-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-02-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-03-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   }
+  ],
+  "net": [
+   {
+    "label": "2025-04-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-05-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-06-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-07-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-08-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-09-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-10-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-11-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2025-12-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-01-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-02-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-03-01",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   }
+  ],
+  "planned_income": null,
+  "planned_expenses": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] 12 ending 2026-03-01 

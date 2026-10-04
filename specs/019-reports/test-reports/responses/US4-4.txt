@@ -1,0 +1,3 @@
+===== US4-4 Default is profile default (EGP) 2026-10-04T21:13:30.708915Z
+
+CHECK [PASS] EGP 

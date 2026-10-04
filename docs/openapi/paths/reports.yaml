@@ -1,0 +1,852 @@
+# Reports (spec 019, brief B13). Every operation sits under /api/v1,
+# inherits the root's bearer scheme and runs through the shared runtime, so
+# each also documents the shared refusals it can produce.
+#
+# Frozen for the C13 client. Read-only: no operation here writes, and no
+# report is syncable (never on a change feed, never a batch item). Every
+# figure is computed from the ledger on the read — postings plus each
+# wallet's opening balance, never the cached `balance_minor` — with no cache.
+#
+# A wallet report (/wallets/{id}/reports/*) covers every member's live
+# transactions in that wallet, so every member sees the same figures for the
+# same Report Range; any active member may read it (permission matrix row
+# W-01, specs/010-wallets-membership/spec.md §6), anyone else gets 404
+# NOT_FOUND. A cross-wallet report (/reports/*) covers every live wallet the
+# caller currently belongs to in one currency; wallets in other currencies
+# are listed in `meta.excluded_wallets`, never converted, and a transfer
+# between two covered wallets appears nowhere.
+#
+# The Report Range is the caller's Budget Period containing `date` (default
+# today in the caller's profile timezone), computed exactly as
+# /budget-progress computes it, or an explicit `from`/`to`. Transactions
+# belong to it by calendar date. Trend buckets are consecutive Budget
+# Periods. No percentage is sent: derive shares from `value` and `total`.
+# `label` is a machine key (a platform `system_key`, a category id, or a
+# Budget Period start date), never display text.
+#
+# Nothing is gated by a plan: `reports.advanced` stays reserved. Reads are not
+# behind the verification gate. New in v1.11. No new error code.
+
+/wallets/{id}/reports/summary:
+  get:
+    operationId: getWalletReportSummary
+    tags: [Reporting]
+    summary: Income, expenses, transfers and balances of one wallet over a Report Range.
+    description: |
+      `income` and `expenses` are positive sums of the wallet's live income
+      and expense transactions dated in the range; `net` is income −
+      expenses. Transfers never count as income or expense: they are
+      `transfers_in` and `transfers_out`. `balance_start` is the opening
+      balance plus every live posting to the wallet dated before `from`;
+      `balance_end` the same through `to`, so
+      `balance_end = balance_start + income − expenses + transfers_in − transfers_out`.
+      Liability balances are negative, as stored. With `include_planned=true`,
+      `planned` sums the wallet's scheduled occurrences dated in the range
+      (only those materialised, through each rule's today + 35 days); planned
+      amounts never enter the actual figures or balances.
+
+      Precedence: 401 → 422 INVALID_ID → 404 NOT_FOUND (not an active member,
+      or no live wallet) → 400 INVALID_QUERY_PARAMETER → 200.
+    parameters:
+      - &walletId
+        $ref: '../components/parameters.yaml#/components/parameters/ResourceId'
+      - &reportDate
+        $ref: '#/components/parameters/ReportDate'
+      - &reportFrom
+        $ref: '#/components/parameters/ReportFrom'
+      - &reportTo
+        $ref: '#/components/parameters/ReportTo'
+      - &includePlanned
+        $ref: '#/components/parameters/IncludePlanned'
+      - &acceptLanguage
+        $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - &correlationId
+        $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - &clientPlatform
+        $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - &clientVersion
+        $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: The wallet's summary for the Report Range.
+        headers: &successHeaders
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/ReportSummary'
+                    meta:
+                      $ref: '#/components/schemas/WalletReportMeta'
+            examples:
+              currentPeriod:
+                summary: A cash wallet, current Budget Period, scheduled rent included
+                value:
+                  data:
+                    wallet_id: 0192f79e-0000-7000-8000-000000000001
+                    range: { from: '2026-10-01', to: '2026-10-31' }
+                    currency: EGP
+                    income: { amount_minor: 1000000, currency: EGP }
+                    expenses: { amount_minor: 350000, currency: EGP }
+                    net: { amount_minor: 650000, currency: EGP }
+                    transfers_in: { amount_minor: 0, currency: EGP }
+                    transfers_out: { amount_minor: 200000, currency: EGP }
+                    balance_start: { amount_minor: 80000, currency: EGP }
+                    balance_end: { amount_minor: 530000, currency: EGP }
+                    planned:
+                      income: { amount_minor: 0, currency: EGP }
+                      expenses: { amount_minor: 500000, currency: EGP }
+                      transfers_in: { amount_minor: 0, currency: EGP }
+                      transfers_out: { amount_minor: 0, currency: EGP }
+                  meta: {}
+              creditCard:
+                summary: A credit-card wallet over an explicit range, nothing planned asked
+                value:
+                  data:
+                    wallet_id: 0192f79e-0000-7000-8000-000000000003
+                    range: { from: '2026-09-01', to: '2026-09-30' }
+                    currency: EGP
+                    income: { amount_minor: 0, currency: EGP }
+                    expenses: { amount_minor: 420000, currency: EGP }
+                    net: { amount_minor: -420000, currency: EGP }
+                    transfers_in: { amount_minor: 300000, currency: EGP }
+                    transfers_out: { amount_minor: 0, currency: EGP }
+                    balance_start: { amount_minor: -300000, currency: EGP }
+                    balance_end: { amount_minor: -420000, currency: EGP }
+                    planned: null
+                  meta: {}
+      '400': &badRequest
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401': &unauthenticated
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404': &notFound
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406': &notAcceptable
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422': &unprocessable
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426': &upgradeRequired
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500': &internalError
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/wallets/{id}/reports/by-category:
+  get:
+    operationId: getWalletReportByCategory
+    tags: [Reporting]
+    summary: Expenses and income of one wallet per category over a Report Range.
+    description: |
+      One item per category with a non-zero sum (actual, or planned when
+      `include_planned=true`), in `expenses` and `income` separately;
+      transfers appear in neither. A platform category is grouped and
+      labelled by its `system_key`; a person's category (the caller's or a
+      partner's) by its id, with `system_key` null — resolve its name from
+      local categories or the wallet's Category References. Categories are
+      never merged by name. Items are sorted by `value.amount_minor`
+      descending, then `label` ascending; `total` is the exact sum of the
+      items' `value`. No share is sent: derive `value / total` for display.
+
+      Precedence as for the summary.
+    parameters:
+      - *walletId
+      - *reportDate
+      - *reportFrom
+      - *reportTo
+      - *includePlanned
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: The wallet's category breakdown for the Report Range.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/ReportByCategory'
+                    meta:
+                      $ref: '#/components/schemas/WalletReportMeta'
+            examples:
+              currentPeriod:
+                summary: Two platform categories and one personal category
+                value:
+                  data:
+                    wallet_id: 0192f79e-0000-7000-8000-000000000001
+                    range: { from: '2026-10-01', to: '2026-10-31' }
+                    currency: EGP
+                    expenses:
+                      total: { amount_minor: 550000, currency: EGP }
+                      planned: null
+                      items:
+                        - label: groceries
+                          category_id: 0192f7c0-0000-7000-8000-000000000101
+                          system_key: groceries
+                          value: { amount_minor: 350000, currency: EGP }
+                          planned: null
+                        - label: transport
+                          category_id: 0192f7c0-0000-7000-8000-000000000105
+                          system_key: transport
+                          value: { amount_minor: 120000, currency: EGP }
+                          planned: null
+                        - label: 0192f7c1-0000-7000-8000-0000000000a7
+                          category_id: 0192f7c1-0000-7000-8000-0000000000a7
+                          system_key: null
+                          value: { amount_minor: 80000, currency: EGP }
+                          planned: null
+                    income:
+                      total: { amount_minor: 1000000, currency: EGP }
+                      planned: null
+                      items:
+                        - label: salary
+                          category_id: 0192f7c0-0000-7000-8000-000000000120
+                          system_key: salary
+                          value: { amount_minor: 1000000, currency: EGP }
+                          planned: null
+                  meta: {}
+              withPlanned:
+                summary: Rent still scheduled this period, nothing recorded yet
+                value:
+                  data:
+                    wallet_id: 0192f79e-0000-7000-8000-000000000001
+                    range: { from: '2026-10-01', to: '2026-10-31' }
+                    currency: EGP
+                    expenses:
+                      total: { amount_minor: 0, currency: EGP }
+                      planned: { amount_minor: 500000, currency: EGP }
+                      items:
+                        - label: rent
+                          category_id: 0192f7c0-0000-7000-8000-000000000102
+                          system_key: rent
+                          value: { amount_minor: 0, currency: EGP }
+                          planned: { amount_minor: 500000, currency: EGP }
+                    income:
+                      total: { amount_minor: 0, currency: EGP }
+                      planned: { amount_minor: 0, currency: EGP }
+                      items: []
+                  meta: {}
+      '400': *badRequest
+      '401': *unauthenticated
+      '404': *notFound
+      '406': *notAcceptable
+      '422': *unprocessable
+      '426': *upgradeRequired
+      '500': *internalError
+
+/wallets/{id}/reports/trend:
+  get:
+    operationId: getWalletReportTrend
+    tags: [Reporting]
+    summary: Income, expenses and net of one wallet per Budget Period, over consecutive Budget Periods.
+    description: |
+      `months` consecutive Budget Periods of the caller's (1–12, default 6),
+      oldest first, the last containing `date` (default today in the
+      caller's profile timezone). With the default start day 1 they are
+      calendar months; after a start day change a transitional period may be
+      shorter or longer. `periods` lists them; each series has one
+      `{label, value}` per period in the same order, `label` being the
+      period's start date, zero when empty. Transfers are not in the trend.
+      With `include_planned=true`, `planned_income` and `planned_expenses`
+      carry the scheduled occurrences per period; otherwise they are null.
+
+      Precedence as for the summary.
+    parameters:
+      - *walletId
+      - *reportDate
+      - &months
+        $ref: '#/components/parameters/Months'
+      - *includePlanned
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: The wallet's trend.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/ReportTrend'
+                    meta:
+                      $ref: '#/components/schemas/WalletReportMeta'
+            examples:
+              threeMonths:
+                summary: Three calendar-month Budget Periods (start day 1), one empty
+                value:
+                  data:
+                    wallet_id: 0192f79e-0000-7000-8000-000000000001
+                    currency: EGP
+                    periods:
+                      - { label: '2026-08-01', from: '2026-08-01', to: '2026-08-31' }
+                      - { label: '2026-09-01', from: '2026-09-01', to: '2026-09-30' }
+                      - { label: '2026-10-01', from: '2026-10-01', to: '2026-10-31' }
+                    income:
+                      - { label: '2026-08-01', value: { amount_minor: 0, currency: EGP } }
+                      - { label: '2026-09-01', value: { amount_minor: 1000000, currency: EGP } }
+                      - { label: '2026-10-01', value: { amount_minor: 1000000, currency: EGP } }
+                    expenses:
+                      - { label: '2026-08-01', value: { amount_minor: 0, currency: EGP } }
+                      - { label: '2026-09-01', value: { amount_minor: 1200000, currency: EGP } }
+                      - { label: '2026-10-01', value: { amount_minor: 350000, currency: EGP } }
+                    net:
+                      - { label: '2026-08-01', value: { amount_minor: 0, currency: EGP } }
+                      - { label: '2026-09-01', value: { amount_minor: -200000, currency: EGP } }
+                      - { label: '2026-10-01', value: { amount_minor: 650000, currency: EGP } }
+                    planned_income: null
+                    planned_expenses: null
+                  meta: {}
+      '400': *badRequest
+      '401': *unauthenticated
+      '404': *notFound
+      '406': *notAcceptable
+      '422': *unprocessable
+      '426': *upgradeRequired
+      '500': *internalError
+
+/reports/summary:
+  get:
+    operationId: getReportSummary
+    tags: [Reporting]
+    summary: Income, expenses, transfers and balances across the caller's wallets in one currency.
+    description: |
+      Covers every live wallet the caller currently belongs to (any role,
+      archived included) whose currency is `currency` (default: the
+      caller's profile default currency), for every range. Each figure is
+      the sum of those wallets' own figures, except that a transfer between
+      two covered wallets appears nowhere; a transfer to or from any other
+      wallet counts in its direction. `balance_end` across all covered
+      wallets is the caller's net worth in that currency on `to`. Wallets
+      in other currencies are listed in `meta.excluded_wallets` and are in no
+      figure. `wallet_id` is null. No wallet in the currency is 200 with
+      zeros.
+
+      Precedence: 401 → 400 INVALID_QUERY_PARAMETER → 200.
+    parameters:
+      - *reportDate
+      - *reportFrom
+      - *reportTo
+      - *includePlanned
+      - &reportCurrency
+        $ref: '#/components/parameters/ReportCurrency'
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: The summary across the covered wallets.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/ReportSummary'
+                    meta:
+                      $ref: '#/components/schemas/CrossWalletReportMeta'
+            examples:
+              egp:
+                summary: Three EGP wallets, a USD wallet excluded
+                value:
+                  data:
+                    wallet_id: null
+                    range: { from: '2026-10-01', to: '2026-10-31' }
+                    currency: EGP
+                    income: { amount_minor: 1000000, currency: EGP }
+                    expenses: { amount_minor: 770000, currency: EGP }
+                    net: { amount_minor: 230000, currency: EGP }
+                    transfers_in: { amount_minor: 0, currency: EGP }
+                    transfers_out: { amount_minor: 50000, currency: EGP }
+                    balance_start: { amount_minor: 2480000, currency: EGP }
+                    balance_end: { amount_minor: 2660000, currency: EGP }
+                    planned: null
+                  meta:
+                    excluded_wallets:
+                      - wallet_id: 0192f79e-0000-7000-8000-000000000004
+                        currency: USD
+      '400': *badRequest
+      '401': *unauthenticated
+      '406': *notAcceptable
+      '426': *upgradeRequired
+      '500': *internalError
+
+/reports/by-category:
+  get:
+    operationId: getReportByCategory
+    tags: [Reporting]
+    summary: Expenses and income per category across the caller's wallets in one currency.
+    description: |
+      As the wallet breakdown, over the covered wallets of `/reports/summary`:
+      a platform category's sums from every covered wallet are added under
+      its `system_key`; a person's category under its id. Transfers appear
+      nowhere. `wallet_id` is null; `meta.excluded_wallets` lists wallets in
+      other currencies.
+
+      Precedence: 401 → 400 INVALID_QUERY_PARAMETER → 200.
+    parameters:
+      - *reportDate
+      - *reportFrom
+      - *reportTo
+      - *includePlanned
+      - *reportCurrency
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: The category breakdown across the covered wallets.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/ReportByCategory'
+                    meta:
+                      $ref: '#/components/schemas/CrossWalletReportMeta'
+            examples:
+              egp:
+                summary: Groceries across two wallets, no wallet excluded
+                value:
+                  data:
+                    wallet_id: null
+                    range: { from: '2026-10-01', to: '2026-10-31' }
+                    currency: EGP
+                    expenses:
+                      total: { amount_minor: 470000, currency: EGP }
+                      planned: null
+                      items:
+                        - label: groceries
+                          category_id: 0192f7c0-0000-7000-8000-000000000101
+                          system_key: groceries
+                          value: { amount_minor: 470000, currency: EGP }
+                          planned: null
+                    income:
+                      total: { amount_minor: 0, currency: EGP }
+                      planned: null
+                      items: []
+                  meta:
+                    excluded_wallets: []
+      '400': *badRequest
+      '401': *unauthenticated
+      '406': *notAcceptable
+      '426': *upgradeRequired
+      '500': *internalError
+
+/reports/trend:
+  get:
+    operationId: getReportTrend
+    tags: [Reporting]
+    summary: Income, expenses and net per Budget Period across the caller's wallets in one currency.
+    description: |
+      As the wallet trend, over the covered wallets of `/reports/summary`.
+      `wallet_id` is null; `meta.excluded_wallets` lists wallets in other
+      currencies.
+
+      Precedence: 401 → 400 INVALID_QUERY_PARAMETER → 200.
+    parameters:
+      - *reportDate
+      - *months
+      - *includePlanned
+      - *reportCurrency
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: The trend across the covered wallets.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/ReportTrend'
+                    meta:
+                      $ref: '#/components/schemas/CrossWalletReportMeta'
+            examples:
+              twoPeriodsPlanned:
+                summary: Two Budget Periods from the 25th, scheduled occurrences included
+                value:
+                  data:
+                    wallet_id: null
+                    currency: EGP
+                    periods:
+                      - { label: '2026-08-25', from: '2026-08-25', to: '2026-09-24' }
+                      - { label: '2026-09-25', from: '2026-09-25', to: '2026-10-24' }
+                    income:
+                      - { label: '2026-08-25', value: { amount_minor: 1000000, currency: EGP } }
+                      - { label: '2026-09-25', value: { amount_minor: 1000000, currency: EGP } }
+                    expenses:
+                      - { label: '2026-08-25', value: { amount_minor: 900000, currency: EGP } }
+                      - { label: '2026-09-25', value: { amount_minor: 300000, currency: EGP } }
+                    net:
+                      - { label: '2026-08-25', value: { amount_minor: 100000, currency: EGP } }
+                      - { label: '2026-09-25', value: { amount_minor: 700000, currency: EGP } }
+                    planned_income:
+                      - { label: '2026-08-25', value: { amount_minor: 0, currency: EGP } }
+                      - { label: '2026-09-25', value: { amount_minor: 0, currency: EGP } }
+                    planned_expenses:
+                      - { label: '2026-08-25', value: { amount_minor: 0, currency: EGP } }
+                      - { label: '2026-09-25', value: { amount_minor: 500000, currency: EGP } }
+                  meta:
+                    excluded_wallets: []
+      '400': *badRequest
+      '401': *unauthenticated
+      '406': *notAcceptable
+      '426': *upgradeRequired
+      '500': *internalError
+
+components:
+  parameters:
+
+    ReportDate:
+      name: date
+      in: query
+      required: false
+      description: |
+        Any calendar date (`YYYY-MM-DD`, 1900-01-01 to 2999-12-31) inside the
+        wanted Budget Period of the caller's (the trend: inside its last
+        bucket). Absent means today in the caller's profile timezone. Never
+        combined with `from`/`to`. Anything else is 400 INVALID_QUERY_PARAMETER.
+      schema:
+        type: string
+        format: date
+      examples:
+        lastMonth:
+          summary: A day in an earlier Budget Period
+          value: '2026-09-10'
+
+    ReportFrom:
+      name: from
+      in: query
+      required: false
+      description: |
+        First day of an explicit Report Range (`YYYY-MM-DD`, inclusive). Sent
+        together with `to`, never with `date`; `from` ≤ `to`; at most 366
+        days; both within 1900-01-01 to 2999-12-31. Anything else is 400
+        INVALID_QUERY_PARAMETER.
+      schema:
+        type: string
+        format: date
+      examples:
+        september:
+          value: '2026-09-01'
+
+    ReportTo:
+      name: to
+      in: query
+      required: false
+      description: Last day of an explicit Report Range (`YYYY-MM-DD`, inclusive). See `from`.
+      schema:
+        type: string
+        format: date
+      examples:
+        september:
+          value: '2026-09-30'
+
+    Months:
+      name: months
+      in: query
+      required: false
+      description: |
+        How many consecutive Budget Periods the trend covers, 1 to 12. Absent
+        means 6. Anything else is 400 INVALID_QUERY_PARAMETER (never clamped).
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 12
+        default: 6
+      examples:
+        year:
+          value: 12
+
+    IncludePlanned:
+      name: include_planned
+      in: query
+      required: false
+      description: |
+        `true` adds separate planned figures summed from scheduled
+        occurrences dated in the range; they never enter actual figures or
+        balances. Absent or `false`: planned members are null. Anything else
+        is 400 INVALID_QUERY_PARAMETER.
+      schema:
+        type: string
+        enum: ['true', 'false']
+        default: 'false'
+      examples:
+        withPlanned:
+          value: 'true'
+
+    ReportCurrency:
+      name: currency
+      in: query
+      required: false
+      description: |
+        The one currency of a cross-wallet report, uppercase ISO 4217
+        alpha-3. Absent means the caller's profile default currency (EGP
+        without a profile). Lowercase or malformed is 400
+        INVALID_QUERY_PARAMETER. Nothing is converted.
+      schema:
+        type: string
+        pattern: '^[A-Z]{3}$'
+      examples:
+        usd:
+          value: USD
+
+  schemas:
+
+    Money:
+      $ref: '../components/schemas.yaml#/components/schemas/Money'
+
+    ReportRange:
+      type: object
+      description: The inclusive span of calendar dates a report covers.
+      required: [from, to]
+      additionalProperties: false
+      properties:
+        from:
+          type: string
+          format: date
+        to:
+          type: string
+          format: date
+
+    PlannedSummary:
+      type: [object, 'null']
+      description: Sums of scheduled occurrences dated in the range; null unless `include_planned=true`.
+      required: [income, expenses, transfers_in, transfers_out]
+      additionalProperties: false
+      properties:
+        income:
+          $ref: '#/components/schemas/Money'
+        expenses:
+          $ref: '#/components/schemas/Money'
+        transfers_in:
+          $ref: '#/components/schemas/Money'
+        transfers_out:
+          $ref: '#/components/schemas/Money'
+
+    ReportSummary:
+      type: object
+      description: |
+        Not syncable; computed on the read. Every money member is in
+        `currency`. `income`, `expenses`, `transfers_in` and `transfers_out`
+        are never negative; `net` and the balances may be.
+      required: [wallet_id, range, currency, income, expenses, net, transfers_in, transfers_out, balance_start, balance_end, planned]
+      additionalProperties: false
+      properties:
+        wallet_id:
+          type: [string, 'null']
+          format: uuid
+          description: The wallet reported on; null for a cross-wallet report.
+        range:
+          $ref: '#/components/schemas/ReportRange'
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+        income:
+          $ref: '#/components/schemas/Money'
+        expenses:
+          $ref: '#/components/schemas/Money'
+        net:
+          $ref: '#/components/schemas/Money'
+        transfers_in:
+          $ref: '#/components/schemas/Money'
+        transfers_out:
+          $ref: '#/components/schemas/Money'
+        balance_start:
+          $ref: '#/components/schemas/Money'
+        balance_end:
+          $ref: '#/components/schemas/Money'
+        planned:
+          $ref: '#/components/schemas/PlannedSummary'
+
+    CategoryItem:
+      type: object
+      description: One category's sum in the range. No share is sent.
+      required: [label, category_id, system_key, value, planned]
+      additionalProperties: false
+      properties:
+        label:
+          type: string
+          description: The grouping key — the platform category's `system_key`, else the category id. A machine key, never display text.
+        category_id:
+          type: string
+          format: uuid
+        system_key:
+          type: [string, 'null']
+          description: Set for a platform category; null for a person's category.
+        value:
+          $ref: '#/components/schemas/Money'
+        planned:
+          description: Scheduled occurrences in this category; null unless `include_planned=true`.
+          oneOf:
+            - $ref: '#/components/schemas/Money'
+            - type: 'null'
+
+    CategoryGroup:
+      type: object
+      required: [total, planned, items]
+      additionalProperties: false
+      properties:
+        total:
+          $ref: '#/components/schemas/Money'
+        planned:
+          description: Sum of the items' `planned`; null unless `include_planned=true`.
+          oneOf:
+            - $ref: '#/components/schemas/Money'
+            - type: 'null'
+        items:
+          type: array
+          description: Sorted by `value.amount_minor` descending, then `label` ascending.
+          items:
+            $ref: '#/components/schemas/CategoryItem'
+
+    ReportByCategory:
+      type: object
+      description: Not syncable; computed on the read.
+      required: [wallet_id, range, currency, expenses, income]
+      additionalProperties: false
+      properties:
+        wallet_id:
+          type: [string, 'null']
+          format: uuid
+          description: The wallet reported on; null for a cross-wallet report.
+        range:
+          $ref: '#/components/schemas/ReportRange'
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+        expenses:
+          $ref: '#/components/schemas/CategoryGroup'
+        income:
+          $ref: '#/components/schemas/CategoryGroup'
+
+    TrendBudgetPeriod:
+      type: object
+      description: One Budget Period of the trend.
+      required: [label, from, to]
+      additionalProperties: false
+      properties:
+        label:
+          type: string
+          format: date
+          description: The period's start date; the key of this period in every series.
+        from:
+          type: string
+          format: date
+        to:
+          type: string
+          format: date
+
+    ChartPoint:
+      type: object
+      description: One chart point; `label` matches a `periods[].label`.
+      required: [label, value]
+      additionalProperties: false
+      properties:
+        label:
+          type: string
+        value:
+          $ref: '#/components/schemas/Money'
+
+    ChartSeries:
+      type: array
+      description: One point per period, in the order of `periods`.
+      items:
+        $ref: '#/components/schemas/ChartPoint'
+
+    ReportTrend:
+      type: object
+      description: Not syncable; computed on the read. Transfers are not in the trend.
+      required: [wallet_id, currency, periods, income, expenses, net, planned_income, planned_expenses]
+      additionalProperties: false
+      properties:
+        wallet_id:
+          type: [string, 'null']
+          format: uuid
+          description: The wallet reported on; null for a cross-wallet report.
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+        periods:
+          type: array
+          minItems: 1
+          maxItems: 12
+          items:
+            $ref: '#/components/schemas/TrendBudgetPeriod'
+        income:
+          $ref: '#/components/schemas/ChartSeries'
+        expenses:
+          $ref: '#/components/schemas/ChartSeries'
+        net:
+          $ref: '#/components/schemas/ChartSeries'
+        planned_income:
+          description: Null unless `include_planned=true`.
+          oneOf:
+            - $ref: '#/components/schemas/ChartSeries'
+            - type: 'null'
+        planned_expenses:
+          description: Null unless `include_planned=true`.
+          oneOf:
+            - $ref: '#/components/schemas/ChartSeries'
+            - type: 'null'
+
+    WalletReportMeta:
+      type: object
+      description: Always `{}` for a wallet report.
+      additionalProperties: false
+      maxProperties: 0
+
+    CrossWalletReportMeta:
+      type: object
+      required: [excluded_wallets]
+      additionalProperties: false
+      properties:
+        excluded_wallets:
+          type: array
+          description: |
+            Every live wallet the caller belongs to whose currency is not the
+            report's, sorted by `wallet_id`; none of its money is in any figure.
+            Empty when none.
+          items:
+            type: object
+            required: [wallet_id, currency]
+            additionalProperties: false
+            properties:
+              wallet_id:
+                type: string
+                format: uuid
+              currency:
+                type: string
+                pattern: '^[A-Z]{3}$'

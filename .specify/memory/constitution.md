@@ -1,6 +1,10 @@
 <!--
 Sync Impact Report (latest first)
 
+v1.3.10 → 1.3.11 — 2026-10-04
+- PATCH: P-05 and P-12 list ADR-0022, introduced by spec 019; no rule changes.
+- Reason: spec 019 (B13, Reports); ADR-0022 extends ADR-0011, ADR-0014 and ADR-0019.
+
 v1.3.9 → 1.3.10 — 2026-10-02
 - PATCH: P-07, P-08 and P-11 list ADR-0021, introduced by spec 017; no rule changes.
 - Reason: spec 017 (B14a, Sync Follow-ups); ADR-0021 extends ADR-0008 and ADR-0017.
@@ -115,7 +119,7 @@ v1.0.0 — 2026-09-19 (ratified)
 
 <!-- "Save Me" is a working codename used as display text only; see P-13. -->
 
-**Version**: 1.3.10 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-02
+**Version**: 1.3.11 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-04
 
 ## Purpose & Precedence
 
@@ -178,7 +182,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-05 Derived balances
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0005](../../docs/adr/0005-derived-balance-with-cache.md), [ADR-0018](../../docs/adr/0018-occurrences-materialised-by-the-server.md) (extends ADR-0008 and ADR-0011)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0005](../../docs/adr/0005-derived-balance-with-cache.md), [ADR-0018](../../docs/adr/0018-occurrences-materialised-by-the-server.md) (extends ADR-0008 and ADR-0011), [ADR-0022](../../docs/adr/0022-reports-are-wallet-views-computed-on-read.md) (extends ADR-0011, ADR-0014 and ADR-0019)
 
 1. A wallet's balance MUST be derived as opening balance + Σ postings.
 2. The cached balance column MUST be recomputed within the same database transaction that changes postings.
@@ -257,7 +261,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-12 Time
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0011](../../docs/adr/0011-time-and-timezones.md), [ADR-0018](../../docs/adr/0018-occurrences-materialised-by-the-server.md) (extends ADR-0008 and ADR-0011), [ADR-0019](../../docs/adr/0019-budget-spending-by-author-computed-on-read.md) (extends ADR-0011 and ADR-0014)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0011](../../docs/adr/0011-time-and-timezones.md), [ADR-0018](../../docs/adr/0018-occurrences-materialised-by-the-server.md) (extends ADR-0008 and ADR-0011), [ADR-0019](../../docs/adr/0019-budget-spending-by-author-computed-on-read.md) (extends ADR-0011 and ADR-0014), [ADR-0022](../../docs/adr/0022-reports-are-wallet-views-computed-on-read.md) (extends ADR-0011, ADR-0014 and ADR-0019)
 
 1. Instants MUST be stored in UTC.
 2. Calendar dates (transaction date, period start, recurring anchor) MUST be stored as `YYYY-MM-DD` with no timezone.
@@ -387,7 +391,7 @@ Every `plan.md` includes this section, filled in before Phase 0 and again after 
 ```markdown
 ## Constitution Check
 
-*Constitution v1.3.10. GATE: before Phase 0 and again after Phase 1.*
+*Constitution v1.3.11. GATE: before Phase 0 and again after Phase 1.*
 
 | Principle | Result | Evidence / justification |
 |---|---|---|
@@ -425,4 +429,4 @@ Every amendment updates the footer's **Last Amended** date and the Sync Impact R
 
 **Consistency** — run `/speckit-analyze` before implementing each feature. Contradictions between this constitution, the ADRs and a feature's spec are defects to resolve before code.
 
-**Version**: 1.3.10 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-02
+**Version**: 1.3.11 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-04

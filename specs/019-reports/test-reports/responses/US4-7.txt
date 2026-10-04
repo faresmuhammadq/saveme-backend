@@ -1,0 +1,167 @@
+===== US4-7 Both members same contribution 2026-10-04T21:13:30.840210Z
+
+GET /wallets/01a108c3-9a0b-730d-873b-0ae7b2917120/reports/by-category
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c3-9a0b-730d-873b-0ae7b2917120",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "expenses": {
+   "total": {
+    "amount_minor": 557000,
+    "currency": "EGP"
+   },
+   "planned": null,
+   "items": [
+    {
+     "label": "groceries",
+     "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+     "system_key": "groceries",
+     "value": {
+      "amount_minor": 350000,
+      "currency": "EGP"
+     },
+     "planned": null
+    },
+    {
+     "label": "transport",
+     "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0",
+     "system_key": "transport",
+     "value": {
+      "amount_minor": 120000,
+      "currency": "EGP"
+     },
+     "planned": null
+    },
+    {
+     "label": "01a108c3-98f4-7426-a199-9379c38a0339",
+     "category_id": "01a108c3-98f4-7426-a199-9379c38a0339",
+     "system_key": null,
+     "value": {
+      "amount_minor": 80000,
+      "currency": "EGP"
+     },
+     "planned": null
+    },
+    {
+     "label": "01a108c3-9979-7310-bc1a-852d3d94a4ca",
+     "category_id": "01a108c3-9979-7310-bc1a-852d3d94a4ca",
+     "system_key": null,
+     "value": {
+      "amount_minor": 7000,
+      "currency": "EGP"
+     },
+     "planned": null
+    }
+   ]
+  },
+  "income": {
+   "total": {
+    "amount_minor": 1000000,
+    "currency": "EGP"
+   },
+   "planned": null,
+   "items": [
+    {
+     "label": "salary",
+     "category_id": "01a0fa05-c344-7014-a053-5688a2879949",
+     "system_key": "salary",
+     "value": {
+      "amount_minor": 1000000,
+      "currency": "EGP"
+     },
+     "planned": null
+    }
+   ]
+  }
+ },
+ "meta": {}
+}
+
+GET /wallets/01a108c3-9a0b-730d-873b-0ae7b2917120/reports/by-category
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c3-9a0b-730d-873b-0ae7b2917120",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "expenses": {
+   "total": {
+    "amount_minor": 557000,
+    "currency": "EGP"
+   },
+   "planned": null,
+   "items": [
+    {
+     "label": "groceries",
+     "category_id": "01a0fa05-c298-7250-b5b2-2c85cc436f70",
+     "system_key": "groceries",
+     "value": {
+      "amount_minor": 350000,
+      "currency": "EGP"
+     },
+     "planned": null
+    },
+    {
+     "label": "transport",
+     "category_id": "01a0fa05-c2b7-70b6-9c70-5e91a88e0da0",
+     "system_key": "transport",
+     "value": {
+      "amount_minor": 120000,
+      "currency": "EGP"
+     },
+     "planned": null
+    },
+    {
+     "label": "01a108c3-98f4-7426-a199-9379c38a0339",
+     "category_id": "01a108c3-98f4-7426-a199-9379c38a0339",
+     "system_key": null,
+     "value": {
+      "amount_minor": 80000,
+      "currency": "EGP"
+     },
+     "planned": null
+    },
+    {
+     "label": "01a108c3-9979-7310-bc1a-852d3d94a4ca",
+     "category_id": "01a108c3-9979-7310-bc1a-852d3d94a4ca",
+     "system_key": null,
+     "value": {
+      "amount_minor": 7000,
+      "currency": "EGP"
+     },
+     "planned": null
+    }
+   ]
+  },
+  "income": {
+   "total": {
+    "amount_minor": 1000000,
+    "currency": "EGP"
+   },
+   "planned": null,
+   "items": [
+    {
+     "label": "salary",
+     "category_id": "01a0fa05-c344-7014-a053-5688a2879949",
+     "system_key": "salary",
+     "value": {
+      "amount_minor": 1000000,
+      "currency": "EGP"
+     },
+     "planned": null
+    }
+   ]
+  }
+ },
+ "meta": {}
+}
+
+CHECK [PASS] shared cash identical for both 

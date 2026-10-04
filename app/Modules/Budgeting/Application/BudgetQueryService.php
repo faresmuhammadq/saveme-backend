@@ -5,18 +5,14 @@ namespace App\Modules\Budgeting\Application;
 use App\Modules\Budgeting\Application\Dto\BudgetPage;
 use App\Modules\Budgeting\Application\Dto\ProgressPage;
 use App\Modules\Budgeting\Domain\BudgetPeriod;
-use App\Modules\Budgeting\Domain\BudgetPeriods;
 use App\Modules\Budgeting\Domain\BudgetProgress;
 use App\Modules\Budgeting\Domain\BudgetRecord;
 use App\Modules\Budgeting\Domain\Ports\BudgetRepository;
 use App\Modules\Budgeting\Domain\Refusals\BudgetNotFound;
 use App\Modules\Budgeting\Domain\Refusals\ProgressCursorMismatch;
 use App\Modules\Budgeting\Domain\SpendingLine;
-use App\Modules\Budgeting\Domain\StartDayEntry;
-use App\Modules\Identity\Application\Profiles\BudgetStartDayQuery;
 use App\Modules\Wallets\Application\Transactions\Dto\SpendingTotal;
 use App\Modules\Wallets\Application\Transactions\SpendingQueryService;
-use DateTimeZone;
 
 /**
  * Reads of a person's budgets and their progress (spec 015, FR-013 to
@@ -29,7 +25,7 @@ final class BudgetQueryService
     public function __construct(
         private readonly BudgetRepository $budgets,
         private readonly SpendingQueryService $spending,
-        private readonly BudgetStartDayQuery $startDays,
+        private readonly BudgetPeriodQuery $periods,
     ) {}
 
     /**
@@ -64,14 +60,12 @@ final class BudgetQueryService
      */
     public function progressList(string $userId, ?string $date, ?array $after, int $limit): ProgressPage
     {
-        $today = $this->todayOf($userId);
-        $entries = $this->entriesOf($userId);
-        $fallback = $this->startDays->currentDayOf($userId);
+        $today = $this->periods->todayOf($userId);
 
         if ($after === null) {
-            $period = BudgetPeriods::containing($date ?? $today, $entries, $fallback);
+            $period = $this->periods->containing($userId, $date ?? $today);
         } else {
-            $period = BudgetPeriods::containing($after['period_start'], $entries, $fallback);
+            $period = $this->periods->containing($userId, $after['period_start']);
 
             if ($period->start !== $after['period_start'] || ($date !== null && ! $period->contains($date))) {
                 throw new ProgressCursorMismatch;
@@ -107,29 +101,10 @@ final class BudgetQueryService
             throw new BudgetNotFound;
         }
 
-        $today = $this->todayOf($userId);
-        $period = BudgetPeriods::containing($date ?? $today, $this->entriesOf($userId), $this->startDays->currentDayOf($userId));
+        $today = $this->periods->todayOf($userId);
+        $period = $this->periods->containing($userId, $date ?? $today);
 
         return BudgetProgress::of($budget, $period, $this->linesFor($userId, $period), $today);
-    }
-
-    /**
-     * Today in the owner's profile timezone (FR-009).
-     */
-    private function todayOf(string $userId): string
-    {
-        return now()->toDateTimeImmutable()->setTimezone(new DateTimeZone($this->startDays->timezoneOf($userId)))->format('Y-m-d');
-    }
-
-    /**
-     * @return list<StartDayEntry>
-     */
-    private function entriesOf(string $userId): array
-    {
-        return array_map(
-            fn (array $entry): StartDayEntry => new StartDayEntry($entry['start_day'], $entry['applies_from']),
-            $this->startDays->entriesOf($userId),
-        );
     }
 
     /**

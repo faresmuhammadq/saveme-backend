@@ -38,7 +38,7 @@ Rules:
 
 ## The entity index
 
-25 entities: the 21 named in the spec, plus **Category Reference**, which exists because categories are user-scoped and shared wallets need to render a partner's category (see [ADR-0012](adr/0012-postings-wallet-and-category-accounts.md) and the Category entry), plus **Audit Entry** and **Operator Notification**, added by spec 007 (Identity & Authentication), plus **Operator Account**, **Recovery Code** and **Re-enrolment Request**, added by spec 018 (Operator Sign-in), plus **Activity Entry**, added by spec 016 (Sharing & Invitations; see [ADR-0020](adr/0020-wallet-activity-beside-the-audit-log.md)).
+26 entities: the 21 named in the spec, plus **Category Reference**, which exists because categories are user-scoped and shared wallets need to render a partner's category (see [ADR-0012](adr/0012-postings-wallet-and-category-accounts.md) and the Category entry), plus **Audit Entry** and **Operator Notification**, added by spec 007 (Identity & Authentication), plus **Operator Account**, **Recovery Code** and **Re-enrolment Request**, added by spec 018 (Operator Sign-in), plus **Activity Entry**, added by spec 016 (Sharing & Invitations; see [ADR-0020](adr/0020-wallet-activity-beside-the-audit-log.md)), plus **Report Range**, added by spec 019 (Reports; see [ADR-0022](adr/0022-reports-are-wallet-views-computed-on-read.md)).
 
 | Entity | Arabic | Context | Role | Persistence | Sync |
 |---|---|---|---|---|---|
@@ -71,6 +71,7 @@ Rules:
 | [Scope Head](#scope-head) | — | Sync | protocol value | derived (the scope counter) | n/a |
 | [Sync Position](#sync-position) | — | Sync | protocol value | derived (a feed page's meta) | n/a |
 | [Report](#report) | — | Reporting | derived value | derived | no |
+| [Report Range](#report-range) | — | Reporting | derived value | derived | no |
 | [Operator Notification](#operator-notification) | — | Admin | root | persisted | no |
 | [Operator Account](#operator-account) | — | Admin | root | persisted | no |
 | [Recovery Code](#recovery-code) | — | Admin | value inside Operator Account | persisted in the account | no |
@@ -100,7 +101,7 @@ Rules:
 | Operator Account, Recovery Code | never — operators only, and never through `/api/v1` |
 | Re-enrolment Request | never — operator-only |
 
-**6 never persisted** — Entitlement, Budget Period, Report (all derived), Sync Cursor (held by the client), Change Row (a read of a feed) and Sync Batch (a request that is gone once answered). The Purge Horizon is a counter on the scope row, not an entity. The Scope Head and the Sync Position are positions read off a scope or a page, not entities either.
+**7 never persisted** — Entitlement, Budget Period, Report, Report Range (all derived), Sync Cursor (held by the client), Change Row (a read of a feed) and Sync Batch (a request that is gone once answered). The Purge Horizon is a counter on the scope row, not an entity. The Scope Head and the Sync Position are positions read off a scope or a page, not entities either.
 
 ---
 
@@ -334,7 +335,7 @@ The calendar window a budget applies to.
 - **Persistence**: derived — computed from the budget's period type plus a date; not stored in MVP
 - **Sync**: no
 - **States**: `single-state`
-- **Referenced by**: budget progress and reports
+- **Referenced by**: budget progress, reports and [Report Range](#report-range)
 - **Notes**: a Budget Period containing a date is derived from the owner's [budget start day history](#profile); a period already begun keeps its dates after a start day change, and a transitional period may be shorter or longer than a month. **the bare word "Period" is never an entity name.** This is the budget window; a subscription's window is the *billing period*, which is a pair of fields on [Subscription](#subscription). Period membership is decided by the transaction's **calendar date**, so every member of a shared wallet sees identical totals regardless of timezone (P-12). Per-month rows with rollover are deferred.
 
 ---
@@ -518,8 +519,26 @@ A computed view over the ledger — spending by category, net worth, a period co
 - **Persistence**: **derived — a query, never a row**
 - **Sync**: no
 - **States**: `single-state`
-- **Referenced by**: —
-- **Notes**: reads Transaction, Posting sums, Category and Budget through their owning modules' query services (P-02). Totals are recomputed from postings and **never read `balance_minor`** (P-05). The viewer's timezone affects only default date ranges; period membership is by calendar date, so members of a shared wallet see identical figures.
+- **Referenced by**: [Report Range](#report-range)
+- **Notes**: reads Transaction, Posting sums, Category and Budget through their owning modules' query services (P-02). Totals are recomputed from postings and **never read `balance_minor`** (P-05). The viewer's timezone affects only default date ranges; period membership is by calendar date, so members of a shared wallet see identical figures. Spec 019 answers:
+  - a **wallet report** counts every member's live transactions in that wallet, identical for every member (ADR-0011 rule 7);
+  - a **cross-wallet report** covers the live wallets the caller currently belongs to, in one currency, with transfers between covered wallets cancelled;
+  - balances are opening balance plus the sum of the wallet's postings, never the cache;
+  - no share or percentage is sent, and `label` is a machine key (a platform `system_key`, a category id or a Budget Period start date), never display text;
+  - planned figures come from scheduled occurrences and are kept apart from actual figures;
+  - a report is computed on read, never cached or synced, and is not gated by a plan.
+
+### Report Range
+
+The inclusive span of calendar dates a report covers.
+
+- **Context**: Reporting
+- **Role**: derived value
+- **Persistence**: **derived — never stored**
+- **Sync**: no
+- **States**: `single-state`
+- **Referenced by**: [Report](#report)
+- **Notes**: either the caller's [Budget Period](#budget-period) containing a date (today in the caller's profile timezone when none is given), or an explicit `from`/`to` of at most 366 days. Transactions belong to it by calendar date; the response echoes the resolved range. A *covered wallet* is a live wallet the caller currently belongs to (any role, archived included) in the report's currency; an *excluded wallet* is one in another currency, listed in `meta.excluded_wallets` and never converted.
 
 ---
 

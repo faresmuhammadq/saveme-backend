@@ -1,0 +1,3 @@
+===== US2-5 Partner's personal category present with its id 2026-10-04T21:13:27.611629Z
+
+CHECK [PASS] f own present 

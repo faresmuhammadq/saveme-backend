@@ -1,0 +1,155 @@
+===== US3-3 Start day 25 buckets run 25th..24th 2026-10-04T21:13:27.861197Z
+
+GET /me
+< 200
+{
+ "data": {
+  "account": {
+   "id": "01a108c3-7dd5-73f0-8b86-9998ce35cef3",
+   "email": "qs019-e-1791148391e@example.test",
+   "email_verified": true,
+   "state": "active",
+   "deletion_scheduled_for": null
+  },
+  "profile": {
+   "id": "01a108c3-7ddd-721f-8770-d05448e07a5a",
+   "version": 1,
+   "change_seq": 1,
+   "created_at": "2026-10-04T21:13:11.901167Z",
+   "updated_at": "2026-10-04T21:13:11.901167Z",
+   "deleted_at": null,
+   "user_id": "01a108c3-7dd5-73f0-8b86-9998ce35cef3",
+   "display_name": "Eman E2E",
+   "locale": "en",
+   "timezone": "Africa/Cairo",
+   "default_currency": "EGP",
+   "default_currency_locked": true,
+   "budget_period_start_day": 1,
+   "budget_period_start_day_from": null
+  }
+ },
+ "meta": {}
+}
+
+PUT /me/profile
+> {"display_name": "Eman E2E", "locale": "en", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 25, "version": 1}
+< 200
+{
+ "data": {
+  "id": "01a108c3-7ddd-721f-8770-d05448e07a5a",
+  "version": 2,
+  "change_seq": 13,
+  "created_at": "2026-10-04T21:13:11.901167Z",
+  "updated_at": "2026-10-04T21:13:28.084584Z",
+  "deleted_at": null,
+  "user_id": "01a108c3-7dd5-73f0-8b86-9998ce35cef3",
+  "display_name": "Eman E2E",
+  "locale": "en",
+  "timezone": "Africa/Cairo",
+  "default_currency": "EGP",
+  "default_currency_locked": true,
+  "budget_period_start_day": 25,
+  "budget_period_start_day_from": "2026-10-25"
+ },
+ "meta": {}
+}
+
+GET /wallets/01a108c3-a9a2-72be-90c3-3cf093e41cab/reports/trend params={'months': 3, 'date': '2026-11-30'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c3-a9a2-72be-90c3-3cf093e41cab",
+  "currency": "EGP",
+  "periods": [
+   {
+    "label": "2026-10-01",
+    "from": "2026-10-01",
+    "to": "2026-10-24"
+   },
+   {
+    "label": "2026-10-25",
+    "from": "2026-10-25",
+    "to": "2026-11-24"
+   },
+   {
+    "label": "2026-11-25",
+    "from": "2026-11-25",
+    "to": "2026-12-24"
+   }
+  ],
+  "income": [
+   {
+    "label": "2026-10-01",
+    "value": {
+     "amount_minor": 10000,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-10-25",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-11-25",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   }
+  ],
+  "expenses": [
+   {
+    "label": "2026-10-01",
+    "value": {
+     "amount_minor": 3000,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-10-25",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-11-25",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   }
+  ],
+  "net": [
+   {
+    "label": "2026-10-01",
+    "value": {
+     "amount_minor": 7000,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-10-25",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   },
+   {
+    "label": "2026-11-25",
+    "value": {
+     "amount_minor": 0,
+     "currency": "EGP"
+    }
+   }
+  ],
+  "planned_income": null,
+  "planned_expenses": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] transitional bucket [{'label': '2026-10-01', 'from': '2026-10-01', 'to': '2026-10-24'}, {'label': '2026-10-25', 'from': '2026-10-25', 'to': '2026-11-24'}, {'label': '2026-11-25', 'from': '2026-11-25', 'to': '2026-12-24'}]

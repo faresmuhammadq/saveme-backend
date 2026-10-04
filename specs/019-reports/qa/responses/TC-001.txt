@@ -1,0 +1,490 @@
+===== TC-001 Wallet summary: figures vs independent model, default range, identity, meta {}, planned null (US1 1-5) 2026-10-04T21:10:24.438762Z
+
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 1300000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 388911,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 911089,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 4000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 200000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -2477,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 712612,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CASH as a: 200 200
+CHECK [PASS] CASH/a default: figures 
+CHECK [PASS] CASH/a default: range 
+CHECK [PASS] CASH/a default: identity 
+CHECK [PASS] CASH/a default: net 
+CHECK [PASS] CASH/a default: no percentages 
+CHECK [PASS] CASH/a default: planned null 
+CHECK [PASS] CASH/a: meta is {} 
+CHECK [PASS] CASH/a: wallet_id echoed + currency 
+GET /wallets/01a108bc-0f5a-76d2-98e7-3544ccd5f1d7/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0f5a-76d2-98e7-3544ccd5f1d7",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 800000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 15000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 785000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 209000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 132500,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 44000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 905500,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] BANK as a: 200 200
+CHECK [PASS] BANK/a default: figures 
+CHECK [PASS] BANK/a default: range 
+CHECK [PASS] BANK/a default: identity 
+CHECK [PASS] BANK/a default: net 
+CHECK [PASS] BANK/a default: no percentages 
+CHECK [PASS] BANK/a default: planned null 
+CHECK [PASS] BANK/a: meta is {} 
+CHECK [PASS] BANK/a: wallet_id echoed + currency 
+GET /wallets/01a108bc-0fe4-76c9-9505-db3406551041/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0fe4-76c9-9505-db3406551041",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 420000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": -420000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 100000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -30000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -350000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CARD as a: 200 200
+CHECK [PASS] CARD/a default: figures 
+CHECK [PASS] CARD/a default: range 
+CHECK [PASS] CARD/a default: identity 
+CHECK [PASS] CARD/a default: net 
+CHECK [PASS] CARD/a default: no percentages 
+CHECK [PASS] CARD/a default: planned null 
+CHECK [PASS] CARD/a: meta is {} 
+CHECK [PASS] CARD/a: wallet_id echoed + currency 
+GET /wallets/01a108bc-10e1-74f4-bbcc-dc09c3ee3393/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-10e1-74f4-bbcc-dc09c3ee3393",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 3000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 3000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 2500,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 6000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 11500,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] ARCH as a: 200 200
+CHECK [PASS] ARCH/a default: figures 
+CHECK [PASS] ARCH/a default: range 
+CHECK [PASS] ARCH/a default: identity 
+CHECK [PASS] ARCH/a default: net 
+CHECK [PASS] ARCH/a default: no percentages 
+CHECK [PASS] ARCH/a default: planned null 
+CHECK [PASS] ARCH/a: meta is {} 
+CHECK [PASS] ARCH/a: wallet_id echoed + currency 
+GET /wallets/01a108bc-1062-7033-940d-842166c31fc9/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-1062-7033-940d-842166c31fc9",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "USD",
+  "income": {
+   "amount_minor": 5000,
+   "currency": "USD"
+  },
+  "expenses": {
+   "amount_minor": 1500,
+   "currency": "USD"
+  },
+  "net": {
+   "amount_minor": 3500,
+   "currency": "USD"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "USD"
+  },
+  "balance_start": {
+   "amount_minor": 20000,
+   "currency": "USD"
+  },
+  "balance_end": {
+   "amount_minor": 23500,
+   "currency": "USD"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] USDW as a: 200 200
+CHECK [PASS] USDW/a default: figures 
+CHECK [PASS] USDW/a default: range 
+CHECK [PASS] USDW/a default: identity 
+CHECK [PASS] USDW/a default: net 
+CHECK [PASS] USDW/a default: no percentages 
+CHECK [PASS] USDW/a default: planned null 
+CHECK [PASS] USDW/a: meta is {} 
+CHECK [PASS] USDW/a: wallet_id echoed + currency 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 1300000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 388911,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 911089,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 4000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 200000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -2477,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 712612,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CASH as b: 200 200
+CHECK [PASS] CASH/b default: figures 
+CHECK [PASS] CASH/b default: range 
+CHECK [PASS] CASH/b default: identity 
+CHECK [PASS] CASH/b default: net 
+CHECK [PASS] CASH/b default: no percentages 
+CHECK [PASS] CASH/b default: planned null 
+CHECK [PASS] CASH/b: meta is {} 
+CHECK [PASS] CASH/b: wallet_id echoed + currency 
+GET /wallets/01a108bc-0fe4-76c9-9505-db3406551041/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0fe4-76c9-9505-db3406551041",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 420000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": -420000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 100000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -30000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -350000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] credit card balances negative, unclamped {"amount_minor": -350000, "currency": "EGP"}
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 1300000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 388911,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 911089,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 4000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 200000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -2477,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 712612,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] CASH worked example (income 1300000 incl confirmed salary, expenses 388911, tin 4000 from partner, tout 200000) 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'date': '2026-10-05'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 1300000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 388911,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 911089,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 4000,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 200000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": -2477,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 712612,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] date=today equals default 
+GET /wallets/01a108bc-0ed0-71ea-9fbd-fc6704eea43d/reports/summary params={'date': '2026-09-17'}
+< 200
+{
+ "data": {
+  "wallet_id": "01a108bc-0ed0-71ea-9fbd-fc6704eea43d",
+  "range": {
+   "from": "2026-09-01",
+   "to": "2026-09-30"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 7000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 97777,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": -90777,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 88300,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -2477,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] date inside another period 

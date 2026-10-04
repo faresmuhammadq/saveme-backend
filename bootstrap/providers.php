@@ -10,6 +10,8 @@ use App\Modules\Budgeting\Http\BudgetingHttpServiceProvider;
 use App\Modules\Budgeting\Infrastructure\BudgetingPersistenceServiceProvider;
 use App\Modules\Identity\Http\IdentityServiceProvider;
 use App\Modules\Identity\Infrastructure\IdentityPersistenceServiceProvider;
+use App\Modules\Reporting\Application\ReportingServiceProvider;
+use App\Modules\Reporting\Http\ReportingHttpServiceProvider;
 use App\Modules\Sharing\Application\SharingServiceProvider;
 use App\Modules\Sharing\Http\SharingHttpServiceProvider;
 use App\Modules\Sharing\Infrastructure\SharingPersistenceServiceProvider;
@@ -35,6 +37,8 @@ return [
     BudgetingPersistenceServiceProvider::class,
     BudgetingServiceProvider::class,
     BudgetingHttpServiceProvider::class,
+    ReportingServiceProvider::class,
+    ReportingHttpServiceProvider::class,
     SharingPersistenceServiceProvider::class,
     SharingServiceProvider::class,
     SharingHttpServiceProvider::class,

@@ -530,6 +530,16 @@ with the ordinary problem body and `code: METHOD_NOT_ALLOWED`.
 
 An **Occurrence** (recurring transactions, [ADR-0018](adr/0018-occurrences-materialised-by-the-server.md)) is the second server-produced syncable record, and unlike a Category Reference it has a write: a `PUT` of its writable members with the last-seen `version`, to confirm, skip or edit it. That `PUT` never creates. An id the server did not mint is `404 NOT_FOUND`, never `201`, and there is no `DELETE`: it goes with its rule. The rule that "a create is a `PUT` with a client id" holds for every record a client creates; the occurrence is not one.
 
+## Reports
+
+A report ([glossary](glossary.md#report)) is one object computed on the read, not a collection: it has no cursor, no `limit` and no change feed, and it is never written or synced (spec 019, [ADR-0022](adr/0022-reports-are-wallet-views-computed-on-read.md)).
+
+- **Range**: `date` (a day inside the wanted Budget Period; default today in the caller's profile timezone) or `from` together with `to` (at most 366 days). The two forms are never combined, and the response echoes the resolved [Report Range](glossary.md#report-range).
+- **Figures**: every amount is Money, `{amount_minor, currency}`. No share or percentage is sent; the client derives it from `value` and `total`.
+- **Series and items**: `{label, value}`, where `label` is a machine key (a platform category's `system_key`, a category id or a Budget Period start date), never display text.
+- **`months`** (trend) is an integer 1 to 12 and is refused outside it, never clamped. Anything else malformed is 400 `INVALID_QUERY_PARAMETER`.
+- **Cross-wallet reports** cover one currency; wallets in other currencies are listed in `meta.excluded_wallets` and never converted.
+
 ## Client version gating
 
 Every request identifies its caller:

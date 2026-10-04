@@ -1,0 +1,51 @@
+===== US1-2 Figures: income 1000000, expenses 350000+120000+80000+7000, net, transfers_out 200000; no deleted 2026-10-04T21:13:24.612306Z
+
+CHECK [PASS] income 
+CHECK [PASS] expenses 557000
+CHECK [PASS] net 
+CHECK [PASS] tout 
+CHECK [PASS] tin 
+GET /wallets/01a108c3-9a0b-730d-873b-0ae7b2917120/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c3-9a0b-730d-873b-0ae7b2917120",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 1000000,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 557000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": 443000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 200000,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 80000,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": 323000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] partner member sees identical figures 

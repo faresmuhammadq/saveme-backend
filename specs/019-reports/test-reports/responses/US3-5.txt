@@ -1,0 +1,92 @@
+===== US3-5 months 0/13/x -> 400 2026-10-04T21:13:28.312403Z
+
+GET /wallets/01a108c3-a9a2-72be-90c3-3cf093e41cab/reports/trend params={'months': 0}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a108c3-be26-7060-a59f-46148e06ef80"
+}
+
+CHECK [PASS] months=0 
+GET /wallets/01a108c3-a9a2-72be-90c3-3cf093e41cab/reports/trend params={'months': 13}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a108c3-be88-715c-982e-3054661f252a"
+}
+
+CHECK [PASS] months=13 
+GET /wallets/01a108c3-a9a2-72be-90c3-3cf093e41cab/reports/trend params={'months': 'x'}
+< 400
+{
+ "type": "http://saveme-backend.test/problems/invalid-query-parameter",
+ "title": "Invalid query parameter",
+ "status": 400,
+ "detail": "A query parameter cannot be used as sent.",
+ "code": "INVALID_QUERY_PARAMETER",
+ "request_id": "01a108c3-bee2-7360-839d-2fda70934ddf"
+}
+
+CHECK [PASS] months=x 
+GET /me
+< 200
+{
+ "data": {
+  "account": {
+   "id": "01a108c3-7dd5-73f0-8b86-9998ce35cef3",
+   "email": "qs019-e-1791148391e@example.test",
+   "email_verified": true,
+   "state": "active",
+   "deletion_scheduled_for": null
+  },
+  "profile": {
+   "id": "01a108c3-7ddd-721f-8770-d05448e07a5a",
+   "version": 2,
+   "change_seq": 13,
+   "created_at": "2026-10-04T21:13:11.901167Z",
+   "updated_at": "2026-10-04T21:13:28.084584Z",
+   "deleted_at": null,
+   "user_id": "01a108c3-7dd5-73f0-8b86-9998ce35cef3",
+   "display_name": "Eman E2E",
+   "locale": "en",
+   "timezone": "Africa/Cairo",
+   "default_currency": "EGP",
+   "default_currency_locked": true,
+   "budget_period_start_day": 25,
+   "budget_period_start_day_from": "2026-10-25"
+  }
+ },
+ "meta": {}
+}
+
+PUT /me/profile
+> {"display_name": "Eman E2E", "locale": "en", "timezone": "Africa/Cairo", "default_currency": "EGP", "budget_period_start_day": 1, "version": 2}
+< 200
+{
+ "data": {
+  "id": "01a108c3-7ddd-721f-8770-d05448e07a5a",
+  "version": 3,
+  "change_seq": 14,
+  "created_at": "2026-10-04T21:13:11.901167Z",
+  "updated_at": "2026-10-04T21:13:28.787799Z",
+  "deleted_at": null,
+  "user_id": "01a108c3-7dd5-73f0-8b86-9998ce35cef3",
+  "display_name": "Eman E2E",
+  "locale": "en",
+  "timezone": "Africa/Cairo",
+  "default_currency": "EGP",
+  "default_currency_locked": true,
+  "budget_period_start_day": 1,
+  "budget_period_start_day_from": "2026-11-01"
+ },
+ "meta": {}
+}
+

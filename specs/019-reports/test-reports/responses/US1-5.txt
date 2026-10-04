@@ -1,0 +1,46 @@
+===== US1-5 Liability wallet: negative balances unclamped 2026-10-04T21:13:26.464937Z
+
+GET /wallets/01a108c3-9b24-7205-8ede-df10e63f5396/reports/summary
+< 200
+{
+ "data": {
+  "wallet_id": "01a108c3-9b24-7205-8ede-df10e63f5396",
+  "range": {
+   "from": "2026-10-01",
+   "to": "2026-10-31"
+  },
+  "currency": "EGP",
+  "income": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "expenses": {
+   "amount_minor": 15000,
+   "currency": "EGP"
+  },
+  "net": {
+   "amount_minor": -15000,
+   "currency": "EGP"
+  },
+  "transfers_in": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "transfers_out": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_start": {
+   "amount_minor": 0,
+   "currency": "EGP"
+  },
+  "balance_end": {
+   "amount_minor": -15000,
+   "currency": "EGP"
+  },
+  "planned": null
+ },
+ "meta": {}
+}
+
+CHECK [PASS] card balance_end -15000 {'amount_minor': -15000, 'currency': 'EGP'}

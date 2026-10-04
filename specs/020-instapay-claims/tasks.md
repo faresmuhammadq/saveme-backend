@@ -177,7 +177,7 @@ description: "Task list for Billing — InstaPay Claims (B11)"
 - [X] T047 Apply the review checklists of plan.md (endpoint review checklist for both operations; security review checklist; `checklists/security.md` items with the reviewer's evidence) and record the result and any exception in plan.md "Implementation notes". Confirm the implementation matches `docs/openapi/paths/instapay.yaml` member for member; any deviation is a contract change → stop and record it.
 - [X] T048 Gates: `dev exec -- composer test:lint`, `test:types`, `test:arch`, `test:suite`, `test:api` (or `composer test`), `dev exec -- vendor/bin/pest tests/Contract/OpenApi --compact`; walk quickstart.md steps 1–5 on the dev stack (Mailpit for the code). State "Seeder: N/A — no reference data (InstaPay prices already seeded by spec 009)" in the commit description.
 - [X] T049 Apidog sync: bundle with `npx @redocly/cli bundle docs/openapi/openapi.yaml -o <scratchpad>/bundle.json`; import with `apidog import --project 1332822 --format openapi --file <scratchpad>/bundle.json --module-map "Personal finance backend API=1363204"`; create or update the project doc **"InstaPay claims & redeem"** with contracts/instapay-api.md "What C11 binds to" and "What the landing page binds to" (web-only claim, uniform answer, base64 receipt ≤ 3 MiB, code format and folding, refusal order, the three new codes, `governing` vs `subscription`, idempotency keys); also update the "Error catalogue" doc (2444506) with the three codes. Record the import counts and doc id for the summary.
-- [ ] T050 Write specs/020-instapay-claims/summary.md (parent writes it)
+- [X] T050 Write specs/020-instapay-claims/summary.md (parent writes it)
 
 ---
 

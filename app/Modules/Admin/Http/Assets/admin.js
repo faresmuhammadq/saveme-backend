@@ -10,6 +10,10 @@
  *   adminDialog      native <dialog> open/close with focus return
  *   adminCopy        copy to clipboard with a short confirmation
  *   adminToasts      the toast stack
+ *   adminCodeInput   six digit boxes over one `one_time_code` field (spec 018, FR-092)
+ *   adminCountdown   seconds until the next 30-second code, from the server's clock
+ *   adminDownload    saves text as a file, client-side
+ *   (livewire:init)  a 401 from a back-office component sends the browser to sign-in
  */
 
 const focusable = (root, selector) => [...root.querySelectorAll(selector)].filter((el) => el.getAttribute('aria-disabled') !== 'true' && ! el.disabled);
@@ -381,4 +385,128 @@ document.addEventListener('alpine:init', () => {
             this.dismiss(toast);
         },
     }));
+
+    // Six boxes that enhance one ordinary field: without JavaScript the field is
+    // all there is, and it submits as `one_time_code` either way.
+    Alpine.data('adminCodeInput', (length = 6) => ({
+        enhanced: false,
+        digits: Array(length).fill(''),
+
+        init() {
+            this.enhanced = true;
+            this.$nextTick(() => this.boxes()[0]?.focus());
+        },
+
+        boxes() {
+            return [...this.$refs.boxes.querySelectorAll('[data-box]')];
+        },
+
+        sync() {
+            this.$refs.field.value = this.digits.join('');
+        },
+
+        onInput(index, event) {
+            const typed = event.target.value.replace(/\D/g, '');
+
+            if (typed.length > 1) {
+                this.fill(typed, index);
+                return;
+            }
+
+            this.digits[index] = typed;
+            event.target.value = typed;
+            this.sync();
+
+            if (typed !== '') {
+                this.boxes()[index + 1]?.focus();
+            }
+        },
+
+        onKeydown(index, event) {
+            const boxes = this.boxes();
+            // Start and end are logical: the boxes read left to right in both languages, like the digits.
+            const moves = { ArrowLeft: -1, ArrowRight: 1 };
+
+            if (event.key === 'Backspace' && this.digits[index] === '' && index > 0) {
+                boxes[index - 1].focus();
+                this.digits[index - 1] = '';
+                boxes[index - 1].value = '';
+                this.sync();
+                event.preventDefault();
+            } else if (event.key in moves) {
+                boxes[index + moves[event.key]]?.focus();
+                event.preventDefault();
+            }
+        },
+
+        onPaste(index, event) {
+            const pasted = (event.clipboardData?.getData('text') ?? '').replace(/\D/g, '');
+
+            if (pasted !== '') {
+                event.preventDefault();
+                this.fill(pasted, 0);
+            }
+        },
+
+        fill(text, from) {
+            const boxes = this.boxes();
+
+            [...text.slice(0, length - from)].forEach((digit, offset) => {
+                this.digits[from + offset] = digit;
+                boxes[from + offset].value = digit;
+            });
+            this.sync();
+            boxes[Math.min(from + text.length, length - 1)].focus();
+        },
+    }));
+
+    Alpine.data('adminCountdown', (serverTime, step = 30) => ({
+        offset: serverTime * 1000 - Date.now(),
+        seconds: step,
+
+        init() {
+            this.tick();
+            setInterval(() => this.tick(), 1000);
+        },
+
+        tick() {
+            const now = Math.floor((Date.now() + this.offset) / 1000);
+            this.seconds = step - (now % step);
+        },
+    }));
+
+    Alpine.data('adminDownload', (text, filename) => ({
+        save() {
+            const link = Object.assign(document.createElement('a'), {
+                href: URL.createObjectURL(new Blob([text], { type: 'text/plain' })),
+                download: filename,
+            });
+            document.body.append(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(link.href);
+        },
+    }));
+});
+
+// A component update refused with 401 (the session ended) sends the browser to
+// step 1 instead of showing an error (spec 018, R-8).
+document.addEventListener('livewire:init', () => {
+    // A dialog opened with showModal() has no `open` attribute in the server's
+    // HTML, so a morph would close it (hiding a validation error it just
+    // received). Keep an open dialog open across updates.
+    window.Livewire.hook('morph.updating', ({ el, toEl }) => {
+        if (el instanceof HTMLDialogElement && el.open) {
+            toEl.setAttribute('open', '');
+        }
+    });
+
+    window.Livewire.hook('request', ({ fail }) => {
+        fail(({ status, preventDefault }) => {
+            if (status === 401) {
+                preventDefault();
+                window.location.assign('/admin/sign-in');
+            }
+        });
+    });
 });

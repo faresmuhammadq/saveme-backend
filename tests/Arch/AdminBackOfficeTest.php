@@ -158,3 +158,47 @@ test('FR-001: Admin views take colours and sizes from the token set, never arbit
 
     expect($hits)->toBe([], "FR-001: use a token utility instead of an arbitrary value:\n".describeHits($hits));
 });
+
+test('P-18 rules 4 and 7: every back-office component extends BackOfficeComponent, except the language switch and the local gallery', function () {
+    $base = 'App\\Modules\\Admin\\Http\\Livewire\\BackOfficeComponent';
+    $exempt = ['App\\Modules\\Admin\\Http\\Livewire\\LocaleSwitcher', 'App\\Modules\\Admin\\Http\\Livewire\\Gallery', $base];
+
+    $offending = array_values(array_filter(
+        appClasses(),
+        fn (string $class): bool => str_starts_with($class, 'App\\Modules\\Admin\\Http\\Livewire\\')
+            && ! str_contains($class, '\\Concerns\\')
+            && ! in_array($class, $exempt, true)
+            && class_exists($class)
+            && is_subclass_of($class, Component::class)
+            && ! is_subclass_of($class, $base),
+    ));
+
+    expect($offending)->toBe([], 'P-18 rule 7: back-office components must extend BackOfficeComponent, which re-checks the session on every update: '.implode(', ', $offending));
+});
+
+test('FR-027: the admin commands are exactly the contracted four, and nothing switches the second factor off', function () {
+    $root = dirname(__DIR__, 2).'/app/Modules/Admin/Http';
+    $signatures = [];
+
+    foreach (glob("{$root}/Console/*.php") ?: [] as $file) {
+        if (preg_match('/\$signature\s*=\s*\'([^\s\']+)/', (string) file_get_contents($file), $matches) === 1) {
+            $signatures[] = $matches[1];
+        }
+    }
+    sort($signatures);
+
+    expect($signatures)->toBe([
+        'admin:expire-reenrolment-requests',
+        'admin:operator:create',
+        'admin:operator:deactivate',
+        'admin:operator:reset-password',
+    ]);
+
+    $names = [];
+    preg_match_all('/->name\(\'([^\']+)\'\)/', (string) file_get_contents("{$root}/routes.php"), $routeNames);
+    $names = [...$signatures, ...$routeNames[1]];
+
+    $switches = array_values(array_filter($names, fn (string $name): bool => preg_match('/disable|two-factor-off|bypass|skip/i', $name) === 1));
+
+    expect($switches)->toBe([], 'FR-027: no route or command may turn the second factor off: '.implode(', ', $switches));
+});

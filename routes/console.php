@@ -25,3 +25,6 @@ Schedule::command('wallets:materialise-occurrences')->hourly()->withoutOverlappi
 
 // Closes pending invitations past their expiry; hourly so the stored status is the truth on the feed (spec 016, R-14).
 Schedule::command('sharing:expire-invitations')->hourly()->withoutOverlapping();
+
+// Closes re-enrolment requests past their 72 hours, so "expired" has an instant (spec 018, R-13).
+Schedule::command('admin:expire-reenrolment-requests')->everyFiveMinutes()->withoutOverlapping();

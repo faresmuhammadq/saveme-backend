@@ -47,7 +47,7 @@
                 @if ($signOutUrl)
                     <form method="POST" action="{{ $signOutUrl }}">
                         @csrf
-                        <x-admin::icon-button type="submit" icon="sign-out" :label="__('admin::shell.sign_out')" size="sm" />
+                        <x-admin::icon-button type="submit" icon="sign-out" :label="__('admin::shell.sign_out')" size="sm" data-test="sign-out" />
                     </form>
                 @endif
             </div>

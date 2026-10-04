@@ -38,7 +38,7 @@ Rules:
 
 ## The entity index
 
-25 entities: the 21 named in the spec, plus **Category Reference**, which exists because categories are user-scoped and shared wallets need to render a partner's category (see [ADR-0012](adr/0012-postings-wallet-and-category-accounts.md) and the Category entry), plus **Audit Entry** and **Operator Notification**, added by spec 007 (Identity & Authentication), plus **Activity Entry**, added by spec 016 (Sharing & Invitations; see [ADR-0020](adr/0020-wallet-activity-beside-the-audit-log.md)).
+25 entities: the 21 named in the spec, plus **Category Reference**, which exists because categories are user-scoped and shared wallets need to render a partner's category (see [ADR-0012](adr/0012-postings-wallet-and-category-accounts.md) and the Category entry), plus **Audit Entry** and **Operator Notification**, added by spec 007 (Identity & Authentication), plus **Operator Account**, **Recovery Code** and **Re-enrolment Request**, added by spec 018 (Operator Sign-in), plus **Activity Entry**, added by spec 016 (Sharing & Invitations; see [ADR-0020](adr/0020-wallet-activity-beside-the-audit-log.md)).
 
 | Entity | Arabic | Context | Role | Persistence | Sync |
 |---|---|---|---|---|---|
@@ -72,6 +72,9 @@ Rules:
 | [Sync Position](#sync-position) | — | Sync | protocol value | derived (a feed page's meta) | n/a |
 | [Report](#report) | — | Reporting | derived value | derived | no |
 | [Operator Notification](#operator-notification) | — | Admin | root | persisted | no |
+| [Operator Account](#operator-account) | — | Admin | root | persisted | no |
+| [Recovery Code](#recovery-code) | — | Admin | value inside Operator Account | persisted in the account | no |
+| [Re-enrolment Request](#re-enrolment-request) | — | Admin | root | persisted | no |
 
 #### What syncs, and how the client gets the rest
 
@@ -80,7 +83,7 @@ Rules:
 - **User scope (4)** — Profile, Device Session, Category, Budget.
 - **Wallet scope (7)** — Wallet, Wallet Member, Category Reference, Transaction, Recurring Rule, Occurrence, Invitation.
 
-**10 persisted but not synced**, and how the client obtains each:
+**12 persisted but not synced**, and how the client obtains each:
 
 | Entity | How the client gets it |
 |---|---|
@@ -94,6 +97,8 @@ Rules:
 | Audit Entry | never — operator-only |
 | Activity Entry | read endpoint (`GET /wallets/{id}/activity`), paged, 90 days |
 | Operator Notification | never — operator-only |
+| Operator Account, Recovery Code | never — operators only, and never through `/api/v1` |
+| Re-enrolment Request | never — operator-only |
 
 **6 never persisted** — Entitlement, Budget Period, Report (all derived), Sync Cursor (held by the client), Change Row (a read of a feed) and Sync Batch (a request that is gone once answered). The Purge Horizon is a counter on the scope row, not an entity. The Scope Head and the Sync Position are positions read off a scope or a page, not entities either.
 
@@ -520,7 +525,7 @@ A computed view over the ledger — spending by category, net worth, a period co
 
 ## Notifications and Admin
 
-Neither context owns any of the 21 named entities. Admin owns one entity added since, [Operator Notification](#operator-notification).
+Neither context owns any of the 21 named entities. Admin owns three entities added since: [Operator Notification](#operator-notification), [Operator Account](#operator-account) (with its [Recovery Codes](#recovery-code)) and [Re-enrolment Request](#re-enrolment-request).
 
 - **Notifications** owns the push registration that binds a device to a [Device Session](#device-session), and notification preferences. Those records will be indexed here when that feature is specced.
 - **Admin** owns admin accounts — a **separate guard**, with no role or admin flag on application users (P-08, ADR-0006) — and records admin actions through its `AdminAuditService` façade, which writes to Identity's one [audit log](#audit-entry). Admin **writes only through other modules' application services**, so back-office actions run the same invariants, authorization and events as app actions.
@@ -536,6 +541,42 @@ A back-office alert telling operators that something needing their attention hap
 - **States**: `single-state`
 - **Referenced by**: —
 - **Notes**: carries identifiers only, **never an address**. Unique per source event, so a redelivered event produces no second notification. Per-operator read state arrives with operator accounts.
+
+### Operator Account
+
+A person who may use the back office: separate from every application [User](#user), on its own session guard.
+
+- **Context**: Admin
+- **Role**: aggregate root
+- **Persistence**: persisted
+- **Sync**: no — operators only, never through `/api/v1`
+- **States**: `awaiting_password_change` → `awaiting_enrolment` → `active`; any non-deactivated state → `awaiting_password_change` (the reset command; an enrolled secret is kept); `active` → `awaiting_enrolment` (an approved re-enrolment); any → `deactivated`
+- **Referenced by**: Re-enrolment Request, Audit Entry (actor and subject)
+- **Notes**: a separate guard with no role on application users; every operator has the same authority in MVP. Email and display name are sealed at rest, the email found by a keyed lookup value. Operators are created only by the command line. Contains ten [Recovery Codes](#recovery-code).
+
+### Recovery Code
+
+One of ten single-use codes that stand in for the one-time code when an operator's device is unavailable. A value inside [Operator Account](#operator-account).
+
+- **Context**: Admin
+- **Role**: value inside Operator Account
+- **Persistence**: persisted in the account (one keyed hash per code, with a used-at instant)
+- **Sync**: no
+- **States**: `unused` → `used`
+- **Referenced by**: —
+- **Notes**: shown once, when issued; never recoverable afterwards by anyone. A new set replaces the old one at once.
+
+### Re-enrolment Request
+
+An operator's request to replace a lost second factor, which needs approval by two other operators.
+
+- **Context**: Admin
+- **Role**: aggregate root
+- **Persistence**: persisted
+- **Sync**: no
+- **States**: `open` → `completed` | `declined` | `expired` | `cancelled`
+- **Referenced by**: Audit Entry (`admin_action` detail)
+- **Notes**: two distinct approvers, neither the requester, each with a reason; open for 72 hours. Completion clears the requester's secret and recovery codes and ends their sessions.
 
 ---
 

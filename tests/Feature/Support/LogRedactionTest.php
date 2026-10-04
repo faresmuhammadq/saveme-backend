@@ -34,3 +34,26 @@ test('sensitive keys are redacted at every depth and level', function () {
 
     expect($handler->hasRecordThatContains('hunter2', Level::Debug))->toBeFalse();
 });
+
+test('back-office one-time codes, recovery codes and setup keys are redacted too', function () {
+    $handler = new TestHandler;
+    Log::channel('single')->getLogger()->pushHandler($handler);
+
+    Log::channel('single')->info('event', [
+        'one_time_code' => '123456',
+        'recovery_code' => 'ABCDE-FGHJK',
+        'setup_key' => 'ABCD EFGH',
+        'otpauth' => 'otpauth://totp/x',
+        'form' => ['one_time_code' => '654321'],
+        'kept' => 'visible',
+    ]);
+
+    $record = $handler->getRecords()[0];
+
+    expect($record->context['one_time_code'])->toBe('[REDACTED]')
+        ->and($record->context['recovery_code'])->toBe('[REDACTED]')
+        ->and($record->context['setup_key'])->toBe('[REDACTED]')
+        ->and($record->context['otpauth'])->toBe('[REDACTED]')
+        ->and($record->context['form']['one_time_code'])->toBe('[REDACTED]')
+        ->and($record->context['kept'])->toBe('visible');
+});

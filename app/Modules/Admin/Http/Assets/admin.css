@@ -110,6 +110,11 @@
         cursor: pointer;
     }
 
+    /* A utility such as `flex` on a closed dialog would show it; closed means hidden (found when the bell first rendered, spec 018). */
+    dialog:not([open]) {
+        display: none !important;
+    }
+
     dialog::backdrop {
         background: var(--color-scrim);
     }

@@ -16,6 +16,10 @@ return [
         'operate' => 'التشغيل',
         'configure' => 'الإعدادات',
     ],
+    'nav' => [
+        'security' => 'الأمان',
+        'reenrolment_requests' => 'طلبات إعادة التسجيل',
+    ],
     'environment' => [
         'local' => 'محلي',
         'staging' => 'تجريبي',

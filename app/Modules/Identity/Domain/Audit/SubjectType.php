@@ -11,4 +11,5 @@ enum SubjectType: string
     case Wallet = 'wallet';
     case Session = 'session';
     case Subscription = 'subscription';
+    case Operator = 'operator';
 }

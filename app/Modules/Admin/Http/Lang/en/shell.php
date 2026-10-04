@@ -16,6 +16,10 @@ return [
         'operate' => 'Operate',
         'configure' => 'Configure',
     ],
+    'nav' => [
+        'security' => 'Security',
+        'reenrolment_requests' => 'Re-enrolment requests',
+    ],
     'environment' => [
         'local' => 'Local',
         'staging' => 'Staging',

@@ -11,5 +11,8 @@
     :sign-out-url="$signOutUrl ?? null"
     :navigation="$navigation ?? null"
 >
+    @auth('operator')
+        <x-slot:notifications><livewire:admin::operator-notification-bell /></x-slot:notifications>
+    @endauth
     {{ $slot }}
 </x-admin::layouts.shell>

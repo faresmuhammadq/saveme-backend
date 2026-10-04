@@ -82,3 +82,22 @@ it('defines every key the back office uses, in both languages', function () {
 it('writes Arabic strings with Western digits only', function () {
     expect(json_encode(adminTranslations('ar'), JSON_UNESCAPED_UNICODE))->toUseWesternDigitsOnly();
 });
+
+it('carries the sign-in, set-up and security strings in both languages', function () {
+    $english = adminTranslations('en');
+    $arabic = adminTranslations('ar');
+
+    foreach (['auth', 'security'] as $file) {
+        expect($english)->toHaveKey($file)->and($arabic)->toHaveKey($file);
+
+        foreach (Arr::dot($english[$file]) as $key => $value) {
+            expect($value)->toBeString()->not->toBe('')
+                ->and(Arr::dot($arabic[$file])[$key] ?? '')->toBeString()->not->toBe('', "ar/{$file}.php: {$key}");
+        }
+    }
+});
+
+it('words the re-enrolment hint with two other operators in both languages', function () {
+    expect(trans('admin::auth.second_factor.hint', ['remaining' => 4], 'en'))->toContain('two other operators')
+        ->and(trans('admin::auth.second_factor.hint', ['remaining' => 4], 'ar'))->toContain('مشغّلَين آخرَين');
+});

@@ -5,15 +5,15 @@ namespace App\Modules\Admin\Http\Livewire;
 use App\Modules\Admin\Application\OperatorNotificationQueryService;
 use App\Modules\Admin\Domain\Notifications\OperatorNotificationView;
 use Illuminate\Contracts\View\View;
-use Livewire\Component;
 
 /**
  * The top bar's notification bell (spec 007, R-14). Reads through Admin's
  * query service and holds only scalars (P-18 rule 5). Mounted in the shell's
- * `notifications` slot by operator sign-in (D2); until then no /admin page
- * renders it, and the gallery shows its markup with sample data.
+ * `notifications` slot by the back-office page layout (spec 018); the gallery
+ * shows its markup with sample data. Like every back-office component it
+ * refuses an update when the session no longer qualifies.
  */
-class OperatorNotificationBell extends Component
+class OperatorNotificationBell extends BackOfficeComponent
 {
     public int $unread = 0;
 

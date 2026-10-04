@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Admin\Infrastructure\Models\OperatorAccount;
 use App\Modules\Identity\Infrastructure\Models\User;
 
 /*
@@ -12,6 +13,11 @@ use App\Modules\Identity\Infrastructure\Models\User;
 | an application user can never hold a browser session — and so can never
 | reach the back office, whose own guard arrives with operator sign-in (D2;
 | constitution P-08 rule 4, P-18 rule 4).
+|
+| The `operator` guard (spec 018, R-5) is a session guard over Operator
+| Accounts, owned by Admin. A Sanctum bearer token authenticates only on
+| `api`, so it can never satisfy `operator`. Sign-in verifies the password
+| and the second factor itself and logs the guard in last.
 |
 | Password reset is Identity's own single-use link flow, not Laravel's broker.
 |
@@ -32,12 +38,22 @@ return [
         'web' => [
             'driver' => 'session',
         ],
+
+        'operator' => [
+            'driver' => 'session',
+            'provider' => 'operators',
+        ],
     ],
 
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
             'model' => User::class,
+        ],
+
+        'operators' => [
+            'driver' => 'eloquent',
+            'model' => OperatorAccount::class,
         ],
     ],
 

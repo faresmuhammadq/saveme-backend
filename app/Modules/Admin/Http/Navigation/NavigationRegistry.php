@@ -32,6 +32,11 @@ class NavigationRegistry
         $this->groups[$key] = new NavigationGroup($key, $labelKey, $order);
     }
 
+    public function has(string $key): bool
+    {
+        return isset($this->entries[$key]);
+    }
+
     /**
      * @throws DuplicateNavigationEntry
      * @throws UnknownNavigationGroup

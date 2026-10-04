@@ -315,6 +315,10 @@ The back office is the only server-rendered interface (constitution P-18), built
 
 - **Audited actions**: a screen uses the `RequiresReason` trait. The action itself is a **protected** method whose last parameter is `AuditReason $reason`, so it cannot run without a reason and the browser cannot call it directly. The public method only calls `$this->requireReason('claim.approve', 'approveClaim', [$claimId])`, and the view renders `<x-admin::reason-prompt action-key="claim.approve" />`.
 - **Full pages**: a full-page Livewire component renders into the shell with `->layout('admin::page', ['title' => …, 'breadcrumbs' => …])`.
+- **Guarded by default** (spec 018): register a new screen's route inside the operator group of `app/Modules/Admin/Http/routes.php` (the `EnsureOperatorSignedIn` group), and make its component extend `BackOfficeComponent`. Together they refuse anyone not fully signed in on the page and on every update through Livewire's shared endpoint; `AdminRouteSurfaceTest` and the arch test fail a screen that skips either. The shell binds the signed-in operator itself; a screen passes no operator or sign-out URL.
+- **Sensitive actions** (spec 018): a screen that must ask for a fresh second-factor code first uses the `RequiresRecentFactor` trait: the public method calls `$this->requireRecentFactor('methodName')`, the work is a **protected** method, and the view renders `<x-admin::factor-prompt />`. It composes with `RequiresReason` (factor first, then reason).
+- **Before sign-in**: the sign-in, set-up and recovery screens are plain Blade forms posted to controllers on the `admin::layouts.auth` layout, not Livewire components, so nothing stateful runs before sign-in completes.
+- **Operators**: they are created only by `admin:operator:create` (and reset or deactivated by its siblings); there is no sign-up, no mailed reset and no way to turn the second factor off.
 - **Gallery**: `/admin/_gallery` shows every primitive in every state. It exists in the local environment only.
 
 ---
@@ -329,7 +333,7 @@ The Pest suites prove each layer. End-to-end checks run a feature's spec against
 | `/speckit-test-by-validate` | Runs the spec's Given/When/Then acceptance scenarios in the browser | `specs/<feature>/test-reports/` |
 | `/speckit-test-by-e2e <csv>` | Runs a CSV of browser steps (`navigate`, `fill`, `click`, `assert_text`…); by default `specs/<feature>/test-cases/e2e.csv` | `specs/<feature>/test-reports/` |
 
-- **Which UI.** The only web UI is the back office. Until operator sign-in (D2) lands, the reachable page is the local gallery at `/admin/_gallery`.
+- **Which UI.** The only web UI is the back office, behind operator sign-in (spec 018): create an operator with `dev admin:operator:create`, then sign in at `/admin`. The local gallery at `/admin/_gallery` stays reachable without signing in.
 - **What to commit.** Markdown reports are committed as the feature's evidence; screenshots are gitignored.
 - **When it runs.** `/speckit-qa-run` is also offered, optionally, after `/speckit-implement`.
 - **The browser.** Tests use the Playwright MCP server, pinned and headless, registered per machine (not in the gitignored `.mcp.json`, which Laravel Boost rewrites):

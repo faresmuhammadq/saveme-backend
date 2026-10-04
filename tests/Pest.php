@@ -1,6 +1,14 @@
 <?php
 
 use App\Http\Api\Envelope;
+use App\Modules\Admin\Domain\Operators\SignInStage;
+use App\Modules\Admin\Domain\Ports\RecoveryCodeHasher;
+use App\Modules\Admin\Domain\Ports\RecoveryCodeStore;
+use App\Modules\Admin\Domain\SecondFactor\RecoveryCode;
+use App\Modules\Admin\Domain\SecondFactor\Totp;
+use App\Modules\Admin\Http\Auth\OperatorSession;
+use App\Modules\Admin\Http\Auth\PendingSignIn;
+use App\Modules\Admin\Infrastructure\Models\OperatorAccount;
 use App\Modules\Billing\Infrastructure\Models\Subscription;
 use App\Modules\Budgeting\Application\BudgetQueryService;
 use App\Modules\Budgeting\Application\BudgetService;
@@ -1288,4 +1296,121 @@ function assertSharedRefusals(string $method, string $uri, array $body, string $
     }
 
     $test->withHeaders([...asCredential($credential), 'X-Client-Version' => '0.0.1'])->json($method, $uri, $body)->assertStatus(426);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Operator sign-in (spec 018)
+|--------------------------------------------------------------------------
+|
+| An operator is made through the factory, which seals through the real
+| sealer. `makeOperator` returns the model with the plain email, password and
+| second-factor secret the test needs to sign in; `signInOperator` puts a
+| full sign-in into the session as the real flow would.
+|
+*/
+
+/**
+ * @param  'enrolled'|'awaiting_password_change'|'awaiting_enrolment'|'deactivated'  $state
+ * @param  array<string, mixed>  $attributes
+ * @return array{operator: OperatorAccount, email: string, password: string, secret: string|null}
+ */
+function makeOperator(string $state = 'enrolled', array $attributes = []): array
+{
+    static $sequence = 0;
+    $sequence++;
+
+    $email = $attributes['email'] ?? "operator{$sequence}@example.test";
+    $password = $attributes['password'] ?? 'a long operator password';
+    $name = $attributes['name'] ?? "Operator {$sequence}";
+    $secret = $state === 'enrolled' ? ($attributes['secret'] ?? random_bytes(20)) : null;
+    unset($attributes['email'], $attributes['password'], $attributes['name'], $attributes['secret']);
+
+    $factory = OperatorAccount::factory()->withEmail($email)->withDisplayName($name)->withPassword($password);
+    $factory = match ($state) {
+        'enrolled' => $factory->enrolled($secret),
+        'awaiting_password_change' => $factory->awaitingPasswordChange($password),
+        'deactivated' => $factory->deactivated(),
+        default => $factory->awaitingEnrolment(),
+    };
+
+    return ['operator' => $factory->create($attributes), 'email' => $email, 'password' => $password, 'secret' => $secret];
+}
+
+/**
+ * Stores a set of recovery codes for the operator and returns them as they
+ * would be typed (XXXXX-XXXXX).
+ *
+ * @return list<string>
+ */
+function giveRecoveryCodes(OperatorAccount $operator, int $count = 10): array
+{
+    $codes = array_map(fn (): RecoveryCode => RecoveryCode::generate(), range(1, $count));
+
+    app(RecoveryCodeStore::class)->replaceSet(
+        $operator->id,
+        array_map(fn (RecoveryCode $code): string => app(RecoveryCodeHasher::class)->hash($code->value), $codes),
+    );
+
+    return array_map(fn (RecoveryCode $code): string => $code->display(), $codes);
+}
+
+/**
+ * The code an authenticator would show, `$offsetSteps` 30-second steps from now.
+ */
+function currentCode(string $secret, int $offsetSteps = 0): string
+{
+    return Totp::codeAt($secret, Totp::stepAt(now()->getTimestamp()) + $offsetSteps);
+}
+
+/**
+ * Signs the operator in as the real flow ends: guard, epoch, limits, proof.
+ */
+function signInOperator(OperatorAccount $operator): void
+{
+    app(OperatorSession::class)->start($operator->id, $operator->refresh()->credential_epoch);
+}
+
+/**
+ * Leaves the session half signed in, at a stage.
+ */
+function signInOperatorPending(OperatorAccount $operator, SignInStage $stage): void
+{
+    app(PendingSignIn::class)->begin($operator->id, $stage, $operator->refresh()->credential_epoch);
+}
+
+/**
+ * The snapshot of one component on a rendered page, as the browser would
+ * send it back to the shared update endpoint.
+ */
+function livewireSnapshot(string $html, string $componentClass): string
+{
+    preg_match_all('/wire:snapshot="([^"]*)"/', $html, $matches);
+
+    foreach ($matches[1] as $encoded) {
+        $snapshot = html_entity_decode($encoded, ENT_QUOTES);
+        $decoded = json_decode($snapshot, true);
+
+        if (is_array($decoded) && str_ends_with((string) ($decoded['memo']['name'] ?? ''), Str::kebab(class_basename($componentClass)))) {
+            return $snapshot;
+        }
+    }
+
+    throw new RuntimeException("No snapshot for {$componentClass} on the page.");
+}
+
+/**
+ * A component update through the shared endpoint, as Livewire's client sends it.
+ *
+ * @param  list<array{method: string, params: list<mixed>, metadata?: array<string, mixed>}>  $calls
+ * @param  array<string, string>  $headers
+ * @param  array<string, mixed>  $updates  property => value, as wire:model sends them
+ */
+function livewireUpdate(string $snapshot, array $calls = [], array $headers = [], array $updates = []): TestResponse
+{
+    return test()->postJson(
+        route('default-livewire.update'),
+        ['components' => [['snapshot' => $snapshot, 'updates' => (object) $updates, 'calls' => $calls]]],
+        ['X-Livewire' => 'true', ...$headers],
+    );
 }

@@ -38,6 +38,8 @@ beforeEach(function () {
 });
 
 test('the bell shows the count and the list, in both languages', function (string $locale) {
+    ['operator' => $operator] = makeOperator();
+    signInOperator($operator);
     app()->setLocale($locale);
 
     Livewire::test(OperatorNotificationBell::class)
@@ -45,6 +47,10 @@ test('the bell shows the count and the list, in both languages', function (strin
         ->assertSee(trans('admin::notifications.kinds.deletion_cancelled_by_sign_in.title', [], $locale))
         ->assertSee('0192f7a0-1c3d-7abc-9f01-2b3c4d5e6f70', false);
 })->with(['en', 'ar']);
+
+test('the bell is refused when nobody is signed in', function () {
+    Livewire::test(OperatorNotificationBell::class)->assertStatus(401);
+});
 
 test('the bell holds only scalars and arrays', function () {
     $properties = (new ReflectionClass(OperatorNotificationBell::class))->getProperties(ReflectionProperty::IS_PUBLIC);

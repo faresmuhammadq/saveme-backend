@@ -38,6 +38,11 @@
         <!-- Test-only Identity keys. Never used outside the test suite. -->
         <env name="IDENTITY_KEYS" value="{&quot;k1&quot;:&quot;aMwpk6RevtyluUTCOCwNrDZHmJNSN+BReF/sq8i+k7s=&quot;}"/>
         <env name="IDENTITY_ACTIVE_KEY" value="k1"/>
+        <!-- Test-only Admin (operator sign-in) keys. Never used outside the test suite. -->
+        <env name="ADMIN_KEYS" value="{&quot;a1&quot;:&quot;Z3VpbGR0ZXN0a2V5LWFkbWluLTAxMjM0NTY3ODkwMTI=&quot;}"/>
+        <env name="ADMIN_ACTIVE_KEY" value="a1"/>
+        <env name="ADMIN_LOOKUP_KEY" value="YWRtaW4tbG9va3VwLXRlc3Qta2V5LTAxMjM0NTY3ODk="/>
+        <env name="ADMIN_CODE_KEY" value="YWRtaW4tY29kZS10ZXN0LWtleS0wMTIzNDU2Nzg5MDE="/>
         <env name="IDENTITY_LOOKUP_KEY" value="u1sMe5sEXD7vfBN9AnDfCC1RlB/NpuNcIQIBlFzUidA="/>
         <env name="ADMIN_NOTIFICATION_RECIPIENTS" value=""/>
         <env name="BROADCAST_CONNECTION" value="null"/>

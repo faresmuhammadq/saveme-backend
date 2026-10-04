@@ -212,6 +212,12 @@ There is no blanket claim here, because a blanket claim collapses under one ques
 | Device installation identifier | none | by owner's sessions only | nobody through any endpoint |
 | Sign-in failure counter | none (keyed by lookup value) | by lookup value | nobody through any endpoint |
 | Operator notification | none, carrying identifiers only | yes | operators |
+| Operator email | encrypted under Admin's keyring, with a keyed lookup value beside it | by lookup value only | operators |
+| Operator display name | encrypted | no | operators |
+| Operator password | argon2id hash | no | nobody, ever, at any level of privilege |
+| Second-factor secret | encrypted | no | nobody after the enrolment display |
+| Recovery codes | keyed hash | by hash | nobody after the one display |
+| Operator sign-in failure counter | none (keyed by lookup value) | by lookup value | nobody through any endpoint |
 
 **Rules**
 
@@ -447,7 +453,7 @@ Identity already owns users, credentials and sessions, which is where most recor
 | `event` | enum | from [the vocabulary](#what-is-recorded), and nothing else |
 | `actor_type` | enum | `user` \| `operator` \| `system` |
 | `actor_id` | uuid, nullable | null only for `system` |
-| `subject_type` | enum | `user` \| `wallet` \| `session` \| `subscription` |
+| `subject_type` | enum | `user` \| `wallet` \| `session` \| `subscription` \| `operator` |
 | `subject_id` | uuid, nullable | null only for `sign_in_failed` and `lockout_applied` on an unregistered address |
 | `request_id` | uuid | correlates the entry with the server's logs |
 | `origin` | string, nullable | coarse origin of the request |
@@ -468,6 +474,8 @@ The vocabulary is **fixed**. "Log security events" is not a rule anybody can che
 | Billing | `entitlement_changed` | Billing |
 | Departure | `export_requested`, `export_delivered`, `deletion_requested`, `deletion_cancelled`, `deletion_completed` | Identity |
 | Privileged | `admin_action`, `audit_read` | Admin |
+
+Access, Sessions and Credentials events whose subject is an operator (`subject_type = operator`) are written by Admin, through Identity's audit service; Identity writes them for users.
 
 The Sharing events are written by Wallets, not Sharing: every membership change goes through `WalletService`, so the module that performs the act records it (spec 010, Clarifications), and each event still has exactly one writer.
 
@@ -517,6 +525,12 @@ The back office is not a second way into user data with a weaker lock.
 - Enrolment is **mandatory**. An operator account that has not enrolled can do nothing at all.
 - A correct password alone is refused: `401 TWO_FACTOR_REQUIRED` when the factor is absent, `401 TWO_FACTOR_INVALID` when it is wrong.
 - An operator acts **through other modules' application services**, so the same invariants, authorization and events apply to a back-office action as to a user's own. There is no direct-write path and no read-only exception.
+
+**Sessions and re-confirmation**
+
+- An operator session ends after **30 minutes without a request** and **12 hours after sign-in**, whichever comes first; it also ends on sign-out, deactivation, a completed re-enrolment, or a password change made elsewhere. The check happens on every request, with no cached answer.
+- A sensitive act (changing the password, regenerating recovery codes, linking an authenticator, approving or declining a re-enrolment) needs a second-factor proof from the **last 10 minutes**.
+- Operators are **created only from the command line**; there is no public sign-up and no mailed password reset.
 
 Time-based codes need no messaging channel, which matters: the messaging channel is often the thing an attacker already controls.
 
@@ -624,6 +638,7 @@ FR-038a requires every rule in this baseline to be expressible as a check a revi
 - [ ] F4 — An operator acting on a user's behalf is distinguishable from the user acting alone.
 - [ ] F5 — No new event name was invented locally; a genuinely new event was added to the vocabulary in the same change.
 - [ ] F6 — Nothing writes to a second audit store.
+- [ ] F7 — Operator access is guarded on every request, including component updates.
 
 ### G. Retention and departure
 

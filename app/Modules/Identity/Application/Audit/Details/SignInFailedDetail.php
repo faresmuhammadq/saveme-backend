@@ -9,15 +9,21 @@ namespace App\Modules\Identity\Application\Audit\Details;
  */
 final readonly class SignInFailedDetail implements AuditDetail
 {
-    public function __construct(private ?string $lookupPrefix = null) {}
+    /**
+     * @param  string|null  $stage  where a back-office failure happened (password, second_factor, enrolment, reconfirm); application sign-in leaves it out
+     */
+    public function __construct(private ?string $lookupPrefix = null, private ?string $stage = null) {}
 
-    public static function forUnknownAddress(string $lookup): self
+    public static function forUnknownAddress(string $lookup, ?string $stage = null): self
     {
-        return new self(substr($lookup, 0, 8));
+        return new self(substr($lookup, 0, 8), $stage);
     }
 
     public function toArray(): array
     {
-        return $this->lookupPrefix === null ? [] : ['lookup_prefix' => $this->lookupPrefix];
+        return array_filter(
+            ['stage' => $this->stage, 'lookup_prefix' => $this->lookupPrefix],
+            fn (?string $value): bool => $value !== null,
+        );
     }
 }

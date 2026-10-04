@@ -19,6 +19,16 @@ return [
         'screenshot_checked' => 'Screenshot checked',
     ],
     'actions' => [
+        'reenrolment' => [
+            'approve' => [
+                'title' => 'Approve the re-enrolment',
+                'consequence' => 'Records your approval. When a second operator approves, the operator’s authenticator and recovery codes stop working and their sessions end.',
+            ],
+            'decline' => [
+                'title' => 'Decline the re-enrolment',
+                'consequence' => 'Closes the request. The operator can ask again.',
+            ],
+        ],
         'gallery' => [
             'approve' => [
                 'title' => 'Approve the sample',

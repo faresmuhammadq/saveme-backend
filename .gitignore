@@ -43,3 +43,6 @@ yarn-error.log
 # E2E evidence (Spec Kit qa / test-by): reports are committed, screenshots are not.
 specs/*/qa/screenshots/
 specs/*/test-reports/screenshots/
+
+# Playwright MCP session output
+.playwright-mcp/

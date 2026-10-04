@@ -102,6 +102,22 @@ final class AdminAuditService
         ));
     }
 
+    /**
+     * An operator read a payment claim's address or opened its receipt (spec 020,
+     * FR-014a, FR-045): one entry per read, about the claim.
+     */
+    public function claimReadByOperator(string $operatorId, string $claimId, AdminAction $action): void
+    {
+        $this->audit->record(new AuditRecord(
+            AuditEvent::AdminAction,
+            ActorType::Operator,
+            $operatorId,
+            SubjectType::PaymentClaim,
+            $claimId,
+            new AdminActionDetail($action),
+        ));
+    }
+
     private function operatorActs(AuditEvent $event, string $operatorId, AuditDetail $detail): void
     {
         $this->audit->record(new AuditRecord($event, ActorType::Operator, $operatorId, SubjectType::Operator, $operatorId, $detail));

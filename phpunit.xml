@@ -43,6 +43,9 @@
         <env name="ADMIN_ACTIVE_KEY" value="a1"/>
         <env name="ADMIN_LOOKUP_KEY" value="YWRtaW4tbG9va3VwLXRlc3Qta2V5LTAxMjM0NTY3ODk="/>
         <env name="ADMIN_CODE_KEY" value="YWRtaW4tY29kZS10ZXN0LWtleS0wMTIzNDU2Nzg5MDE="/>
+        <!-- Test-only Billing (InstaPay claim sealing) keys. Never used outside the test suite. -->
+        <env name="BILLING_KEYS" value="{&quot;b1&quot;:&quot;Z3VpbGR0ZXN0a2V5LWJpbGxpbmctMDEyMzQ1Njc4OTA=&quot;}"/>
+        <env name="BILLING_ACTIVE_KEY" value="b1"/>
         <env name="IDENTITY_LOOKUP_KEY" value="u1sMe5sEXD7vfBN9AnDfCC1RlB/NpuNcIQIBlFzUidA="/>
         <env name="ADMIN_NOTIFICATION_RECIPIENTS" value=""/>
         <env name="BROADCAST_CONNECTION" value="null"/>

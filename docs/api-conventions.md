@@ -494,6 +494,8 @@ The sync batch carries no key: it is idempotent because every item is, by its id
 
 An opaque client string, 16 to 255 characters from `[A-Za-z0-9._:-]`. The server stores it for **24 hours**, scoped to the authenticated user, against a fingerprint of the method, the path and the canonical request body, together with the status and body it produced.
 
+A public operation (InstaPay claim submission) keys in one anonymous scope; only successful answers are stored; a request still in progress after 60 seconds is treated as abandoned.
+
 | Situation | Outcome |
 |---|---|
 | Key absent on an operation that requires it | `400 IDEMPOTENCY_KEY_REQUIRED` |

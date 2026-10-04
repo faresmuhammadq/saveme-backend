@@ -27,6 +27,7 @@ const GUARDED_SURFACE = [
     'admin/security',
     'admin/security/authenticator',
     'admin/reenrolment-requests',
+    'admin/claims/{claim}/receipt',
     'admin/sign-out',
 ];
 

@@ -1,0 +1,461 @@
+# Plans & Billing — InstaPay claims and redeem codes (spec 020, brief B11).
+#
+# Frozen for the landing page (claim submission) and the C11 client (redeem).
+# Every operation sits under /api/v1 and runs through the shared runtime, so
+# each also documents the shared refusals it can produce.
+#
+# Claim submission is website-only (P-10 rule 3, ADR-0023): it carries no
+# bearer credential, answers 404 NOT_FOUND to any X-Client-Platform other than
+# `web`, and answers identically whether or not the address belongs to an
+# account. Redemption is the in-app "Enter code" (P-10 rule 2).
+#
+# Both operations require Idempotency-Key (docs/api-conventions.md,
+# Idempotency). A claim's key is held in one anonymous scope.
+#
+# Codes REDEEM_CODE_EMAIL_MISMATCH, REDEEM_CODE_USED and REDEEM_CODE_EXPIRED are new in v1.12.
+
+/billing/instapay/claims:
+  post:
+    operationId: submitInstapayClaim
+    tags: [Plans & Billing]
+    summary: Tell us you paid for a plan by InstaPay (website only).
+    description: |
+      Creates a Payment Claim for an operator to review. The answer, its
+      status and the work done are the same whether or not `email` belongs to
+      an account; the address is never echoed. If approved, a Redeem Code is
+      mailed to `email` within the claim's 7 days, to be entered in the app
+      ("Enter code") from an account holding that address. If not reviewed
+      within 7 days the claim expires and a notice is mailed.
+
+      **Website only.** Any `X-Client-Platform` other than `web` gets
+      404 NOT_FOUND: the operation does not exist for the app.
+
+      **Validation** (one 422 VALIDATION_FAILED entry per offending member):
+      `/plan_id` INVALID_ENUM_VALUE when the plan is not active or has no
+      InstaPay price; `/currency` CURRENCY_MISMATCH when it is not the
+      price's currency; `/amount_minor` OUT_OF_RANGE when it is not exactly
+      the price (AMOUNT_NOT_INTEGER when not an integer); `/reference`
+      INVALID_TYPE when, after removing spaces and hyphens and upper-casing,
+      it is not 8–32 characters of A–Z and 0–9; `/email` INVALID_TYPE or
+      OUT_OF_RANGE; `/screenshot/media_type` INVALID_ENUM_VALUE;
+      `/screenshot/data` INVALID_TYPE (not base64, or not an image of the
+      declared type) or OUT_OF_RANGE (over 3 MiB decoded); any other member
+      UNKNOWN_FIELD.
+
+      **Budgets** (429 RATE_LIMITED with Retry-After): 5 valid submissions
+      per hour per origin and 5 per 24 hours per address, counted whether or
+      not the address is registered. A replay spends nothing.
+
+      **Duplicates**: a reference already on another claim is accepted with
+      the same answer; at most one claim per reference is ever approved.
+
+      **Idempotency**: same key and body replays the stored 202 with
+      `Idempotency-Replayed: true`; same key, different body is 409
+      IDEMPOTENCY_KEY_REUSED; the original still running is 409
+      IDEMPOTENCY_REQUEST_IN_PROGRESS with Retry-After. A refused request is
+      not stored, so it may be corrected and resent with the same key.
+
+      The receipt image is stored encrypted, shown only to operators, never
+      logged, and deleted 90 days after the claim closes.
+    security: []
+    parameters:
+      - &idempotencyKey
+        $ref: '../components/headers.yaml#/components/parameters/IdempotencyKey'
+      - &acceptLanguage
+        $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - &correlationId
+        $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - &clientPlatform
+        $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - &clientVersion
+        $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ClaimRequest'
+          examples:
+            withScreenshot:
+              summary: Plus · Yearly, with a PNG screenshot (data shortened)
+              value:
+                email: mona@example.com
+                plan_id: 0192f7a0-0000-7000-8000-0000000000c3
+                amount_minor: 129000
+                currency: EGP
+                reference: '4815 1623 4211'
+                screenshot:
+                  media_type: image/png
+                  data: iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==
+            withoutScreenshot:
+              summary: Plus · Monthly, no screenshot
+              value:
+                email: karim@example.com
+                plan_id: 0192f7a0-0000-7000-8000-0000000000c2
+                amount_minor: 14900
+                currency: EGP
+                reference: IPN-20261005-7731
+    responses:
+      '202':
+        description: |
+          Received for review. Identical in status and members for a
+          registered and an unregistered address.
+        headers:
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+          Idempotency-Replayed:
+            $ref: '../components/headers.yaml#/components/headers/IdempotencyReplayed'
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/ClaimReceipt'
+                    meta:
+                      type: object
+                      additionalProperties: false
+            examples:
+              received:
+                summary: A claim received for review
+                value:
+                  data:
+                    id: 0192f7c1-2a3b-7c4d-8e5f-6a7b8c9d0e1f
+                    status: submitted
+                    plan:
+                      id: 0192f7a0-0000-7000-8000-0000000000c3
+                      name: بلس · سنوي
+                    amount:
+                      amount_minor: 129000
+                      currency: EGP
+                    expires_at: '2026-10-12T10:15:00.000000Z'
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/billing/redeem:
+  post:
+    operationId: redeemCode
+    tags: [Plans & Billing]
+    summary: Enter a redeem code to attach a plan to the signed-in account.
+    description: |
+      The in-app "Enter code" (P-10 rule 2). The code was mailed after an
+      operator approved an InstaPay claim. It is single use, valid 30 days,
+      and redeemable only by a signed-in, verified account whose address is
+      the address the code was sent to.
+
+      **Format**: 16 characters of Crockford base32 (0–9 and A–Z without I,
+      L, O, U), mailed as `XXXX-XXXX-XXXX-XXXX`. Accepted in any case, with
+      or without hyphens or spaces; `O` is read as `0`, `I` and `L` as `1`.
+      Anything else is 422 VALIDATION_FAILED at `/code` with field code
+      INVALID_TYPE.
+
+      **Effect**: creates one subscription with `provider: instapay` for the
+      claim's plan. Its billing period starts now, or at the end of the
+      account's latest-ending InstaPay subscription if that is later (an
+      early renewal loses no days), and lasts one plan period (lifetime: no
+      end). No other subscription changes. Which subscription governs follows
+      the plan rule: the latest billing-period end wins, no end beats any
+      end. The answer names the redeemed subscription, the governing one and
+      the resulting entitlements, so the app can show which plan now governs.
+
+      **Refusals, in this order**: unknown or revoked code 404 NOT_FOUND;
+      redeemed earlier by this same account 200 with the same subscription;
+      redeemed by another account 409 REDEEM_CODE_USED; past its 30 days 410
+      REDEEM_CODE_EXPIRED; the account's address is not the one the code was
+      sent to 403 REDEEM_CODE_EMAIL_MISMATCH (the message asks the person to
+      sign in with that address and never names it); the account's address
+      not verified 403 EMAIL_NOT_VERIFIED.
+
+      **Budget**: 10 attempts per hour per person (429 RATE_LIMITED), counted
+      after format validation. A replay spends nothing.
+
+      **Idempotency**: same key and body replays the stored 200 with
+      `Idempotency-Replayed: true`; same key, different body is 409
+      IDEMPOTENCY_KEY_REUSED; the original still running is 409
+      IDEMPOTENCY_REQUEST_IN_PROGRESS with Retry-After.
+    parameters:
+      - *idempotencyKey
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RedeemRequest'
+          examples:
+            grouped:
+              summary: As mailed
+              value:
+                code: 7KQ2-MX4D-9TRB-H3WE
+            typed:
+              summary: Typed loosely; read as the same code
+              value:
+                code: 7kq2mx4d9trbh3we
+    responses:
+      '200':
+        description: Redeemed (or already redeemed by this account).
+        headers:
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+          Idempotency-Replayed:
+            $ref: '../components/headers.yaml#/components/headers/IdempotencyReplayed'
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/RedeemResult'
+                    meta:
+                      type: object
+                      additionalProperties: false
+            examples:
+              redeemedGoverns:
+                summary: The InstaPay yearly plan now governs
+                value:
+                  data:
+                    subscription:
+                      id: 0192f7d0-1111-7222-8333-444455556666
+                      plan:
+                        id: 0192f7a0-0000-7000-8000-0000000000c3
+                        name: Plus · Yearly
+                      provider: instapay
+                      status: active
+                      current_period_start: '2026-10-05T12:00:00.000000Z'
+                      current_period_end: '2027-10-05T12:00:00.000000Z'
+                    governing:
+                      plan:
+                        id: 0192f7a0-0000-7000-8000-0000000000c3
+                        name: Plus · Yearly
+                      provider: instapay
+                      status: active
+                      current_period_start: '2026-10-05T12:00:00.000000Z'
+                      current_period_end: '2027-10-05T12:00:00.000000Z'
+                      grace_until: null
+                      auto_renew: false
+                    entitlements:
+                      plan:
+                        id: 0192f7a0-0000-7000-8000-0000000000c3
+                        name: Plus · Yearly
+                      features:
+                        sharing.enabled: true
+                        sharing.max_members_per_wallet: 5
+                        export.enabled: true
+                        reports.advanced: true
+                        wallets.max: null
+                  meta: {}
+              playStillGoverns:
+                summary: A Play yearly subscription ending later keeps governing
+                value:
+                  data:
+                    subscription:
+                      id: 0192f7d0-1111-7222-8333-444455557777
+                      plan:
+                        id: 0192f7a0-0000-7000-8000-0000000000c2
+                        name: Plus · Monthly
+                      provider: instapay
+                      status: active
+                      current_period_start: '2026-10-05T12:00:00.000000Z'
+                      current_period_end: '2026-11-05T12:00:00.000000Z'
+                    governing:
+                      plan:
+                        id: 0192f7a0-0000-7000-8000-0000000000c3
+                        name: Plus · Yearly
+                      provider: google_play
+                      status: active
+                      current_period_start: '2026-01-10T08:00:00.000000Z'
+                      current_period_end: '2027-01-10T08:00:00.000000Z'
+                      grace_until: null
+                      auto_renew: true
+                    entitlements:
+                      plan:
+                        id: 0192f7a0-0000-7000-8000-0000000000c3
+                        name: Plus · Yearly
+                      features:
+                        sharing.enabled: true
+                        sharing.max_members_per_wallet: 5
+                        export.enabled: true
+                        reports.advanced: true
+                        wallets.max: null
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '410':
+        $ref: '../components/responses.yaml#/components/responses/Gone'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+components:
+  schemas:
+    ClaimRequest:
+      type: object
+      required: [email, plan_id, amount_minor, currency, reference]
+      additionalProperties: false
+      properties:
+        email:
+          type: string
+          maxLength: 254
+          description: |
+            Where the redeem code will be mailed. Normalised (trimmed, NFKC,
+            lower-cased) as at registration. Need not belong to an account
+            yet; the code is redeemed from an account holding this address.
+          examples: [mona@example.com]
+        plan_id:
+          type: string
+          format: uuid
+          description: An active plan with an InstaPay price (see `GET /plans`, `prices[].channel = instapay`).
+        amount_minor:
+          type: integer
+          minimum: 0
+          description: Exactly the plan's InstaPay price, in minor units.
+          examples: [129000]
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+          description: The InstaPay price's currency.
+          examples: [EGP]
+        reference:
+          type: string
+          minLength: 8
+          maxLength: 64
+          description: |
+            The InstaPay transaction reference. Spaces and hyphens are removed
+            and letters upper-cased; the result must be 8–32 characters of
+            A–Z and 0–9.
+          examples: ['4815 1623 4211']
+        screenshot:
+          $ref: '#/components/schemas/ClaimScreenshot'
+
+    ClaimScreenshot:
+      type: object
+      description: Optional image of the transfer confirmation. Never logged; operators only.
+      required: [media_type, data]
+      additionalProperties: false
+      properties:
+        media_type:
+          type: string
+          enum: [image/jpeg, image/png, image/webp]
+        data:
+          type: string
+          contentEncoding: base64
+          description: Standard base64 (RFC 4648 §4), no line breaks; at most 3 MiB once decoded.
+          maxLength: 4194304
+
+    ClaimReceipt:
+      type: object
+      description: What the website shows after submission. Carries no address and no reference.
+      required: [id, status, plan, amount, expires_at]
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Quote it to support.
+        status:
+          type: string
+          enum: [submitted]
+        plan:
+          $ref: './billing.yaml#/components/schemas/PlanRef'
+        amount:
+          $ref: '../components/schemas.yaml#/components/schemas/Money'
+        expires_at:
+          type: string
+          format: date-time
+          description: When the claim expires if not reviewed (7 days after submission).
+
+    RedeemRequest:
+      type: object
+      required: [code]
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+          minLength: 1
+          maxLength: 64
+          description: The mailed code, `XXXX-XXXX-XXXX-XXXX`; case, hyphens and spaces are ignored.
+          examples: [7KQ2-MX4D-9TRB-H3WE]
+
+    RedeemedSubscription:
+      type: object
+      description: The subscription this redemption created.
+      required: [id, plan, provider, status, current_period_start, current_period_end]
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+        plan:
+          $ref: './billing.yaml#/components/schemas/PlanRef'
+        provider:
+          type: string
+          enum: [instapay]
+        status:
+          type: string
+          enum: [active, grace, expired, revoked]
+          description: '`active` on a first redemption; a repeat by the same account reports the subscription as it now stands.'
+        current_period_start:
+          type: string
+          format: date-time
+          description: Now, or the end of the account's latest InstaPay billing period if later.
+        current_period_end:
+          type: [string, 'null']
+          format: date-time
+          description: Null for a lifetime plan.
+
+    RedeemResult:
+      type: object
+      required: [subscription, governing, entitlements]
+      additionalProperties: false
+      properties:
+        subscription:
+          $ref: '#/components/schemas/RedeemedSubscription'
+        governing:
+          $ref: './billing.yaml#/components/schemas/MySubscription'
+        entitlements:
+          $ref: './billing.yaml#/components/schemas/EntitlementSummary'

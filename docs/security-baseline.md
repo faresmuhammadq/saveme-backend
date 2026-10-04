@@ -16,6 +16,7 @@ This document **states rules and builds nothing**. Every rule here is implemente
 | What is protected at rest, the address lookup value, keys and rotation | Identity |
 | The audit log and its application service | Identity |
 | Messages from the payment provider | Billing |
+| InstaPay claims, redeem codes, idempotency records | Billing |
 | Retention horizons and the purge that enforces them | Sync |
 | Operator accounts, the second factor and its recovery | Admin |
 | Transport, and what must never be logged or disclosed | every feature, checked per endpoint |
@@ -134,6 +135,8 @@ The routes that send mail or create accounts carry their own budgets, independen
 | Invitation create | 20 per 24 hours per inviter, counted for applied creates only (429) |
 | Invitation mail | 5 per 24 hours per address lookup value, across all inviters; silent: the invitation is created and answered the same, no mail is sent |
 | Invitation token operations (preview, accept, decline) | 30 per hour per person (429) |
+| InstaPay claim | 5 per hour per origin and 5 per 24 hours per address lookup value, registered or not (429) |
+| Redeem code | 10 per hour per person (429) |
 
 **Owned by**: Identity.
 
@@ -147,6 +150,7 @@ Four surfaces can be used to ask "does this address have an account here". Three
 | Password reset request | `202` — "if that address is registered, a link is on its way" |
 | Registration | **not uniform**: `202` for a new address, `409 EMAIL_ALREADY_REGISTERED` for one that has an account, with no mail |
 | Invitation | `201` (or `200` for a replay) with the same body whether or not the address is registered; only the mail differs |
+| InstaPay claim | `202` with the same members whether or not the address is registered; submission performs no account lookup |
 
 **Rules**
 
@@ -218,6 +222,12 @@ There is no blanket claim here, because a blanket claim collapses under one ques
 | Second-factor secret | encrypted | no | nobody after the enrolment display |
 | Recovery codes | keyed hash | by hash | nobody after the one display |
 | Operator sign-in failure counter | none (keyed by lookup value) | by lookup value | nobody through any endpoint |
+| Claim address | encrypted under Billing's keyring with the keyed lookup value beside it; erased 90 days after the claim closes | by lookup value only | operators, with a recorded read |
+| Receipt image | encrypted under Billing's keyring, private disk; erased 90 days after the claim closes | no | operators through a 5-minute signed link, each view recorded |
+| Claim reference, amount, plan, status, reject reason | none at rest | yes | operators |
+| Review note | none at rest; never mailed or audited | no | operators only |
+| Redeem code | hash | by hash | nobody after issue |
+| Idempotency record | none at rest, holds the answer only (no secret) | by scope and key | nobody through any endpoint |
 
 **Rules**
 
@@ -364,6 +374,10 @@ Every period is a number. Nothing here says "a reasonable time", because a revie
 | Audit entries | 400 days | this document |
 | Application logs | 30 days | [the observability decision](adr/0010-observability.md) |
 | Idempotency records | 24 hours | [the API conventions](api-conventions.md) |
+| Receipt image and claim address | 90 days after the claim closes | this document |
+| Payment claim and redeem code records | 400 days after the claim closes | this document |
+| Unreviewed claim | expires after 7 days | this document |
+| Redeem code | valid 30 days | this document |
 | Password reset token | 60 minutes | this document |
 | Address verification token | 24 hours | this document |
 | Provider message identifiers | 24 hours | this document |
@@ -459,7 +473,7 @@ Identity already owns users, credentials and sessions, which is where most recor
 | `event` | enum | from [the vocabulary](#what-is-recorded), and nothing else |
 | `actor_type` | enum | `user` \| `operator` \| `system` |
 | `actor_id` | uuid, nullable | null only for `system` |
-| `subject_type` | enum | `user` \| `wallet` \| `session` \| `subscription` \| `operator` |
+| `subject_type` | enum | `user` \| `wallet` \| `session` \| `subscription` \| `operator` \| `payment_claim` |
 | `subject_id` | uuid, nullable | null only for `sign_in_failed` and `lockout_applied` on an unregistered address |
 | `request_id` | uuid | correlates the entry with the server's logs |
 | `origin` | string, nullable | coarse origin of the request |
@@ -477,9 +491,11 @@ The vocabulary is **fixed**. "Log security events" is not a rule anybody can che
 | Sessions | `session_issued`, `session_revoked` | Identity |
 | Credentials | `password_changed`, `address_change_requested`, `address_verified` | Identity |
 | Sharing | `membership_granted`, `membership_revoked`, `role_changed` | Wallets |
-| Billing | `entitlement_changed` | Billing |
+| Billing | `entitlement_changed`, `claim_reviewed` | Billing |
 | Departure | `export_requested`, `export_delivered`, `deletion_requested`, `deletion_cancelled`, `deletion_completed` | Identity |
 | Privileged | `admin_action`, `audit_read` | Admin |
+
+Operator reads of a claim's address or receipt are admin_action entries (subject type payment_claim) written by Admin.
 
 Access, Sessions and Credentials events whose subject is an operator (`subject_type = operator`) are written by Admin, through Identity's audit service; Identity writes them for users.
 
@@ -535,7 +551,7 @@ The back office is not a second way into user data with a weaker lock.
 **Sessions and re-confirmation**
 
 - An operator session ends after **30 minutes without a request** and **12 hours after sign-in**, whichever comes first; it also ends on sign-out, deactivation, a completed re-enrolment, or a password change made elsewhere. The check happens on every request, with no cached answer.
-- A sensitive act (changing the password, regenerating recovery codes, linking an authenticator, approving or declining a re-enrolment) needs a second-factor proof from the **last 10 minutes**.
+- A sensitive act (changing the password, regenerating recovery codes, linking an authenticator, approving or declining a re-enrolment, approving or rejecting a payment claim, revoking a redeem code) needs a second-factor proof from the **last 10 minutes**.
 - Operators are **created only from the command line**; there is no public sign-up and no mailed password reset.
 
 Time-based codes need no messaging channel, which matters: the messaging channel is often the thing an attacker already controls.

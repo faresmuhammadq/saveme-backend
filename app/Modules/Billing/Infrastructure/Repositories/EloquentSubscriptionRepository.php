@@ -25,6 +25,18 @@ final class EloquentSubscriptionRepository implements SubscriptionRepository
         return $subscription === null ? null : self::record($subscription);
     }
 
+    public function lockForUser(string $userId): array
+    {
+        return $this->records(Subscription::query()->where('user_id', $userId)->lockForUpdate());
+    }
+
+    public function findByProviderRef(string $provider, string $providerRef): ?SubscriptionRecord
+    {
+        $subscription = Subscription::query()->where('provider', $provider)->where('provider_ref', $providerRef)->first();
+
+        return $subscription === null ? null : self::record($subscription);
+    }
+
     public function create(array $row): SubscriptionRecord
     {
         $subscription = Subscription::query()->create([...$row, 'source_meta' => []]);
@@ -59,6 +71,22 @@ final class EloquentSubscriptionRepository implements SubscriptionRepository
     {
         return $this->records(Subscription::query()->where('status', 'grace')
             ->whereNotNull('grace_until')->where('grace_until', '<=', $now->format(self::INSTANT)));
+    }
+
+    public function dueForReminder(DateTimeImmutable $now, int $days): array
+    {
+        return $this->records(Subscription::query()->where('provider', 'instapay')->where('status', 'active')
+            ->whereNull('renewal_reminded_at')
+            ->where('current_period_end', '>', $now->format(self::INSTANT))
+            ->where('current_period_end', '<=', $now->modify("+{$days} days")->format(self::INSTANT)));
+    }
+
+    public function markReminded(string $id, DateTimeImmutable $at): bool
+    {
+        return Subscription::query()->whereKey($id)->whereNull('renewal_reminded_at')->toBase()->update([
+            'renewal_reminded_at' => $at->format(self::INSTANT),
+            'updated_at' => $at->format(self::INSTANT),
+        ]) === 1;
     }
 
     /**

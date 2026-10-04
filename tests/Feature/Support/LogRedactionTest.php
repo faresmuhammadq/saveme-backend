@@ -57,3 +57,24 @@ test('back-office one-time codes, recovery codes and setup keys are redacted too
         ->and($record->context['form']['one_time_code'])->toBe('[REDACTED]')
         ->and($record->context['kept'])->toBe('visible');
 });
+
+test('InstaPay receipts, screenshots, redeem codes and sealed addresses are redacted too', function () {
+    $handler = new TestHandler;
+    Log::channel('single')->getLogger()->pushHandler($handler);
+
+    Log::channel('single')->info('event', [
+        'screenshot' => ['media_type' => 'image/png', 'data' => 'iVBOR'],
+        'receipt' => 'bytes',
+        'redeem_code' => '7KQ2-MX4D-9TRB-H3WE',
+        'address_sealed' => 'v1.b1.xyz',
+        'kept' => 'visible',
+    ]);
+
+    $record = $handler->getRecords()[0];
+
+    expect($record->context['screenshot'])->toBe('[REDACTED]')
+        ->and($record->context['receipt'])->toBe('[REDACTED]')
+        ->and($record->context['redeem_code'])->toBe('[REDACTED]')
+        ->and($record->context['address_sealed'])->toBe('[REDACTED]')
+        ->and($record->context['kept'])->toBe('visible');
+});

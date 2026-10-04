@@ -62,3 +62,7 @@ The brief predates decisions ratified since. These collide with it; the ratified
 ## Inherited from B14a (spec 017)
 
 - **Any path that changes or erases a display name must publish `ProfileUpdated` with `display_name` in `changedFields`.** Wallets listens to it and re-sends the person's live memberships on every wallet feed (a queued job, ADR-0021), so partners see the new name, or none after an erasure. An erasure that clears the name without the event would leave the old name on partners' phones.
+
+## Inherited from B11 (spec 020)
+
+- **A redeemer's id stays on `redeem_codes` until the 400-day delete.** It is an identifier only, with no FK; the subscription the redemption created follows B15's rules. Claims hold no user id (only a sealed address, erased 90 days after closing), so there is nothing else of the person to purge there.

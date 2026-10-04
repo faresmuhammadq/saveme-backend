@@ -9,6 +9,7 @@ use App\Modules\Admin\Domain\SecondFactor\Totp;
 use App\Modules\Admin\Http\Auth\OperatorSession;
 use App\Modules\Admin\Http\Auth\PendingSignIn;
 use App\Modules\Admin\Infrastructure\Models\OperatorAccount;
+use App\Modules\Billing\Infrastructure\Models\Plan;
 use App\Modules\Billing\Infrastructure\Models\Subscription;
 use App\Modules\Budgeting\Application\BudgetQueryService;
 use App\Modules\Budgeting\Application\BudgetService;
@@ -1477,4 +1478,93 @@ function livewireUpdate(string $snapshot, array $calls = [], array $headers = []
         ['components' => [['snapshot' => $snapshot, 'updates' => (object) $updates, 'calls' => $calls]]],
         ['X-Livewire' => 'true', ...$headers],
     );
+}
+
+/*
+|--------------------------------------------------------------------------
+| InstaPay claims (spec 020)
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * A real image of the given type; with $size, padded with trailing zero bytes
+ * to exactly that many bytes (trailing data does not stop it parsing).
+ */
+function receiptBytes(string $type = 'png', ?int $size = null): string
+{
+    $image = imagecreatetruecolor(1, 1);
+    ob_start();
+    match ($type) {
+        'jpeg' => imagejpeg($image),
+        'webp' => imagewebp($image),
+        default => imagepng($image),
+    };
+    $bytes = (string) ob_get_clean();
+
+    return $size === null ? $bytes : str_pad($bytes, $size, "\0");
+}
+
+function receiptBase64(string $type = 'png', ?int $size = null): string
+{
+    return base64_encode(receiptBytes($type, $size));
+}
+
+/**
+ * The media type for a receiptBytes() type name.
+ */
+function receiptMediaType(string $type = 'png'): string
+{
+    return "image/{$type}";
+}
+
+/**
+ * The id of a seeded plan by its code (spec 009 catalogue).
+ */
+function planIdByCode(string $code = 'plus_yearly'): string
+{
+    return (string) Plan::query()->where('code', $code)->value('id');
+}
+
+/**
+ * A valid claim body for the seeded Plus yearly plan (129,000 EGP minor units).
+ *
+ * @param  array<string, mixed>  $overrides
+ * @return array<string, mixed>
+ */
+function claimBody(array $overrides = []): array
+{
+    return [
+        'email' => 'mona@example.test',
+        'plan_id' => planIdByCode('plus_yearly'),
+        'amount_minor' => 129000,
+        'currency' => 'EGP',
+        'reference' => '4815 1623 4211',
+        ...$overrides,
+    ];
+}
+
+/**
+ * The headers the website sends with a claim.
+ *
+ * @return array<string, string>
+ */
+function claimHeaders(?string $key = null, string $platform = 'web', array $extra = []): array
+{
+    return [
+        ...clientHeaders($platform),
+        'Accept' => 'application/json',
+        'Idempotency-Key' => $key ?? 'claim-'.Str::lower(Str::random(24)),
+        ...$extra,
+    ];
+}
+
+/**
+ * POST /billing/instapay/claims as the website.
+ *
+ * @param  array<string, mixed>  $body
+ * @param  array<string, string>  $headers
+ */
+function submitClaimOverHttp(array $body, array $headers = []): TestResponse
+{
+    return test()->postJson('/api/v1/billing/instapay/claims', $body, [...claimHeaders(), ...$headers]);
 }

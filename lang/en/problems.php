@@ -45,6 +45,9 @@ return [
     'INSECURE_TRANSPORT' => 'This connection is not secure. Use HTTPS.',
     'PROVIDER_SIGNATURE_INVALID' => 'The payment message could not be verified.',
     'EXPORT_IN_PROGRESS' => 'An export is already being prepared. Wait for it to finish.',
+    'REDEEM_CODE_EMAIL_MISMATCH' => 'Sign in with the email address this code was sent to.',
+    'REDEEM_CODE_USED' => 'This code has already been used by another account.',
+    'REDEEM_CODE_EXPIRED' => 'This code has expired. Contact support.',
     'CATEGORY_IN_USE' => 'This category is used by your records, so it can\'t be deleted. Archive it instead.',
     'EMAIL_ALREADY_REGISTERED' => 'You already have an account with this email address. Sign in, or reset your password if you forgot it.',
 

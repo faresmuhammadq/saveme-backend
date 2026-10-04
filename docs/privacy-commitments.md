@@ -90,6 +90,7 @@ One honest limit: if someone was a member and you removed them, whatever their p
 - **When you delete something, it is removed within 90 days.** Not immediately, because your other devices may be offline and need to learn that you deleted it. Once they have, it goes.
 - **When you delete your account, you have 30 days to change your mind.** During that time nothing is lost and you can simply cancel; signing in again also cancels it, and we email you when that happens. After it, your email address, your name and the records only you own are removed, and we destroy the key that would have made your information readable — so even an old backup cannot bring it back.
 - **Our operational records are kept 30 days.** Security events, such as sign-ins and changes to who can see a wallet, are kept 400 days so that we can answer a question about something that happened last year.
+- **If you pay by InstaPay, we keep your transfer screenshot and the email address on your claim only for review, and delete them 90 days after the claim is closed** — rejected, expired, or approved and its code used or expired.
 
 ### العربية
 
@@ -97,6 +98,7 @@ One honest limit: if someone was a member and you removed them, whatever their p
 - **عندما تحذف شيئاً يُزال خلال 90 يوماً.** ليس فوراً، لأن أجهزتك الأخرى قد تكون غير متصلة وتحتاج أن تعرف أنك حذفته. وبعد أن تعرف، يختفي.
 - **عندما تحذف حسابك أمامك 30 يوماً لتغيّر رأيك.** خلالها لا يضيع شيء ويمكنك الإلغاء ببساطة؛ وتسجيل الدخول مرة أخرى يلغيه أيضاً، ونرسل لك رسالة عندما يحدث ذلك. وبعدها يُزال بريدك الإلكتروني واسمك والسجلات التي تخصك وحدك، ونتلف المفتاح الذي كان سيجعل بياناتك قابلة للقراءة — حتى النسخة الاحتياطية القديمة لا تستطيع إعادتها.
 - **سجلاتنا التشغيلية تُحفظ 30 يوماً.** أما أحداث الأمان، مثل تسجيل الدخول وتغيّر من يستطيع رؤية محفظة، فتُحفظ 400 يوم لنتمكن من الإجابة عن سؤال يخص شيئاً حدث العام الماضي.
+- **إذا دفعت عبر إنستاباي، نحتفظ بلقطة شاشة التحويل وبالبريد الإلكتروني المدوّن في طلبك للمراجعة فقط، ونحذفهما بعد 90 يوماً من إغلاق الطلب** — أي رفضه أو انتهاء مهلته، أو الموافقة عليه ثم استخدام رمزه أو انتهاء صلاحيته.
 
 ---
 
@@ -150,6 +152,7 @@ Every promise on this page is backed by a rule in [the security baseline](securi
 | After the grace period your identity and your own records are gone | FR-026 |
 | An old backup cannot bring your information back | FR-026 |
 | Operational records are kept 30 days; security events 400 days | FR-023, FR-029 |
+| InstaPay transfer screenshot and claim address are deleted 90 days after the claim closes | spec 020 FR-039, FR-041 |
 | You can export everything you entered, in a form that opens elsewhere | FR-024 |
 | A shared wallet keeps its history when you leave, without your name | FR-027 |
 | Exporting during the grace period does not restart it | FR-024, FR-025 |

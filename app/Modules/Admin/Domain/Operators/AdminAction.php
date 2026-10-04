@@ -4,7 +4,8 @@ namespace App\Modules\Admin\Domain\Operators;
 
 /**
  * The closed list of `admin_action` actions operator sign-in writes
- * (spec 018, R-13).
+ * (spec 018, R-13), and the two reads of a payment claim (spec 020, FR-014a,
+ * FR-045).
  */
 enum AdminAction: string
 {
@@ -20,4 +21,6 @@ enum AdminAction: string
     case ReenrolmentCompleted = 'reenrolment_completed';
     case ReenrolmentExpired = 'reenrolment_expired';
     case ReenrolmentCancelled = 'reenrolment_cancelled';
+    case ClaimReceiptViewed = 'claim_receipt_viewed';
+    case ClaimAddressRead = 'claim_address_read';
 }

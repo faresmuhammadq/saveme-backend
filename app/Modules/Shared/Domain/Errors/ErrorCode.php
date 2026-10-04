@@ -64,6 +64,9 @@ enum ErrorCode: string
     case EmailAlreadyRegistered = 'EMAIL_ALREADY_REGISTERED';
     case CategoryInUse = 'CATEGORY_IN_USE';
     case CurrencyMismatch = 'CURRENCY_MISMATCH';
+    case RedeemCodeEmailMismatch = 'REDEEM_CODE_EMAIL_MISMATCH';
+    case RedeemCodeUsed = 'REDEEM_CODE_USED';
+    case RedeemCodeExpired = 'REDEEM_CODE_EXPIRED';
 
     /**
      * The single HTTP status this code is served with.
@@ -104,7 +107,8 @@ enum ErrorCode: string
             self::ProviderSignatureInvalid => 401,
             self::Forbidden,
             self::FeatureNotEntitled,
-            self::EmailNotVerified => 403,
+            self::EmailNotVerified,
+            self::RedeemCodeEmailMismatch => 403,
             self::NotFound => 404,
             self::MethodNotAllowed => 405,
             self::NotAcceptable => 406,
@@ -113,9 +117,11 @@ enum ErrorCode: string
             self::IdempotencyRequestInProgress,
             self::ExportInProgress,
             self::EmailAlreadyRegistered,
-            self::CategoryInUse => 409,
+            self::CategoryInUse,
+            self::RedeemCodeUsed => 409,
             self::SyncCursorExpired,
-            self::EndpointRemoved => 410,
+            self::EndpointRemoved,
+            self::RedeemCodeExpired => 410,
             self::UnsupportedMediaType => 415,
             self::ClientVersionUnsupported => 426,
             self::RateLimited => 429,
@@ -182,6 +188,9 @@ enum ErrorCode: string
             self::EmailAlreadyRegistered => 'Email already registered',
             self::CategoryInUse => 'Category in use',
             self::CurrencyMismatch => 'Currency mismatch',
+            self::RedeemCodeEmailMismatch => 'Redeem code for another address',
+            self::RedeemCodeUsed => 'Redeem code already used',
+            self::RedeemCodeExpired => 'Redeem code expired',
         };
     }
 
@@ -215,7 +224,8 @@ enum ErrorCode: string
             self::VerificationTokenInvalid,
             self::ResetTokenInvalid,
             self::TwoFactorRequired,
-            self::TwoFactorInvalid => 'after-change',
+            self::TwoFactorInvalid,
+            self::RedeemCodeEmailMismatch => 'after-change',
             self::FilterFieldNotSupported,
             self::FilterOperatorNotSupported,
             self::SortFieldNotSupported,
@@ -235,7 +245,9 @@ enum ErrorCode: string
             self::InsecureTransport,
             self::ProviderSignatureInvalid,
             self::EmailAlreadyRegistered,
-            self::CategoryInUse => 'never',
+            self::CategoryInUse,
+            self::RedeemCodeUsed,
+            self::RedeemCodeExpired => 'never',
             self::IdempotencyRequestInProgress,
             self::RateLimited,
             self::InternalError,

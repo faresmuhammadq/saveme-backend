@@ -28,3 +28,18 @@ Schedule::command('sharing:expire-invitations')->hourly()->withoutOverlapping();
 
 // Closes re-enrolment requests past their 72 hours, so "expired" has an instant (spec 018, R-13).
 Schedule::command('admin:expire-reenrolment-requests')->everyFiveMinutes()->withoutOverlapping();
+
+// InstaPay claims (spec 020, R-11): unreviewed claims close after 7 days, hourly so the stored status is the truth.
+Schedule::command('billing:expire-claims')->hourly()->withoutOverlapping();
+
+// Idempotency records live 24 hours (spec 020, R-2).
+Schedule::command('billing:purge-idempotency-records')->hourly()->withoutOverlapping();
+
+// Issued redeem codes past their 30 days expire and close their claims (spec 020, FR-022a).
+Schedule::command('billing:expire-redeem-codes')->daily()->withoutOverlapping();
+
+// One reminder, 7 days before an InstaPay billing period ends (spec 020, FR-034).
+Schedule::command('billing:send-renewal-reminders')->daily()->withoutOverlapping();
+
+// Address and receipt erased 90 days after a claim closes; the record deleted at 400 (spec 020, FR-039).
+Schedule::command('billing:purge-claims')->daily()->withoutOverlapping();

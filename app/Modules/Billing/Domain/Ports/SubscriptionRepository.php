@@ -16,6 +16,16 @@ interface SubscriptionRepository
     public function find(string $id): ?SubscriptionRecord;
 
     /**
+     * The person's subscriptions, each locked until the transaction ends, in
+     * ascending id order (spec 020, lock order).
+     *
+     * @return list<SubscriptionRecord>
+     */
+    public function lockForUser(string $userId): array;
+
+    public function findByProviderRef(string $provider, string $providerRef): ?SubscriptionRecord;
+
+    /**
      * @param  array{user_id: string, plan_id: string, provider: string, provider_ref: string, status: string, current_period_start: DateTimeImmutable, current_period_end: ?DateTimeImmutable, grace_until: ?DateTimeImmutable, auto_renew: bool}  $row
      */
     public function create(array $row): SubscriptionRecord;
@@ -47,4 +57,19 @@ interface SubscriptionRepository
      * @return list<SubscriptionRecord>
      */
     public function dueForExpiry(DateTimeImmutable $now): array;
+
+    /**
+     * Active `instapay` subscriptions whose billing period ends within the
+     * next $days days and that have not been reminded (spec 020, FR-034).
+     *
+     * @return list<SubscriptionRecord>
+     */
+    public function dueForReminder(DateTimeImmutable $now, int $days): array;
+
+    /**
+     * Records that the renewal reminder was queued, only if it was not before.
+     *
+     * @return bool whether this call recorded it
+     */
+    public function markReminded(string $id, DateTimeImmutable $at): bool;
 }

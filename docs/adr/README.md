@@ -42,6 +42,7 @@ New records use [`template.md`](template.md) and take the next free number.
 | 0020 | [Wallet activity beside the audit log](0020-wallet-activity-beside-the-audit-log.md) | Accepted | 2026-10-02 | P-01, P-07, P-08, P-15 |
 | 0021 | [Scope heads, and member names re-sent on wallet feeds](0021-scope-heads-and-member-name-restamps.md) | Accepted | 2026-10-02 | P-07, P-08, P-11 |
 | 0022 | [Reports are wallet views computed on read](0022-reports-are-wallet-views-computed-on-read.md) | Accepted | 2026-10-04 | P-03, P-05, P-08, P-12 |
+| 0023 | [InstaPay claims deliver a plan through a claim-bound redeem code](0023-instapay-claims-and-claim-bound-redeem-codes.md) | Accepted | 2026-10-05 | P-09, P-10 |
 
 ## Reading order
 
@@ -51,6 +52,7 @@ Not numerical order. Follow the thread you need:
 - **Offline and sync** — [0002](0002-identifiers-uuidv7.md) (who generates an id) → [0008](0008-sync-changes-feed.md) (feeds, cursors, conflicts) → [0016](0016-batch-upload-beside-per-record-writes.md) (batch upload) → [0017](0017-membership-on-the-members-user-feed.md) (memberships on the user feed) → [0021](0021-scope-heads-and-member-name-restamps.md) (which wallets moved; names re-sent) → [0011](0011-time-and-timezones.md) (dates that do not shift) → [0018](0018-occurrences-materialised-by-the-server.md) (who creates recurring occurrences) → [0019](0019-budget-spending-by-author-computed-on-read.md) (whose spending a budget counts) → [0022](0022-reports-are-wallet-views-computed-on-read.md) (what a report counts, and where its range comes from).
 - **Who did what** — [0020](0020-wallet-activity-beside-the-audit-log.md) (a member-visible activity record beside the operator-only audit log).
 - **Access and money-in** — [0006](0006-wallet-scoped-authorization.md) (who may act on a wallet) → [0013](0013-entitlements-with-manual-channel.md) (what their plan allows; supersedes 0007).
+- **Billing** — [0013](0013-entitlements-with-manual-channel.md) (plans, subscriptions, precedence) → [0023](0023-instapay-claims-and-claim-bound-redeem-codes.md) (InstaPay claims, claim-bound redeem codes, subscription created at redemption).
 - **Runtime** — [0001](0001-database-engine.md) (engine) → [0009](0009-domain-events-after-commit.md) (events) → [0010](0010-observability.md) (logs and tracing).
 
 ## Superseding a decision

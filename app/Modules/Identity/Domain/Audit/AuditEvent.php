@@ -28,4 +28,5 @@ enum AuditEvent: string
     case DeletionCompleted = 'deletion_completed';
     case AdminAction = 'admin_action';
     case AuditRead = 'audit_read';
+    case ClaimReviewed = 'claim_reviewed';
 }

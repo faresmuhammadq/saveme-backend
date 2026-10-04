@@ -38,7 +38,7 @@ Rules:
 
 ## The entity index
 
-26 entities: the 21 named in the spec, plus **Category Reference**, which exists because categories are user-scoped and shared wallets need to render a partner's category (see [ADR-0012](adr/0012-postings-wallet-and-category-accounts.md) and the Category entry), plus **Audit Entry** and **Operator Notification**, added by spec 007 (Identity & Authentication), plus **Operator Account**, **Recovery Code** and **Re-enrolment Request**, added by spec 018 (Operator Sign-in), plus **Activity Entry**, added by spec 016 (Sharing & Invitations; see [ADR-0020](adr/0020-wallet-activity-beside-the-audit-log.md)), plus **Report Range**, added by spec 019 (Reports; see [ADR-0022](adr/0022-reports-are-wallet-views-computed-on-read.md)).
+27 entities: the 21 named in the spec, plus **Category Reference**, which exists because categories are user-scoped and shared wallets need to render a partner's category (see [ADR-0012](adr/0012-postings-wallet-and-category-accounts.md) and the Category entry), plus **Audit Entry** and **Operator Notification**, added by spec 007 (Identity & Authentication), plus **Operator Account**, **Recovery Code** and **Re-enrolment Request**, added by spec 018 (Operator Sign-in), plus **Activity Entry**, added by spec 016 (Sharing & Invitations; see [ADR-0020](adr/0020-wallet-activity-beside-the-audit-log.md)), plus **Report Range**, added by spec 019 (Reports; see [ADR-0022](adr/0022-reports-are-wallet-views-computed-on-read.md)), plus **Idempotency Record**, added by spec 020 (InstaPay Claims; see [ADR-0023](adr/0023-instapay-claims-and-claim-bound-redeem-codes.md)).
 
 | Entity | Arabic | Context | Role | Persistence | Sync |
 |---|---|---|---|---|---|
@@ -64,6 +64,7 @@ Rules:
 | [Entitlement](#entitlement) | — | Plans & Billing | derived value | derived | no |
 | [Payment Claim](#payment-claim) | — | Plans & Billing | root | persisted | no |
 | [Redeem Code](#redeem-code) | — | Plans & Billing | root | persisted | no |
+| [Idempotency Record](#idempotency-record) | — | Plans & Billing | root (operational) | persisted | no |
 | [Sync Cursor](#sync-cursor) | — | Sync | protocol value | client-held | n/a |
 | [Change Row](#change-row) | — | Sync | protocol value | derived (a read of the feed) | n/a |
 | [Sync Batch](#sync-batch) | — | Sync | protocol value | request-only | n/a |
@@ -84,7 +85,7 @@ Rules:
 - **User scope (4)** — Profile, Device Session, Category, Budget.
 - **Wallet scope (7)** — Wallet, Wallet Member, Category Reference, Transaction, Recurring Rule, Occurrence, Invitation.
 
-**12 persisted but not synced**, and how the client obtains each:
+**13 persisted but not synced**, and how the client obtains each:
 
 | Entity | How the client gets it |
 |---|---|
@@ -94,6 +95,7 @@ Rules:
 | Subscription | read endpoint, refreshed after purchase or restore |
 | Payment Claim | website only (P-10); the app sees only the resulting Subscription |
 | Redeem Code | never read by the client; it submits a code and sees the result |
+| Idempotency Record | never — operational; the client only sends the key and sees a replay header |
 | Posting | never — internal to the server (P-04) |
 | Audit Entry | never — operator-only |
 | Activity Entry | read endpoint (`GET /wallets/{id}/activity`), paged, 90 days |
@@ -116,7 +118,7 @@ The authenticated person who owns an account.
 - **Persistence**: persisted
 - **Sync**: no — credentials and account state are auth data, not client records
 - **States**: `active` ⇄ `pending_deletion` → `purged` (after the 30-day grace period). A new sign-in or an explicit cancel during the grace period returns the account to `active`
-- **Referenced by**: Profile, Device Session, Wallet Member, Category, Budget, Subscription, Payment Claim, Transaction (`created_by`), and every user-scoped entity
+- **Referenced by**: Profile, Device Session, Wallet Member, Category, Budget, Subscription, Transaction (`created_by`), and every user-scoped entity
 - **Notes**: holds credentials and account lifecycle only. Display name, locale and timezone live on Profile. Deleting an account never destroys another member's data in a shared wallet.
 
 ### Profile
@@ -390,9 +392,9 @@ One user's provider-agnostic record of paid access.
 - **Role**: aggregate root
 - **Persistence**: persisted
 - **Sync**: no — read endpoint, refreshed after purchase or restore
-- **States**: `active` → `grace` → `expired`; `grace` | `expired` → `active` (on renewal, recovered payment, extension or an approved claim); `active` | `grace` → `revoked`, which is final (ADR-0013)
-- **Referenced by**: Entitlement, Payment Claim, Redeem Code
-- **Notes**: every channel normalises into this one record — `provider` is `google_play`, `instapay` or `manual` (operator grants and redeem codes; never a payment) (ADR-0013, superseding ADR-0007). The **governing subscription** is, among a person's `active` and `grace` subscriptions whose grace has not passed, the one whose billing period ends latest (no end beats any end); with none, the default plan applies. The free tier has no subscription row. It carries the **billing period** (`current_period_start`, `current_period_end`, `grace_until`); those fields are never called just "period". Losing a subscription **never deletes user data**; it blocks plan-gated sharing actions.
+- **States**: `active` → `grace` → `expired`; `grace` | `expired` → `active` (on renewal, recovered payment or extension); `active` | `grace` → `revoked`, which is final (ADR-0013)
+- **Referenced by**: Entitlement, Redeem Code
+- **Notes**: every channel normalises into this one record — `provider` is `google_play`, `instapay` or `manual` (operator grants and redeem codes; never a payment) (ADR-0013, superseding ADR-0007). The **governing subscription** is, among a person's `active` and `grace` subscriptions whose grace has not passed, the one whose billing period ends latest (no end beats any end); with none, the default plan applies. The free tier has no subscription row. An `instapay` subscription is created at redemption of a claim-backed Redeem Code (`provider_ref` is the claim id, ADR-0023); `instapay` billing periods chain on early renewal, and one renewal reminder goes out 7 days before the end. It carries the **billing period** (`current_period_start`, `current_period_end`, `grace_until`); those fields are never called just "period". Losing a subscription **never deletes user data**; it blocks plan-gated sharing actions.
 
 ### Entitlement
 
@@ -408,19 +410,19 @@ The answer to "may this user do this right now".
 
 ### Payment Claim
 
-A user's claim that they paid by InstaPay, awaiting review.
+A visitor's claim that they paid a plan's InstaPay price, awaiting review.
 
 - **Context**: Plans & Billing
 - **Role**: aggregate root
 - **Persistence**: persisted
 - **Sync**: no — **website only**
-- **States**: `submitted` → `under_review` → `approved` | `rejected`; `submitted` → `expired`
-- **Referenced by**: Subscription (created or extended on approval)
-- **Notes**: **never submitted from inside the app** — Google Play policy forbids alternative payment there, so the app exposes only restore-purchases and redeem-code (P-10). Receipt images are never logged (ADR-0010).
+- **States**: `submitted` → `approved` | `rejected` | `expired`
+- **Referenced by**: Redeem Code
+- **Notes**: **never submitted from inside the app** — Google Play policy forbids alternative payment there, so the app exposes only restore-purchases and redeem-code (P-10). Submission is public and web-only with a uniform answer whether or not the address has an account (ADR-0023). The amount must equal the plan's InstaPay price exactly; the reference is normalised; duplicate references are flagged and at most one claim per reference is ever approved. The address is encrypted with its lookup value beside it, the receipt image is encrypted and operator-only, and neither is ever logged. A claim expires after 7 days unreviewed; address and receipt are erased 90 days after it closes, and the record is deleted at 400 days.
 
 ### Redeem Code
 
-A code that grants a subscription when redeemed.
+A single-use code, issued when a claim is approved, that creates a subscription when redeemed.
 
 - **Context**: Plans & Billing
 - **Role**: aggregate root
@@ -428,7 +430,19 @@ A code that grants a subscription when redeemed.
 - **Sync**: no
 - **States**: `issued` → `redeemed` | `revoked` | `expired`
 - **Referenced by**: Subscription (created on redemption)
-- **Notes**: the in-app "enter code" surface is permitted because redemption is not a purchase (P-10).
+- **Notes**: 16 characters of Crockford base32 shown `XXXX-XXXX-XXXX-XXXX`; only its SHA-256 hash is stored, and the plaintext exists only in the approval mail. Valid 30 days. Bound to the claim's address: redeemable by a verified account holding it. A claim-backed code creates an `instapay` subscription at redemption (ADR-0023); `manual` applies only to codes without a claim (none in the MVP). The in-app "enter code" surface is permitted because redemption is not a purchase (P-10).
+
+### Idempotency Record
+
+The stored answer for one `Idempotency-Key`, so a retry replays it.
+
+- **Context**: Plans & Billing (operational)
+- **Role**: aggregate root
+- **Persistence**: persisted
+- **Sync**: no
+- **States**: `single-state`
+- **Referenced by**: —
+- **Notes**: held 24 hours; scope is the user, or one anonymous scope for public operations (InstaPay claim submission). Only `2xx` answers are stored. Holds the answer only and no secret.
 
 ---
 

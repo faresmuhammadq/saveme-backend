@@ -21,7 +21,7 @@ trait ResolvesCaller
 
     protected function currentSessionId(Request $request): string
     {
-        $user = $request->user() ?? throw new RuntimeException('Route is missing auth:api.');
+        $user = $request->user('api') ?? throw new RuntimeException('Route is missing auth:api.');
 
         return (string) $user->currentAccessToken()->getKey();
     }

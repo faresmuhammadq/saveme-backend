@@ -10,7 +10,7 @@ namespace App\Modules\Identity\Application\Audit\Details;
 final readonly class EntitlementChangedDetail implements AuditDetail
 {
     /**
-     * @param  'grant'|'extend'|'revoke'|'expire'  $action
+     * @param  'grant'|'extend'|'revoke'|'expire'|'redeem'  $action
      */
     public function __construct(
         private string $action,

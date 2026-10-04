@@ -43,7 +43,9 @@ components:
       description: |
         The caller is inside the wallet but may not do this. Codes: FORBIDDEN
         (role insufficient), FEATURE_NOT_ENTITLED (plan lacks the capability),
-        EMAIL_NOT_VERIFIED (an unverified address may not write to a wallet).
+        EMAIL_NOT_VERIFIED (an unverified address may not write to a wallet),
+        REDEEM_CODE_EMAIL_MISMATCH (the redeem code was sent to another
+        address than the caller's; the address is never named).
         A caller outside the wallet gets NotFound instead, so a 403 discloses
         only that the caller is already a member.
       headers:
@@ -58,7 +60,8 @@ components:
       description: |
         The resource does not exist, or it is outside the caller's scope. The
         two are deliberately indistinguishable, so existence is never
-        disclosed. Code: NOT_FOUND.
+        disclosed. Code: NOT_FOUND (also an unknown or revoked redeem code,
+        and the InstaPay claim operation for any client other than the website).
       headers:
         X-Request-Id:
           $ref: './headers.yaml#/components/headers/XRequestId'
@@ -102,7 +105,8 @@ components:
         IDEMPOTENCY_REQUEST_IN_PROGRESS (the original has not finished),
         EMAIL_ALREADY_REGISTERED (registration for an address that already
         has an account), CATEGORY_IN_USE (a category referenced by recorded
-        history cannot be deleted; archive it).
+        history cannot be deleted; archive it), REDEEM_CODE_USED (another
+        account has already redeemed the code).
       headers:
         X-Request-Id:
           $ref: './headers.yaml#/components/headers/XRequestId'
@@ -116,7 +120,8 @@ components:
     Gone:
       description: |
         Codes: SYNC_CURSOR_EXPIRED (the cursor predates the tombstone horizon;
-        resync the whole scope), ENDPOINT_REMOVED (past its sunset date).
+        resync the whole scope), ENDPOINT_REMOVED (past its sunset date),
+        REDEEM_CODE_EXPIRED (the redeem code is past its 30 days).
       headers:
         X-Request-Id:
           $ref: './headers.yaml#/components/headers/XRequestId'

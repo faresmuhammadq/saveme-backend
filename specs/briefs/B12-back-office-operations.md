@@ -20,3 +20,11 @@ The brief predates decisions ratified since. These collide with it; the ratified
 | Separate guard, 2FA, seeding an admin | Delivered by D1 | Out of this spec's scope |
 | "Look up a user and see … wallets count and members" | P-18 rule 8: no screen shows an individual user's amounts, balances or notes; the paused operator-access decision is in memory | Counts and membership are fine; balances are not |
 | "View the security audit log" | Security baseline: reading the audit log is itself an `audit_read` event | Required |
+
+## Inherited from B11 (spec 020)
+
+- **Claim review screens call the Billing commands** `ClaimService::approve`, `reject` and `revokeCode`, each behind `RequiresRecentFactor` (a second-factor proof from the last 10 minutes).
+- **Detail** comes from `ClaimQuery::detail`; opening it must record one `admin_action` `claim_address_read` (the list carries no address and `account_exists` is operator-only).
+- **The receipt link** comes from `ClaimReceipts::temporaryUrl` (signed, 5 minutes); the Admin route records `claim_receipt_viewed`.
+- **Show duplicates**: the other claims sharing the normalised reference (only one per reference can ever be approved).
+- **Reject reasons are a fixed list** (`reference_not_found`, `amount_mismatch`, `duplicate`, `other`) plus an internal note of at most 500 characters, never mailed or audited.

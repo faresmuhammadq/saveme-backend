@@ -14,5 +14,5 @@ test('the event enum is exactly the baseline vocabulary', function () {
 
     expect(array_map(fn (AuditEvent $event): string => $event->value, AuditEvent::cases()))
         ->toEqualCanonicalizing(array_values(array_unique($matches[1])))
-        ->toHaveCount(19);
+        ->toHaveCount(20);
 });

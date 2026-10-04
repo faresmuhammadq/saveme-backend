@@ -13,7 +13,7 @@ final class UserChangesController
     public function __invoke(Request $request, ChangeFeedService $feeds): JsonResponse
     {
         $query = FeedRequest::from($request);
-        $user = $request->user() ?? throw new RuntimeException('Route is missing auth:api.');
+        $user = $request->user('api') ?? throw new RuntimeException('Route is missing auth:api.');
         $token = $user->currentAccessToken();
 
         $result = $feeds->userPage((string) $user->getAuthIdentifier(), (string) $token->getKey(), $query->cursor, $query->limit);

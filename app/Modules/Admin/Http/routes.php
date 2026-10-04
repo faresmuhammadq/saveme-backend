@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Admin\Domain\Operators\SignInStage;
+use App\Modules\Admin\Http\Controllers\ClaimReceiptController;
 use App\Modules\Admin\Http\Controllers\EnrolmentController;
 use App\Modules\Admin\Http\Controllers\LostDeviceController;
 use App\Modules\Admin\Http\Controllers\NewPasswordController;
@@ -74,6 +75,9 @@ Route::middleware(['web', ResolveAdminLocale::class, BackOfficeHeaders::class])
             Route::livewire('/security', SecurityPage::class)->name('security');
             Route::livewire('/security/authenticator', ReplaceAuthenticator::class)->name('security.authenticator');
             Route::livewire('/reenrolment-requests', ReenrolmentRequests::class)->name('reenrolment-requests');
+
+            // An InstaPay claim's receipt, through a link signed for 5 minutes (spec 020, FR-014).
+            Route::get('/claims/{claim}/receipt', ClaimReceiptController::class)->middleware('signed')->name('claims.receipt');
         });
 
         if (app()->environment('local')) {

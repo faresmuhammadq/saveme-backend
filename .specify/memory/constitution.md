@@ -1,6 +1,10 @@
 <!--
 Sync Impact Report (latest first)
 
+v1.3.11 → 1.3.12 — 2026-10-05
+- PATCH: P-09 and P-10 list ADR-0023, introduced by spec 020; no rule changes.
+- Reason: spec 020 (B11, InstaPay claims); ADR-0023 extends ADR-0013.
+
 v1.3.10 → 1.3.11 — 2026-10-04
 - PATCH: P-05 and P-12 list ADR-0022, introduced by spec 019; no rule changes.
 - Reason: spec 019 (B13, Reports); ADR-0022 extends ADR-0011, ADR-0014 and ADR-0019.
@@ -119,7 +123,7 @@ v1.0.0 — 2026-09-19 (ratified)
 
 <!-- "Save Me" is a working codename used as display text only; see P-13. -->
 
-**Version**: 1.3.11 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-04
+**Version**: 1.3.12 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-05
 
 ## Purpose & Precedence
 
@@ -228,7 +232,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-09 Entitlements
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0013](../../docs/adr/0013-entitlements-with-manual-channel.md) (supersedes ADR-0007)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0013](../../docs/adr/0013-entitlements-with-manual-channel.md) (supersedes ADR-0007), [ADR-0023](../../docs/adr/0023-instapay-claims-and-claim-bound-redeem-codes.md) (extends ADR-0013)
 
 1. Plans MUST be data: a period plus feature flags and quotas.
 2. Every capability check MUST go through `EntitlementService` against a `Feature` enum value.
@@ -241,7 +245,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-10 Billing channels
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0013](../../docs/adr/0013-entitlements-with-manual-channel.md) (supersedes ADR-0007)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0013](../../docs/adr/0013-entitlements-with-manual-channel.md) (supersedes ADR-0007), [ADR-0023](../../docs/adr/0023-instapay-claims-and-claim-bound-redeem-codes.md) (extends ADR-0013)
 
 1. In-app purchases MUST use Google Play Billing.
 2. The in-app API surface MUST expose only "restore purchases" and "enter code".
@@ -391,7 +395,7 @@ Every `plan.md` includes this section, filled in before Phase 0 and again after 
 ```markdown
 ## Constitution Check
 
-*Constitution v1.3.11. GATE: before Phase 0 and again after Phase 1.*
+*Constitution v1.3.12. GATE: before Phase 0 and again after Phase 1.*
 
 | Principle | Result | Evidence / justification |
 |---|---|---|
@@ -429,4 +433,4 @@ Every amendment updates the footer's **Last Amended** date and the Sync Impact R
 
 **Consistency** — run `/speckit-analyze` before implementing each feature. Contradictions between this constitution, the ADRs and a feature's spec are defects to resolve before code.
 
-**Version**: 1.3.11 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-04
+**Version**: 1.3.12 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-05

@@ -50,7 +50,7 @@ abstract class ApiRequest extends FormRequest
     /**
      * @param  list<FieldError>  $errors
      */
-    private function refusal(array $errors): ApiRefusal
+    protected function refusal(array $errors): ApiRefusal
     {
         return new ApiRefusal(ErrorCode::ValidationFailed, fieldErrors: $errors);
     }
@@ -58,7 +58,7 @@ abstract class ApiRequest extends FormRequest
     /**
      * @return list<FieldError>
      */
-    private function unknownMembers(): array
+    protected function unknownMembers(): array
     {
         $declared = array_keys($this->rules());
         $unknown = [];

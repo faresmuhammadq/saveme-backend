@@ -62,6 +62,9 @@ components:
         - EXPORT_IN_PROGRESS
         - EMAIL_ALREADY_REGISTERED
         - CATEGORY_IN_USE
+        - REDEEM_CODE_EMAIL_MISMATCH
+        - REDEEM_CODE_USED
+        - REDEEM_CODE_EXPIRED
 
     FieldErrorCode:
       type: string
@@ -445,3 +448,24 @@ x-error-catalog:
     meaning: 'The category is referenced by recorded history and cannot be deleted. Archive it instead.'
     retryable: never
     since: v1.4
+  REDEEM_CODE_EMAIL_MISMATCH:
+    status: 403
+    level: [response]
+    title: 'Redeem code for another address'
+    meaning: 'The code was sent to a different address than this account''s. Sign in with the address the code was sent to; the address is never named.'
+    retryable: after-change
+    since: v1.12
+  REDEEM_CODE_USED:
+    status: 409
+    level: [response]
+    title: 'Redeem code already used'
+    meaning: 'Another account has already redeemed this code.'
+    retryable: never
+    since: v1.12
+  REDEEM_CODE_EXPIRED:
+    status: 410
+    level: [response]
+    title: 'Redeem code expired'
+    meaning: 'The code is past its 30 days. Contact support.'
+    retryable: never
+    since: v1.12

@@ -197,7 +197,7 @@ description: "Task list for spec 018, Operator Sign-in (D2)"
 - [X] T066 Visual fidelity: compare step 2 in both languages with the design source boards `SignIn` / `SignInAr` (artifact `Ag9pG4RnifekirczEG2drM`, version `1791137074-53df`) and record the result in `specs/018-operator-sign-in/checklists/fidelity.md` (layout, copy, tokens, focus ring, countdown, recovery hint wording change).
 - [X] T067 Gates: `dev exec -- vendor/bin/pint --dirty --format agent`, then `dev exec -- composer test` (Pint, Larastan level 8, Arch, Unit, Feature, Contract) green; `dev exec -- vendor/bin/pest tests/Contract/OpenApi` green and `docs/openapi` untouched.
 - [X] T068 Quickstart walk-through: run `specs/018-operator-sign-in/quickstart.md` steps 1–12 against `http://saveme-backend.test/admin` (manually or with Playwright using the `data-test` hooks); note results for the summary.
-- [ ] T069 Write `specs/018-operator-sign-in/summary.md` (parent writes it).
+- [X] T069 Write `specs/018-operator-sign-in/summary.md` (parent writes it).
 
 ---
 

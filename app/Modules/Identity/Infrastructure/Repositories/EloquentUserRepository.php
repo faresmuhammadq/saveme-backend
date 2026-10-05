@@ -39,6 +39,11 @@ final class EloquentUserRepository implements UserRepository
         return $user === null ? null : $this->record($user);
     }
 
+    public function createdAt(string $id): ?DateTimeImmutable
+    {
+        return User::query()->find($id)?->created_at->toDateTimeImmutable();
+    }
+
     public function sealedEmail(string $id): string
     {
         return $this->model($id)->email_ciphertext;
@@ -78,6 +83,20 @@ final class EloquentUserRepository implements UserRepository
             'deletion_scheduled_for' => null,
             'updated_at' => now()->format(self::INSTANT),
         ]) === 1;
+    }
+
+    public function figures(DateTimeImmutable $now): array
+    {
+        $live = fn () => User::query()->where('state', '!=', AccountState::Purged->value);
+        $since = fn (int $days): int => $live()->where('created_at', '>=', $now->modify("-{$days} days")->format(self::INSTANT))->count();
+
+        return [
+            'total' => $live()->count(),
+            'verified' => $live()->whereNotNull('email_verified_at')->count(),
+            'pending_deletion' => User::query()->where('state', AccountState::PendingDeletion->value)->count(),
+            'new_7_days' => $since(7),
+            'new_30_days' => $since(30),
+        ];
     }
 
     private function model(string $id): User

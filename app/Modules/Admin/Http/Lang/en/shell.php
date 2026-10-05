@@ -17,6 +17,10 @@ return [
         'configure' => 'Configure',
     ],
     'nav' => [
+        'claims' => 'Claims',
+        'accounts' => 'Accounts',
+        'plans' => 'Plans',
+        'audit' => 'Audit log',
         'security' => 'Security',
         'reenrolment_requests' => 'Re-enrolment requests',
     ],

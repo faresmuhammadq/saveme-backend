@@ -94,7 +94,7 @@ Registration's unit of work becomes the user, the data key and the profile. `tes
 
 ## R-8 The launch catalogue as reference data
 
-**Decision**: `Billing\Infrastructure\Database\Seeders\BillingSeeder` upserts the plans by `code`: `free`, `plus_monthly` and `plus_yearly`, with the Q2 values. It is idempotent and safe in production. `database/seeders/DatabaseSeeder.php` already calls each module's seeder.
+**Decision**: `Billing\Infrastructure\Database\Seeders\BillingSeeder` upserts the plans by `code`: `free`, `plus_monthly` and `plus_yearly`, with the Q2 values. It is idempotent and safe in production. *Superseded by spec 021 (R-6, FR-039): it is now create-missing-only, inserting an absent plan and adding an absent capability key, and never overwriting a stored value, so a back-office edit survives a deployment.* `database/seeders/DatabaseSeeder.php` already calls each module's seeder.
 
 Before writing, it checks that **every plan declares every `Feature` case**, and throws naming the plan and the missing key otherwise (FR-004). Prices are:
 

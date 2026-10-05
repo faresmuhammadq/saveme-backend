@@ -44,6 +44,20 @@ final class ReenrolmentQuery
     }
 
     /**
+     * Open requests that have not expired, whoever opened them: the
+     * overview's needs-attention figure (spec 021, FR-012).
+     */
+    public function openCount(): int
+    {
+        $now = now()->toDateTimeImmutable();
+
+        return count(array_filter(
+            $this->requests->listOpen(),
+            fn ($request): bool => $request->expiresAt > $now,
+        ));
+    }
+
+    /**
      * Waiting requests the viewer could still act on, for the badge.
      */
     public function waitingCount(string $viewerId): int

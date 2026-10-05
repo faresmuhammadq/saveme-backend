@@ -118,6 +118,81 @@ final class AdminAuditService
         ));
     }
 
+    /**
+     * An operator opened an account page (spec 021, FR-024): one entry per opening.
+     */
+    public function accountViewed(string $operatorId, string $userId): void
+    {
+        $this->audit->record(new AuditRecord(
+            AuditEvent::AdminAction,
+            ActorType::Operator,
+            $operatorId,
+            SubjectType::User,
+            $userId,
+            new AdminActionDetail(AdminAction::AccountViewed),
+        ));
+    }
+
+    /**
+     * A lookup found nothing (spec 021, FR-025). The subject is the operator
+     * themselves; the term typed is never recorded, only how it was typed.
+     *
+     * @param  'address'|'id'  $by
+     */
+    public function accountLookupMissed(string $operatorId, string $by): void
+    {
+        $this->audit->record(new AuditRecord(
+            AuditEvent::AdminAction,
+            ActorType::Operator,
+            $operatorId,
+            SubjectType::Operator,
+            $operatorId,
+            new AdminActionDetail(AdminAction::AccountLookupMissed, by: $by),
+        ));
+    }
+
+    /**
+     * A plan was saved or retired (spec 021, FR-038). Field names and the
+     * reason only, never a price or a capability value.
+     *
+     * @param  list<string>  $fields
+     */
+    public function planChanged(string $operatorId, string $planId, AdminAction $action, array $fields, string $reason): void
+    {
+        sort($fields);
+
+        $this->audit->record(new AuditRecord(
+            AuditEvent::AdminAction,
+            ActorType::Operator,
+            $operatorId,
+            SubjectType::Plan,
+            $planId,
+            new AdminActionDetail(
+                $action,
+                reason: new AuditReason($reason),
+                fields: $action === AdminAction::PlanUpdated ? implode(',', $fields) : null,
+            ),
+        ));
+    }
+
+    /**
+     * An operator read the audit log (spec 021, FR-043): the filters and the
+     * page, subject the reading operator.
+     *
+     * @param  array<string, string>  $detail
+     */
+    public function auditRead(string $operatorId, array $detail): void
+    {
+        $this->audit->record(new AuditRecord(
+            AuditEvent::AuditRead,
+            ActorType::Operator,
+            $operatorId,
+            SubjectType::Operator,
+            $operatorId,
+            new AuditReadDetail($detail),
+        ));
+    }
+
     private function operatorActs(AuditEvent $event, string $operatorId, AuditDetail $detail): void
     {
         $this->audit->record(new AuditRecord($event, ActorType::Operator, $operatorId, SubjectType::Operator, $operatorId, $detail));

@@ -188,6 +188,38 @@ final class EloquentMembershipRepository implements MembershipRepository
             ->all());
     }
 
+    public function countsFor(string $userId): array
+    {
+        $live = fn () => DB::table('wallet_members')
+            ->join('wallets', 'wallets.id', '=', 'wallet_members.wallet_id')
+            ->whereNull('wallet_members.deleted_at')
+            ->whereNull('wallets.deleted_at');
+
+        $owned = $live()->where('wallet_members.user_id', $userId)->where('wallet_members.role', Role::Owner->value)->count();
+        $joined = $live()->where('wallet_members.user_id', $userId)->where('wallet_members.role', '!=', Role::Owner->value)->count();
+        $others = $live()
+            ->where('wallet_members.user_id', '!=', $userId)
+            ->whereIn('wallet_members.wallet_id', fn ($query) => $query->select('owned.wallet_id')->from('wallet_members as owned')
+                ->where('owned.user_id', $userId)->where('owned.role', Role::Owner->value)->whereNull('owned.deleted_at'))
+            ->distinct()
+            ->count('wallet_members.user_id');
+
+        return ['owned' => $owned, 'joined' => $joined, 'others' => $others];
+    }
+
+    public function countSharedWallets(): int
+    {
+        $shared = DB::table('wallet_members')
+            ->join('wallets', 'wallets.id', '=', 'wallet_members.wallet_id')
+            ->whereNull('wallet_members.deleted_at')
+            ->whereNull('wallets.deleted_at')
+            ->groupBy('wallet_members.wallet_id')
+            ->havingRaw('count(*) >= 2')
+            ->select('wallet_members.wallet_id');
+
+        return DB::query()->fromSub($shared, 'shared')->count();
+    }
+
     public function restamp(string $memberId, int $changeSeq): void
     {
         WalletMember::query()->whereKey($memberId)->toBase()->update(['change_seq' => $changeSeq]);

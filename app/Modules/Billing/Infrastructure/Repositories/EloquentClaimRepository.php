@@ -13,6 +13,7 @@ use App\Modules\Billing\Infrastructure\Models\PaymentClaim;
 use DateTimeImmutable;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 final class EloquentClaimRepository implements ClaimRepository
 {
@@ -129,6 +130,62 @@ final class EloquentClaimRepository implements ClaimRepository
             self::record($claim),
             max(0, (int) ($counts[$claim->reference] ?? 1) - 1),
         ))->all());
+    }
+
+    public function page(ClaimStatus $status, ?string $reference, ?string $lookup, ?string $after, int $limit, DateTimeImmutable $now): array
+    {
+        $submitted = $status === ClaimStatus::Submitted;
+        $direction = $submitted ? 'asc' : 'desc';
+        $comparison = $submitted ? '>' : '<';
+
+        $query = PaymentClaim::query()->where('status', $status->value)
+            ->orderBy('created_at', $direction)->orderBy('id', $direction);
+
+        if ($submitted) {
+            $query->where('expires_at', '>', $now->format(self::INSTANT));
+        }
+
+        if ($reference !== null) {
+            $query->where('reference', $reference);
+        }
+
+        if ($lookup !== null) {
+            $query->where('address_lookup', $lookup);
+        }
+
+        if ($after !== null && Str::isUuid($after) && ($cursor = PaymentClaim::query()->find($after)) !== null) {
+            $query->whereRaw("(created_at, id) {$comparison} (?, ?)", [$cursor->created_at->format(self::INSTANT), $cursor->id]);
+        }
+
+        $claims = $query->limit($limit + 1)->get();
+        $more = $claims->count() > $limit;
+        $claims = $claims->take($limit);
+        $counts = PaymentClaim::query()->whereIn('reference', $claims->pluck('reference')->unique()->all())
+            ->groupBy('reference')->selectRaw('reference, count(*) as total')->pluck('total', 'reference');
+
+        $items = array_values($claims->map(fn (PaymentClaim $claim): QueuedClaim => new QueuedClaim(
+            self::record($claim),
+            max(0, (int) ($counts[$claim->reference] ?? 1) - 1),
+        ))->all());
+
+        return ['items' => $items, 'next' => $more && $items !== [] ? $items[array_key_last($items)]->claim->id : null];
+    }
+
+    public function awaitingSummary(DateTimeImmutable $now): array
+    {
+        $awaiting = PaymentClaim::query()->where('status', ClaimStatus::Submitted->value)->where('expires_at', '>', $now->format(self::INSTANT));
+        $oldest = (clone $awaiting)->min('created_at');
+
+        return [
+            'count' => (clone $awaiting)->count(),
+            'oldest' => $oldest === null ? null : new DateTimeImmutable((string) $oldest),
+        ];
+    }
+
+    public function countSubmittedForPlan(string $planId, DateTimeImmutable $now): int
+    {
+        return PaymentClaim::query()->where('plan_id', $planId)->where('status', ClaimStatus::Submitted->value)
+            ->where('expires_at', '>', $now->format(self::INSTANT))->count();
     }
 
     public function expireDue(DateTimeImmutable $now, int $limit): array

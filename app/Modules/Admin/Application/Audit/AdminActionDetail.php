@@ -17,6 +17,8 @@ final readonly class AdminActionDetail implements AuditDetail
         private AdminAction $action,
         private ?string $reenrolmentRequestId = null,
         private ?AuditReason $reason = null,
+        private ?string $fields = null,
+        private ?string $by = null,
     ) {}
 
     public function toArray(): array
@@ -24,6 +26,8 @@ final readonly class AdminActionDetail implements AuditDetail
         return array_filter([
             'action' => $this->action->value,
             'reenrolment_request_id' => $this->reenrolmentRequestId,
+            'by' => $this->by,
+            'fields' => $this->fields,
             'reason' => $this->reason?->value(),
         ], fn (?string $value): bool => $value !== null);
     }

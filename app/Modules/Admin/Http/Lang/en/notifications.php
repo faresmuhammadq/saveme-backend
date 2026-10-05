@@ -4,6 +4,9 @@ return [
 
     'label' => 'Notifications',
     'unread' => ':count new',
+    'mark_all_read' => 'Mark all read',
+    'open_account' => 'Open account',
+    'unread_item' => 'unread',
     'empty' => 'Nothing new.',
     'user' => 'User',
 

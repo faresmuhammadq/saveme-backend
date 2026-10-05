@@ -11,7 +11,7 @@ use InvalidArgumentException;
 
 /**
  * The launch catalogue (spec 009, owner decision Q2 = B), as reference data:
- * idempotent, keyed on code, safe in production. Every plan must declare
+ * create-missing-only, keyed on code, safe in production: a deployment never undoes a back-office edit (spec 021). Every plan must declare
  * every capability, so an omission fails here rather than silently denying.
  */
 class BillingSeeder extends Seeder
@@ -69,19 +69,30 @@ class BillingSeeder extends Seeder
         }
     }
 
+    /**
+     * Create-missing-only (spec 021, FR-039, R-6): a plan whose code is absent
+     * is inserted; a stored plan only gains the capability keys it lacks, with
+     * the seeded value. Nothing an operator edited is ever overwritten.
+     */
     public function run(): void
     {
         $definitions = self::definitions();
         array_walk($definitions, fn (array $definition) => self::validate($definition));
 
         foreach ($definitions as $definition) {
-            $plan = Plan::query()->firstOrNew(['code' => $definition['code']]);
+            $plan = Plan::query()->where('code', $definition['code'])->first();
 
-            // jsonb reorders object keys, so compare values, not key order.
-            $changed = array_filter($definition, fn (mixed $value, string $column): bool => $plan->getAttribute($column) != $value, ARRAY_FILTER_USE_BOTH);
+            if ($plan === null) {
+                Plan::query()->create($definition);
 
-            if (! $plan->exists || $changed !== []) {
-                $plan->fill($definition)->save();
+                continue;
+            }
+
+            $missing = array_diff_key($definition['features'], $plan->features);
+
+            if ($missing !== []) {
+                $plan->features = [...$plan->features, ...$missing];
+                $plan->save();
             }
         }
     }

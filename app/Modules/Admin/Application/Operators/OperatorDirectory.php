@@ -36,6 +36,23 @@ final class OperatorDirectory
     }
 
     /**
+     * Display names for a screen that lists reviewers or actors, in one query.
+     *
+     * @param  list<string>  $operatorIds
+     * @return array<string, string> operator id => display name; unknown ids are left out
+     */
+    public function displayNames(array $operatorIds): array
+    {
+        $names = [];
+
+        foreach ($this->operators->findMany($operatorIds) as $operator) {
+            $names[$operator->id] = $operator->displayName;
+        }
+
+        return $names;
+    }
+
+    /**
      * The email a half-finished sign-in is for, shown so the person can tell
      * "Not you?".
      */

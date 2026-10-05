@@ -11,6 +11,9 @@ use DateTimeImmutable;
  */
 final readonly class ClaimSummary
 {
+    /**
+     * @param  array{en: string, ar: string}|null  $planName
+     */
     public function __construct(
         public string $id,
         public string $planId,
@@ -21,9 +24,13 @@ final readonly class ClaimSummary
         public DateTimeImmutable $createdAt,
         public DateTimeImmutable $expiresAt,
         public int $duplicateCount,
+        public ?array $planName = null,
     ) {}
 
-    public static function of(ClaimRecord $claim, int $duplicateCount = 0): self
+    /**
+     * @param  array{en: string, ar: string}|null  $planName
+     */
+    public static function of(ClaimRecord $claim, int $duplicateCount = 0, ?array $planName = null): self
     {
         return new self(
             $claim->id,
@@ -35,6 +42,7 @@ final readonly class ClaimSummary
             $claim->createdAt,
             $claim->expiresAt,
             $duplicateCount,
+            $planName,
         );
     }
 }

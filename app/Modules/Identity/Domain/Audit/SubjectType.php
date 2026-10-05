@@ -13,4 +13,5 @@ enum SubjectType: string
     case Subscription = 'subscription';
     case Operator = 'operator';
     case PaymentClaim = 'payment_claim';
+    case Plan = 'plan';
 }

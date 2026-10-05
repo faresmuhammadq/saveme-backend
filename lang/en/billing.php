@@ -14,6 +14,12 @@ return [
         'claim_not_reviewable' => 'This claim cannot be reviewed: it is not waiting for review, or its 7 days have passed.',
         'reference_already_approved' => 'Another claim with the same reference is already approved.',
         'code_not_revocable' => 'Only a code that was issued and not yet used can be revoked.',
+        'account_not_active' => 'This account is not active, so access cannot be granted or extended.',
+        'subscription_not_extendable' => 'Only a manual subscription with an end date can be extended.',
+        'subscription_not_revocable' => 'A Google Play subscription is managed by Google Play and cannot be revoked here.',
+        'nothing_to_save' => 'There is nothing to save: no field differs from the stored plan.',
+        'plan_changed_elsewhere' => 'This plan was changed by someone else since it was opened.',
+        'plan_not_retirable' => 'Only an active plan that is not the default can be retired.',
     ],
 
     'reject_reasons' => [

@@ -4,6 +4,9 @@ return [
 
     'label' => 'الإشعارات',
     'unread' => ':count جديد',
+    'mark_all_read' => 'تحديد الكل كمقروء',
+    'open_account' => 'فتح الحساب',
+    'unread_item' => 'غير مقروء',
     'empty' => 'لا جديد.',
     'user' => 'المستخدم',
 

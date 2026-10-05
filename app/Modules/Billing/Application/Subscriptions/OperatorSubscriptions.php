@@ -6,13 +6,17 @@ use App\Modules\Billing\Domain\Events\SubscriptionActivated;
 use App\Modules\Billing\Domain\Events\SubscriptionLapsed;
 use App\Modules\Billing\Domain\Ports\PlanRepository;
 use App\Modules\Billing\Domain\Ports\SubscriptionRepository;
+use App\Modules\Billing\Domain\Refusals\AccountNotActive;
 use App\Modules\Billing\Domain\Refusals\InvalidDays;
 use App\Modules\Billing\Domain\Refusals\InvalidReason;
 use App\Modules\Billing\Domain\Refusals\PlanNotGrantable;
+use App\Modules\Billing\Domain\Refusals\SubscriptionNotExtendable;
 use App\Modules\Billing\Domain\Refusals\SubscriptionNotFound;
+use App\Modules\Billing\Domain\Refusals\SubscriptionNotRevocable;
 use App\Modules\Billing\Domain\Refusals\SubscriptionRevoked;
 use App\Modules\Billing\Domain\Subscriptions\SubscriptionRecord;
 use App\Modules\Billing\Domain\Subscriptions\SubscriptionStatus;
+use App\Modules\Identity\Application\Accounts;
 use App\Modules\Identity\Application\Audit\AuditLog;
 use App\Modules\Identity\Application\Audit\AuditRecord;
 use App\Modules\Identity\Application\Audit\Details\EntitlementChangedDetail;
@@ -28,13 +32,22 @@ use Illuminate\Support\Str;
  * revoke one. Each is one unit of work with exactly one `entitlement_changed`
  * audit entry, and carries the operator's reason. The back office (B12)
  * calls these; they have no HTTP surface of their own.
+ *
+ * The channel and account rules live here, not on the screen (spec 021,
+ * FR-029, R-7): only a `manual` subscription with an end can be extended, a
+ * `google_play` one is never revoked, and access is only granted or extended
+ * for an `active` account.
  */
 final class OperatorSubscriptions
 {
+    /** The most days one grant or extension may add (spec 021, FR-026). */
+    public const MAX_DAYS = 3650;
+
     public function __construct(
         private readonly PlanRepository $plans,
         private readonly SubscriptionRepository $subscriptions,
         private readonly AuditLog $audit,
+        private readonly Accounts $accounts,
     ) {}
 
     /**
@@ -48,6 +61,10 @@ final class OperatorSubscriptions
 
         if ($plan === null || $plan->isDefault || $plan->status !== 'active') {
             throw new PlanNotGrantable;
+        }
+
+        if (! $this->accounts->isActive($userId)) {
+            throw new AccountNotActive;
         }
 
         return DB::transaction(function () use ($operatorId, $userId, $planId, $days, $reason): SubscriptionRecord {
@@ -81,10 +98,18 @@ final class OperatorSubscriptions
             throw new SubscriptionRevoked;
         }
 
+        if ($subscription->provider !== 'manual' || $subscription->currentPeriodEnd === null) {
+            throw new SubscriptionNotExtendable;
+        }
+
+        if (! $this->accounts->isActive($subscription->userId)) {
+            throw new AccountNotActive;
+        }
+
         return DB::transaction(function () use ($operatorId, $subscription, $days, $reason): SubscriptionRecord {
             $now = now()->toDateTimeImmutable();
-            $base = $subscription->currentPeriodEnd === null || $subscription->currentPeriodEnd < $now ? $now : $subscription->currentPeriodEnd;
-            $end = $subscription->currentPeriodEnd === null ? null : $base->modify("+{$days} days");
+            $base = max($subscription->currentPeriodEnd, $now);
+            $end = $base->modify("+{$days} days");
             $changes = ['current_period_end' => $end, 'grace_until' => null];
 
             $reactivated = $subscription->status !== SubscriptionStatus::Active;
@@ -114,6 +139,10 @@ final class OperatorSubscriptions
     {
         $reason = self::reason($reason);
         $subscription = $this->subscriptions->find($subscriptionId) ?? throw new SubscriptionNotFound;
+
+        if ($subscription->provider === 'google_play') {
+            throw new SubscriptionNotRevocable;
+        }
 
         if ($subscription->status === SubscriptionStatus::Revoked) {
             return;
@@ -148,7 +177,7 @@ final class OperatorSubscriptions
 
     private static function days(?int $days): void
     {
-        if ($days !== null && $days < 1) {
+        if ($days !== null && ($days < 1 || $days > self::MAX_DAYS)) {
             throw new InvalidDays;
         }
     }

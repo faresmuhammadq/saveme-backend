@@ -8,8 +8,15 @@ use App\Modules\Admin\Http\Controllers\NewPasswordController;
 use App\Modules\Admin\Http\Controllers\SecondFactorController;
 use App\Modules\Admin\Http\Controllers\SignInController;
 use App\Modules\Admin\Http\Controllers\SignOutController;
+use App\Modules\Admin\Http\Livewire\AccountPage;
+use App\Modules\Admin\Http\Livewire\AuditLog;
+use App\Modules\Admin\Http\Livewire\ClaimQueue;
+use App\Modules\Admin\Http\Livewire\ClaimReview;
+use App\Modules\Admin\Http\Livewire\FindAccount;
 use App\Modules\Admin\Http\Livewire\Gallery;
 use App\Modules\Admin\Http\Livewire\Overview;
+use App\Modules\Admin\Http\Livewire\PlanCatalogue;
+use App\Modules\Admin\Http\Livewire\PlanEditor;
 use App\Modules\Admin\Http\Livewire\ReenrolmentRequests;
 use App\Modules\Admin\Http\Livewire\ReplaceAuthenticator;
 use App\Modules\Admin\Http\Livewire\SecurityPage;
@@ -75,6 +82,15 @@ Route::middleware(['web', ResolveAdminLocale::class, BackOfficeHeaders::class])
             Route::livewire('/security', SecurityPage::class)->name('security');
             Route::livewire('/security/authenticator', ReplaceAuthenticator::class)->name('security.authenticator');
             Route::livewire('/reenrolment-requests', ReenrolmentRequests::class)->name('reenrolment-requests');
+
+            // Spec 021: the operators' working screens.
+            Route::livewire('/claims', ClaimQueue::class)->name('claims');
+            Route::livewire('/claims/{claim}', ClaimReview::class)->whereUuid('claim')->name('claims.show');
+            Route::livewire('/accounts', FindAccount::class)->name('accounts');
+            Route::livewire('/accounts/{user}', AccountPage::class)->whereUuid('user')->name('accounts.show');
+            Route::livewire('/plans', PlanCatalogue::class)->name('plans');
+            Route::livewire('/plans/{plan}', PlanEditor::class)->whereUuid('plan')->name('plans.edit');
+            Route::livewire('/audit', AuditLog::class)->name('audit');
 
             // An InstaPay claim's receipt, through a link signed for 5 minutes (spec 020, FR-014).
             Route::get('/claims/{claim}/receipt', ClaimReceiptController::class)->middleware('signed')->name('claims.receipt');

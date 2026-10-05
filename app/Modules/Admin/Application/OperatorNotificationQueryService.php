@@ -6,8 +6,9 @@ use App\Modules\Admin\Domain\Notifications\OperatorNotificationView;
 use App\Modules\Admin\Domain\Ports\OperatorNotificationStore;
 
 /**
- * What the back office's notification bell reads (P-18 rule 5). Until
- * operator accounts carry read state (D2), "unread" means recent.
+ * What the back office's notification bell reads (P-18 rule 5). "Unread" is
+ * per operator: a notification from the last `admin.notifications.unread_days`
+ * days that this operator has not marked read (spec 021, FR-051).
  */
 final class OperatorNotificationQueryService
 {
@@ -16,13 +17,13 @@ final class OperatorNotificationQueryService
     /**
      * @return list<OperatorNotificationView>
      */
-    public function latest(int $limit = 20): array
+    public function latestFor(string $operatorId, int $limit = 20): array
     {
-        return $this->store->latest($limit);
+        return $this->store->latestFor($operatorId, $limit);
     }
 
-    public function unreadCount(): int
+    public function unreadCountFor(string $operatorId): int
     {
-        return $this->store->countSince(now()->subDays((int) config('admin.notifications.unread_days'))->toDateTimeImmutable());
+        return $this->store->unreadCountFor($operatorId, now()->subDays((int) config('admin.notifications.unread_days'))->toDateTimeImmutable());
     }
 }

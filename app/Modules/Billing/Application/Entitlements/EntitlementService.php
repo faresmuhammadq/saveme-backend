@@ -70,6 +70,15 @@ final class EntitlementService
         return $this->forUser($ownerId);
     }
 
+    /**
+     * Drops the person's memoised answer, so the next call resolves afresh.
+     * For a screen that has just changed their access within the same request.
+     */
+    public function forget(string $userId): void
+    {
+        unset($this->resolved[$userId]);
+    }
+
     public function summaryFor(string $userId): EntitlementSummary
     {
         return $this->forUser($userId)->summary();

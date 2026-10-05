@@ -17,6 +17,10 @@ return [
         'configure' => 'الإعدادات',
     ],
     'nav' => [
+        'claims' => 'المطالبات',
+        'accounts' => 'الحسابات',
+        'plans' => 'الخطط',
+        'audit' => 'سجل التدقيق',
         'security' => 'الأمان',
         'reenrolment_requests' => 'طلبات إعادة التسجيل',
     ],

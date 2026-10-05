@@ -13,6 +13,7 @@ final readonly class PlanRecord
      * @param  array{ar: string, en: string}  $name
      * @param  array<string, bool|int|null>  $features
      * @param  list<array{channel: string, product_id: ?string, amount_minor: int, currency: string}>  $prices
+     * @param  string  $version  the edit version: `updated_at` with microseconds (spec 021, FR-035)
      */
     public function __construct(
         public string $id,
@@ -25,6 +26,7 @@ final readonly class PlanRecord
         public int $sortOrder,
         public array $features,
         public array $prices,
+        public string $version = '',
     ) {}
 
     public function nameIn(string $locale): string

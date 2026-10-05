@@ -61,7 +61,8 @@ We would rather tell you exactly what is protected than tell you "everything is 
 ### English
 
 - **Members of a wallet see that wallet's entries.** That is the point of sharing one.
-- **Nobody outside it sees anything at all** — not the wallet, not its name, not that it exists.
+- **No other user sees anything at all** — not the wallet, not its name, not that it exists.
+- **Our staff can see your account's state, your plan and how many wallets, members and devices you have — never your wallet names, amounts, balances or notes. Each time they look, it is recorded.**
 - **Your categories and your budgets stay yours.** Sharing a wallet with someone does not show them how you organise your own spending, and does not let them change it.
 - **You choose who joins, and you can remove them.** Removing someone stops them reaching the wallet from that moment.
 - **When you invite someone by email, we keep their address only until they answer or 7 days pass, and only the wallet's members see it.**
@@ -72,7 +73,8 @@ One honest limit: if someone was a member and you removed them, whatever their p
 ### العربية
 
 - **أعضاء المحفظة يرون قيودها.** هذا هو الغرض من مشاركتها.
-- **لا أحد خارجها يرى أي شيء** — لا المحفظة، ولا اسمها، ولا حتى أنها موجودة.
+- **لا مستخدم آخر خارجها يرى أي شيء** — لا المحفظة، ولا اسمها، ولا حتى أنها موجودة.
+- **يستطيع فريقنا رؤية حالة حسابك وخطتك وعدد محافظك وأعضائك وأجهزتك — ولا يرى أبداً أسماء محافظك ولا مبالغك ولا أرصدتك ولا ملاحظاتك. وفي كل مرة ينظرون، يُسجَّل ذلك.**
 - **فئاتك وميزانياتك تبقى لك.** مشاركة محفظة مع شخص لا تُظهر له طريقتك في تنظيم إنفاقك، ولا تتيح له تغييرها.
 - **أنت تختار من ينضم، ويمكنك إزالته.** والإزالة توقف وصوله إلى المحفظة من تلك اللحظة.
 - **عندما تدعو شخصاً بالبريد الإلكتروني، نحتفظ بعنوانه فقط إلى أن يردّ أو تمرّ 7 أيام، ولا يراه إلا أعضاء المحفظة.**
@@ -142,7 +144,8 @@ Every promise on this page is backed by a rule in [the security baseline](securi
 | Your money entries are not encrypted in storage, and we say so | FR-015 |
 | Amounts and notes never appear in our operational records | FR-016, FR-016a, FR-016b |
 | Everything travels encrypted, and an unencrypted request is refused | FR-018 |
-| Members see a wallet; nobody outside it sees anything | FR-017 |
+| Members see a wallet; no other user sees anything | FR-017 |
+| Operators see counts, never names or money; each look is recorded | spec 021 FR-021, FR-022, FR-024 |
 | Your categories and budgets stay yours | FR-017 |
 | Removing a member stops their access from that moment | FR-003, FR-019 |
 | A removed member's phone keeps what it already downloaded | FR-028, stated limit |

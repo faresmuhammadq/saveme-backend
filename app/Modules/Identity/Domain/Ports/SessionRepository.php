@@ -26,6 +26,11 @@ interface SessionRepository
     public function activeIdsFor(string $userId, ?string $except = null): array;
 
     /**
+     * How many sessions are active and not past their own expiry at $now.
+     */
+    public function activeCountFor(string $userId, DateTimeImmutable $now): int;
+
+    /**
      * One page of a user's sessions, keyset-paged on (sort column, id).
      *
      * @param  'signed_in_at'|'last_used_at'  $sort

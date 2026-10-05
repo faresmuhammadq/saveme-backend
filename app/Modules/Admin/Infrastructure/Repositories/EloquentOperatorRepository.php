@@ -36,6 +36,17 @@ final class EloquentOperatorRepository implements OperatorRepository
         return $row === null ? null : $this->record($row);
     }
 
+    public function findMany(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        return array_values(OperatorAccount::query()->whereIn('id', array_values(array_unique($ids)))->get()
+            ->map(fn (OperatorAccount $row): OperatorRecord => $this->record($row))
+            ->all());
+    }
+
     public function lockForUpdate(string $id): ?OperatorRecord
     {
         $row = OperatorAccount::query()->whereKey($id)->lockForUpdate()->first();

@@ -8,6 +8,7 @@ use App\Modules\Billing\Domain\Subscriptions\SubscriptionStatus;
 use App\Modules\Billing\Infrastructure\Models\Subscription;
 use DateTimeImmutable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 final class EloquentSubscriptionRepository implements SubscriptionRepository
 {
@@ -87,6 +88,57 @@ final class EloquentSubscriptionRepository implements SubscriptionRepository
             'renewal_reminded_at' => $at->format(self::INSTANT),
             'updated_at' => $at->format(self::INSTANT),
         ]) === 1;
+    }
+
+    public function governedCountsByPlan(DateTimeImmutable $now): array
+    {
+        $at = $now->format(self::INSTANT);
+
+        $rows = DB::select(<<<'SQL'
+            SELECT plan_id, COUNT(*) AS people FROM (
+                SELECT DISTINCT ON (user_id) user_id, plan_id
+                FROM subscriptions
+                WHERE status IN ('active', 'grace')
+                  AND (COALESCE(grace_until, current_period_end) IS NULL OR COALESCE(grace_until, current_period_end) > ?::timestamptz)
+                ORDER BY user_id, (current_period_end IS NULL) DESC, current_period_end DESC, created_at DESC, id DESC
+            ) governing
+            GROUP BY plan_id
+            SQL, [$at]);
+
+        $counts = [];
+        foreach ($rows as $row) {
+            $counts[(string) $row->plan_id] = (int) $row->people;
+        }
+
+        return $counts;
+    }
+
+    public function figures(DateTimeImmutable $now): array
+    {
+        $at = $now->format(self::INSTANT);
+
+        $rows = DB::select(<<<'SQL'
+            SELECT s.provider, COUNT(DISTINCT s.user_id) AS people
+            FROM subscriptions s
+            JOIN plans p ON p.id = s.plan_id
+            WHERE s.status IN ('active', 'grace')
+              AND (COALESCE(s.grace_until, s.current_period_end) IS NULL OR COALESCE(s.grace_until, s.current_period_end) > ?::timestamptz)
+              AND NOT p.is_default
+            GROUP BY s.provider
+            SQL, [$at]);
+
+        $byChannel = [];
+        foreach ($rows as $row) {
+            $byChannel[(string) $row->provider] = (int) $row->people;
+        }
+
+        return [
+            'google_play' => $byChannel['google_play'] ?? 0,
+            'instapay' => $byChannel['instapay'] ?? 0,
+            'manual' => $byChannel['manual'] ?? 0,
+            'in_grace' => Subscription::query()->where('status', 'grace')
+                ->where(fn ($query) => $query->whereNull('grace_until')->orWhere('grace_until', '>', $at))->count(),
+        ];
     }
 
     /**

@@ -17,6 +17,14 @@ interface OperatorRepository
     public function findByLookup(string $lookup): ?OperatorRecord;
 
     /**
+     * One query for many operators; unknown ids are left out.
+     *
+     * @param  list<string>  $ids
+     * @return list<OperatorRecord>
+     */
+    public function findMany(array $ids): array;
+
+    /**
      * Reads the row with FOR UPDATE; call inside a transaction.
      */
     public function lockForUpdate(string $id): ?OperatorRecord;

@@ -137,6 +137,7 @@ The routes that send mail or create accounts carry their own budgets, independen
 | Invitation token operations (preview, accept, decline) | 30 per hour per person (429) |
 | InstaPay claim | 5 per hour per origin and 5 per 24 hours per address lookup value, registered or not (429) |
 | Redeem code | 10 per hour per person (429) |
+| Operator account lookups | 30 per 10 minutes per operator (429) |
 
 **Owned by**: Identity.
 
@@ -227,6 +228,8 @@ There is no blanket claim here, because a blanket claim collapses under one ques
 | Claim reference, amount, plan, status, reject reason | none at rest | yes | operators |
 | Review note | none at rest; never mailed or audited | no | operators only |
 | Redeem code | hash | by hash | nobody after issue |
+| Account facts and counts shown to operators (state, verification, plan, subscription dates, counts of wallets, members and devices) | none at rest beyond their sources | no | operators, with a recorded read |
+| Notification read mark | none, identifiers only | no | operators |
 | Idempotency record | none at rest, holds the answer only (no secret) | by scope and key | nobody through any endpoint |
 
 **Rules**
@@ -473,7 +476,7 @@ Identity already owns users, credentials and sessions, which is where most recor
 | `event` | enum | from [the vocabulary](#what-is-recorded), and nothing else |
 | `actor_type` | enum | `user` \| `operator` \| `system` |
 | `actor_id` | uuid, nullable | null only for `system` |
-| `subject_type` | enum | `user` \| `wallet` \| `session` \| `subscription` \| `operator` \| `payment_claim` |
+| `subject_type` | enum | `user` \| `wallet` \| `session` \| `subscription` \| `operator` \| `payment_claim` \| `plan` |
 | `subject_id` | uuid, nullable | null only for `sign_in_failed` and `lockout_applied` on an unregistered address |
 | `request_id` | uuid | correlates the entry with the server's logs |
 | `origin` | string, nullable | coarse origin of the request |
@@ -506,6 +509,8 @@ The Sharing events are written by Wallets, not Sharing: every membership change 
 - A module does not invent a local event name. A genuinely new event is added to this table, in the same change that starts emitting it.
 - Every event names **exactly one** module that writes it, so no event reaches implementation without an owner.
 - An act that appears in this table produces exactly one entry. Not two, and not none.
+
+The `admin_action` actions `account_viewed` (an operator opened a person's account page), `account_lookup_missed` (an account lookup found nobody), `plan_updated` and `plan_retired` are written by Admin. The last two have subject type `plan`.
 
 ## What an entry must never contain
 
@@ -551,7 +556,7 @@ The back office is not a second way into user data with a weaker lock.
 **Sessions and re-confirmation**
 
 - An operator session ends after **30 minutes without a request** and **12 hours after sign-in**, whichever comes first; it also ends on sign-out, deactivation, a completed re-enrolment, or a password change made elsewhere. The check happens on every request, with no cached answer.
-- A sensitive act (changing the password, regenerating recovery codes, linking an authenticator, approving or declining a re-enrolment, approving or rejecting a payment claim, revoking a redeem code) needs a second-factor proof from the **last 10 minutes**.
+- A sensitive act (changing the password, regenerating recovery codes, linking an authenticator, approving or declining a re-enrolment, approving or rejecting a payment claim, revoking a redeem code, granting, extending or revoking a person's access, saving or retiring a plan) needs a second-factor proof from the **last 10 minutes**.
 - Operators are **created only from the command line**; there is no public sign-up and no mailed password reset.
 
 Time-based codes need no messaging channel, which matters: the messaging channel is often the thing an attacker already controls.

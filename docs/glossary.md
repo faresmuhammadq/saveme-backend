@@ -77,6 +77,8 @@ Rules:
 | [Operator Account](#operator-account) | — | Admin | root | persisted | no |
 | [Recovery Code](#recovery-code) | — | Admin | value inside Operator Account | persisted in the account | no |
 | [Re-enrolment Request](#re-enrolment-request) | — | Admin | root | persisted | no |
+| [Notification Read Mark](#notification-read-mark) | — | Admin | root | persisted | no |
+| [Anonymity Floor](#anonymity-floor) | — | Admin | value | derived (a constant of the back office) | n/a |
 
 #### What syncs, and how the client gets the rest
 
@@ -558,10 +560,10 @@ The inclusive span of calendar dates a report covers.
 
 ## Notifications and Admin
 
-Neither context owns any of the 21 named entities. Admin owns three entities added since: [Operator Notification](#operator-notification), [Operator Account](#operator-account) (with its [Recovery Codes](#recovery-code)) and [Re-enrolment Request](#re-enrolment-request).
+Neither context owns any of the 21 named entities. Admin owns five entities added since: [Operator Notification](#operator-notification), [Operator Account](#operator-account) (with its [Recovery Codes](#recovery-code)), [Re-enrolment Request](#re-enrolment-request), [Notification Read Mark](#notification-read-mark) and [Anonymity Floor](#anonymity-floor).
 
 - **Notifications** owns the push registration that binds a device to a [Device Session](#device-session), and notification preferences. Those records will be indexed here when that feature is specced.
-- **Admin** owns admin accounts — a **separate guard**, with no role or admin flag on application users (P-08, ADR-0006) — and records admin actions through its `AdminAuditService` façade, which writes to Identity's one [audit log](#audit-entry). Admin **writes only through other modules' application services**, so back-office actions run the same invariants, authorization and events as app actions.
+- **Admin** owns admin accounts — a **separate guard**, with no role or admin flag on application users (P-08, ADR-0006) — and records admin actions through its `AdminAuditService` façade, which writes to Identity's one [audit log](#audit-entry). Admin **writes only through other modules' application services**, so back-office actions run the same invariants, authorization and events as app actions. Its screens (B12) are the overview, the payment-claim queue, account lookup, the plan editor and the audit log.
 
 ### Operator Notification
 
@@ -610,6 +612,30 @@ An operator's request to replace a lost second factor, which needs approval by t
 - **States**: `open` → `completed` | `declined` | `expired` | `cancelled`
 - **Referenced by**: Audit Entry (`admin_action` detail)
 - **Notes**: two distinct approvers, neither the requester, each with a reason; open for 72 hours. Completion clears the requester's secret and recovery codes and ends their sessions.
+
+### Notification Read Mark
+
+The record that one operator has read one [Operator Notification](#operator-notification), and when.
+
+- **Context**: Admin
+- **Role**: aggregate root
+- **Persistence**: persisted
+- **Sync**: no — operators only, never through `/api/v1`
+- **States**: `single-state`
+- **Referenced by**: —
+- **Notes**: identifiers and an instant only. Per operator: one operator reading a notification does not mark it read for another.
+
+### Anonymity Floor
+
+The smallest non-zero population count the back office shows exactly: 10. A smaller non-zero count is shown as "fewer than 10".
+
+- **Context**: Admin
+- **Role**: value
+- **Persistence**: derived (a constant of the back office, not stored)
+- **Sync**: no
+- **States**: `single-state`
+- **Referenced by**: —
+- **Notes**: zero is shown as zero. It stops a small count from singling out a person.
 
 ---
 

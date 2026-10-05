@@ -97,6 +97,19 @@ interface MembershipRepository
     public function liveWalletIdsOf(string $userId, string $afterWalletId, int $limit): array;
 
     /**
+     * Counts for an operator's account page, over live rows only (a live
+     * wallet, a live membership). Numbers, never names.
+     *
+     * @return array{owned: int, joined: int, others: int}
+     */
+    public function countsFor(string $userId): array;
+
+    /**
+     * Live wallets with at least two live members.
+     */
+    public function countSharedWallets(): int;
+
+    /**
      * Gives the membership a new `change_seq` and nothing else: `version`,
      * `updated_at` and `member_change_seq` stay (ADR-0021).
      */

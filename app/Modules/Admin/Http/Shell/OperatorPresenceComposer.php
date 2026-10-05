@@ -7,6 +7,7 @@ use App\Modules\Admin\Application\Reenrolment\ReenrolmentQuery;
 use App\Modules\Admin\Http\Auth\OperatorSession;
 use App\Modules\Admin\Http\Navigation\NavigationEntry;
 use App\Modules\Admin\Http\Navigation\NavigationRegistry;
+use App\Modules\Billing\Application\Claims\ClaimQuery;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\ComponentAttributeBag;
 
@@ -57,6 +58,12 @@ final class OperatorPresenceComposer
 
     private function registerNavigation(): void
     {
+        foreach ($this->workScreens() as $entry) {
+            if (! $this->navigation->has($entry->key)) {
+                $this->navigation->add($entry);
+            }
+        }
+
         if (! $this->navigation->has('security')) {
             $this->navigation->add(new NavigationEntry(
                 key: 'security',
@@ -83,5 +90,29 @@ final class OperatorPresenceComposer
                 },
             ));
         }
+    }
+
+    /**
+     * The operators' working screens (spec 021, R-1). Icons are the registry's
+     * existing glyphs for them: claims, users, plans, audit.
+     *
+     * @return list<NavigationEntry>
+     */
+    private function workScreens(): array
+    {
+        return [
+            new NavigationEntry(
+                key: 'claims',
+                group: 'operate',
+                labelKey: 'admin::shell.nav.claims',
+                icon: 'claims',
+                route: 'admin.claims',
+                order: 20,
+                badge: fn (): ?int => app(ClaimQuery::class)->awaitingSummary()['count'] ?: null,
+            ),
+            new NavigationEntry(key: 'accounts', group: 'operate', labelKey: 'admin::shell.nav.accounts', icon: 'users', route: 'admin.accounts', order: 30),
+            new NavigationEntry(key: 'plans', group: 'configure', labelKey: 'admin::shell.nav.plans', icon: 'plans', route: 'admin.plans', order: 10),
+            new NavigationEntry(key: 'audit', group: 'configure', labelKey: 'admin::shell.nav.audit', icon: 'audit', route: 'admin.audit', order: 20),
+        ];
     }
 }

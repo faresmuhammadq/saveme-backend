@@ -3,6 +3,7 @@
 namespace App\Modules\Billing\Domain\Ports;
 
 use App\Modules\Billing\Domain\Claims\ClaimRecord;
+use App\Modules\Billing\Domain\Claims\ClaimStatus;
 use App\Modules\Billing\Domain\Claims\NewClaim;
 use App\Modules\Billing\Domain\Claims\QueuedClaim;
 use App\Modules\Billing\Domain\Claims\RejectReason;
@@ -47,6 +48,28 @@ interface ClaimRepository
      * @return list<QueuedClaim>
      */
     public function queue(?string $afterId, int $limit): array;
+
+    /**
+     * One page of claims in a status (spec 021, FR-015): submitted claims
+     * (unexpired at `$now`) oldest first, the others newest first; an optional
+     * exact normalised reference or address lookup value; the cursor is the id
+     * of the last claim seen. `next` is set when more follow.
+     *
+     * @return array{items: list<QueuedClaim>, next: ?string}
+     */
+    public function page(ClaimStatus $status, ?string $reference, ?string $lookup, ?string $after, int $limit, DateTimeImmutable $now): array;
+
+    /**
+     * Submitted claims not yet past their expiry, and the oldest creation instant among them.
+     *
+     * @return array{count: int, oldest: ?DateTimeImmutable}
+     */
+    public function awaitingSummary(DateTimeImmutable $now): array;
+
+    /**
+     * Submitted, unexpired claims naming the plan.
+     */
+    public function countSubmittedForPlan(string $planId, DateTimeImmutable $now): int;
 
     /**
      * Expires submitted claims past `expires_at`, in one conditional update.

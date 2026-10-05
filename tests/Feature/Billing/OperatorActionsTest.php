@@ -12,6 +12,7 @@ use App\Modules\Billing\Domain\Refusals\SubscriptionRevoked;
 use App\Modules\Billing\Infrastructure\Models\Plan;
 use App\Modules\Billing\Infrastructure\Models\Subscription;
 use App\Modules\Identity\Infrastructure\Models\AuditEntry;
+use App\Modules\Identity\Infrastructure\Models\User;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 
@@ -22,7 +23,8 @@ use Illuminate\Support\Str;
 beforeEach(function () {
     $this->freezeTime();
     $this->operator = (string) Str::uuid7();
-    $this->user = (string) Str::uuid7();
+    // Spec 021, R-7: an operator grants and extends only for a real, active account.
+    $this->user = User::factory()->create()->id;
     $this->plus = (string) Plan::query()->where('code', 'plus_monthly')->value('id');
     $this->ops = app(OperatorSubscriptions::class);
 });

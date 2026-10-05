@@ -19,9 +19,26 @@ interface OperatorNotificationStore
     public function recordOnce(string $kind, string $subjectUserId, DateTimeImmutable $occurredAt, array $payload, string $sourceEventId): bool;
 
     /**
+     * The newest notifications with this operator's read mark on each.
+     *
      * @return list<OperatorNotificationView>
      */
-    public function latest(int $limit): array;
+    public function latestFor(string $operatorId, int $limit): array;
 
-    public function countSince(DateTimeImmutable $since): int;
+    /**
+     * Notifications since $since that this operator has not marked read.
+     */
+    public function unreadCountFor(string $operatorId, DateTimeImmutable $since): int;
+
+    /**
+     * Marks one notification read for one operator; idempotent, and a
+     * notification that does not exist is ignored.
+     */
+    public function markRead(string $operatorId, string $notificationId, DateTimeImmutable $at): void;
+
+    /**
+     * Marks every notification since $since that this operator has not read
+     * as read for them; idempotent.
+     */
+    public function markAllRead(string $operatorId, DateTimeImmutable $since, DateTimeImmutable $at): void;
 }

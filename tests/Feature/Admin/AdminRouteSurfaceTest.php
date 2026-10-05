@@ -7,6 +7,13 @@
 | Updating this list is deliberate: a route added to /admin changes it.
 */
 
+use App\Modules\Admin\Http\Livewire\AccountPage;
+use App\Modules\Admin\Http\Livewire\AuditLog;
+use App\Modules\Admin\Http\Livewire\ClaimQueue;
+use App\Modules\Admin\Http\Livewire\ClaimReview;
+use App\Modules\Admin\Http\Livewire\FindAccount;
+use App\Modules\Admin\Http\Livewire\PlanCatalogue;
+use App\Modules\Admin\Http\Livewire\PlanEditor;
 use App\Modules\Admin\Http\Middleware\BackOfficeHeaders;
 use App\Modules\Admin\Http\Middleware\EnsureOperatorSignedIn;
 use Illuminate\Routing\Route;
@@ -27,6 +34,13 @@ const GUARDED_SURFACE = [
     'admin/security',
     'admin/security/authenticator',
     'admin/reenrolment-requests',
+    'admin/claims',
+    'admin/claims/{claim}',
+    'admin/accounts',
+    'admin/accounts/{user}',
+    'admin/plans',
+    'admin/plans/{plan}',
+    'admin/audit',
     'admin/claims/{claim}/receipt',
     'admin/sign-out',
 ];
@@ -111,3 +125,27 @@ it('keeps the gallery reachable signed out in the local environment', function (
 
     $this->get('/admin/_gallery')->assertOk();
 });
+
+it('gates every spec 021 screen on the operator session', function (string $uri) {
+    $id = '0199b0f0-0000-7000-8000-000000000001';
+    $path = str_replace(['{claim}', '{user}', '{plan}'], $id, '/'.$uri);
+
+    // Signed out: redirected to sign-in.
+    $this->get($path)->assertRedirect(route('admin.sign-in'));
+
+    // An application Sanctum token is not an operator.
+    ['operator' => $operator] = makeOperator();
+    $this->withHeaders(['Authorization' => 'Bearer not-an-operator'])->get($path)->assertRedirect(route('admin.sign-in'));
+})->with(['admin/claims', 'admin/claims/{claim}', 'admin/accounts', 'admin/accounts/{user}', 'admin/plans', 'admin/plans/{plan}', 'admin/audit']);
+
+it('refuses every spec 021 component signed out, as a Livewire update would', function (string $component, array $params) {
+    Livewire\Livewire::test($component, $params)->assertStatus(401);
+})->with([
+    [ClaimQueue::class, []],
+    [ClaimReview::class, ['claim' => '0199b0f0-0000-7000-8000-000000000001']],
+    [FindAccount::class, []],
+    [AccountPage::class, ['user' => '0199b0f0-0000-7000-8000-000000000001']],
+    [PlanCatalogue::class, []],
+    [PlanEditor::class, ['plan' => '0199b0f0-0000-7000-8000-000000000001']],
+    [AuditLog::class, []],
+]);

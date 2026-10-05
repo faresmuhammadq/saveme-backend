@@ -19,10 +19,11 @@ final readonly class OperatorNotificationView
         public string $titleKey,
         public string $bodyKey,
         public array $params = [],
+        public bool $read = false,
     ) {}
 
     /**
-     * @return array{id: string, kind: string, subject_user_id: string, occurred_at: string, title_key: string, body_key: string, params: array<string, scalar|null>}
+     * @return array{id: string, kind: string, subject_user_id: string, occurred_at: string, title_key: string, body_key: string, params: array<string, scalar|null>, read: bool}
      */
     public function toArray(): array
     {
@@ -34,6 +35,7 @@ final readonly class OperatorNotificationView
             'title_key' => $this->titleKey,
             'body_key' => $this->bodyKey,
             'params' => $this->params,
+            'read' => $this->read,
         ];
     }
 }

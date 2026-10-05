@@ -30,5 +30,6 @@ final readonly class ClaimDetail
         public ?string $codeStatus,
         public ?DateTimeImmutable $codeExpiresAt,
         public array $duplicates,
+        public bool $matchesCurrentPrice = false,
     ) {}
 }

@@ -54,7 +54,7 @@ it('signs in with the current, previous or next step code', function (int $offse
     submitPassword($email, $password);
     submitCode(currentCode($secret, $offset))->assertRedirect(route('admin.overview'));
 
-    $this->get('/admin')->assertOk()->assertSee('Overview');
+    $this->get('/admin')->assertOk()->assertSee('Platform overview');
 })->with([-1, 0, 1]);
 
 it('refuses a code two steps away', function (int $offset) {

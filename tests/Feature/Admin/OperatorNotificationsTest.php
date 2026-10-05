@@ -91,8 +91,10 @@ test('the query service returns views and counts only the recent ones as unread'
         'occurred_at' => now()->subDays(10), 'payload' => '{}', 'source_event_id' => (string) Str::uuid7(), 'created_at' => now(),
     ]);
 
+    ['operator' => $operator] = makeOperator();
+
     $service = app(OperatorNotificationQueryService::class);
-    expect($service->latest())->toHaveCount(2)
-        ->and($service->latest()[0]->titleKey)->toBe('admin::notifications.kinds.deletion_cancelled_by_sign_in.title')
-        ->and($service->unreadCount())->toBe(1);
+    expect($service->latestFor($operator->id))->toHaveCount(2)
+        ->and($service->latestFor($operator->id)[0]->titleKey)->toBe('admin::notifications.kinds.deletion_cancelled_by_sign_in.title')
+        ->and($service->unreadCountFor($operator->id))->toBe(1);
 });

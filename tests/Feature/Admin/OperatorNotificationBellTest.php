@@ -20,7 +20,7 @@ beforeEach(function () {
             return true;
         }
 
-        public function latest(int $limit): array
+        public function latestFor(string $operatorId, int $limit): array
         {
             return [new OperatorNotificationView(
                 '0192f7a0-0000-7000-8000-000000000001', 'deletion_cancelled_by_sign_in', '0192f7a0-1c3d-7abc-9f01-2b3c4d5e6f70',
@@ -30,10 +30,14 @@ beforeEach(function () {
             )];
         }
 
-        public function countSince(DateTimeImmutable $since): int
+        public function unreadCountFor(string $operatorId, DateTimeImmutable $since): int
         {
             return 1;
         }
+
+        public function markRead(string $operatorId, string $notificationId, DateTimeImmutable $at): void {}
+
+        public function markAllRead(string $operatorId, DateTimeImmutable $since, DateTimeImmutable $at): void {}
     });
 });
 
@@ -67,5 +71,5 @@ test('every notification string exists in both languages', function () {
 });
 
 test('the query service resolves', function () {
-    expect(app(OperatorNotificationQueryService::class)->unreadCount())->toBe(1);
+    expect(app(OperatorNotificationQueryService::class)->unreadCountFor('0192f7a0-0000-7000-8000-0000000000aa'))->toBe(1);
 });

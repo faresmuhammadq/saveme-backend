@@ -19,6 +19,12 @@ return [
         'screenshot_checked' => 'Screenshot checked',
     ],
     'actions' => [
+        'claim' => [
+            'revoke' => [
+                'title' => 'Revoke this redeem code',
+                'consequence' => 'Voids the unredeemed code and closes the claim. No email is sent; contact the payer yourself. Don’t include personal details in the reason.',
+            ],
+        ],
         'reenrolment' => [
             'approve' => [
                 'title' => 'Approve the re-enrolment',

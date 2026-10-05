@@ -72,4 +72,23 @@ interface SubscriptionRepository
      * @return bool whether this call recorded it
      */
     public function markReminded(string $id, DateTimeImmutable $at): bool;
+
+    /**
+     * How many people each plan governs at $now (ADR-0013 rule 14): per
+     * person, the granting subscription that ends latest (none beats any
+     * end). People with none are governed by the default plan and are not
+     * counted here.
+     *
+     * @return array<string, int> plan id to people
+     */
+    public function governedCountsByPlan(DateTimeImmutable $now): array;
+
+    /**
+     * People holding a granting subscription (active or in grace, not yet
+     * ended) on a non-default plan, distinct per channel, and the
+     * subscriptions currently in grace (spec 021, FR-010).
+     *
+     * @return array{google_play: int, instapay: int, manual: int, in_grace: int}
+     */
+    public function figures(DateTimeImmutable $now): array;
 }

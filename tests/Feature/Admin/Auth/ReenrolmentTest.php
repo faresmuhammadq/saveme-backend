@@ -258,15 +258,21 @@ it('is scheduled every five minutes', function () {
     expect($event)->not->toBeNull()->and($event->expression)->toBe('*/5 * * * *');
 });
 
+function reenrolmentNavigationBadge(): ?int
+{
+    $entries = collect(app(NavigationRegistry::class)->groups())->flatMap(fn (array $group): array => $group['entries']);
+
+    return $entries->firstWhere(fn ($item) => $item['entry']->key === 'reenrolment-requests')['badge'];
+}
+
 it('counts waiting requests in the navigation badge, never the viewer\'s own', function () {
     ['requester' => $requester, 'first' => $first] = threeOperators();
     openRequest($requester);
 
     signInOperator($first['operator']);
     $this->get('/admin')->assertOk()->assertSee('Re-enrolment requests');
-    $badge = app(NavigationRegistry::class)->groups()[0]['entries'];
-    expect(collect($badge)->firstWhere(fn ($item) => $item['entry']->key === 'reenrolment-requests')['badge'])->toBe(1);
+    expect(reenrolmentNavigationBadge())->toBe(1);
 
     signInOperator($requester['operator']);
-    expect(collect(app(NavigationRegistry::class)->groups()[0]['entries'])->firstWhere(fn ($item) => $item['entry']->key === 'reenrolment-requests')['badge'])->toBeNull();
+    expect(reenrolmentNavigationBadge())->toBeNull();
 });

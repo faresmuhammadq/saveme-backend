@@ -86,6 +86,15 @@ final class EloquentSessionRepository implements SessionRepository
         return $ids;
     }
 
+    public function activeCountFor(string $userId, DateTimeImmutable $now): int
+    {
+        return DeviceSession::query()
+            ->where('user_id', $userId)
+            ->where('state', SessionState::Active->value)
+            ->where(fn ($query) => $query->whereNull('expires_at')->orWhereRaw('expires_at > ?', [$now->format('Y-m-d H:i:s.uP')]))
+            ->count();
+    }
+
     public function page(string $userId, ?SessionState $state, string $sort, bool $descending, ?array $after, int $limit): array
     {
         $direction = $descending ? 'desc' : 'asc';

@@ -109,7 +109,13 @@ document.addEventListener('alpine:init', () => {
                 const selected = each === option;
                 each.setAttribute('aria-selected', selected ? 'true' : 'false');
             });
-            this.$el.querySelector('input[type="hidden"]')?.dispatchEvent(new Event('input', { bubbles: true }));
+            const hidden = this.$root.querySelector('input[type="hidden"]');
+
+            if (hidden) {
+                hidden.value = this.value;
+                hidden.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+
             this.close(true);
         },
 

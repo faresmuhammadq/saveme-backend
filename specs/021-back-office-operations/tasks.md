@@ -207,7 +207,7 @@ description: "Task list for Back-office Operations (B12)"
 - [X] T065 Run the full gate: `dev exec -- vendor/bin/pint --dirty --format agent`, `dev exec -- composer test` (Arch, Larastan 8, Unit, Feature, Contract) and `dev exec -- vendor/bin/pest tests/Contract/OpenApi --compact` (must stay green: no API change, FR-058); confirm `git diff --stat composer.json package.json docs/openapi` is empty (FR-058, FR-059), that no new class implements a domain event under any module's `Domain/Events` (FR-060), and that `AuditLog` offers no edit, delete or export path (FR-046).
 - [X] T066 Browser validation with Playwright (MCP) per quickstart.md steps 1–24, English and Arabic, 1280 px and 390 px, keyboard-only passes; save the report to `specs/021-back-office-operations/test-reports/validation-<timestamp>.md` with screenshots; fix any defect found and re-run its tests. Run in the browser on 2026-10-05 (Playwright): see test-reports/validation-20261005-123900.md; steps 7, 9, 17, 22 (second operator) and 23 stay with Livewire tests.
 - [X] T067 Write `specs/021-back-office-operations/checklists/fidelity.md`: compare each built screen with its board (artifact `Ag9pG4RnifekirczEG2drM`, version `1791137074-53df`: `Overview`/`OverviewAr`, `Claims`/`ClaimsAr`, `UserLookup`/`UserLookupAr`, `Plans`/`PlansAr`, `Audit`/`AuditAr`) as spec 018's fidelity checklist does, listing every recorded gap of research R-15 and every screen composed without a board.
-- [ ] T068 Write specs/021-back-office-operations/summary.md (parent writes it)
+- [X] T068 Write specs/021-back-office-operations/summary.md (parent writes it)
 
 ---
 

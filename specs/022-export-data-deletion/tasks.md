@@ -183,7 +183,7 @@ description: "Task list for Export & Data Deletion (B15)"
 - [X] T057 Apply the endpoint and security review checklists (both appendices) to the six operations, the signed route, and each new stored attribute; tick `checklists/privacy.md` evidence; confirm every implemented response matches `docs/openapi/paths/exports.yaml` and `identity.yaml` member for member — any deviation is a contract change → stop and record it in plan.md.
 - [X] T058 Gates: `dev exec -- composer test` (Pint, Larastan 8, arch, suite, API), `dev exec -- vendor/bin/pest tests/Contract/OpenApi --compact`; walk quickstart.md §1–§4 on the dev stack (Mailpit). State "Seeder: N/A — no reference data" in the commit description. Ask the owner to run the complete suite.
 - [X] T059 Apidog sync: bundle with `npx @redocly/cli bundle docs/openapi/openapi.yaml -o <scratchpad>/bundle.json`; import with `apidog import --project 1332822 --format openapi --file <scratchpad>/bundle.json --module-map "Personal finance backend API=1363204"`; create or update the project doc **"Export & deletion"** with contracts/export-deletion-api.md "What C15 binds to" (export states and polling, `download_url` in the system browser, `409` + `current`, 5 per 24 h, ZIP/CSV format, no gating, ownership-choice fields and fallbacks, Google Play notice, "Former member" rendering); update the "Error catalogue" doc (2444506) with the reworded `EXPORT_IN_PROGRESS` meaning. Record the import counts and doc id for the summary.
-- [ ] T060 Write specs/022-export-data-deletion/summary.md (parent writes it)
+- [X] T060 Write specs/022-export-data-deletion/summary.md (parent writes it)
 
 ---
 

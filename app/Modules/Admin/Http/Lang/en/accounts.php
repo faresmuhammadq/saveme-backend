@@ -27,10 +27,12 @@ return [
         'unverified' => 'Email not verified',
         'audit_link' => 'Audit entries about this account',
         'purged_note' => 'This account was deleted. Nothing else is kept.',
+        'purging_note' => 'This account is being deleted. Nothing else is shown.',
     ],
     'state' => [
         'active' => 'Active',
         'pending_deletion' => 'Deletion pending · :date',
+        'purging' => 'Deleting',
         'purged' => 'Deleted',
     ],
     'plan' => [

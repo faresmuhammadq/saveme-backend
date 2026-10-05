@@ -9,6 +9,7 @@ use App\Modules\Identity\Application\Events;
 use App\Modules\Identity\Domain\Audit\AuditEvent;
 use App\Modules\Identity\Domain\Audit\SubjectType;
 use App\Modules\Identity\Domain\Events\UserDeletionCancelled;
+use App\Modules\Identity\Domain\Ports\SuccessorChoiceRepository;
 use App\Modules\Identity\Domain\Ports\UserRepository;
 use Illuminate\Support\Facades\DB;
 
@@ -22,6 +23,7 @@ final class CancelDeletion
     public function __construct(
         private readonly UserRepository $users,
         private readonly AuditLog $audit,
+        private readonly SuccessorChoiceRepository $choices,
     ) {}
 
     /**
@@ -34,6 +36,8 @@ final class CancelDeletion
             if (! $this->users->cancelDeletion($userId)) {
                 return false;
             }
+
+            $this->choices->deleteFor($userId);
 
             $this->audit->record(AuditRecord::byUser(AuditEvent::DeletionCancelled, $userId, SubjectType::User, $userId, new DeletionCancelledDetail($reason)));
 

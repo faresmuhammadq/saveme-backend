@@ -62,6 +62,19 @@ final class EloquentSubscriptionRepository implements SubscriptionRepository
         ]);
     }
 
+    public function stampEndedByAccountPurge(string $userId, DateTimeImmutable $at): int
+    {
+        return Subscription::query()->where('user_id', $userId)->whereNull('ended_by_account_purge_at')->toBase()->update([
+            'ended_by_account_purge_at' => $at->format(self::INSTANT),
+            'updated_at' => $at->format(self::INSTANT),
+        ]);
+    }
+
+    public function deleteEndedByAccountPurgeBefore(DateTimeImmutable $cut): int
+    {
+        return Subscription::query()->where('ended_by_account_purge_at', '<', $cut->format(self::INSTANT))->delete();
+    }
+
     public function dueForGrace(DateTimeImmutable $now): array
     {
         return $this->records(Subscription::query()->where('status', 'active')

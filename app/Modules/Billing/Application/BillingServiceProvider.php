@@ -2,7 +2,9 @@
 
 namespace App\Modules\Billing\Application;
 
+use App\Modules\Billing\Application\Departure\EndSubscriptions;
 use App\Modules\Billing\Application\Entitlements\EntitlementService;
+use App\Modules\Billing\Application\Export\SubscriptionSection;
 use Illuminate\Support\ServiceProvider;
 use RuntimeException;
 
@@ -19,6 +21,10 @@ class BillingServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->scoped(EntitlementService::class);
+
+        // Identity orchestrates exports and purges; Billing supplies its share (spec 022, P-02).
+        $this->app->tag([SubscriptionSection::class], 'identity.export-sections');
+        $this->app->tag([EndSubscriptions::class], 'identity.purge-participants');
     }
 
     public function boot(): void

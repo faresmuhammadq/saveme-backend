@@ -15,6 +15,10 @@ return [
             'title' => 'Account deletion cancelled by sign-in',
             'body' => 'An account in its deletion grace period returned to active because someone signed in.',
         ],
+        'account_purge_stalled' => [
+            'title' => 'Account purge not finished',
+            'body' => 'An account deletion has been running for more than 24 hours without finishing. It resumes every hour; check the queue if it persists.',
+        ],
     ],
 
     'mail' => [

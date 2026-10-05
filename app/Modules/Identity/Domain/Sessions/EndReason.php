@@ -14,4 +14,5 @@ enum EndReason: string
     case PasswordChanged = 'password_changed';
     case PasswordReset = 'password_reset';
     case Expired = 'expired';
+    case AccountDeleted = 'account_deleted';
 }

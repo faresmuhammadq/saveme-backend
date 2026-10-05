@@ -113,6 +113,23 @@ interface TombstoneStore
     public function deleteUnreferencedCategories(array $ids, DateTimeImmutable $before): array;
 
     /**
+     * Live archived categories of people, after an id: the candidates for the
+     * sweep of a departed owner's categories (spec 022, FR-046).
+     *
+     * @return list<array{id: string, user_id: string}>
+     */
+    public function nextArchivedCategories(string $afterId, int $limit): array;
+
+    /**
+     * Removes the live archived categories among the ids that no transaction,
+     * posting, category reference, recurring rule or occurrence refers to.
+     *
+     * @param  list<string>  $ids
+     * @return int rows removed
+     */
+    public function deleteUnreferencedArchivedCategories(array $ids): int;
+
+    /**
      * Removes the wallets still tombstoned past the cut that no transaction,
      * posting, category reference, membership, recurring rule or occurrence
      * refers to.

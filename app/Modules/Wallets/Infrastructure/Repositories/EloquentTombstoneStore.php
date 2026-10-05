@@ -182,6 +182,29 @@ final class EloquentTombstoneStore implements TombstoneStore
         return array_map(fn (array $row): array => ['user_id' => (string) $row['user_id'], 'change_seq' => (int) $row['change_seq']], $rows);
     }
 
+    public function nextArchivedCategories(string $afterId, int $limit): array
+    {
+        $rows = self::select(
+            'SELECT id, user_id FROM categories WHERE user_id IS NOT NULL AND archived_at IS NOT NULL AND deleted_at IS NULL AND id > ?::uuid ORDER BY id LIMIT ?',
+            [self::after($afterId), $limit],
+        );
+
+        return array_map(fn (array $row): array => ['id' => (string) $row['id'], 'user_id' => (string) $row['user_id']], $rows);
+    }
+
+    public function deleteUnreferencedArchivedCategories(array $ids): int
+    {
+        return DB::delete(
+            'DELETE FROM categories c WHERE c.id = ANY(?::uuid[]) AND c.user_id IS NOT NULL AND c.archived_at IS NOT NULL AND c.deleted_at IS NULL
+               AND NOT EXISTS (SELECT 1 FROM transactions t WHERE t.category_id = c.id)
+               AND NOT EXISTS (SELECT 1 FROM postings p WHERE p.category_id = c.id)
+               AND NOT EXISTS (SELECT 1 FROM category_references r WHERE r.category_id = c.id)
+               AND NOT EXISTS (SELECT 1 FROM recurring_rules rr WHERE rr.category_id = c.id OR rr.payout_category_id = c.id)
+               AND NOT EXISTS (SELECT 1 FROM occurrences oc WHERE oc.category_id = c.id)',
+            [self::uuidArray($ids)],
+        );
+    }
+
     public function deleteUnreferencedWallets(array $ids, DateTimeImmutable $before): int
     {
         return DB::delete(

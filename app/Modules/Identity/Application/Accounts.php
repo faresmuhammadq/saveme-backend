@@ -40,6 +40,23 @@ final class Accounts
         return $this->users->find($userId)?->state === AccountState::Active;
     }
 
+    /**
+     * Which of the given people are gone for good: purged, or no longer
+     * known at all (spec 022). A person still leaving is not.
+     *
+     * @param  list<string>  $userIds
+     * @return list<string>
+     */
+    public function departedAmong(array $userIds): array
+    {
+        $states = $this->users->statesOf($userIds);
+
+        return array_values(array_filter(
+            $userIds,
+            fn (string $id): bool => ! isset($states[$id]) || $states[$id] === AccountState::Purged,
+        ));
+    }
+
     public function address(string $userId): string
     {
         return $this->cipher->open($userId, $this->users->sealedEmail($userId));

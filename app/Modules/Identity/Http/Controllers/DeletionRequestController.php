@@ -4,9 +4,11 @@ namespace App\Modules\Identity\Http\Controllers;
 
 use App\Http\Api\Envelope;
 use App\Modules\Identity\Application\Deletion\CancelDeletion;
+use App\Modules\Identity\Application\Deletion\DeletionPlanner;
 use App\Modules\Identity\Application\Deletion\RequestDeletion;
 use App\Modules\Identity\Http\Controllers\Concerns\ResolvesCaller;
-use App\Modules\Identity\Http\Requests\PasswordConfirmationRequest;
+use App\Modules\Identity\Http\Requests\DeletionRequestRequest;
+use App\Modules\Identity\Http\Resources\DeletionPlanResource;
 use App\Modules\Identity\Http\Resources\Instants;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,11 +18,21 @@ final class DeletionRequestController
 {
     use ResolvesCaller;
 
-    public function store(PasswordConfirmationRequest $request, RequestDeletion $deletion): JsonResponse
+    public function show(Request $request, DeletionPlanner $planner): JsonResponse
     {
-        $scheduledFor = $deletion->handle($this->callerId($request), $request->string('password')->toString());
+        return Envelope::ok(DeletionPlanResource::toArray($planner->plan($this->callerId($request))));
+    }
 
-        return Envelope::ok(['state' => 'pending_deletion', 'deletion_scheduled_for' => Instants::format($scheduledFor)]);
+    public function store(DeletionRequestRequest $request, RequestDeletion $deletion, DeletionPlanner $planner): JsonResponse
+    {
+        $callerId = $this->callerId($request);
+        $scheduledFor = $deletion->handle($callerId, $request->string('password')->toString(), $request->successors());
+
+        return Envelope::ok([
+            'state' => 'pending_deletion',
+            'deletion_scheduled_for' => Instants::format($scheduledFor),
+            'successors' => DeletionPlanResource::successors($planner->plan($callerId)),
+        ]);
     }
 
     public function destroy(Request $request, CancelDeletion $cancel): Response

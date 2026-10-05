@@ -38,7 +38,7 @@ Rules:
 
 ## The entity index
 
-27 entities: the 21 named in the spec, plus **Category Reference**, which exists because categories are user-scoped and shared wallets need to render a partner's category (see [ADR-0012](adr/0012-postings-wallet-and-category-accounts.md) and the Category entry), plus **Audit Entry** and **Operator Notification**, added by spec 007 (Identity & Authentication), plus **Operator Account**, **Recovery Code** and **Re-enrolment Request**, added by spec 018 (Operator Sign-in), plus **Activity Entry**, added by spec 016 (Sharing & Invitations; see [ADR-0020](adr/0020-wallet-activity-beside-the-audit-log.md)), plus **Report Range**, added by spec 019 (Reports; see [ADR-0022](adr/0022-reports-are-wallet-views-computed-on-read.md)), plus **Idempotency Record**, added by spec 020 (InstaPay Claims; see [ADR-0023](adr/0023-instapay-claims-and-claim-bound-redeem-codes.md)).
+27 entities: the 21 named in the spec, plus **Category Reference**, which exists because categories are user-scoped and shared wallets need to render a partner's category (see [ADR-0012](adr/0012-postings-wallet-and-category-accounts.md) and the Category entry), plus **Audit Entry** and **Operator Notification**, added by spec 007 (Identity & Authentication), plus **Operator Account**, **Recovery Code** and **Re-enrolment Request**, added by spec 018 (Operator Sign-in), plus **Activity Entry**, added by spec 016 (Sharing & Invitations; see [ADR-0020](adr/0020-wallet-activity-beside-the-audit-log.md)), plus **Report Range**, added by spec 019 (Reports; see [ADR-0022](adr/0022-reports-are-wallet-views-computed-on-read.md)), plus **Idempotency Record**, added by spec 020 (InstaPay Claims; see [ADR-0023](adr/0023-instapay-claims-and-claim-bound-redeem-codes.md)), plus **Export** and **Successor**, added by spec 022 (Export & Data Deletion; see [ADR-0024](adr/0024-account-deletion-keeps-shared-history.md)).
 
 | Entity | Arabic | Context | Role | Persistence | Sync |
 |---|---|---|---|---|---|
@@ -46,6 +46,8 @@ Rules:
 | [Profile](#profile) | — | Identity | child of User | persisted | yes — user |
 | [Device Session](#device-session) | — | Identity | child of User | persisted | yes — user |
 | [Audit Entry](#audit-entry) | — | Identity | root | persisted | no |
+| [Export](#export) | — | Identity | root | persisted | no |
+| [Successor](#successor) | — | Identity | value | derived | no |
 | [Wallet](#wallet-محفظة) | محفظة | Wallets & Ledger | root, and a sync scope | persisted | yes — wallet |
 | [Wallet Member](#wallet-member) | — | Wallets & Ledger | child of Wallet | persisted | yes — wallet |
 | [Activity Entry](#activity-entry) | — | Wallets & Ledger | root | persisted | no — read endpoint |
@@ -87,7 +89,7 @@ Rules:
 - **User scope (4)** — Profile, Device Session, Category, Budget.
 - **Wallet scope (7)** — Wallet, Wallet Member, Category Reference, Transaction, Recurring Rule, Occurrence, Invitation.
 
-**13 persisted but not synced**, and how the client obtains each:
+**14 persisted but not synced**, and how the client obtains each:
 
 | Entity | How the client gets it |
 |---|---|
@@ -100,12 +102,13 @@ Rules:
 | Idempotency Record | never — operational; the client only sends the key and sees a replay header |
 | Posting | never — internal to the server (P-04) |
 | Audit Entry | never — operator-only |
+| Export | read endpoint (`GET /exports`, `GET /exports/{id}`), polled until `ready`; the file is fetched through a signed link |
 | Activity Entry | read endpoint (`GET /wallets/{id}/activity`), paged, 90 days |
 | Operator Notification | never — operator-only |
 | Operator Account, Recovery Code | never — operators only, and never through `/api/v1` |
 | Re-enrolment Request | never — operator-only |
 
-**7 never persisted** — Entitlement, Budget Period, Report, Report Range (all derived), Sync Cursor (held by the client), Change Row (a read of a feed) and Sync Batch (a request that is gone once answered). The Purge Horizon is a counter on the scope row, not an entity. The Scope Head and the Sync Position are positions read off a scope or a page, not entities either.
+**8 never persisted** — Entitlement, Budget Period, Report, Report Range, Successor (all derived), Sync Cursor (held by the client), Change Row (a read of a feed) and Sync Batch (a request that is gone once answered). The Purge Horizon is a counter on the scope row, not an entity. The Scope Head and the Sync Position are positions read off a scope or a page, not entities either.
 
 ---
 
@@ -119,9 +122,9 @@ The authenticated person who owns an account.
 - **Role**: aggregate root
 - **Persistence**: persisted
 - **Sync**: no — credentials and account state are auth data, not client records
-- **States**: `active` ⇄ `pending_deletion` → `purged` (after the 30-day grace period). A new sign-in or an explicit cancel during the grace period returns the account to `active`
+- **States**: `active` ⇄ `pending_deletion` → `purging` → `purged`. After the 30-day grace period the purge moves the account to `purging`, which ends every session and cannot be cancelled; `purged` is a **husk** with no identity attribute (no address, password or data key), deleted after 400 days. A new sign-in or an explicit cancel during the grace period returns the account to `active`
 - **Referenced by**: Profile, Device Session, Wallet Member, Category, Budget, Subscription, Transaction (`created_by`), and every user-scoped entity
-- **Notes**: holds credentials and account lifecycle only. Display name, locale and timezone live on Profile. Deleting an account never destroys another member's data in a shared wallet.
+- **Notes**: holds credentials and account lifecycle only. Display name, locale and timezone live on Profile. Deleting an account never destroys another member's data in a shared wallet: an owned wallet with another member passes to a [Successor](#successor) ([ADR-0024](adr/0024-account-deletion-keeps-shared-history.md)).
 
 ### Profile
 
@@ -163,6 +166,30 @@ One recorded security or privacy event — who did what, to which subject, and w
 - **States**: `single-state`
 - **Referenced by**: —
 - **Notes**: append-only; never edited, and never deleted before its 400-day retention expires. Its shape, event vocabulary and exclusion list are fixed by the [security baseline](security-baseline.md#the-audit-entry), not here. Identity owns the one log; every other module, Admin's `AdminAuditService` included, writes through Identity's application service. Reading it is itself recorded.
+
+### Export
+
+A copy of what a person entered and can see, prepared on request as one downloadable archive.
+
+- **Context**: Identity
+- **Role**: aggregate root
+- **Persistence**: persisted (the record; the file lives on the private disk)
+- **Sync**: no — the client reads it through `GET /exports` and `GET /exports/{id}`
+- **States**: `queued` → `running` → `ready` → `expired`; `queued` | `running` → `failed`
+- **Referenced by**: —
+- **Notes**: scope is the whole account or one wallet the person belongs to. The archive is a ZIP of JSON files plus a spreadsheet-openable CSV of transactions. It is not gated by plan or verification. One export per person is active at a time, and at most five may be requested per 24 hours. The file lives 24 hours after it is ready, then is deleted; the record lives 30 days. A signed link opens the file: 15 minutes when handed out by the app, until expiry when mailed. See the [security baseline](security-baseline.md#export) and [ADR-0024](adr/0024-account-deletion-keeps-shared-history.md).
+
+### Successor
+
+The member who takes over a shared wallet when its owner's account is deleted.
+
+- **Context**: Identity
+- **Role**: value (computed by the deletion planner)
+- **Persistence**: derived (never stored); the owner's choices are stored while the deletion is pending
+- **Sync**: no
+- **States**: `single-state`
+- **Referenced by**: — (shown by `GET /account/deletion-request` and applied by the purge)
+- **Notes**: carries a reason: `only_member`, `chosen`, `oldest_editor` or `oldest_viewer`. Order: the only other member, of any role; the one the owner chose; the editor with the earliest membership; the viewer with the earliest membership. A member whose own account is pending deletion is skipped unless every candidate is. A wallet with no other active member has no successor and is deleted. The preview and the purge use the same rule ([ADR-0024](adr/0024-account-deletion-keeps-shared-history.md)).
 
 ---
 
@@ -244,7 +271,7 @@ A money-movement event — what the user actually records.
 - **States**: `live` → `live (v+1)` on edit → `tombstoned` on delete → `live` again on an explicit undelete
 - **Referenced by**: Posting, Occurrence (which one it confirmed into; the transaction carries read-only `occurrence_id` and `recurring_rule_id`), Report
 - **Notes**:
-  - Carries a calendar `date` (`YYYY-MM-DD`, no timezone), a positive `amount_minor` with its `currency`, an **optional** `description` (≤ 100 characters), an optional `memo` (≤ 1000), an optional **counterparty** (a free-text person name, for debts, ≤ 100), a `cleared` flag and `created_by` (never changes). `kind` is immutable.
+  - Carries a calendar `date` (`YYYY-MM-DD`, no timezone), a positive `amount_minor` with its `currency`, an **optional** `description` (≤ 100 characters), an optional `memo` (≤ 1000), an optional **counterparty** (a free-text person name, for debts, ≤ 100), a `cleared` flag and `created_by` (never changes). `created_by` outlives its author: after the author's account is purged it is an identifier that resolves to nobody, and clients show "Former member" ([ADR-0024](adr/0024-account-deletion-keeps-shared-history.md)). `kind` is immutable.
   - A **transfer** is a Transaction whose two postings both reference wallets: money out of `wallet_id` into `counter_wallet_id`. It is one record, listed in both wallets and carried on both wallet feeds ([ADR-0015](adr/0015-transfers-on-two-wallet-feeds.md)).
   - The **counter wallet** (`counter_wallet_id`) is a transfer's destination; it is null for income and expense and never changes after creation.
   - **Exactly one category in MVP.** The ledger permits several category legs, so splits are a later contract change, not a data migration.

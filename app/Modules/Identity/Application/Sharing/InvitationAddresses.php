@@ -2,7 +2,6 @@
 
 namespace App\Modules\Identity\Application\Sharing;
 
-use App\Modules\Identity\Domain\Account\AccountState;
 use App\Modules\Identity\Domain\Address\EmailAddress;
 use App\Modules\Identity\Domain\Ports\AddressLookup;
 use App\Modules\Identity\Domain\Ports\AttributeCipher;
@@ -63,7 +62,7 @@ final class InvitationAddresses
     {
         $user = $this->users->findByLookup($lookup);
 
-        return $user === null || $user->state === AccountState::Purged ? null : $user->id;
+        return $user === null || $user->state->isGone() ? null : $user->id;
     }
 
     /**

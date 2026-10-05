@@ -2,10 +2,17 @@
 
 namespace App\Modules\Identity\Http;
 
+use App\Modules\Identity\Application\Deletion\PurgeAccount;
+use App\Modules\Identity\Application\Export\GenerateExport;
+use App\Modules\Identity\Application\Export\IdentitySections;
 use App\Modules\Identity\Application\Sync\FeedPresenter;
 use App\Modules\Identity\Domain\Ports\AddressLookup;
+use App\Modules\Identity\Http\Console\ExpireExports;
 use App\Modules\Identity\Http\Console\ExpireSessions;
+use App\Modules\Identity\Http\Console\PurgeAccounts;
+use App\Modules\Identity\Http\Console\SendDeletionReminders;
 use App\Modules\Identity\Http\Console\TimingProbe;
+use App\Modules\Identity\Http\Controllers\ExportFileController;
 use App\Modules\Identity\Http\Listeners\ApplyProfileLanguage;
 use App\Modules\Identity\Http\Middleware\EnsureAddressVerified;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -35,6 +42,27 @@ class IdentityServiceProvider extends ServiceProvider
         FeedPresenter::class => ResourceFeedPresenter::class,
     ];
 
+    /**
+     * The tags other modules attach their export sections and purge steps to
+     * (spec 022, R-4, R-12): Identity orchestrates, each module owns its own.
+     */
+    public const EXPORT_SECTIONS = 'identity.export-sections';
+
+    public const PURGE_PARTICIPANTS = 'identity.purge-participants';
+
+    public function register(): void
+    {
+        $this->app->tag([IdentitySections::class], self::EXPORT_SECTIONS);
+
+        $this->app->when(PurgeAccount::class)
+            ->needs('$participants')
+            ->giveTagged(self::PURGE_PARTICIPANTS);
+
+        $this->app->when(GenerateExport::class)
+            ->needs('$sections')
+            ->giveTagged(self::EXPORT_SECTIONS);
+    }
+
     public function boot(Router $router): void
     {
         $this->loadViewsFrom(__DIR__.'/Views', 'identity');
@@ -49,8 +77,16 @@ class IdentityServiceProvider extends ServiceProvider
 
         Route::middleware('api')->prefix('api/v1')->group(__DIR__.'/routes.php');
 
+        // The signed archive link a browser or share sheet opens without bearer or client headers
+        // (spec 022, R-6). Not an API operation; the signature is checked in the controller so a bad
+        // one answers 404, not 403.
+        Route::get('exports/{export}/file', ExportFileController::class)
+            ->whereUuid('export')
+            ->middleware('throttle:identity-export-file')
+            ->name('identity.exports.file');
+
         if ($this->app->runningInConsole()) {
-            $this->commands($this->app->environment('local') ? [ExpireSessions::class, TimingProbe::class] : [ExpireSessions::class]);
+            $this->commands($this->app->environment('local') ? [ExpireSessions::class, ExpireExports::class, PurgeAccounts::class, SendDeletionReminders::class, TimingProbe::class] : [ExpireSessions::class, ExpireExports::class, PurgeAccounts::class, SendDeletionReminders::class]);
         }
     }
 
@@ -65,6 +101,12 @@ class IdentityServiceProvider extends ServiceProvider
 
         RateLimiter::for('identity-resend', fn (Request $request): Limit => Limit::perHour((int) config('identity.throttle.resend_per_hour_per_address'))
             ->by('resend:'.$request->user()?->getAuthIdentifier()));
+
+        // The export archive link: 20 per 10 minutes per origin (spec 022, FR-018).
+        RateLimiter::for('identity-export-file', fn (Request $request): Limit => Limit::perSecond(
+            (int) config('identity.export_file_budget.attempts'),
+            (int) config('identity.export_file_budget.decay_seconds'),
+        )->by('export-file:'.$request->ip()));
 
         // Counted per address lookup value, registered or not, so the budget
         // itself discloses nothing about registration.

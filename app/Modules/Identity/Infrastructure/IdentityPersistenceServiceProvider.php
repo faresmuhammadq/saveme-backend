@@ -2,16 +2,21 @@
 
 namespace App\Modules\Identity\Infrastructure;
 
+use App\Modules\Identity\Domain\Ports\AccountPurgeRepository;
 use App\Modules\Identity\Domain\Ports\AddressLookup;
 use App\Modules\Identity\Domain\Ports\AttributeCipher;
 use App\Modules\Identity\Domain\Ports\AuditStore;
 use App\Modules\Identity\Domain\Ports\BudgetStartDayHistory;
 use App\Modules\Identity\Domain\Ports\ChangeSequence;
+use App\Modules\Identity\Domain\Ports\ExportRepository;
+use App\Modules\Identity\Domain\Ports\ExportStore;
 use App\Modules\Identity\Domain\Ports\FailureCounter;
+use App\Modules\Identity\Domain\Ports\IdentityEraser;
 use App\Modules\Identity\Domain\Ports\LinkRepository;
 use App\Modules\Identity\Domain\Ports\ProfileRepository;
 use App\Modules\Identity\Domain\Ports\SessionIssuer;
 use App\Modules\Identity\Domain\Ports\SessionRepository;
+use App\Modules\Identity\Domain\Ports\SuccessorChoiceRepository;
 use App\Modules\Identity\Domain\Ports\UserRepository;
 use App\Modules\Identity\Domain\Ports\UserScope;
 use App\Modules\Identity\Infrastructure\Console\RewrapKeys;
@@ -19,13 +24,18 @@ use App\Modules\Identity\Infrastructure\Crypto\HmacAddressLookup;
 use App\Modules\Identity\Infrastructure\Crypto\Keyring;
 use App\Modules\Identity\Infrastructure\Crypto\SodiumAttributeCipher;
 use App\Modules\Identity\Infrastructure\Models\DeviceSession;
+use App\Modules\Identity\Infrastructure\Repositories\EloquentAccountPurgeRepository;
 use App\Modules\Identity\Infrastructure\Repositories\EloquentAuditStore;
 use App\Modules\Identity\Infrastructure\Repositories\EloquentBudgetStartDayHistory;
+use App\Modules\Identity\Infrastructure\Repositories\EloquentExportRepository;
 use App\Modules\Identity\Infrastructure\Repositories\EloquentFailureCounter;
+use App\Modules\Identity\Infrastructure\Repositories\EloquentIdentityEraser;
 use App\Modules\Identity\Infrastructure\Repositories\EloquentLinkRepository;
 use App\Modules\Identity\Infrastructure\Repositories\EloquentProfileRepository;
 use App\Modules\Identity\Infrastructure\Repositories\EloquentSessionRepository;
+use App\Modules\Identity\Infrastructure\Repositories\EloquentSuccessorChoiceRepository;
 use App\Modules\Identity\Infrastructure\Repositories\EloquentUserRepository;
+use App\Modules\Identity\Infrastructure\Repositories\LocalDiskExportStore;
 use App\Modules\Identity\Infrastructure\Sessions\SanctumSessionIssuer;
 use App\Modules\Identity\Infrastructure\Sync\EloquentUserScope;
 use App\Modules\Identity\Infrastructure\Sync\UserRowChangeSequence;
@@ -53,6 +63,11 @@ class IdentityPersistenceServiceProvider extends ServiceProvider
         ChangeSequence::class => UserRowChangeSequence::class,
         UserScope::class => EloquentUserScope::class,
         BudgetStartDayHistory::class => EloquentBudgetStartDayHistory::class,
+        IdentityEraser::class => EloquentIdentityEraser::class,
+        ExportRepository::class => EloquentExportRepository::class,
+        ExportStore::class => LocalDiskExportStore::class,
+        SuccessorChoiceRepository::class => EloquentSuccessorChoiceRepository::class,
+        AccountPurgeRepository::class => EloquentAccountPurgeRepository::class,
     ];
 
     public function register(): void

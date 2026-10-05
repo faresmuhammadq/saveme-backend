@@ -1,6 +1,10 @@
 <!--
 Sync Impact Report (latest first)
 
+v1.3.12 → 1.3.13 — 2026-10-06
+- PATCH: P-07 and P-08 list ADR-0024, introduced by spec 022; the Identity row publishes `AccountPurgeStalled`; no rule changes.
+- Reason: spec 022 (B15, Export & Data Deletion); ADR-0024 extends ADR-0017 and ADR-0021 and supersedes ADR-0008 rule 12 for purged user scopes only.
+
 v1.3.11 → 1.3.12 — 2026-10-05
 - PATCH: P-09 and P-10 list ADR-0023, introduced by spec 020; no rule changes.
 - Reason: spec 020 (B11, InstaPay claims); ADR-0023 extends ADR-0013.
@@ -123,7 +127,7 @@ v1.0.0 — 2026-09-19 (ratified)
 
 <!-- "Save Me" is a working codename used as display text only; see P-13. -->
 
-**Version**: 1.3.12 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-05
+**Version**: 1.3.13 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-06
 
 ## Purpose & Precedence
 
@@ -208,7 +212,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-07 Sync and concurrency
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0008](../../docs/adr/0008-sync-changes-feed.md), [ADR-0015](../../docs/adr/0015-transfers-on-two-wallet-feeds.md) (extends ADR-0008), [ADR-0016](../../docs/adr/0016-batch-upload-beside-per-record-writes.md) (supersedes ADR-0008 rule 7), [ADR-0017](../../docs/adr/0017-membership-on-the-members-user-feed.md) (extends ADR-0008), [ADR-0018](../../docs/adr/0018-occurrences-materialised-by-the-server.md) (extends ADR-0008 and ADR-0011), [ADR-0021](../../docs/adr/0021-scope-heads-and-member-name-restamps.md) (extends ADR-0008 and ADR-0017)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0008](../../docs/adr/0008-sync-changes-feed.md), [ADR-0015](../../docs/adr/0015-transfers-on-two-wallet-feeds.md) (extends ADR-0008), [ADR-0016](../../docs/adr/0016-batch-upload-beside-per-record-writes.md) (supersedes ADR-0008 rule 7), [ADR-0017](../../docs/adr/0017-membership-on-the-members-user-feed.md) (extends ADR-0008), [ADR-0018](../../docs/adr/0018-occurrences-materialised-by-the-server.md) (extends ADR-0008 and ADR-0011), [ADR-0021](../../docs/adr/0021-scope-heads-and-member-name-restamps.md) (extends ADR-0008 and ADR-0017), [ADR-0024](../../docs/adr/0024-account-deletion-keeps-shared-history.md) (extends ADR-0017 and ADR-0021; supersedes ADR-0008 rule 12 for purged user scopes only)
 
 1. Every syncable entity MUST carry `version`, `updated_at`, `deleted_at` and `change_seq`.
 2. Every write MUST carry the client's last-seen `version`.
@@ -220,7 +224,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-08 Authorization
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0006](../../docs/adr/0006-wallet-scoped-authorization.md), [ADR-0017](../../docs/adr/0017-membership-on-the-members-user-feed.md), [ADR-0021](../../docs/adr/0021-scope-heads-and-member-name-restamps.md) (extends ADR-0008 and ADR-0017)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0006](../../docs/adr/0006-wallet-scoped-authorization.md), [ADR-0017](../../docs/adr/0017-membership-on-the-members-user-feed.md), [ADR-0021](../../docs/adr/0021-scope-heads-and-member-name-restamps.md) (extends ADR-0008 and ADR-0017), [ADR-0024](../../docs/adr/0024-account-deletion-keeps-shared-history.md) (extends ADR-0017 and ADR-0021; supersedes ADR-0008 rule 12 for purged user scopes only)
 
 1. Authorization MUST be wallet-scoped: the caller's `wallet_members.role` combined with entitlement checks.
 2. A write MUST be authorized against every wallet it touches.
@@ -345,7 +349,7 @@ Nine contexts, one module directory each. Module directories use short PascalCas
 
 | Context | Module dir | Owns | Publishes |
 |---|---|---|---|
-| Identity | `app/Modules/Identity` | users, credentials, sessions/tokens, profile, preferences (locale, timezone), account deletion and export orchestration | `AuthService`, `ProfileService`, `UserQueryService`; `UserRegistered`, `UserDeletionRequested`, `UserSignedIn`, `DeviceSessionEnded`, `UserDeletionCancelled` |
+| Identity | `app/Modules/Identity` | users, credentials, sessions/tokens, profile, preferences (locale, timezone), account deletion and export orchestration | `AuthService`, `ProfileService`, `UserQueryService`; `UserRegistered`, `UserDeletionRequested`, `UserSignedIn`, `DeviceSessionEnded`, `UserDeletionCancelled`, `AccountPurgeStalled` |
 | Wallets & Ledger | `app/Modules/Wallets` | wallets, wallet members, categories, transactions, postings, recurring rules | `WalletService`, `TransactionService`, `MembershipQueryService`, `BalanceQueryService`; `TransactionPosted`, `TransactionVoided`, `WalletCreated`, `WalletDeleted`, `WalletOwnershipTransferred` |
 | Budgeting | `app/Modules/Budgeting` | budgets per category per period, budget progress read models | `BudgetService`, `BudgetQueryService`; `BudgetExceeded` |
 | Sharing | `app/Modules/Sharing` | invitations, invitation acceptance and revocation flows | `InvitationService`; `InvitationSent`, `InvitationAccepted`, `MemberRevoked`, `MemberRoleChanged` |

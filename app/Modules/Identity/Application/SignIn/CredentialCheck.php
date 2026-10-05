@@ -6,7 +6,6 @@ use App\Modules\Identity\Application\Audit\AuditLog;
 use App\Modules\Identity\Application\Audit\AuditRecord;
 use App\Modules\Identity\Application\Audit\Details\LockoutDetail;
 use App\Modules\Identity\Application\Audit\Details\SignInFailedDetail;
-use App\Modules\Identity\Domain\Account\AccountState;
 use App\Modules\Identity\Domain\Account\UserRecord;
 use App\Modules\Identity\Domain\Audit\ActorType;
 use App\Modules\Identity\Domain\Audit\AuditEvent;
@@ -52,7 +51,7 @@ final class CredentialCheck
         }
 
         $user = $this->users->findByLookup($lookup);
-        $usable = $user !== null && $user->state !== AccountState::Purged;
+        $usable = $user !== null && ! $user->state->isGone();
 
         $matches = Hash::check($password, $usable ? $user->passwordHash : self::dummyHash());
 

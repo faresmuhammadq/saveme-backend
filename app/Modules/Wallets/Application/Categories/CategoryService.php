@@ -2,6 +2,7 @@
 
 namespace App\Modules\Wallets\Application\Categories;
 
+use App\Modules\Identity\Application\Sync\TombstonePurge as UserScopeHorizon;
 use App\Modules\Wallets\Application\Categories\Dto\CategoryView;
 use App\Modules\Wallets\Application\Categories\Dto\SavedCategory;
 use App\Modules\Wallets\Domain\Categories\CategoryKind;
@@ -12,6 +13,7 @@ use App\Modules\Wallets\Domain\Categories\Ports\UserScopeSequence;
 use App\Modules\Wallets\Domain\Categories\Refusals\CategoryInUse;
 use App\Modules\Wallets\Domain\Categories\Refusals\CategoryNotFound;
 use App\Modules\Wallets\Domain\Categories\Refusals\CategoryVersionConflict;
+use App\Modules\Wallets\Domain\Ports\TombstoneStore;
 use Closure;
 use DateTimeImmutable;
 use DateTimeZone;
@@ -40,6 +42,8 @@ final class CategoryService
         private readonly UserScopeSequence $sequence,
         private readonly CategoryReferences $references,
         private readonly CategoryUsageQuery $usage,
+        private readonly TombstoneStore $tombstones,
+        private readonly UserScopeHorizon $horizon,
     ) {}
 
     /**
@@ -142,6 +146,73 @@ final class CategoryService
 
             return $this->view($this->reload($categoryId));
         });
+    }
+
+    /**
+     * Lets go of every category of a person whose account is being purged
+     * (spec 022, FR-046, ADR-0024). One that no record refers to is
+     * tombstoned (its references withdrawn, `change_seq` from the person's
+     * user counter, P-07 rule 5) and, when nothing at all still points at its
+     * row, removed at once with the user scope's purge horizon raised: nobody
+     * reads that scope any more. One still used by a transaction, rule,
+     * occurrence or budget is archived and kept with its owner id so partners
+     * keep the label; the daily purge deletes it when nothing uses it. A
+     * category already archived is left as it is, so a second call changes
+     * nothing.
+     *
+     * @return array{deleted: int, kept: int}
+     */
+    public function releaseForDepartedUser(string $userId): array
+    {
+        $deleted = 0;
+        $kept = 0;
+        $after = null;
+
+        do {
+            $rows = $this->categories->listOwned($userId, 'created_at', false, $after, 100);
+            $page = array_slice($rows, 0, 100);
+
+            foreach ($page as $category) {
+                $outcome = DB::transaction(fn (): ?string => $this->release($userId, $category->id));
+
+                $deleted += $outcome === 'deleted' ? 1 : 0;
+                $kept += $outcome === 'kept' ? 1 : 0;
+            }
+
+            $last = $page === [] ? null : $page[array_key_last($page)];
+            $after = count($rows) > 100 && $last !== null ? ['value' => $this->categories->sortValue($last, 'created_at'), 'id' => $last->id] : null;
+        } while ($after !== null);
+
+        return ['deleted' => $deleted, 'kept' => $kept];
+    }
+
+    /**
+     * @return 'deleted'|'kept'|null null when there was nothing to do
+     */
+    private function release(string $userId, string $categoryId): ?string
+    {
+        $current = $this->categories->findOwnedForUpdate($categoryId, $userId);
+
+        if ($current === null || $current->isTombstone()) {
+            return null;
+        }
+
+        if ($this->usage->isUsed($categoryId)) {
+            if ($current->archivedAt === null) {
+                $this->bump($current, ['archived_at' => self::instant(now()->toDateTimeImmutable())]);
+            }
+
+            return 'kept';
+        }
+
+        $this->references->withdrawAll($categoryId);
+        $this->bump($current, ['deleted_at' => self::instant(now()->toDateTimeImmutable())]);
+
+        $gone = $this->categories->findAny($categoryId) ?? throw new CategoryNotFound;
+        $this->tombstones->deleteUnreferencedCategories([$categoryId], now()->addMinute()->toDateTimeImmutable());
+        $this->horizon->raiseHorizon($userId, $gone->changeSeq);
+
+        return 'deleted';
     }
 
     /**

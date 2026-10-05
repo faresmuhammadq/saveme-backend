@@ -6,7 +6,7 @@
     $isActive = $state === 'active';
     $shortDate = fn (?string $instant): string => $instant === null ? '' : substr($instant, 0, 10);
     $ltrDate = fn (?string $instant): string => '<bdi dir="ltr">'.e($shortDate($instant)).'</bdi>';
-    $stateTone = ['active' => 'positive', 'pending_deletion' => 'pending', 'purged' => 'neutral'][$state] ?? 'neutral';
+    $stateTone = ['active' => 'positive', 'pending_deletion' => 'pending', 'purging' => 'pending', 'purged' => 'neutral'][$state] ?? 'neutral';
     $subscriptions = $account['access']['subscriptions'] ?? [];
     $governing = $account['access']['governing_subscription_id'] ?? null;
     $feature = function (string $key, mixed $value): string {
@@ -34,7 +34,7 @@
                         {{ __('admin::accounts.state.'.$state) }}
                     @endif
                 </x-admin::pill>
-                @if ($state !== 'purged')
+                @if ($state !== 'purged' && $state !== 'purging')
                     <x-admin::pill :tone="$facts['verified'] ? 'info' : 'neutral'" size="sm" data-test="verified">{{ $facts['verified'] ? __('admin::accounts.page.verified') : __('admin::accounts.page.unverified') }}</x-admin::pill>
                     <span class="text-label text-ink-2" data-test="created">{!! __('admin::accounts.page.created', ['date' => $ltrDate($facts['created_at'])]) !!}</span>
                 @endif
@@ -50,6 +50,8 @@
 
         @if ($state === 'purged')
             <x-admin::alert tone="info" data-test="purged-note">{{ __('admin::accounts.page.purged_note') }}</x-admin::alert>
+        @elseif ($state === 'purging')
+            <x-admin::alert tone="info" data-test="purging-note">{{ __('admin::accounts.page.purging_note') }}</x-admin::alert>
         @else
             <x-admin::alert tone="info" data-test="privacy-note">{{ __('admin::accounts.page.privacy_note') }}</x-admin::alert>
 

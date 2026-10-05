@@ -100,7 +100,7 @@ test('an English profile gets the English mail', function () {
 test('a purged account is sent nothing', function () {
     Mail::fake();
     $subscription = instapaySubscription($this->user->id);
-    User::query()->whereKey($this->user->id)->update(['state' => 'purged']);
+    User::query()->whereKey($this->user->id)->update(['state' => 'purged', 'purged_at' => now()]);
 
     app()->call([new SendRenewalReminderMail($this->user->id, $subscription->id), 'handle']);
 

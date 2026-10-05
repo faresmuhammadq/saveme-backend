@@ -30,7 +30,7 @@ test('an address is normalised like sign-in and found by its lookup value', func
 
 test('an unknown, purged or non-address term finds nothing', function () {
     $user = User::factory()->withEmail('gone@example.test')->create();
-    User::query()->whereKey($user->id)->update(['state' => 'purged']);
+    User::query()->whereKey($user->id)->update(['state' => 'purged', 'purged_at' => now()]);
 
     expect($this->directory->byAddress('nobody@example.test'))->toBeNull()
         ->and($this->directory->byAddress('gone@example.test'))->toBeNull()
@@ -47,7 +47,7 @@ test('an id that is not a uuid or is unknown finds nothing', function () {
 
 test('a purged account is found by id with its state only', function () {
     $user = User::factory()->create();
-    User::query()->whereKey($user->id)->update(['state' => 'purged']);
+    User::query()->whereKey($user->id)->update(['state' => 'purged', 'purged_at' => now()]);
 
     $facts = $this->directory->byId($user->id);
 
@@ -77,7 +77,7 @@ test('only an existing active account counts as active', function () {
     $active = User::factory()->create();
     $pending = User::factory()->pendingDeletion()->create();
     $purged = User::factory()->create();
-    User::query()->whereKey($purged->id)->update(['state' => 'purged']);
+    User::query()->whereKey($purged->id)->update(['state' => 'purged', 'purged_at' => now()]);
     $accounts = app(Accounts::class);
 
     expect($accounts->isActive($active->id))->toBeTrue()

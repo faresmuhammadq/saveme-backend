@@ -431,7 +431,7 @@ x-error-catalog:
     status: 409
     level: [response]
     title: 'Export already in progress'
-    meaning: 'An export for this account is already being produced. Wait for it rather than starting a second one.'
+    meaning: 'An export for this account is already being produced. Wait for it rather than starting a second one; the body''s `current` is that export.'
     retryable: automatic
     since: v1.1
   EMAIL_ALREADY_REGISTERED:

@@ -45,6 +45,19 @@ interface SubscriptionRepository
     public function updateDates(string $id, array $changes): void;
 
     /**
+     * Stamps every subscription row of the person as ended by an account
+     * purge, once (spec 022, FR-047).
+     *
+     * @return int rows stamped by this call
+     */
+    public function stampEndedByAccountPurge(string $userId, DateTimeImmutable $at): int;
+
+    /**
+     * Deletes the rows stamped as ended by an account purge before the cut.
+     */
+    public function deleteEndedByAccountPurgeBefore(DateTimeImmutable $cut): int;
+
+    /**
      * Active subscriptions whose billing period has ended.
      *
      * @return list<SubscriptionRecord>

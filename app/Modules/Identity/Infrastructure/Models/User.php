@@ -17,13 +17,15 @@ use Laravel\Sanctum\HasApiTokens;
  * Private to the Identity module: nothing outside Infrastructure uses it.
  *
  * @property string $id
- * @property string $email_ciphertext
- * @property string $email_lookup
- * @property string $password_hash
+ * @property string|null $email_ciphertext
+ * @property string|null $email_lookup
+ * @property string|null $password_hash
  * @property Carbon|null $email_verified_at
  * @property string $state
  * @property Carbon|null $deletion_requested_at
  * @property Carbon|null $deletion_scheduled_for
+ * @property Carbon|null $deletion_reminded_at
+ * @property Carbon|null $purged_at
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
@@ -47,12 +49,14 @@ class User extends Authenticatable
             'email_verified_at' => 'immutable_datetime',
             'deletion_requested_at' => 'immutable_datetime',
             'deletion_scheduled_for' => 'immutable_datetime',
+            'deletion_reminded_at' => 'immutable_datetime',
+            'purged_at' => 'immutable_datetime',
         ];
     }
 
     public function getAuthPassword(): string
     {
-        return $this->password_hash;
+        return (string) $this->password_hash;
     }
 
     public function getAuthPasswordName(): string

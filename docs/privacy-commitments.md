@@ -91,6 +91,7 @@ One honest limit: if someone was a member and you removed them, whatever their p
 - **While your account is open, we keep what you entered** — that is what makes it your record.
 - **When you delete something, it is removed within 90 days.** Not immediately, because your other devices may be offline and need to learn that you deleted it. Once they have, it goes.
 - **When you delete your account, you have 30 days to change your mind.** During that time nothing is lost and you can simply cancel; signing in again also cancels it, and we email you when that happens. After it, your email address, your name and the records only you own are removed, and we destroy the key that would have made your information readable — so even an old backup cannot bring it back.
+- **An export of your data is available for 24 hours.** The link we give you and the file behind it stop working after 24 hours and the file is deleted. We keep a short record that you asked for it for 30 days, without its contents.
 - **Our operational records are kept 30 days.** Security events, such as sign-ins and changes to who can see a wallet, are kept 400 days so that we can answer a question about something that happened last year.
 - **If you pay by InstaPay, we keep your transfer screenshot and the email address on your claim only for review, and delete them 90 days after the claim is closed** — rejected, expired, or approved and its code used or expired.
 
@@ -99,6 +100,7 @@ One honest limit: if someone was a member and you removed them, whatever their p
 - **ما دام حسابك مفتوحاً نحتفظ بما أدخلته** — فهذا هو سجلك.
 - **عندما تحذف شيئاً يُزال خلال 90 يوماً.** ليس فوراً، لأن أجهزتك الأخرى قد تكون غير متصلة وتحتاج أن تعرف أنك حذفته. وبعد أن تعرف، يختفي.
 - **عندما تحذف حسابك أمامك 30 يوماً لتغيّر رأيك.** خلالها لا يضيع شيء ويمكنك الإلغاء ببساطة؛ وتسجيل الدخول مرة أخرى يلغيه أيضاً، ونرسل لك رسالة عندما يحدث ذلك. وبعدها يُزال بريدك الإلكتروني واسمك والسجلات التي تخصك وحدك، ونتلف المفتاح الذي كان سيجعل بياناتك قابلة للقراءة — حتى النسخة الاحتياطية القديمة لا تستطيع إعادتها.
+- **نسخة بياناتك المصدَّرة متاحة 24 ساعة.** الرابط الذي نعطيك إياه والملف الذي خلفه يتوقفان عن العمل بعد 24 ساعة، ويُحذف الملف. ونحتفظ 30 يوماً بسجل قصير يبيّن أنك طلبتها، دون محتواها.
 - **سجلاتنا التشغيلية تُحفظ 30 يوماً.** أما أحداث الأمان، مثل تسجيل الدخول وتغيّر من يستطيع رؤية محفظة، فتُحفظ 400 يوم لنتمكن من الإجابة عن سؤال يخص شيئاً حدث العام الماضي.
 - **إذا دفعت عبر إنستاباي، نحتفظ بلقطة شاشة التحويل وبالبريد الإلكتروني المدوّن في طلبك للمراجعة فقط، ونحذفهما بعد 90 يوماً من إغلاق الطلب** — أي رفضه أو انتهاء مهلته، أو الموافقة عليه ثم استخدام رمزه أو انتهاء صلاحيته.
 
@@ -110,22 +112,26 @@ One honest limit: if someone was a member and you removed them, whatever their p
 
 Leaving is a feature, not a support request. You do all of it from the app.
 
-- **Take a copy first.** Ask for an export and you receive everything you entered, including a spreadsheet file of your transactions that opens without this app.
+- **Take a copy first.** Ask for an export and you receive everything you entered as one ZIP file, including a spreadsheet (CSV) of your transactions that opens without this app. You can also export a single wallet.
 - **Then delete the account.** You have 30 days to cancel, and cancelling costs you nothing.
 - **Signing in again within the 30 days cancels the deletion.** We email you when that happens, so you'll know if it wasn't you.
 - **After 30 days it is done.** Your email address, your name and the records only you own are gone.
-- **A shared wallet keeps its history.** If you entered transactions in a wallet somebody else owns, those entries stay, because the other members' balances depend on them. Your name comes off them.
+- **If you own a shared wallet, it passes to another member.** You can choose who while the deletion is pending; otherwise it goes to the member who has been an editor longest, and failing that the viewer who has been there longest. It is never deleted while someone else is in it. A wallet nobody else belongs to is deleted.
+- **Deleting your account does not cancel a Google Play subscription.** Cancel it in Google Play yourself; we cannot do it for you.
+- **A shared wallet keeps its history.** If you entered transactions in a wallet somebody else owns, those entries stay, because the other members' balances depend on them. Your name comes off them, and they keep an identifier that no longer points to any person.
 - **You can ask for the export even while the deletion is pending**, and asking does not restart the 30 days.
 
 ### العربية
 
 المغادرة ميزة في التطبيق، لا طلب دعم. تقوم بها كلها من داخل التطبيق.
 
-- **خذ نسخة أولاً.** اطلب تصديراً فتصلك كل بياناتك، ومعها ملف جدولي بمعاملاتك يُفتح دون هذا التطبيق.
+- **خذ نسخة أولاً.** اطلب تصديراً فتصلك كل بياناتك في ملف مضغوط واحد (ZIP)، ومعها ملف جدولي (CSV) بمعاملاتك يُفتح دون هذا التطبيق. ويمكنك أيضاً تصدير محفظة واحدة.
 - **ثم احذف الحساب.** أمامك 30 يوماً للإلغاء، والإلغاء لا يكلّفك شيئاً.
 - **تسجيل الدخول مرة أخرى خلال الثلاثين يوماً يلغي الحذف.** نرسل لك رسالة عندما يحدث ذلك، لتعرف إن لم يكن أنت.
 - **بعد 30 يوماً ينتهي الأمر.** يختفي بريدك الإلكتروني واسمك والسجلات التي تخصك وحدك.
-- **المحفظة المشتركة تحتفظ بتاريخها.** إذا أدخلت معاملات في محفظة يملكها شخص آخر، تبقى تلك القيود لأن أرصدة بقية الأعضاء تعتمد عليها. ويُزال اسمك عنها.
+- **إذا كنت تملك محفظة مشتركة تنتقل إلى عضو آخر.** يمكنك اختيار من يتسلمها أثناء انتظار الحذف؛ وإلا فتذهب إلى العضو الذي ظل محرِّراً أطول مدة، وإن لم يوجد فإلى المشاهد الأقدم عضوية. ولا تُحذف أبداً ما دام فيها شخص آخر. أما المحفظة التي لا يشاركك فيها أحد فتُحذف.
+- **حذف حسابك لا يلغي اشتراكك في Google Play.** ألغِه بنفسك من Google Play؛ لا نستطيع إلغاءه نيابةً عنك.
+- **المحفظة المشتركة تحتفظ بتاريخها.** إذا أدخلت معاملات في محفظة يملكها شخص آخر، تبقى تلك القيود لأن أرصدة بقية الأعضاء تعتمد عليها. ويُزال اسمك عنها، وتبقى فيها علامة لا تشير إلى أي شخص.
 - **يمكنك طلب التصدير حتى أثناء انتظار الحذف**، والطلب لا يعيد احتساب الثلاثين يوماً من جديد.
 
 ---
@@ -159,5 +165,10 @@ Every promise on this page is backed by a rule in [the security baseline](securi
 | You can export everything you entered, in a form that opens elsewhere | FR-024 |
 | A shared wallet keeps its history when you leave, without your name | FR-027 |
 | Exporting during the grace period does not restart it | FR-024, FR-025 |
+| The export is one ZIP with a spreadsheet (CSV) of transactions, and a single wallet can be exported | spec 022 FR-001 to FR-007 |
+| The export link and file last 24 hours; the request record 30 days | spec 022 FR-012 to FR-016, FR-020 |
+| An owned shared wallet passes to another member, by choice or by seniority, and is never deleted while someone else is in it | spec 022 FR-030, FR-031, FR-034, FR-035 |
+| Your name comes off shared entries and they keep an identifier that points to nobody | spec 022 FR-040, FR-041 |
+| Deleting the account does not cancel a Google Play subscription | spec 022 FR-057, FR-071 |
 
 **Rule**: when a promise on this page changes, the row changes with it in the same edit. A page that drifts from its rules is worse than no page, because people act on it.

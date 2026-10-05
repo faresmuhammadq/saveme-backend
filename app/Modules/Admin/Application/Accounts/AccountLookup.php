@@ -76,7 +76,7 @@ final class AccountLookup
         return DB::transaction(function () use ($operatorId, $facts): AccountSnapshot {
             $this->audit->accountViewed($operatorId, $facts->id);
 
-            if ($facts->state === 'purged') {
+            if ($facts->state === 'purged' || $facts->state === 'purging') {
                 return new AccountSnapshot($facts, null, null, null);
             }
 

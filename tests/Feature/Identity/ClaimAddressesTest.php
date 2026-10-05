@@ -43,7 +43,7 @@ test('an unknown or purged address has no account', function () {
 
     expect($addresses->accountFor($addresses->normaliseAndLookup('nobody@example.test')['lookup']))->toBeNull();
 
-    User::query()->whereKey($user->id)->update(['state' => 'purged']);
+    User::query()->whereKey($user->id)->update(['state' => 'purged', 'purged_at' => now()]);
     expect($addresses->accountFor($lookup))->toBeNull();
 });
 
@@ -64,7 +64,7 @@ test('a person\'s own address and language are opened for a reminder, and a purg
 
     expect($addresses->addressAndLocaleOf($user->id))->toBe(['address' => 'ada@example.test', 'locale' => 'ar']);
 
-    User::query()->whereKey($user->id)->update(['state' => 'purged']);
+    User::query()->whereKey($user->id)->update(['state' => 'purged', 'purged_at' => now()]);
     expect($addresses->addressAndLocaleOf($user->id))->toBeNull()
         ->and($addresses->addressAndLocaleOf((string) Str::uuid7()))->toBeNull();
 });

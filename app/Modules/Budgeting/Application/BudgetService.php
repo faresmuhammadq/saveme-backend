@@ -9,6 +9,7 @@ use App\Modules\Budgeting\Domain\Ports\BudgetRepository;
 use App\Modules\Budgeting\Domain\Refusals\BudgetNotFound;
 use App\Modules\Budgeting\Domain\Refusals\BudgetStateInvalid;
 use App\Modules\Budgeting\Domain\Refusals\BudgetVersionConflict;
+use App\Modules\Identity\Application\Sync\TombstonePurge as UserScopeHorizon;
 use App\Modules\Identity\Application\Sync\UserScopeCounter;
 use App\Modules\Shared\Domain\Errors\ErrorCode;
 use App\Modules\Shared\Domain\Errors\FieldError;
@@ -42,6 +43,7 @@ final class BudgetService
         private readonly UserScopeCounter $counter,
         private readonly BudgetCategoryCheck $categories,
         private readonly RecordIdentifiers $identifiers,
+        private readonly UserScopeHorizon $horizon,
     ) {}
 
     /**
@@ -159,6 +161,52 @@ final class BudgetService
 
             return $this->bump($current, ['deleted_at' => self::instant()], $seq);
         });
+    }
+
+    /**
+     * Removes every budget of a person whose account is being purged (spec
+     * 022, FR-046, ADR-0024): each live budget is first tombstoned from the
+     * person's user counter (P-07 rule 5), then every tombstone is deleted
+     * and the user scope's purge horizon raised past the highest, because no
+     * reader of that scope remains. Idempotent: with nothing left it does
+     * nothing.
+     *
+     * @return int budgets removed
+     */
+    public function removeAllForDepartedUser(string $userId): int
+    {
+        do {
+            $live = array_slice($this->budgets->listLive($userId, false, false, null, 100), 0, 100);
+
+            foreach ($live as $budget) {
+                DB::transaction(function () use ($budget, $userId): void {
+                    $seq = $this->counter->next($userId);
+                    $this->budgets->updateIfVersion($budget->id, $budget->version, ['deleted_at' => self::instant()], $seq);
+                });
+            }
+        } while ($live !== []);
+
+        $removed = 0;
+
+        do {
+            $tombstones = $this->budgets->changedFor($userId, 0, 200);
+
+            $batch = DB::transaction(function () use ($tombstones, $userId): int {
+                $ids = array_map(fn (BudgetRecord $budget): string => $budget->id, array_values(array_filter($tombstones, fn (BudgetRecord $budget): bool => $budget->isTombstoned())));
+
+                if ($ids === []) {
+                    return 0;
+                }
+
+                $this->horizon->raiseHorizon($userId, max(0, ...array_map(fn (BudgetRecord $budget): int => $budget->changeSeq, $tombstones)));
+
+                return count($this->budgets->deleteTombstones($ids, now()->addMinute()->toDateTimeImmutable()));
+            });
+
+            $removed += $batch;
+        } while ($batch > 0);
+
+        return $removed;
     }
 
     /**

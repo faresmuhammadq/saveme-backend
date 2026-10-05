@@ -408,6 +408,78 @@
         $ref: '../components/responses.yaml#/components/responses/InternalError'
 
 /account/deletion-request:
+  get:
+    operationId: getAccountDeletionPlan
+    tags: [Identity]
+    summary: The account's deletion state and who would own each shared wallet it owns.
+    description: |
+      Answerable at any time (spec 022). `state` is `active` or
+      `pending_deletion`; the instants are set only while pending. For each
+      live wallet the caller owns that has at least one other active member,
+      `successors` names who would become its owner if the account were
+      deleted now, and why: `only_member` (the one other member, whatever
+      their role — a viewer becomes owner directly), `chosen` (the caller's
+      stored choice), `oldest_editor`, or `oldest_viewer`. `choice_expected`
+      is true when the wallet has more than one other active member: that is
+      where the app should ask. Owned wallets with no other member are not
+      listed: they are deleted with the account. No names are returned; the
+      app renders members from its own copy. The same rule decides the
+      purge, so the answer is what will happen if nothing changes.
+    parameters: *clientParams
+    responses:
+      '200':
+        description: The deletion plan.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/DeletionPlan'
+            examples:
+              activeWithChoice:
+                summary: An active account owning two shared wallets
+                value:
+                  data:
+                    state: active
+                    deletion_requested_at: null
+                    deletion_scheduled_for: null
+                    successors:
+                      - wallet_id: 0192f79e-0000-7000-8000-000000000001
+                        successor_user_id: 0192f700-0000-7000-8000-000000000002
+                        reason: only_member
+                        choice_expected: false
+                      - wallet_id: 0192f79e-0000-7000-8000-000000000003
+                        successor_user_id: 0192f700-0000-7000-8000-000000000004
+                        reason: oldest_editor
+                        choice_expected: true
+                  meta: {}
+              pendingChosen:
+                summary: Pending deletion with a chosen successor
+                value:
+                  data:
+                    state: pending_deletion
+                    deletion_requested_at: '2026-10-06T10:00:00.000000Z'
+                    deletion_scheduled_for: '2026-11-05T10:00:00.000000Z'
+                    successors:
+                      - wallet_id: 0192f79e-0000-7000-8000-000000000003
+                        successor_user_id: 0192f700-0000-7000-8000-000000000005
+                        reason: chosen
+                        choice_expected: true
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
   post:
     operationId: requestAccountDeletion
     tags: [Identity]
@@ -417,13 +489,41 @@
       returns the date already set; it never moves. Existing sessions keep
       working throughout; signing in anew, or cancelling, returns the account
       to active with nothing lost.
+
+      From v1.13 (spec 022) the body may carry `successors`: for a shared
+      wallet the caller owns, the active member who should become its owner.
+      Each `wallet_id` must be a live wallet the caller owns with at least one
+      other active member, at most once; each `member_user_id` an active
+      member of it other than the caller. Otherwise 422 VALIDATION_FAILED at
+      `/successors/{n}/wallet_id` or `/successors/{n}/member_user_id`
+      (`INVALID_ENUM_VALUE`, `INVALID_ID`), and nothing changes. Repeating
+      the request during the grace period with `successors` replaces the
+      stored choices; without it leaves them. Cancelling drops them. A choice
+      whose member has left by the time of the purge falls back to the oldest
+      editor, then the oldest viewer. No Idempotency-Key: the request is
+      idempotent by state.
+
+      Deleting the account does not cancel a Google Play subscription; the
+      person must cancel it in Google Play.
     parameters: *clientParams
     requestBody:
       required: true
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/PasswordConfirmation'
+            $ref: '#/components/schemas/DeletionRequest'
+          examples:
+            passwordOnly:
+              summary: Spec 007's request, unchanged
+              value:
+                password: correct horse battery staple
+            withChoice:
+              summary: With a chosen new owner for one shared wallet
+              value:
+                password: correct horse battery staple
+                successors:
+                  - wallet_id: 0192f79e-0000-7000-8000-000000000003
+                    member_user_id: 0192f700-0000-7000-8000-000000000005
     responses:
       '200':
         description: The account is pending deletion.
@@ -810,7 +910,7 @@ components:
 
     DeletionSchedule:
       type: object
-      required: [state, deletion_scheduled_for]
+      required: [state, deletion_scheduled_for, successors]
       additionalProperties: false
       properties:
         state:
@@ -819,6 +919,73 @@ components:
         deletion_scheduled_for:
           type: string
           format: date-time
+        successors:
+          type: array
+          description: |
+            From v1.13 (spec 022): the resolved new owner of each shared wallet
+            the caller owns, as `getAccountDeletionPlan` reports it.
+          items:
+            $ref: '#/components/schemas/DeletionSuccessor'
+
+    DeletionRequest:
+      type: object
+      required: [password]
+      additionalProperties: false
+      properties:
+        password:
+          type: string
+          maxLength: 128
+        successors:
+          type: array
+          maxItems: 100
+          items:
+            type: object
+            required: [wallet_id, member_user_id]
+            additionalProperties: false
+            properties:
+              wallet_id:
+                type: string
+                format: uuid
+              member_user_id:
+                type: string
+                format: uuid
+
+    DeletionSuccessor:
+      type: object
+      required: [wallet_id, successor_user_id, reason, choice_expected]
+      additionalProperties: false
+      properties:
+        wallet_id:
+          type: string
+          format: uuid
+        successor_user_id:
+          type: string
+          format: uuid
+        reason:
+          type: string
+          enum: [only_member, chosen, oldest_editor, oldest_viewer]
+        choice_expected:
+          type: boolean
+          description: True when the wallet has more than one other active member.
+
+    DeletionPlan:
+      type: object
+      required: [state, deletion_requested_at, deletion_scheduled_for, successors]
+      additionalProperties: false
+      properties:
+        state:
+          type: string
+          enum: [active, pending_deletion]
+        deletion_requested_at:
+          type: [string, 'null']
+          format: date-time
+        deletion_scheduled_for:
+          type: [string, 'null']
+          format: date-time
+        successors:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeletionSuccessor'
 
     Profile:
       description: The person's own preferences. User-scoped and syncable (spec 008).

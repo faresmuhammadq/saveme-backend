@@ -4,7 +4,6 @@ namespace App\Modules\Identity\Application\Jobs;
 
 use App\Modules\Identity\Application\Accounts;
 use App\Modules\Identity\Application\Mail\ResetPasswordMail;
-use App\Modules\Identity\Domain\Account\AccountState;
 use App\Modules\Identity\Domain\Account\LinkKind;
 use App\Modules\Identity\Domain\Ports\LinkRepository;
 use App\Modules\Identity\Domain\Ports\ProfileRepository;
@@ -28,7 +27,7 @@ final class SendResetMail implements ShouldQueue
     {
         $user = $users->findByLookup($this->lookup);
 
-        if ($user === null || $user->state === AccountState::Purged) {
+        if ($user === null || $user->state->isGone()) {
             return;
         }
 

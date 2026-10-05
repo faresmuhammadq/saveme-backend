@@ -2,7 +2,6 @@
 
 namespace App\Modules\Identity\Application\Operators;
 
-use App\Modules\Identity\Domain\Account\AccountState;
 use App\Modules\Identity\Domain\Account\UserRecord;
 use App\Modules\Identity\Domain\Address\EmailAddress;
 use App\Modules\Identity\Domain\Ports\AddressLookup;
@@ -38,7 +37,7 @@ final class AccountDirectory
 
         $user = $this->users->findByLookup($this->lookup->for($normalised));
 
-        return $user === null || $user->state === AccountState::Purged ? null : $this->facts($user);
+        return $user === null || $user->state->isGone() ? null : $this->facts($user);
     }
 
     /**
@@ -70,7 +69,7 @@ final class AccountDirectory
 
     private function facts(UserRecord $user): AccountFacts
     {
-        if ($user->state === AccountState::Purged) {
+        if ($user->state->isGone()) {
             return new AccountFacts($user->id, $user->state->value, false, null, null, 0);
         }
 

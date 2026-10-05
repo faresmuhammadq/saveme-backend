@@ -1,0 +1,347 @@
+# Exports (spec 022, brief B15). Every operation sits under /api/v1, inherits
+# the root's bearer scheme and runs through the shared runtime, so each also
+# documents the shared refusals it can produce.
+#
+# Frozen for the C15 client. An export is the person's own copy of what they
+# entered and what they can already see (security baseline, Export): a ZIP
+# archive holding manifest.json, one JSON file per record kind and
+# transactions.csv (UTF-8 with BOM, amounts as integer minor units plus
+# currency). Other members of a shared wallet appear only as
+# `author: "other_member"` — never by name, address or identifier.
+#
+# Produced asynchronously; at most one export is queued or running per
+# person (409 EXPORT_IN_PROGRESS, with the active export as `current`). Not
+# gated by plan or by address verification; served during the deletion grace
+# period without moving its date. No Idempotency-Key: a retried request meets
+# the export it already created as `current`.
+#
+# The archive itself is served by a signed web route outside /api/v1
+# (`download_url`), which a browser or share sheet opens without bearer or
+# client headers. It lives 24 hours after it is ready.
+#
+# New in v1.13. No new error code.
+
+/exports:
+  post:
+    operationId: requestExport
+    tags: [Identity]
+    summary: Ask for a copy of the whole account, or of one wallet.
+    description: |
+      Answers `202` with the export in `queued`; a queued job produces it.
+      Read it with `getExport` until it is `ready`, then open `download_url`.
+      A mail is also sent when it is ready, carrying a link valid until the
+      export expires.
+
+      `scope: account` covers the profile, devices, subscriptions, own
+      categories and budgets, own memberships, invitations sent (without the
+      invited address) and every wallet the caller is an active member of,
+      with all its transactions, recurring rules and occurrences.
+      `scope: wallet` covers that one wallet only; a wallet the caller is not
+      an active member of, or a deleted one, is 404 NOT_FOUND.
+
+      At most 5 accepted requests per 24 hours per person (429 RATE_LIMITED
+      with `Retry-After`). A request while another export is `queued` or
+      `running` is 409 EXPORT_IN_PROGRESS with that export as `current`; it
+      is not counted, queued or recorded.
+    parameters:
+      - &acceptLanguage
+        $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - &correlationId
+        $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - &clientPlatform
+        $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - &clientVersion
+        $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExportRequest'
+          examples:
+            account:
+              summary: The whole account
+              value:
+                scope: account
+            wallet:
+              summary: One wallet
+              value:
+                scope: wallet
+                wallet_id: 0192f79e-0000-7000-8000-000000000001
+    responses:
+      '202':
+        description: Accepted and queued.
+        headers: &successHeaders
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+        content:
+          application/json:
+            schema: &exportEnvelope
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Export'
+                    meta:
+                      type: object
+                      additionalProperties: false
+            examples:
+              queued:
+                summary: An account export, queued
+                value:
+                  data:
+                    id: 0192f9a0-6b1c-7c3d-8e4f-5a6b7c8d9e0f
+                    scope: account
+                    wallet_id: null
+                    status: queued
+                    failure_code: null
+                    requested_at: '2026-10-06T10:00:00.000000Z'
+                    completed_at: null
+                    expires_at: null
+                    size_bytes: null
+                    download_url: null
+                    download_url_expires_at: null
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  get:
+    operationId: listExports
+    tags: [Identity]
+    summary: List the caller's exports, newest first.
+    description: |
+      Every export of the caller's from the last 30 days, newest first
+      (`requested_at`, stabilised by `id`). No filters and no other sort.
+      A `ready` entry carries a fresh `download_url`.
+    x-filterable: []
+    x-sortable: [requested_at]
+    parameters:
+      - $ref: '../components/parameters.yaml#/components/parameters/Cursor'
+      - $ref: '../components/parameters.yaml#/components/parameters/Limit'
+      - $ref: '../components/parameters.yaml#/components/parameters/Filter'
+      - $ref: '../components/parameters.yaml#/components/parameters/Sort'
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: 'A page of exports. None is 200 with `data: []`.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Export'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+            examples:
+              readyAndExpired:
+                summary: A ready wallet export and an older expired account export
+                value:
+                  data:
+                    - &readyExport
+                      id: 0192f9b2-0000-7000-8000-0000000000e2
+                      scope: wallet
+                      wallet_id: 0192f79e-0000-7000-8000-000000000001
+                      status: ready
+                      failure_code: null
+                      requested_at: '2026-10-06T10:00:00.000000Z'
+                      completed_at: '2026-10-06T10:00:41.120000Z'
+                      expires_at: '2026-10-07T10:00:41.120000Z'
+                      size_bytes: 184320
+                      download_url: 'https://api.example/exports/0192f9b2-0000-7000-8000-0000000000e2/file?expires=1791282341&signature=4b1c0e9a'
+                      download_url_expires_at: '2026-10-06T10:15:41.000000Z'
+                    - id: 0192f9a0-6b1c-7c3d-8e4f-5a6b7c8d9e0f
+                      scope: account
+                      wallet_id: null
+                      status: expired
+                      failure_code: null
+                      requested_at: '2026-10-01T08:00:00.000000Z'
+                      completed_at: '2026-10-01T08:01:02.000000Z'
+                      expires_at: '2026-10-02T08:01:02.000000Z'
+                      size_bytes: 201728
+                      download_url: null
+                      download_url_expires_at: null
+                  meta:
+                    next_cursor: null
+                    has_more: false
+                    limit: 20
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/exports/{id}:
+  get:
+    operationId: getExport
+    tags: [Identity]
+    summary: Read one of the caller's exports, with a fresh download link when ready.
+    description: |
+      Poll this while the export is `queued` or `running` (every 5 seconds is
+      plenty). When `ready`, `download_url` is signed and valid for 15
+      minutes (never past `expires_at`); read again for a new one. Open it in
+      the system browser or share sheet. Another person's export is 404
+      NOT_FOUND.
+    parameters:
+      - $ref: '../components/parameters.yaml#/components/parameters/ResourceId'
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: The export.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *exportEnvelope
+            examples:
+              running:
+                summary: Being produced
+                value:
+                  data:
+                    id: 0192f9a0-6b1c-7c3d-8e4f-5a6b7c8d9e0f
+                    scope: account
+                    wallet_id: null
+                    status: running
+                    failure_code: null
+                    requested_at: '2026-10-06T10:00:00.000000Z'
+                    completed_at: null
+                    expires_at: null
+                    size_bytes: null
+                    download_url: null
+                    download_url_expires_at: null
+                  meta: {}
+              ready:
+                summary: Ready, with a 15-minute link
+                value:
+                  data: *readyExport
+                  meta: {}
+              failed:
+                summary: Failed; a new request may be made at once
+                value:
+                  data:
+                    id: 0192f9a0-6b1c-7c3d-8e4f-5a6b7c8d9e0f
+                    scope: account
+                    wallet_id: null
+                    status: failed
+                    failure_code: generation_failed
+                    requested_at: '2026-10-06T10:00:00.000000Z'
+                    completed_at: '2026-10-06T10:20:00.000000Z'
+                    expires_at: null
+                    size_bytes: null
+                    download_url: null
+                    download_url_expires_at: null
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+components:
+  schemas:
+    ExportRequest:
+      type: object
+      required: [scope]
+      additionalProperties: false
+      properties:
+        scope:
+          type: string
+          enum: [account, wallet]
+        wallet_id:
+          type: string
+          format: uuid
+          description: 'Required with `scope: wallet`; refused with `scope: account`.'
+
+    Export:
+      type: object
+      description: |
+        One requested copy. Not syncable. `queued` → `running` → `ready` →
+        `expired` (24 hours after it is ready), or `failed`.
+      required: [id, scope, wallet_id, status, failure_code, requested_at, completed_at, expires_at, size_bytes, download_url, download_url_expires_at]
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+          format: uuid
+        scope:
+          type: string
+          enum: [account, wallet]
+        wallet_id:
+          type: [string, 'null']
+          format: uuid
+        status:
+          type: string
+          enum: [queued, running, ready, failed, expired]
+        failure_code:
+          type: [string, 'null']
+          enum: [generation_failed, wallet_unavailable, timed_out, null]
+          description: Set only when `failed`. A new export may be requested at once.
+        requested_at:
+          type: string
+          format: date-time
+        completed_at:
+          type: [string, 'null']
+          format: date-time
+        expires_at:
+          type: [string, 'null']
+          format: date-time
+          description: When `ready`, the instant the archive is deleted.
+        size_bytes:
+          type: [integer, 'null']
+          minimum: 0
+        download_url:
+          type: [string, 'null']
+          format: uri
+          description: |
+            Set only when `ready`. A signed link to the ZIP archive, served
+            outside /api/v1 with no bearer or client headers needed; valid
+            until `download_url_expires_at`. Never store the file in app
+            storage.
+        download_url_expires_at:
+          type: [string, 'null']
+          format: date-time

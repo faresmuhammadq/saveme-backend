@@ -43,3 +43,12 @@ Schedule::command('billing:send-renewal-reminders')->daily()->withoutOverlapping
 
 // Address and receipt erased 90 days after a claim closes; the record deleted at 400 (spec 020, FR-039).
 Schedule::command('billing:purge-claims')->daily()->withoutOverlapping();
+
+// Exports (spec 022, FR-016, FR-019): expire ready archives after 24 hours, fail stale runs, delete records after 30 days.
+Schedule::command('identity:expire-exports')->everyFifteenMinutes()->withoutOverlapping();
+
+// The account purge (spec 022, FR-051): starts every purge whose grace period has ended and resumes the ones under way.
+Schedule::command('identity:purge-accounts')->hourly()->withoutOverlapping();
+
+// One reminder when an account's purge is 3 days or less away (spec 022, FR-058).
+Schedule::command('identity:send-deletion-reminders')->daily()->withoutOverlapping();

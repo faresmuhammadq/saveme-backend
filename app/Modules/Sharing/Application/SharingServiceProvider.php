@@ -3,6 +3,8 @@
 namespace App\Modules\Sharing\Application;
 
 use App\Modules\Billing\Domain\Events\SubscriptionLapsed;
+use App\Modules\Sharing\Application\Departure\RevokeSentInvitations;
+use App\Modules\Sharing\Application\Export\InvitationSection;
 use App\Modules\Sharing\Application\Listeners\DemoteOnLapse;
 use App\Modules\Sharing\Application\Listeners\DemoteOnOwnershipTransfer;
 use App\Modules\Wallets\Application\Deletion\WalletDeletionParticipant;
@@ -20,6 +22,10 @@ class SharingServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->tag([InvitationsGoWithWallet::class], WalletDeletionParticipant::class);
+
+        // Identity orchestrates exports and purges; Sharing supplies its share (spec 022, P-02).
+        $this->app->tag([InvitationSection::class], 'identity.export-sections');
+        $this->app->tag([RevokeSentInvitations::class], 'identity.purge-participants');
     }
 
     public function boot(): void

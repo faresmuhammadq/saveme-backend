@@ -1,6 +1,6 @@
 # ADR-0008: Sync: per-scope changes feed
 
-- **Status**: Accepted — rule 7 superseded by [ADR-0016](0016-batch-upload-beside-per-record-writes.md)
+- **Status**: Accepted — rule 7 superseded by [ADR-0016](0016-batch-upload-beside-per-record-writes.md); rule 12 partly superseded by [ADR-0024](0024-account-deletion-keeps-shared-history.md)
 - **Date**: 2026-09-19
 - **Principles**: P-07
 - **Supersedes**: —

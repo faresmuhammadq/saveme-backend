@@ -44,7 +44,7 @@ test('an account is found by lookup value, and a purged one is not', function ()
     expect($addresses->userIdForLookup($lookup))->toBe($user->id)
         ->and($addresses->userIdForLookup($addresses->normaliseAndLookup('nobody@example.test')['lookup']))->toBeNull();
 
-    User::query()->whereKey($user->id)->update(['state' => 'purged']);
+    User::query()->whereKey($user->id)->update(['state' => 'purged', 'purged_at' => now()]);
     expect($addresses->userIdForLookup($lookup))->toBeNull();
 });
 

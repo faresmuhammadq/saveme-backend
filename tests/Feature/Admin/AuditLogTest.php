@@ -58,7 +58,7 @@ it('records one audit_read with the default filters on first load and lists newe
         ->and(auditReads())->toHaveCount(1)
         ->and(auditReads()[0]['actor'])->toBe($this->operator->id)
         ->and(auditReads()[0]['subject'])->toBe($this->operator->id)
-        ->and(auditReads()[0]['detail'])->toEqual(['page' => 'first', 'from' => '2026-09-29', 'to' => '2026-10-05']);
+        ->and(auditReads()[0]['detail'])->toEqual(['page' => 'first', 'from' => now(config('admin.timezone'))->subDays(6)->toDateString(), 'to' => now(config('admin.timezone'))->toDateString()]);
 });
 
 it('records one audit_read per apply with the filters', function () {

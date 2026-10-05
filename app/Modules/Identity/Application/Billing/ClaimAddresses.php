@@ -2,7 +2,6 @@
 
 namespace App\Modules\Identity\Application\Billing;
 
-use App\Modules\Identity\Domain\Account\AccountState;
 use App\Modules\Identity\Domain\Address\EmailAddress;
 use App\Modules\Identity\Domain\Ports\AddressLookup;
 use App\Modules\Identity\Domain\Ports\AttributeCipher;
@@ -48,7 +47,7 @@ final class ClaimAddresses
     {
         $user = $this->users->findByLookup($lookup);
 
-        return $user === null || $user->state === AccountState::Purged ? null : $user->id;
+        return $user === null || $user->state->isGone() ? null : $user->id;
     }
 
     /**
@@ -74,7 +73,7 @@ final class ClaimAddresses
     {
         $user = $this->users->find($userId);
 
-        if ($user === null || $user->state === AccountState::Purged) {
+        if ($user === null || $user->state->isGone()) {
             return null;
         }
 

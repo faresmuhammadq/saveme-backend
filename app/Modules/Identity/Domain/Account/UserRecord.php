@@ -16,6 +16,7 @@ final readonly class UserRecord
         public AccountState $state,
         public ?DateTimeImmutable $emailVerifiedAt,
         public ?DateTimeImmutable $deletionScheduledFor,
+        public ?DateTimeImmutable $deletionRequestedAt = null,
     ) {}
 
     public function isVerified(): bool

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Wallets\Application\Sync;
 
+use App\Modules\Identity\Application\Accounts;
 use App\Modules\Identity\Application\Sync\TombstonePurge as IdentityPurge;
 use App\Modules\Wallets\Domain\Ports\TombstoneStore;
 use DateTimeImmutable;
@@ -32,6 +33,7 @@ final class TombstonePurge
     public function __construct(
         private readonly TombstoneStore $store,
         private readonly IdentityPurge $identity,
+        private readonly Accounts $accounts,
     ) {}
 
     /**
@@ -46,6 +48,7 @@ final class TombstonePurge
             'category_references' => $this->purgeReferences($before, $batchSize),
             'wallet_members' => $this->purgeMembers($before, $batchSize),
             'categories' => $this->purgeCategories($before, $batchSize),
+            'departed_categories' => $this->purgeDepartedCategories($batchSize),
             'wallets' => $this->purgeWallets($before, $batchSize),
         ];
     }
@@ -213,6 +216,37 @@ final class TombstonePurge
 
                 return count($deleted);
             });
+        }
+
+        return $removed;
+    }
+
+    /**
+     * The categories an account purge archived because records still used
+     * them (spec 022, FR-046): once nothing refers to one and its owner is
+     * gone, it is deleted. Its owner has no reader left, so no tombstone or
+     * horizon is needed.
+     */
+    private function purgeDepartedCategories(int $batchSize): int
+    {
+        $removed = 0;
+        $afterId = '';
+
+        while (($batch = $this->store->nextArchivedCategories($afterId, $batchSize)) !== []) {
+            $afterId = $batch[array_key_last($batch)]['id'];
+            $departed = array_flip($this->accounts->departedAmong(array_values(array_unique(array_column($batch, 'user_id')))));
+            $ids = array_values(array_map(
+                fn (array $row): string => $row['id'],
+                array_filter($batch, fn (array $row): bool => isset($departed[$row['user_id']])),
+            ));
+
+            if ($ids !== []) {
+                $removed += DB::transaction(function () use ($ids): int {
+                    $this->store->lockCategories(self::ascending($ids));
+
+                    return $this->store->deleteUnreferencedArchivedCategories($ids);
+                });
+            }
         }
 
         return $removed;

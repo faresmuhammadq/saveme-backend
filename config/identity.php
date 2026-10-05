@@ -18,6 +18,20 @@
 |                          and their lifetimes in minutes (baseline tokens).
 | session_inactivity_days  A session unused this long stops working (R-3).
 | deletion_grace_days      Days between a deletion request and the purge.
+| deletion_reminder_days   Days before the purge that the reminder mail goes
+|                          out (spec 022).
+| purge_stall_hours        A purge unfinished this long raises an operator
+|                          notification (spec 022).
+| husk_days                Days a purged account's husk row is kept (spec 022).
+| export_hours             Hours an export file lives once it is ready.
+| export_link_minutes      Lifetime of a signed export link handed out by the
+|                          app; a mailed link lasts until the file expires.
+| export_daily_limit       Accepted export requests per person per 24 hours.
+| export_stale_minutes     A queued or running export older than this is
+|                          failed as timed out.
+| export_record_days       Days an export record is kept after its request.
+| export_file_budget       Download budget for the export file link, per
+|                          origin: attempts within decay_seconds.
 | default_timezone         Profile timezone when registration sends none.
 | google                   Google Sign-In, reserved and switched off (FR-080).
 |
@@ -56,6 +70,24 @@ return [
     'session_inactivity_days' => 90,
 
     'deletion_grace_days' => 30,
+
+    'deletion_reminder_days' => 3,
+
+    'purge_stall_hours' => 24,
+
+    'husk_days' => 400,
+
+    'export_hours' => 24,
+
+    'export_link_minutes' => 15,
+
+    'export_daily_limit' => 5,
+
+    'export_stale_minutes' => 60,
+
+    'export_record_days' => 30,
+
+    'export_file_budget' => ['attempts' => 20, 'decay_seconds' => 600],
 
     'default_timezone' => 'Africa/Cairo',
 

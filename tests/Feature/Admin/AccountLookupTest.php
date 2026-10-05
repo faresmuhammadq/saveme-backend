@@ -76,7 +76,7 @@ it('answers every miss the same, writes one account_lookup_missed without the te
 
 it('treats the address of a purged account as a miss', function () {
     $user = User::factory()->withEmail('gone@example.test')->create();
-    User::query()->whereKey($user->id)->update(['state' => 'purged']);
+    User::query()->whereKey($user->id)->update(['state' => 'purged', 'purged_at' => now()]);
 
     Livewire::test(FindAccount::class)->set('term', 'gone@example.test')->call('find')->assertSee('No account matches.');
 

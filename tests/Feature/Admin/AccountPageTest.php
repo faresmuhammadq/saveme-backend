@@ -156,7 +156,7 @@ it('shows the deletion date for an account waiting to be deleted and offers no g
 
 it('shows only the id and Deleted for a purged account, and still records the opening', function () {
     $user = seedAccountWithMarkers();
-    User::query()->whereKey($user->id)->update(['state' => 'purged']);
+    User::query()->whereKey($user->id)->update(['state' => 'purged', 'purged_at' => now()]);
 
     Livewire::test(AccountPage::class, ['user' => $user->id])
         ->assertSee($user->id)

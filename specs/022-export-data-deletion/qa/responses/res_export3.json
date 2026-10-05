@@ -1,0 +1,1 @@
+[["free user export 202", true, "202"], ["free user ready", true, ""], ["unverified export 202", true, "202"], ["unverified ready", true, ""], ["past expires_at presented expired, no link", true, "expired"], ["old link after expires_at refused (404)", true, "404"], ["sweep -> expired", true, "expired"], ["old link 404 post sweep", true, "404"]]

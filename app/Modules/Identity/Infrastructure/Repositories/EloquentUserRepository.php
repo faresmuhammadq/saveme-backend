@@ -46,12 +46,12 @@ final class EloquentUserRepository implements UserRepository
 
     public function sealedEmail(string $id): string
     {
-        return $this->model($id)->email_ciphertext;
+        return (string) $this->model($id)->email_ciphertext;
     }
 
     public function lookupOf(string $id): string
     {
-        return $this->model($id)->email_lookup;
+        return (string) $this->model($id)->email_lookup;
     }
 
     public function updatePasswordHash(string $id, string $passwordHash): void
@@ -81,13 +81,92 @@ final class EloquentUserRepository implements UserRepository
             'state' => AccountState::Active->value,
             'deletion_requested_at' => null,
             'deletion_scheduled_for' => null,
+            'deletion_reminded_at' => null,
             'updated_at' => now()->format(self::INSTANT),
         ]) === 1;
     }
 
+    public function markPurging(string $id, DateTimeImmutable $now): bool
+    {
+        return User::query()->whereKey($id)
+            ->where('state', AccountState::PendingDeletion->value)
+            ->where('deletion_scheduled_for', '<=', $now->format(self::INSTANT))
+            ->toBase()
+            ->update(['state' => AccountState::Purging->value, 'updated_at' => $now->format(self::INSTANT)]) === 1;
+    }
+
+    public function toHusk(string $id, DateTimeImmutable $now): void
+    {
+        User::query()->whereKey($id)->toBase()->update([
+            'state' => AccountState::Purged->value,
+            'purged_at' => $now->format(self::INSTANT),
+            'email_ciphertext' => null,
+            'email_lookup' => null,
+            'password_hash' => null,
+            'deletion_requested_at' => null,
+            'deletion_scheduled_for' => null,
+            'deletion_reminded_at' => null,
+            'updated_at' => $now->format(self::INSTANT),
+        ]);
+    }
+
+    public function purgeCandidates(DateTimeImmutable $now, int $limit): array
+    {
+        return array_values(User::query()
+            ->where(fn ($query) => $query
+                ->where('state', AccountState::Purging->value)
+                ->orWhere(fn ($due) => $due->where('state', AccountState::PendingDeletion->value)->where('deletion_scheduled_for', '<=', $now->format(self::INSTANT))))
+            ->orderBy('deletion_scheduled_for')
+            ->orderBy('id')
+            ->limit($limit)
+            ->pluck('id')
+            ->all());
+    }
+
+    public function dueReminders(DateTimeImmutable $now, int $days, int $limit): array
+    {
+        return array_values(User::query()
+            ->where('state', AccountState::PendingDeletion->value)
+            ->whereNull('deletion_reminded_at')
+            ->where('deletion_scheduled_for', '<=', $now->modify("+{$days} days")->format(self::INSTANT))
+            ->where('deletion_scheduled_for', '>', $now->format(self::INSTANT))
+            ->orderBy('deletion_scheduled_for')
+            ->limit($limit)
+            ->pluck('id')
+            ->all());
+    }
+
+    public function markReminded(string $id, DateTimeImmutable $now): bool
+    {
+        return User::query()->whereKey($id)
+            ->where('state', AccountState::PendingDeletion->value)
+            ->whereNull('deletion_reminded_at')
+            ->toBase()
+            ->update(['deletion_reminded_at' => $now->format(self::INSTANT)]) === 1;
+    }
+
+    public function deleteHusksBefore(DateTimeImmutable $cut): int
+    {
+        return User::query()
+            ->where('state', AccountState::Purged->value)
+            ->where('purged_at', '<', $cut->format(self::INSTANT))
+            ->delete();
+    }
+
+    public function statesOf(array $ids): array
+    {
+        $states = [];
+
+        foreach (User::query()->whereIn('id', $ids)->get(['id', 'state']) as $user) {
+            $states[$user->id] = AccountState::from($user->state);
+        }
+
+        return $states;
+    }
+
     public function figures(DateTimeImmutable $now): array
     {
-        $live = fn () => User::query()->where('state', '!=', AccountState::Purged->value);
+        $live = fn () => User::query()->whereNotIn('state', [AccountState::Purging->value, AccountState::Purged->value]);
         $since = fn (int $days): int => $live()->where('created_at', '>=', $now->modify("-{$days} days")->format(self::INSTANT))->count();
 
         return [
@@ -108,10 +187,11 @@ final class EloquentUserRepository implements UserRepository
     {
         return new UserRecord(
             id: $user->id,
-            passwordHash: $user->password_hash,
+            passwordHash: (string) $user->password_hash,
             state: AccountState::from($user->state),
             emailVerifiedAt: $user->email_verified_at?->toDateTimeImmutable(),
             deletionScheduledFor: $user->deletion_scheduled_for?->toDateTimeImmutable(),
+            deletionRequestedAt: $user->deletion_requested_at?->toDateTimeImmutable(),
         );
     }
 }

@@ -171,6 +171,42 @@ final class InvitationService
     }
 
     /**
+     * Withdraws a pending invitation because the person who sent it is
+     * leaving the product (spec 022, FR-043). Their own authority is used
+     * while it holds: as the wallet's owner they revoke it themselves (row
+     * S-06), with their name on the activity entry. Once the wallet has
+     * another owner they can no longer withdraw it, so the system does, with
+     * no actor. Closed or gone: nothing changes.
+     *
+     * @return bool whether this call closed it
+     */
+    public function revokeForDepartingInviter(string $inviterId, string $walletId, string $invitationId): bool
+    {
+        try {
+            return $this->scopes->within($walletId, function (ScopeWrite $scope) use ($inviterId, $walletId, $invitationId): bool {
+                if ($scope->wallet->isTombstone()) {
+                    return false;
+                }
+
+                $stored = $this->invitations->findForUpdate($invitationId);
+
+                if ($stored === null || $stored->walletId !== $walletId || $stored->isTombstone()) {
+                    return false;
+                }
+
+                $actor = $this->members->roleOf($inviterId, $walletId) === Role::Owner ? $inviterId : null;
+
+                $this->invitations->close($stored->id, InvitationStatus::Revoked, now()->toDateTimeImmutable(), $scope->nextChangeSeq(), null);
+                $this->activity->record($walletId, $actor, ActivityAction::InvitationRevoked, ActivitySubject::Invitation, $stored->id);
+
+                return true;
+            });
+        } catch (WalletNotFound) {
+            return false;
+        }
+    }
+
+    /**
      * A write to an invitation that already exists: a closed one is a
      * conflict, an identical body is a replay, anything else a stale version
      * or an immutable member.

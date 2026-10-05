@@ -96,6 +96,17 @@ final class MembershipQueryService
     }
 
     /**
+     * Active members in joining order (the owner first), without display
+     * names: who could inherit a wallet, for Identity's deletion plan.
+     *
+     * @return list<MemberRecord>
+     */
+    public function activeInJoiningOrder(string $walletId): array
+    {
+        return $this->members->activeRanked($walletId);
+    }
+
+    /**
      * A membership with the display name the other members may see.
      */
     public function view(MemberRecord $member): MemberView

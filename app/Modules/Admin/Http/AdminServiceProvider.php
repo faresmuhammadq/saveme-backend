@@ -3,6 +3,7 @@
 namespace App\Modules\Admin\Http;
 
 use App\Modules\Admin\Application\Listeners\NotifyOperatorsOfDeletionCancelledBySignIn;
+use App\Modules\Admin\Application\Listeners\NotifyOperatorsOfStalledPurge;
 use App\Modules\Admin\Http\Console\CreateOperator;
 use App\Modules\Admin\Http\Console\DeactivateOperator;
 use App\Modules\Admin\Http\Console\ExpireReenrolmentRequests;
@@ -15,6 +16,7 @@ use App\Modules\Admin\Http\Presenters\IdentifierPresenter;
 use App\Modules\Admin\Http\Presenters\MoneyPresenter;
 use App\Modules\Admin\Http\Presenters\TemporalPresenter;
 use App\Modules\Admin\Http\Shell\OperatorPresenceComposer;
+use App\Modules\Identity\Domain\Events\AccountPurgeStalled;
 use App\Modules\Identity\Domain\Events\UserDeletionCancelled;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Event;
@@ -67,6 +69,7 @@ class AdminServiceProvider extends ServiceProvider
         // Operators hear when a sign-in cancels a deletion (spec 007, R-14).
         // An Identity domain event is the cross-module mechanism P-02 allows.
         Event::listen(UserDeletionCancelled::class, NotifyOperatorsOfDeletionCancelledBySignIn::class);
+        Event::listen(AccountPurgeStalled::class, NotifyOperatorsOfStalledPurge::class);
 
         $this->loadRoutesFrom(__DIR__.'/routes.php');
     }

@@ -15,7 +15,7 @@ test('totals exclude purged accounts and split verified and deletion pending', f
     User::factory()->count(3)->create();
     User::factory()->count(2)->verified()->create();
     User::factory()->pendingDeletion()->create();
-    User::factory()->create(['state' => 'purged']);
+    User::factory()->create(['state' => 'purged', 'purged_at' => now()]);
 
     $figures = app(AccountFigures::class)->compute(now()->toDateTimeImmutable());
 
@@ -29,7 +29,7 @@ test('new accounts are counted over the last 7 and 30 days, purged ones never', 
     User::factory()->create(['created_at' => now()->subDays(8)]);
     User::factory()->create(['created_at' => now()->subDays(29)]);
     User::factory()->create(['created_at' => now()->subDays(31)]);
-    User::factory()->create(['created_at' => now()->subDay(), 'state' => 'purged']);
+    User::factory()->create(['created_at' => now()->subDay(), 'state' => 'purged', 'purged_at' => now()]);
 
     $figures = app(AccountFigures::class)->compute(now()->toDateTimeImmutable());
 

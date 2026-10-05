@@ -63,7 +63,7 @@ test('an instapay subscription can be revoked', function () {
 test('granting and extending refuse an account that is not active', function (string $state) {
     $target = match ($state) {
         'pending deletion' => User::factory()->pendingDeletion()->create()->id,
-        'purged' => tap(User::factory()->create(), fn (User $user) => User::query()->whereKey($user->id)->update(['state' => 'purged']))->id,
+        'purged' => tap(User::factory()->create(), fn (User $user) => User::query()->whereKey($user->id)->update(['state' => 'purged', 'purged_at' => now()]))->id,
         'unknown' => (string) Str::uuid7(),
     };
 

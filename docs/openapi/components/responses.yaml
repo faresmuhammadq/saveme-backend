@@ -106,7 +106,8 @@ components:
         EMAIL_ALREADY_REGISTERED (registration for an address that already
         has an account), CATEGORY_IN_USE (a category referenced by recorded
         history cannot be deleted; archive it), REDEEM_CODE_USED (another
-        account has already redeemed the code).
+        account has already redeemed the code), EXPORT_IN_PROGRESS (an export is
+        already queued or running; `current` carries it).
       headers:
         X-Request-Id:
           $ref: './headers.yaml#/components/headers/XRequestId'

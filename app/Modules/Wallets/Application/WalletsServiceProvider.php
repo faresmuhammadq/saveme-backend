@@ -9,6 +9,10 @@ use App\Modules\Wallets\Application\Categories\ReferencesGoWithWallet;
 use App\Modules\Wallets\Application\Categories\WalletCategoryUse;
 use App\Modules\Wallets\Application\Categories\WalletCategoryUses;
 use App\Modules\Wallets\Application\Deletion\WalletDeletionParticipant;
+use App\Modules\Wallets\Application\Departure\LeaveRemainingWallets;
+use App\Modules\Wallets\Application\Departure\ReleaseCategories;
+use App\Modules\Wallets\Application\Departure\ResolveOwnedWallets;
+use App\Modules\Wallets\Application\Export\WalletSections;
 use App\Modules\Wallets\Application\Membership\Listeners\ResendMemberNames;
 use App\Modules\Wallets\Application\Recurring\RecurringCategoryUsage;
 use App\Modules\Wallets\Application\Recurring\RecurringGoesWithWallet;
@@ -47,6 +51,10 @@ class WalletsServiceProvider extends ServiceProvider
 
         $this->app->tag([ReferencesGoWithWallet::class, TransactionsGoWithWallet::class, RecurringGoesWithWallet::class], WalletDeletionParticipant::class);
         $this->app->tag([TransactionCategoryUsage::class, RecurringCategoryUsage::class], CategoryUsage::class);
+        // Identity orchestrates exports and purges; Wallets supplies its share (spec 022, P-02).
+        $this->app->tag([WalletSections::class], 'identity.export-sections');
+        $this->app->tag([ResolveOwnedWallets::class, LeaveRemainingWallets::class, ReleaseCategories::class], 'identity.purge-participants');
+
         $this->app->tag([TransactionWalletCategoryUse::class, RecurringWalletCategoryUse::class], WalletCategoryUse::class);
     }
 

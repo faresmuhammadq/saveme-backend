@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\Identity\Http\Controllers\DeletionRequestController;
+use App\Modules\Identity\Http\Controllers\ExportsController;
 use App\Modules\Identity\Http\Controllers\LoginController;
 use App\Modules\Identity\Http\Controllers\PasswordController;
 use App\Modules\Identity\Http\Controllers\ProfileController;
@@ -32,8 +33,12 @@ Route::name('identity.')->group(function (): void {
         Route::delete('auth/sessions/{id}', [SessionsController::class, 'destroy'])->name('sessions.destroy');
         Route::post('auth/logout', [SessionsController::class, 'logout'])->name('logout');
         Route::post('auth/change-password', [PasswordController::class, 'change'])->name('change-password');
+        Route::get('account/deletion-request', [DeletionRequestController::class, 'show'])->name('deletion-request.show');
         Route::post('account/deletion-request', [DeletionRequestController::class, 'store'])->name('deletion-request.store');
         Route::delete('account/deletion-request', [DeletionRequestController::class, 'destroy'])->name('deletion-request.destroy');
+        Route::post('exports', [ExportsController::class, 'store'])->name('exports.store');
+        Route::get('exports', [ExportsController::class, 'index'])->name('exports.index');
+        Route::get('exports/{id}', [ExportsController::class, 'show'])->name('exports.show');
         Route::get('me', [ProfileController::class, 'show'])->name('me');
         Route::put('me/profile', [ProfileController::class, 'update'])->name('me.profile');
     });

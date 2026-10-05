@@ -8,12 +8,12 @@ use DateTimeImmutable;
  * What an operator may know about a person's account: its state, whether the
  * address is verified, when it began, when deletion is due and how many
  * devices are signed in. No address, name or device detail (spec 021, R-10).
- * A purged account carries its id and state only.
+ * A purging or purged account carries its id and state only.
  */
 final readonly class AccountFacts
 {
     /**
-     * @param  'active'|'pending_deletion'|'purged'  $state
+     * @param  'active'|'pending_deletion'|'purging'|'purged'  $state
      */
     public function __construct(
         public string $id,

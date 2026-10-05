@@ -26,7 +26,7 @@ Recommended order, with the dependencies that force it. A spec directory takes t
 | 13 | [B11](B11-billing-instapay.md) | Billing — InstaPay claims | B3, D1, D2 | Specified as spec 020 |
 | 14 | [B12](B12-back-office-operations.md) | Back-office operations | D1, D2, B3, B11 | Specified as spec 021; Filament replaced by Livewire (P-18) |
 | 15 | [B13](B13-reports.md) | Reports | B6, B8 | Specified as spec 019 |
-| 16 | [B15](B15-export-data-deletion.md) | Export & data deletion | B6, B9 | Ownership transfer (decided); amends the security baseline |
+| 16 | [B15](B15-export-data-deletion.md) | Export & data deletion | B6, B9 | Ownership transfer (decided); amends the security baseline. Specified as spec 022 |
 | 17 | [B16](B16-devices-push.md) | Devices & push notifications | B1, B7, B9 | Firebase SDK needs approval |
 
 ## The brief set's stack line, reconciled

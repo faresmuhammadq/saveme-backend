@@ -18,9 +18,18 @@ use App\Modules\Budgeting\Domain\BudgetProgress;
 use App\Modules\Budgeting\Domain\BudgetRecord;
 use App\Modules\Budgeting\Http\Resources\BudgetResource;
 use App\Modules\Budgeting\Infrastructure\Models\Budget;
+use App\Modules\Identity\Application\Deletion\DeletionPlanner;
+use App\Modules\Identity\Application\Deletion\PurgeAccount;
+use App\Modules\Identity\Application\Deletion\PurgeContext;
+use App\Modules\Identity\Application\Export\GenerateExport;
 use App\Modules\Identity\Application\Sharing\InvitationAddresses;
 use App\Modules\Identity\Domain\Account\LinkKind;
+use App\Modules\Identity\Domain\Deletion\PurgeCounts;
+use App\Modules\Identity\Domain\Deletion\PurgeStep;
+use App\Modules\Identity\Domain\Ports\AccountPurgeRepository;
+use App\Modules\Identity\Domain\Ports\AttributeCipher;
 use App\Modules\Identity\Domain\Ports\LinkRepository;
+use App\Modules\Identity\Infrastructure\Models\DataExport;
 use App\Modules\Identity\Infrastructure\Models\Profile;
 use App\Modules\Identity\Infrastructure\Models\User;
 use App\Modules\Shared\Domain\Errors\Refusal;
@@ -31,6 +40,7 @@ use App\Modules\Wallets\Application\Categories\CategoryUsage;
 use App\Modules\Wallets\Application\Categories\CategoryUsageQuery;
 use App\Modules\Wallets\Application\Categories\Dto\CategoryView;
 use App\Modules\Wallets\Application\Dto\WalletView;
+use App\Modules\Wallets\Application\Membership\MembershipService;
 use App\Modules\Wallets\Application\Recurring\Dto\OccurrenceView;
 use App\Modules\Wallets\Application\Recurring\Dto\RuleView;
 use App\Modules\Wallets\Application\Recurring\OccurrenceService;
@@ -58,6 +68,7 @@ use Illuminate\Routing\RouteCollection;
 use Illuminate\Support\Carbon as ClockInstant;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use Tests\Contract\Api\Support\ProbeRequest;
@@ -1567,4 +1578,265 @@ function claimHeaders(?string $key = null, string $platform = 'web', array $extr
 function submitClaimOverHttp(array $body, array $headers = []): TestResponse
 {
     return test()->postJson('/api/v1/billing/instapay/claims', $body, [...claimHeaders(), ...$headers]);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Export & deletion (spec 022)
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * A verified person with a profile carrying a (sealed) display name.
+ */
+function namedPerson(string $email, ?string $name, string $locale = 'en'): User
+{
+    $user = User::factory()->withEmail($email)->withPassword('correct horse')->verified()->create();
+    Profile::factory()->create([
+        'user_id' => $user->id,
+        'locale' => $locale,
+        'display_name_ciphertext' => $name === null ? null : app(AttributeCipher::class)->seal($user->id, $name),
+    ]);
+
+    return $user;
+}
+
+/**
+ * Calls an export endpoint with a credential, forgetting the guard afterwards.
+ *
+ * @param  array<string, mixed>  $body
+ */
+function exportCall(string $method, string $credential, string $uri, array $body = []): TestResponse
+{
+    $response = test()->withHeaders(asCredential($credential))->json($method, '/api/v1'.$uri, $body);
+    test()->flushHeaders();
+
+    return $response;
+}
+
+/**
+ * Starts a purge for a person whose grace period has ended, runs the whole
+ * thing, and returns nothing: the state is read from the tables afterwards.
+ */
+function purgeAccountNow(string $userId): void
+{
+    User::query()->whereKey($userId)->update([
+        'state' => 'pending_deletion',
+        'deletion_requested_at' => now()->subDays(31),
+        'deletion_scheduled_for' => now()->subMinute(),
+    ]);
+
+    app(PurgeAccount::class)->run($userId);
+}
+
+/**
+ * Puts a person in the deletion grace period with the schedule already due.
+ */
+function dueForPurge(User $user): User
+{
+    User::query()->whereKey($user->id)->update([
+        'state' => 'pending_deletion',
+        'deletion_requested_at' => now()->subDays(31),
+        'deletion_scheduled_for' => now()->subMinute(),
+    ]);
+
+    return $user->refresh();
+}
+
+/**
+ * Produces an export for the person synchronously and opens its archive.
+ *
+ * @return array{id: string, files: list<string>, raw: array<string, string>, json: array<string, mixed>}
+ */
+function generateExport(User $user, string $scope = 'account', ?string $walletId = null): array
+{
+    $export = DataExport::factory()->create([
+        'user_id' => $user->id, 'scope' => $scope, 'wallet_id' => $walletId,
+    ]);
+
+    app(GenerateExport::class)->run($export->id);
+
+    return openExportArchive($user->id, $export->id);
+}
+
+/**
+ * Opens the archive of a ready export from the private disk.
+ *
+ * @return array{id: string, files: list<string>, raw: array<string, string>, json: array<string, mixed>}
+ */
+function openExportArchive(string $userId, string $exportId): array
+{
+    $path = Storage::disk('local')->path("exports/{$userId}/{$exportId}.zip");
+    $zip = new ZipArchive;
+    expect($zip->open($path))->toBeTrue();
+
+    $raw = [];
+    $json = [];
+
+    for ($index = 0; $index < $zip->numFiles; $index++) {
+        $name = (string) $zip->getNameIndex($index);
+        $raw[$name] = (string) $zip->getFromIndex($index);
+
+        if (str_ends_with($name, '.json')) {
+            $json[$name] = json_decode($raw[$name], true, flags: JSON_THROW_ON_ERROR);
+        }
+    }
+
+    $zip->close();
+
+    return ['id' => $exportId, 'files' => array_keys($raw), 'raw' => $raw, 'json' => $json];
+}
+
+/**
+ * Everything the departing person D can reach, with two other people:
+ * W (D owns, shared with P as editor and Q as viewer), R (P owns, D is a
+ * viewer), L (P owns, D left), and S (D's solo wallet). P and Q wrote
+ * entries in W; P wrote one in R.
+ *
+ * @param  string  $tag  makes the three addresses unique, to build two worlds in one test
+ * @return array<string, mixed>
+ */
+function exportWorld(string $tag = ''): array
+{
+    $d = namedPerson("ada{$tag}@example.test", 'Ada Lovelace');
+    $p = namedPerson("pat{$tag}@example.test", 'Pat Partner');
+    $q = namedPerson("quinn{$tag}@example.test", 'Quinn Queue');
+
+    $w = ownedWallet($d->id, ['name' => 'Family']);
+    addMember($w->id, $p->id, 'editor');
+    addMember($w->id, $q->id, 'editor');
+    $r = ownedWallet($p->id, ['name' => 'Pat Wallet']);
+    addMember($r->id, $d->id, 'viewer');
+    $l = ownedWallet($p->id, ['name' => 'Left Behind']);
+    addMember($l->id, $d->id, 'editor');
+    $s = ownedWallet($d->id, ['name' => 'Solo']);
+
+    $groceries = ownedCategory($d->id, ['name' => 'Groceries']);
+    $patCategory = ownedCategory($p->id, ['name' => 'PatSecretCategory']);
+    ownedCategory($p->id, ['name' => 'PatUnusedCategory']);
+
+    $mine = recordTransaction($d->id, $w->id, transactionBody(['category_id' => $groceries->id, 'description' => 'Ada lunch', 'amount_minor' => 2500]));
+    $fromPat = recordTransaction($p->id, $w->id, transactionBody(['category_id' => $patCategory->id, 'description' => 'Pat dinner', 'amount_minor' => 4000]));
+    $fromQuinn = recordTransaction($q->id, $w->id, transactionBody(['description' => 'Quinn snack', 'amount_minor' => 900]));
+    $inR = recordTransaction($p->id, $r->id, transactionBody(['description' => 'Pat in R', 'amount_minor' => 1200]));
+    $inL = recordTransaction($d->id, $l->id, transactionBody(['description' => 'In left wallet', 'amount_minor' => 700]));
+    $solo = recordTransaction($d->id, $s->id, transactionBody(['description' => 'Solo coffee', 'amount_minor' => 300]));
+
+    app(MembershipService::class)->leave($l->id, $d->id);
+
+    return compact('d', 'p', 'q', 'w', 'r', 'l', 's', 'groceries', 'patCategory', 'mine', 'fromPat', 'fromQuinn', 'inR', 'inL', 'solo');
+}
+
+/**
+ * Makes the purge crash once, in the window between a step's commit and the
+ * record of its completion (the one a restart must survive): the next
+ * `record()` of the step throws, once. For the last step, which records
+ * nothing, the deletion of the progress row (inside its transaction) throws.
+ *
+ * @return object{crashed: bool}
+ */
+function crashPurgeOnceAfter(PurgeStep $step): object
+{
+    $state = (object) ['crashed' => false];
+    $real = app(AccountPurgeRepository::class);
+
+    app()->instance(AccountPurgeRepository::class, new class($real, $step, $state) implements AccountPurgeRepository
+    {
+        public function __construct(
+            private AccountPurgeRepository $real,
+            private PurgeStep $step,
+            private object $state,
+        ) {}
+
+        private function crashOnce(): void
+        {
+            if (! $this->state->crashed) {
+                $this->state->crashed = true;
+
+                throw new RuntimeException('The worker died after the step committed.');
+            }
+        }
+
+        public function tryClaim(string $userId): bool
+        {
+            return $this->real->tryClaim($userId);
+        }
+
+        public function release(string $userId): void
+        {
+            $this->real->release($userId);
+        }
+
+        public function begin(string $userId, DateTimeImmutable $at): void
+        {
+            $this->real->begin($userId, $at);
+        }
+
+        public function find(string $userId): ?array
+        {
+            return $this->real->find($userId);
+        }
+
+        public function record(string $userId, PurgeStep $step, PurgeCounts $counts, DateTimeImmutable $at): void
+        {
+            if ($step === $this->step) {
+                $this->crashOnce();
+            }
+
+            $this->real->record($userId, $step, $counts, $at);
+        }
+
+        public function markMailSent(string $userId, DateTimeImmutable $at): bool
+        {
+            return $this->real->markMailSent($userId, $at);
+        }
+
+        public function delete(string $userId): void
+        {
+            if ($this->step === PurgeStep::EraseIdentity) {
+                $this->crashOnce();
+            }
+
+            $this->real->delete($userId);
+        }
+
+        public function stalledBefore(DateTimeImmutable $cut): array
+        {
+            return $this->real->stalledBefore($cut);
+        }
+
+        public function markStallNotified(string $userId, DateTimeImmutable $at): bool
+        {
+            return $this->real->markStallNotified($userId, $at);
+        }
+    });
+
+    return $state;
+}
+
+/**
+ * Runs a purge that crashes once after the step, then lets the next run
+ * finish it, as the hourly sweep would.
+ */
+function purgeWithCrashAfter(string $userId, PurgeStep $step): void
+{
+    $crash = crashPurgeOnceAfter($step);
+
+    try {
+        purgeAccountNow($userId);
+    } catch (RuntimeException) {
+        // The worker died; the account stays `purging` until the next run.
+    }
+
+    expect($crash->crashed)->toBeTrue('the purge never reached '.$step->value);
+
+    app(PurgeAccount::class)->run($userId);
+}
+
+/**
+ * The context a purge step is handed.
+ */
+function purgeContextFor(string $userId): PurgeContext
+{
+    return new PurgeContext($userId, now()->toImmutable(), app(DeletionPlanner::class));
 }

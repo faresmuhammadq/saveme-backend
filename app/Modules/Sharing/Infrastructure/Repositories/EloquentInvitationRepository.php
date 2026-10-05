@@ -144,6 +144,29 @@ final class EloquentInvitationRepository implements InvitationRepository
             ->all());
     }
 
+    public function pendingInvitedBy(string $userId): array
+    {
+        return array_values(Invitation::query()
+            ->where('invited_by', $userId)
+            ->whereNull('deleted_at')
+            ->orderBy('wallet_id')
+            ->orderBy('id')
+            ->get()
+            ->map(fn (Invitation $invitation): InvitationRecord => self::record($invitation))
+            ->all());
+    }
+
+    public function sentBy(string $userId): array
+    {
+        return array_values(Invitation::query()
+            ->where('invited_by', $userId)
+            ->orderBy('wallet_id')
+            ->orderBy('id')
+            ->get()
+            ->map(fn (Invitation $invitation): InvitationRecord => self::record($invitation))
+            ->all());
+    }
+
     public function nextExpiredTombstones(DateTimeImmutable $before, string $afterId, int $limit): array
     {
         return array_values(array_map(

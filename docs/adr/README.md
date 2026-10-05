@@ -27,7 +27,7 @@ New records use [`template.md`](template.md) and take the next free number.
 | 0005 | [Derived balance with cached column](0005-derived-balance-with-cache.md) | Accepted | 2026-09-19 | P-05 |
 | 0006 | [Wallet-scoped authorization](0006-wallet-scoped-authorization.md) | Accepted | 2026-09-19 | P-08 |
 | 0007 | [Entitlements from provider-agnostic subscriptions](0007-entitlements-from-subscriptions.md) | Superseded by 0013 | 2026-09-19 | P-09, P-10 |
-| 0008 | [Sync: per-scope changes feed](0008-sync-changes-feed.md) | Accepted (rule 7 superseded by 0016) | 2026-09-19 | P-07 |
+| 0008 | [Sync: per-scope changes feed](0008-sync-changes-feed.md) | Accepted (rule 7 superseded by 0016; rule 12 partly by 0024) | 2026-09-19 | P-07 |
 | 0009 | [Domain events after commit](0009-domain-events-after-commit.md) | Accepted | 2026-09-19 | P-11 |
 | 0010 | [Observability](0010-observability.md) | Accepted | 2026-09-19 | P-15 |
 | 0011 | [Time and timezones](0011-time-and-timezones.md) | Accepted | 2026-09-19 | P-12 |
@@ -43,6 +43,7 @@ New records use [`template.md`](template.md) and take the next free number.
 | 0021 | [Scope heads, and member names re-sent on wallet feeds](0021-scope-heads-and-member-name-restamps.md) | Accepted | 2026-10-02 | P-07, P-08, P-11 |
 | 0022 | [Reports are wallet views computed on read](0022-reports-are-wallet-views-computed-on-read.md) | Accepted | 2026-10-04 | P-03, P-05, P-08, P-12 |
 | 0023 | [InstaPay claims deliver a plan through a claim-bound redeem code](0023-instapay-claims-and-claim-bound-redeem-codes.md) | Accepted | 2026-10-05 | P-09, P-10 |
+| 0024 | [Account deletion keeps shared history; the departed id is the marker](0024-account-deletion-keeps-shared-history.md) | Accepted | 2026-10-06 | P-07, P-08, P-11 |
 
 ## Reading order
 
@@ -50,6 +51,7 @@ Not numerical order. Follow the thread you need:
 
 - **The money model** — [0012](0012-postings-wallet-and-category-accounts.md) (what a transaction is; supersedes 0004) → [0014](0014-platform-owned-categories.md) (who owns a category) → [0015](0015-transfers-on-two-wallet-feeds.md) (how a transfer travels) → [0003](0003-money-minor-units.md) (how an amount is represented) → [0005](0005-derived-balance-with-cache.md) (where a balance comes from).
 - **Offline and sync** — [0002](0002-identifiers-uuidv7.md) (who generates an id) → [0008](0008-sync-changes-feed.md) (feeds, cursors, conflicts) → [0016](0016-batch-upload-beside-per-record-writes.md) (batch upload) → [0017](0017-membership-on-the-members-user-feed.md) (memberships on the user feed) → [0021](0021-scope-heads-and-member-name-restamps.md) (which wallets moved; names re-sent) → [0011](0011-time-and-timezones.md) (dates that do not shift) → [0018](0018-occurrences-materialised-by-the-server.md) (who creates recurring occurrences) → [0019](0019-budget-spending-by-author-computed-on-read.md) (whose spending a budget counts) → [0022](0022-reports-are-wallet-views-computed-on-read.md) (what a report counts, and where its range comes from).
+- **Leaving** — [0017](0017-membership-on-the-members-user-feed.md) (memberships on the user feed) → [0021](0021-scope-heads-and-member-name-restamps.md) (names re-sent) → [0024](0024-account-deletion-keeps-shared-history.md) (account deletion transfers shared wallets; the departed id is the marker).
 - **Who did what** — [0020](0020-wallet-activity-beside-the-audit-log.md) (a member-visible activity record beside the operator-only audit log).
 - **Access and money-in** — [0006](0006-wallet-scoped-authorization.md) (who may act on a wallet) → [0013](0013-entitlements-with-manual-channel.md) (what their plan allows; supersedes 0007).
 - **Billing** — [0013](0013-entitlements-with-manual-channel.md) (plans, subscriptions, precedence) → [0023](0023-instapay-claims-and-claim-bound-redeem-codes.md) (InstaPay claims, claim-bound redeem codes, subscription created at redemption).

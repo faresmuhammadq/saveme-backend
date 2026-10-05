@@ -60,6 +60,7 @@ Authentication is **per device**. One signed-in device holds one credential, and
 
 - A password change revokes every session **except** the one that made the change. That is what lets a person use their one lever — "sign everything else out" — without signing themselves out of the device in their hand.
 - A revoked session's row survives, so the audit trail can still name it. Only the credential stops working.
+- The purge of a deleted account ends every session of that account with the end reason `account_deleted`; the rows are then removed with the rest of the account (see [Deletion](#deletion)).
 - The session list shown to its owner names the device and the times. It exposes nothing further, because someone reading that screen may not be the owner.
 - There is no positive cache of "this credential is valid". Any cache measured in minutes turns "I ended that session" into a promise the product does not keep for the length of the cache.
 
@@ -138,6 +139,8 @@ The routes that send mail or create accounts carry their own budgets, independen
 | InstaPay claim | 5 per hour per origin and 5 per 24 hours per address lookup value, registered or not (429) |
 | Redeem code | 10 per hour per person (429) |
 | Operator account lookups | 30 per 10 minutes per operator (429) |
+| Export request | 5 per 24 hours per person, counted for accepted requests only (429) |
+| Export file link | 20 per 10 minutes per origin (429) |
 
 **Owned by**: Identity.
 
@@ -213,6 +216,7 @@ There is no blanket claim here, because a blanket claim collapses under one ques
 | Wallet and category names | none at rest | yes | members of the wallet, and the category's owner |
 | Platform category names | none at rest | yes | every signed-in person |
 | Audit entries | none at rest, and they carry nothing protected | yes | operators only, and the read is recorded |
+| Export archive | **none at rest**: a plain ZIP on the private disk, reachable only through a signed link, deleted 24 hours after it is ready and at the purge | no | the account owner, through that link |
 | Device name, platform, app version | none | no | the account owner |
 | Device installation identifier | none | by owner's sessions only | nobody through any endpoint |
 | Sign-in failure counter | none (keyed by lookup value) | by lookup value | nobody through any endpoint |
@@ -374,6 +378,10 @@ Every period is a number. Nothing here says "a reasonable time", because a revie
 | Deleted syncable record, content and marker | 90 days, enforced by `sync:purge-tombstones` | [the sync decision](adr/0008-sync-changes-feed.md) |
 | Other soft-deleted records | 30 days | this document |
 | Account after a deletion request | 30 days, then purged | this document |
+| Export archive (file) | 24 hours after it is ready | this document |
+| Export record | 30 days after it is requested | this document |
+| Ended subscriptions, and the account husk after a purge | 400 days after the purge | this document |
+| A purged account's user-scope records (budgets, categories without references, profile) | tombstoned and removed at the purge, not kept 90 days | [the account deletion decision](adr/0024-account-deletion-keeps-shared-history.md) |
 | Audit entries | 400 days | this document |
 | Application logs | 30 days | [the observability decision](adr/0010-observability.md) |
 | Idempotency records | 24 hours | [the API conventions](api-conventions.md) |
@@ -400,7 +408,7 @@ Both are true at once, stated separately rather than averaged into a number that
 ```text
 requested ──cancel, or sign in, before the 30 days elapse──▶ cancelled
     │
-    └──purge runs, at or after 30 days──▶ completed
+    └──purge starts, at or after 30 days──▶ purging ──last step done──▶ completed (husk)
 ```
 
 **Rules**
@@ -410,6 +418,11 @@ requested ──cancel, or sign in, before the 30 days elapse──▶ cancelled
 3. On completion, the rows the person alone owns are deleted **and** the per-account key material is destroyed.
 4. What is claimed is the removal of their identity attributes and their own records — not every byte they ever caused to exist, because a shared wallet's history is not theirs alone to delete.
 5. A new successful sign-in during the grace period cancels the request; the person is told by mail and operators are notified.
+6. **`purging`.** When the purge starts the account enters `purging`: every session ends, sign-in is refused as a wrong password, and the request can no longer be cancelled. The purge is a list of steps in a fixed order, each safe to repeat, and resumes from the last completed step after a failure. A purge that has not finished 24 hours after it started raises an operator notification.
+7. **Step order.** Erase the display name through the profile save (so partners receive the change); revoke the person's pending invitations; resolve owned wallets (transfer or delete, see [Leaving a shared wallet](#leaving-a-shared-wallet)); leave every remaining wallet; remove budgets and release categories; end subscriptions that grant access; delete exports; send the completion mail; erase identity.
+8. **The husk.** The user row stays with no address, no password and no data key, state `purged` and a purge date, and is deleted 400 days later. It lets an operator answer "was this account deleted?" for as long as the audit trail can.
+9. **Key destruction comes last.** The per-account key is destroyed in the same step that erases identity, after the invitations are revoked and the completion mail, which needs the address, has been sent.
+10. **Google Play.** A Google Play subscription cannot be cancelled by us. The mail that confirms a deletion request, the reminder and the completion mail say so, and the person is told to cancel in Google Play.
 
 ### Why the key material matters
 
@@ -423,11 +436,14 @@ This is the case where privacy and correctness pull in opposite directions.
 
 | What the departing person owned | What happens |
 |---|---|
-| Wallets they own | removed with them |
+| Wallets they own, with another member in them | **passed to another member**: the only other one; else the one the person chose; else the longest-standing editor; else the longest-standing viewer. A member whose own account is pending deletion is skipped unless every candidate is |
+| Wallets they own, with nobody else in them | removed |
 | Records only they can see | removed |
 | Transactions they authored in **someone else's** wallet | **kept** |
-| Their name on those transactions | replaced by a stable anonymous marker that cannot be resolved back to a person |
+| Their name on those transactions | comes off: the entries keep an identifier that no longer resolves to any person, shown as "Former member" |
 | Their membership row | removed |
+
+**A shared wallet is never deleted while someone else is in it.** Only a wallet with no other active member is removed.
 
 **Why the transactions stay.** Deleting them would change the other members' balances, without those members doing anything or being told. A partner would open the app to find last month's total different and no explanation available. Correctness wins for the money; privacy wins for the identity, which is why the name goes and the amount does not.
 
@@ -435,7 +451,7 @@ This is the case where privacy and correctness pull in opposite directions.
 
 A revoked or departed member's phone still holds whatever it last synced. No server rule reaches a copy already on someone else's device, and this document says so rather than implying a remote wipe that does not exist. Anything the commitments say about sharing has to be true with that sentence in view.
 
-**Owned by**: Identity for the purge; Wallets for the anonymous marker.
+**Owned by**: Identity for the purge and the choice of successor; Wallets for the transfer.
 
 ## Export
 
@@ -443,11 +459,13 @@ A person can take a complete copy of what they entered.
 
 **Rules**
 
-1. Produced asynchronously. A second request while one is in progress is `409 EXPORT_IN_PROGRESS`.
-2. Contents: complete structured data, plus a spreadsheet-openable file of transactions — so "a form they can open without this app" is literally true and not a technicality about a format nobody has a reader for.
+1. Produced asynchronously. A second request while one is in progress is `409 EXPORT_IN_PROGRESS`. A person may request 5 per 24 hours.
+2. Contents: complete structured data, plus a spreadsheet-openable file of transactions — so "a form they can open without this app" is literally true and not a technicality about a format nobody has a reader for. The archive is one ZIP of JSON files with a CSV of transactions. An export is not gated by plan or by address verification.
 3. It contains what the person entered and what they can already see. Not other members' records beyond that.
 4. An export requested **during the deletion grace period is served**, and does **not** reset the clock. Refusing it strands someone at the exact moment they are leaving; resetting the clock would let a scheduled export postpone a deletion indefinitely.
-5. Both `export_requested` and `export_delivered` are recorded.
+5. Both `export_requested` and `export_delivered` are recorded; the second is written once, on the first download.
+6. The file is reached through a signed link: 15 minutes when the app asks for it, and until the file expires when it is mailed. The link route carries a budget (see [Route budgets](#route-budgets)). The file lives 24 hours after it is ready; the record lives 30 days.
+7. A wallet export is allowed for any member of that wallet, and contains only what that member can already read.
 
 **Owned by**: Identity.
 
@@ -676,6 +694,9 @@ FR-038a requires every rule in this baseline to be expressible as a check a revi
 - [ ] G5 — A shared wallet keeps its history and balances when one member departs.
 - [ ] G6 — An export served during the grace period does not reset the clock.
 - [ ] G7 — A sign-in during the grace period cancels the deletion and notifies the person and operators.
+- [ ] G8 — A purge step is safe to repeat, and a purge that stops halfway resumes and finishes.
+- [ ] G9 — A departing owner's shared wallet passes to another member and is never deleted while someone else is in it.
+- [ ] G10 — An export file is deleted 24 hours after it is ready, and at the purge.
 
 ### H. Privileged and machine access
 

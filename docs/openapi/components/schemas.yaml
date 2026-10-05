@@ -106,6 +106,8 @@ components:
             Present on VERSION_CONFLICT only. The record's full current state
             under the same schema a read returns, including when that state is
             a tombstone, so the client can merge without a second request.
+            From v1.13 also on EXPORT_IN_PROGRESS: the export already queued or
+            running, under the schema `getExport` returns.
         minimum_version:
           type: string
           description: Present on CLIENT_VERSION_UNSUPPORTED only. The semver the app must update to.

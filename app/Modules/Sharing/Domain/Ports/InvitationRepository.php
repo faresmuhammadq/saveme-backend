@@ -87,6 +87,22 @@ interface InvitationRepository
     public function pendingIn(string $walletId): array;
 
     /**
+     * Every pending invitation a person sent, in any wallet, by wallet id
+     * then id (the order wallets are locked in).
+     *
+     * @return list<InvitationRecord>
+     */
+    public function pendingInvitedBy(string $userId): array;
+
+    /**
+     * Every invitation a person sent, pending or closed while its tombstone
+     * is kept, by wallet id then id.
+     *
+     * @return list<InvitationRecord>
+     */
+    public function sentBy(string $userId): array;
+
+    /**
      * Tombstones closed before the cut, after the id, oldest id first.
      *
      * @return list<array{id: string, wallet_id: string, change_seq: int}>

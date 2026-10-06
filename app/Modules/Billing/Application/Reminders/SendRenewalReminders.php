@@ -3,11 +3,13 @@
 namespace App\Modules\Billing\Application\Reminders;
 
 use App\Modules\Billing\Application\Jobs\SendRenewalReminderMail;
+use App\Modules\Billing\Domain\Events\SubscriptionRenewalDue;
 use App\Modules\Billing\Domain\Ports\SubscriptionRepository;
 use App\Modules\Billing\Domain\Subscriptions\GoverningSubscription;
 use DateTimeImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 /**
  * The daily renewal reminder (spec 020, FR-034, FR-035): one mail per
@@ -38,6 +40,12 @@ final class SendRenewalReminders
             DB::transaction(function () use ($candidate, $now, &$queued): void {
                 if ($this->subscriptions->markReminded($candidate->id, $now)) {
                     SendRenewalReminderMail::dispatch($candidate->userId, $candidate->id)->afterCommit();
+                    event(new SubscriptionRenewalDue(
+                        (string) Str::uuid7(),
+                        $now->setTimezone(new \DateTimeZone('UTC'))->format('Y-m-d\TH:i:s.u\Z'),
+                        $candidate->userId,
+                        $candidate->id,
+                    ));
                     $queued++;
                 }
             });

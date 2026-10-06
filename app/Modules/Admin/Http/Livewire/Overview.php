@@ -26,6 +26,9 @@ class Overview extends BackOfficeComponent
 
     public int $reenrolmentsOpen = 0;
 
+    /** @var array{created: int, sent: int, skipped: int, failed: int, pruned: int} */
+    public array $push = ['created' => 0, 'sent' => 0, 'skipped' => 0, 'failed' => 0, 'pruned' => 0];
+
     public function mount(OverviewFigures $overview): void
     {
         $this->recoveryCodesLeft = $this->operator()->recoveryCodesLeft;
@@ -35,6 +38,7 @@ class Overview extends BackOfficeComponent
         $this->claimsAwaiting = $computed['claims_awaiting'];
         $this->oldestClaimAt = $computed['oldest_claim_at'];
         $this->reenrolmentsOpen = $computed['reenrolments_open'];
+        $this->push = $computed['push'];
     }
 
     public function render(): View

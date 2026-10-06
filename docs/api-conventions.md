@@ -433,6 +433,14 @@ A replay is deliberately indistinguishable from an update: both are `200` with t
 
 `404` rather than `403` for a foreign identifier is not politeness. A `403` would confirm that the record exists, which tells a caller something about another user's data.
 
+### A versioned `/me` resource that is not syncable
+
+A resource under `/me/...` that only the server acts on and the client reads on demand (`/me/notification-preferences`, spec 023) may carry `version` and answer a stale save with `409 VERSION_CONFLICT` and `current`, without being a syncable resource: it has no `change_seq`, no tombstone and no place on a feed, and nothing is merged. Its `GET` before the first save answers the defaults at `version: 1` without writing.
+
+### The device id on `/me/devices/{id}`
+
+`{id}` of `/me/devices/{id}` is the caller's own **current** device session id (the `session_id` the app generated at sign-in), not a resource created by that call. Any other id (another person's session, another of the caller's own, an ended or unknown one) is `404 NOT_FOUND`.
+
 ### What a `POST` is for
 
 `POST` is reserved for operations that are not resource creation: submitting a claim, redeeming a code, acknowledging a purchase, authenticating. Those are the operations that carry an [idempotency key](#idempotency), because they have no client-generated identifier to be idempotent by.

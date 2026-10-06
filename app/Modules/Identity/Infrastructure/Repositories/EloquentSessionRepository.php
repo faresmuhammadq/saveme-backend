@@ -86,6 +86,23 @@ final class EloquentSessionRepository implements SessionRepository
         return $ids;
     }
 
+    public function activeAmong(string $userId, array $sessionIds): array
+    {
+        if ($sessionIds === []) {
+            return [];
+        }
+
+        /** @var list<string> $ids */
+        $ids = DeviceSession::query()
+            ->where('user_id', $userId)
+            ->where('state', SessionState::Active->value)
+            ->whereIn('id', $sessionIds)
+            ->pluck('id')
+            ->all();
+
+        return $ids;
+    }
+
     public function activeCountFor(string $userId, DateTimeImmutable $now): int
     {
         return DeviceSession::query()

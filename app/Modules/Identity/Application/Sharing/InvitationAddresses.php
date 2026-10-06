@@ -66,6 +66,18 @@ final class InvitationAddresses
     }
 
     /**
+     * The account holding the address, only when it can be told about an
+     * invitation by push: not leaving for good (a pending deletion still
+     * counts) and its address verified (spec 023, FR-025).
+     */
+    public function verifiedUserIdForLookup(string $lookup): ?string
+    {
+        $user = $this->users->findByLookup($lookup);
+
+        return $user === null || $user->state->isGone() || ! $user->isVerified() ? null : $user->id;
+    }
+
+    /**
      * The lookup value of the person's own address, to compare with an
      * invitation's.
      */

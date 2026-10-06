@@ -18,6 +18,7 @@ enum PurgeStep: string
     case Budgets = 'budgets';
     case Categories = 'categories';
     case Subscriptions = 'subscriptions';
+    case Notifications = 'notifications';
     case Exports = 'exports';
     case CompletionMail = 'completion_mail';
     case EraseIdentity = 'erase_identity';

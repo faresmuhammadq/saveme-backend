@@ -43,4 +43,17 @@
             />
         @endforeach
     </div>
+
+    <x-admin::card :title="__('admin::overview.push.title')" data-test="push-figures">
+        <p class="mb-3 text-label text-ink-3">{{ __('admin::overview.push.hint') }}</p>
+        <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            @foreach ($push as $key => $value)
+                <x-admin::stat-tile
+                    :label="__('admin::overview.push.'.$key)"
+                    :value="number_format($value, 0, '.', ',')"
+                    data-test="push-{{ $key }}"
+                />
+            @endforeach
+        </div>
+    </x-admin::card>
 </div>

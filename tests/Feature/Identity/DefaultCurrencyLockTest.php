@@ -20,6 +20,11 @@ function transactionsRecorded(bool $recorded): void
         {
             return $this->recorded;
         }
+
+        public function authorAndCurrencyOf(string $transactionId): ?array
+        {
+            return null;
+        }
     });
 }
 

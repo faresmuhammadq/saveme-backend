@@ -17,4 +17,21 @@ final class LedgerTransactionQueryService implements TransactionQueryService
     {
         return $this->transactions->anyLiveRecordedBy($userId);
     }
+
+    public function authorAndCurrencyOf(string $transactionId): ?array
+    {
+        $transaction = $this->transactions->find($transactionId);
+
+        if ($transaction === null || $transaction->isTombstone()) {
+            return null;
+        }
+
+        return [
+            'author_id' => $transaction->createdBy,
+            'currency' => $transaction->currency,
+            'date' => $transaction->date,
+            'category_id' => $transaction->categoryId,
+            'kind' => $transaction->kind->value,
+        ];
+    }
 }

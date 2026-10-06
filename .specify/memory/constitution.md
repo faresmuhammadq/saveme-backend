@@ -1,6 +1,10 @@
 <!--
 Sync Impact Report (latest first)
 
+v1.3.13 → 1.3.14 — 2026-10-06
+- PATCH: P-11 lists ADR-0025, introduced by spec 023; the Plans & Billing row publishes `SubscriptionRenewalDue`; the Identity row publishes `ExportReady` and `DeletionReminderDue`; `BudgetExceeded` is first published. The Constitution Check and bottom footer (which still read 1.3.12) now read 1.3.14. No rule changes.
+- Reason: spec 023 (B16, Devices & Push Notifications); ADR-0025 extends ADR-0009, ADR-0010, ADR-0018 and ADR-0019.
+
 v1.3.12 → 1.3.13 — 2026-10-06
 - PATCH: P-07 and P-08 list ADR-0024, introduced by spec 022; the Identity row publishes `AccountPurgeStalled`; no rule changes.
 - Reason: spec 022 (B15, Export & Data Deletion); ADR-0024 extends ADR-0017 and ADR-0021 and supersedes ADR-0008 rule 12 for purged user scopes only.
@@ -127,7 +131,7 @@ v1.0.0 — 2026-09-19 (ratified)
 
 <!-- "Save Me" is a working codename used as display text only; see P-13. -->
 
-**Version**: 1.3.13 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-06
+**Version**: 1.3.14 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-06
 
 ## Purpose & Precedence
 
@@ -259,7 +263,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-11 Events
 
-**Status**: Active | **Non-negotiable**: no | **ADRs**: [ADR-0009](../../docs/adr/0009-domain-events-after-commit.md), [ADR-0021](../../docs/adr/0021-scope-heads-and-member-name-restamps.md) (extends ADR-0008 and ADR-0017)
+**Status**: Active | **Non-negotiable**: no | **ADRs**: [ADR-0009](../../docs/adr/0009-domain-events-after-commit.md), [ADR-0021](../../docs/adr/0021-scope-heads-and-member-name-restamps.md) (extends ADR-0008 and ADR-0017), [ADR-0025](../../docs/adr/0025-push-through-a-port-with-an-in-house-fcm-adapter.md) (extends ADR-0009, ADR-0010, ADR-0018 and ADR-0019)
 
 1. Domain events MUST be dispatched only after the database transaction commits.
 2. Cross-module listeners MUST be queued and MUST be idempotent.
@@ -349,11 +353,11 @@ Nine contexts, one module directory each. Module directories use short PascalCas
 
 | Context | Module dir | Owns | Publishes |
 |---|---|---|---|
-| Identity | `app/Modules/Identity` | users, credentials, sessions/tokens, profile, preferences (locale, timezone), account deletion and export orchestration | `AuthService`, `ProfileService`, `UserQueryService`; `UserRegistered`, `UserDeletionRequested`, `UserSignedIn`, `DeviceSessionEnded`, `UserDeletionCancelled`, `AccountPurgeStalled` |
+| Identity | `app/Modules/Identity` | users, credentials, sessions/tokens, profile, preferences (locale, timezone), account deletion and export orchestration | `AuthService`, `ProfileService`, `UserQueryService`; `UserRegistered`, `UserDeletionRequested`, `UserSignedIn`, `DeviceSessionEnded`, `UserDeletionCancelled`, `AccountPurgeStalled`, `ExportReady`, `DeletionReminderDue` |
 | Wallets & Ledger | `app/Modules/Wallets` | wallets, wallet members, categories, transactions, postings, recurring rules | `WalletService`, `TransactionService`, `MembershipQueryService`, `BalanceQueryService`; `TransactionPosted`, `TransactionVoided`, `WalletCreated`, `WalletDeleted`, `WalletOwnershipTransferred` |
 | Budgeting | `app/Modules/Budgeting` | budgets per category per period, budget progress read models | `BudgetService`, `BudgetQueryService`; `BudgetExceeded` |
 | Sharing | `app/Modules/Sharing` | invitations, invitation acceptance and revocation flows | `InvitationService`; `InvitationSent`, `InvitationAccepted`, `MemberRevoked`, `MemberRoleChanged` |
-| Plans & Billing | `app/Modules/Billing` | plans, subscriptions, Google Play purchases, InstaPay claims, redemption codes | `EntitlementService`, `SubscriptionService`, `ClaimService`; `SubscriptionActivated`, `SubscriptionLapsed` |
+| Plans & Billing | `app/Modules/Billing` | plans, subscriptions, Google Play purchases, InstaPay claims, redemption codes | `EntitlementService`, `SubscriptionService`, `ClaimService`; `SubscriptionActivated`, `SubscriptionLapsed`, `SubscriptionRenewalDue` |
 | Sync | `app/Modules/Sync` | change feeds, cursors, conflict handling, tombstone retention | `ChangeFeedService`, `UpsertService` |
 | Reporting | `app/Modules/Reporting` | report read models and projections | `ReportQueryService` |
 | Notifications | `app/Modules/Notifications` | devices, push tokens, notification dispatch and preferences | `DeviceService`, `NotificationService` |
@@ -399,7 +403,7 @@ Every `plan.md` includes this section, filled in before Phase 0 and again after 
 ```markdown
 ## Constitution Check
 
-*Constitution v1.3.12. GATE: before Phase 0 and again after Phase 1.*
+*Constitution v1.3.14. GATE: before Phase 0 and again after Phase 1.*
 
 | Principle | Result | Evidence / justification |
 |---|---|---|
@@ -437,4 +441,4 @@ Every amendment updates the footer's **Last Amended** date and the Sync Impact R
 
 **Consistency** — run `/speckit-analyze` before implementing each feature. Contradictions between this constitution, the ADRs and a feature's spec are defects to resolve before code.
 
-**Version**: 1.3.12 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-05
+**Version**: 1.3.14 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-06

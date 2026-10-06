@@ -77,6 +77,8 @@
                         <dd class="{{ $dd }}" data-test="count-other-members"><bdi dir="ltr">{{ $account['counts']['other_members'] }}</bdi></dd>
                         <dt class="{{ $dt }}">{{ __('admin::accounts.counts.devices') }}</dt>
                         <dd class="{{ $dd }}" data-test="count-devices"><bdi dir="ltr">{{ $facts['active_devices'] }}</bdi></dd>
+                        <dt class="{{ $dt }}">{{ __('admin::accounts.counts.push_devices') }}</dt>
+                        <dd class="{{ $dd }}" data-test="count-push-devices"><bdi dir="ltr">{{ $account['push_devices'] ?? 0 }}</bdi></dd>
                     </x-admin::description-list>
                 </x-admin::card>
             </div>

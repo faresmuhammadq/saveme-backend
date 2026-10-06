@@ -2,8 +2,10 @@
 
 namespace App\Modules\Identity\Application\Export;
 
+use App\Modules\Identity\Application\Events;
 use App\Modules\Identity\Application\Jobs\SendExportReadyMail;
 use App\Modules\Identity\Domain\Account\AccountState;
+use App\Modules\Identity\Domain\Events\ExportReady;
 use App\Modules\Identity\Domain\Export\ExportFailure;
 use App\Modules\Identity\Domain\Export\ExportRecord;
 use App\Modules\Identity\Domain\Export\ExportStatus;
@@ -114,6 +116,7 @@ final class GenerateExport
 
         Log::info('export_ready', ['export_id' => $export->id]);
         SendExportReadyMail::dispatch($export->id)->afterCommit();
+        event(new ExportReady(...Events::stamp(), userId: $export->userId, exportId: $export->id));
     }
 
     private function accountAllows(ExportRecord $export): bool

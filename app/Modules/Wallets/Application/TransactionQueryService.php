@@ -14,4 +14,14 @@ interface TransactionQueryService
      * currency (spec 008, R-3).
      */
     public function hasLiveTransactionsRecordedBy(string $userId): bool;
+
+    /**
+     * Who recorded a live transaction and what it is, for Budgeting to
+     * evaluate the author's budgets (spec 023, FR-026). Null when the
+     * transaction is gone or deleted. Identifiers, a currency code, a calendar
+     * date and the kind only: no amount, no text.
+     *
+     * @return array{author_id: string, currency: string, date: string, category_id: ?string, kind: string}|null
+     */
+    public function authorAndCurrencyOf(string $transactionId): ?array;
 }

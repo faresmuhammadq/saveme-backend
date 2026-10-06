@@ -29,9 +29,21 @@ use App\Modules\Identity\Domain\Deletion\PurgeStep;
 use App\Modules\Identity\Domain\Ports\AccountPurgeRepository;
 use App\Modules\Identity\Domain\Ports\AttributeCipher;
 use App\Modules\Identity\Domain\Ports\LinkRepository;
+use App\Modules\Identity\Infrastructure\Database\Factories\DeviceSessionFactory;
 use App\Modules\Identity\Infrastructure\Models\DataExport;
+use App\Modules\Identity\Infrastructure\Models\DeviceSession;
 use App\Modules\Identity\Infrastructure\Models\Profile;
 use App\Modules\Identity\Infrastructure\Models\User;
+use App\Modules\Notifications\Application\Delivery\NotificationDelivery;
+use App\Modules\Notifications\Application\DeviceService;
+use App\Modules\Notifications\Application\NotificationService;
+use App\Modules\Notifications\Application\PreferencesService;
+use App\Modules\Notifications\Domain\Delivery\PushGateway;
+use App\Modules\Notifications\Domain\Messages\MessageType;
+use App\Modules\Notifications\Domain\Messages\NotificationDraft;
+use App\Modules\Notifications\Domain\Preferences\Preferences;
+use App\Modules\Notifications\Domain\Preferences\QuietHours;
+use App\Modules\Notifications\Infrastructure\Models\PushNotification;
 use App\Modules\Shared\Domain\Errors\Refusal;
 use App\Modules\Sharing\Application\Mail\InvitationMail;
 use App\Modules\Sharing\Domain\InvitationSecret;
@@ -59,19 +71,24 @@ use App\Modules\Wallets\Infrastructure\Models\Category;
 use App\Modules\Wallets\Infrastructure\Models\CategoryReference;
 use App\Modules\Wallets\Infrastructure\Models\Occurrence;
 use App\Modules\Wallets\Infrastructure\Models\Posting;
+use App\Modules\Wallets\Infrastructure\Models\RecurringRule;
 use App\Modules\Wallets\Infrastructure\Models\Transaction;
 use App\Modules\Wallets\Infrastructure\Models\Wallet;
 use App\Modules\Wallets\Infrastructure\Models\WalletMember;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Routing\Route;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Support\Carbon as ClockInstant;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use Tests\Contract\Api\Support\ProbeRequest;
+use Tests\Fakes\FakePushGateway;
 use Tests\TestCase;
 
 /*
@@ -1839,4 +1856,132 @@ function purgeWithCrashAfter(string $userId, PurgeStep $step): void
 function purgeContextFor(string $userId): PurgeContext
 {
     return new PurgeContext($userId, now()->toImmutable(), app(DeletionPlanner::class));
+}
+
+/*
+|--------------------------------------------------------------------------
+| Notifications (spec 023)
+|--------------------------------------------------------------------------
+|
+| Notifications tests bind the in-memory gateway, so nothing is ever sent to
+| a real push service; `fakePush()` returns it.
+|
+*/
+
+pest()->beforeEach(function () {
+    app()->instance(PushGateway::class, new FakePushGateway);
+
+    // Midday in Cairo (outside the default quiet hours), so no test depends on the hour it runs at.
+    $this->travelTo(ClockInstant::parse('2026-10-06 10:00:00', 'UTC'));
+})->in('Feature/Notifications', 'Contract/Notifications');
+
+function fakePush(): FakePushGateway
+{
+    $gateway = app(PushGateway::class);
+
+    return $gateway instanceof FakePushGateway ? $gateway : throw new RuntimeException('The fake push gateway is not bound.');
+}
+
+/**
+ * Gives a person an active device session and registers a push token for it,
+ * returning the session id.
+ */
+function registerPhone(User $user, string $token = 'token-a', ?string $sessionId = null): string
+{
+    $session = DeviceSession::factory()->create(['user_id' => $user->id, ...($sessionId === null ? [] : ['id' => $sessionId])]);
+
+    app(DeviceService::class)->register($user->id, $session->id, $session->id, $token);
+
+    return $session->id;
+}
+
+/**
+ * The bearer credential of a session built by the factory.
+ */
+function credentialOf(string $sessionId): string
+{
+    return DeviceSessionFactory::credentialFor(DeviceSession::query()->findOrFail($sessionId));
+}
+
+/**
+ * Collects every log record written from now on, as JSON text, so a test can
+ * assert that a secret appears in none of them at any level.
+ */
+function captureLogs(): ArrayObject
+{
+    $records = new ArrayObject;
+
+    Event::listen(MessageLogged::class, function (MessageLogged $event) use ($records): void {
+        $records->append(json_encode([$event->level, $event->message, $event->context]));
+    });
+
+    return $records;
+}
+
+function budgetDraft(string $userId, string $key = 'budget_exceeded:b1:2026-10-01'): NotificationDraft
+{
+    return new NotificationDraft($userId, MessageType::BudgetExceeded, $key, ['budget_id' => '0192f8d0-0000-7000-8000-0000000000b7']);
+}
+
+/**
+ * Creates a notification without letting the queue deliver it, so a test
+ * drives the delivery itself.
+ */
+function pendingNotification(string $userId, string $key = 'budget_exceeded:b1:2026-10-01'): string
+{
+    Queue::fake();
+    $id = app(NotificationService::class)->create(budgetDraft($userId, $key));
+    expect($id)->not->toBeNull();
+
+    return $id;
+}
+
+function deliver(string $id, int $attempt = 1): ?int
+{
+    return app(NotificationDelivery::class)->deliver($id, $attempt, 5);
+}
+
+function stateOf(string $id): string
+{
+    return PushNotification::query()->findOrFail($id)->state;
+}
+
+/**
+ * Gives a person an active device session without registering a push token.
+ */
+function sessionIdFor(User $user): string
+{
+    return DeviceSession::factory()->create(['user_id' => $user->id])->id;
+}
+
+/**
+ * A scheduled occurrence of a fresh rule in the wallet, dated as given.
+ *
+ * @param  array<string, mixed>  $rule
+ * @param  array<string, mixed>  $occurrence
+ */
+function dueOccurrence(Wallet $wallet, string $authorId, string $date = '2026-10-06', array $rule = [], array $occurrence = []): Occurrence
+{
+    $recurring = RecurringRule::factory()->create(['wallet_id' => $wallet->id, 'created_by' => $authorId, ...$rule]);
+
+    return Occurrence::factory()->forRule($recurring)->create(['scheduled_date' => $date, 'date' => $date, ...$occurrence]);
+}
+
+function savePrefs(string $userId, array $categories = [], ?QuietHours $quiet = null): void
+{
+    $service = app(PreferencesService::class);
+    $defaults = $service->defaults();
+    $current = $service->read($userId);
+
+    $service->save($userId, new Preferences(0, [...$defaults->categories, ...$categories], $quiet ?? $defaults->quietHours, null), $current->version, fn (): array => []);
+}
+
+function budgetNotification(string $userId, string $key, string $budgetId = '0192f8d0-0000-7000-8000-0000000000b7'): string
+{
+    return (string) app(NotificationService::class)->create(new NotificationDraft($userId, MessageType::BudgetExceeded, $key, ['budget_id' => $budgetId]));
+}
+
+function notificationRow(string $id): PushNotification
+{
+    return PushNotification::query()->findOrFail($id);
 }

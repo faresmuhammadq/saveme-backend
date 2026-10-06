@@ -3,6 +3,7 @@
 namespace App\Modules\Budgeting\Application;
 
 use App\Modules\Budgeting\Application\Dto\SavedBudget;
+use App\Modules\Budgeting\Application\Overruns\DetectBudgetOverruns;
 use App\Modules\Budgeting\Domain\BudgetRecord;
 use App\Modules\Budgeting\Domain\BudgetRules;
 use App\Modules\Budgeting\Domain\Ports\BudgetRepository;
@@ -33,8 +34,10 @@ use RuntimeException;
  * rolls back and the counter has no hole (spec 013, default 26).
  *
  * Precedence for every write: not-found, a write to a tombstone, an identical
- * replay, a stale version, the state rules. No events (P-11), no
- * entitlement check (P-09 rule 5), no log line (P-15).
+ * replay, a stale version, the state rules. No event of its own (P-11): a
+ * changed limit is handed to the overrun detection after the commit (spec
+ * 023, FR-026), which publishes `BudgetExceeded` when it finds the first
+ * overrun. No entitlement check (P-09 rule 5), no log line (P-15).
  */
 final class BudgetService
 {
@@ -44,6 +47,7 @@ final class BudgetService
         private readonly BudgetCategoryCheck $categories,
         private readonly RecordIdentifiers $identifiers,
         private readonly UserScopeHorizon $horizon,
+        private readonly DetectBudgetOverruns $overruns,
     ) {}
 
     /**
@@ -82,6 +86,10 @@ final class BudgetService
             return $this->update($current, $values, $version, $seq, $present);
         });
 
+        if (! $created && $stored !== null && $record->amountMinor !== $stored->amountMinor) {
+            $this->overruns->forBudget($actorId, $budgetId);
+        }
+
         return new SavedBudget($record, $created);
     }
 
@@ -101,12 +109,18 @@ final class BudgetService
             return $stored;
         }
 
-        return $this->transactionally(function () use ($actorId, $budgetId, $values, $version, $present): BudgetRecord {
+        $record = $this->transactionally(function () use ($actorId, $budgetId, $values, $version, $present): BudgetRecord {
             [$current, $seq] = $this->lockedAfterStamp($actorId, $budgetId);
 
             // The limit is the only member a patch sends; the stored members win.
             return $this->update($current, [...$current->writableValues(), 'amount_minor' => $values['amount_minor']], $version, $seq, $present);
         });
+
+        if ($record->amountMinor !== $stored->amountMinor) {
+            $this->overruns->forBudget($actorId, $budgetId);
+        }
+
+        return $record;
     }
 
     /**

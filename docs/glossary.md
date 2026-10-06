@@ -38,7 +38,7 @@ Rules:
 
 ## The entity index
 
-27 entities: the 21 named in the spec, plus **Category Reference**, which exists because categories are user-scoped and shared wallets need to render a partner's category (see [ADR-0012](adr/0012-postings-wallet-and-category-accounts.md) and the Category entry), plus **Audit Entry** and **Operator Notification**, added by spec 007 (Identity & Authentication), plus **Operator Account**, **Recovery Code** and **Re-enrolment Request**, added by spec 018 (Operator Sign-in), plus **Activity Entry**, added by spec 016 (Sharing & Invitations; see [ADR-0020](adr/0020-wallet-activity-beside-the-audit-log.md)), plus **Report Range**, added by spec 019 (Reports; see [ADR-0022](adr/0022-reports-are-wallet-views-computed-on-read.md)), plus **Idempotency Record**, added by spec 020 (InstaPay Claims; see [ADR-0023](adr/0023-instapay-claims-and-claim-bound-redeem-codes.md)), plus **Export** and **Successor**, added by spec 022 (Export & Data Deletion; see [ADR-0024](adr/0024-account-deletion-keeps-shared-history.md)).
+27 entities: the 21 named in the spec, plus **Category Reference**, which exists because categories are user-scoped and shared wallets need to render a partner's category (see [ADR-0012](adr/0012-postings-wallet-and-category-accounts.md) and the Category entry), plus **Audit Entry** and **Operator Notification**, added by spec 007 (Identity & Authentication), plus **Operator Account**, **Recovery Code** and **Re-enrolment Request**, added by spec 018 (Operator Sign-in), plus **Activity Entry**, added by spec 016 (Sharing & Invitations; see [ADR-0020](adr/0020-wallet-activity-beside-the-audit-log.md)), plus **Report Range**, added by spec 019 (Reports; see [ADR-0022](adr/0022-reports-are-wallet-views-computed-on-read.md)), plus **Idempotency Record**, added by spec 020 (InstaPay Claims; see [ADR-0023](adr/0023-instapay-claims-and-claim-bound-redeem-codes.md)), plus **Export** and **Successor**, added by spec 022 (Export & Data Deletion; see [ADR-0024](adr/0024-account-deletion-keeps-shared-history.md)), plus **Push Registration**, **Notification Preferences** and **Push Notification** (with its child Push Delivery), added by spec 023 (Devices & Push Notifications; see [ADR-0025](adr/0025-push-through-a-port-with-an-in-house-fcm-adapter.md)), plus **Budget Overrun** (Budgeting), added by spec 023.
 
 | Entity | Arabic | Context | Role | Persistence | Sync |
 |---|---|---|---|---|---|
@@ -59,6 +59,7 @@ Rules:
 | [Occurrence](#occurrence) | — | Wallets & Ledger | child of Recurring Rule | persisted | yes — wallet |
 | [Budget](#budget) | — | Budgeting | root | persisted | yes — user |
 | [Budget Period](#budget-period) | — | Budgeting | derived value | derived | no |
+| [Budget Overrun](#budget-overrun) | — | Budgeting | child of Budget | persisted | no |
 | [Invitation](#invitation) | — | Sharing | root | persisted | yes — wallet |
 | [Plan](#plan) | — | Plans & Billing | root | persisted | no |
 | [Plan Feature](#plan-feature) | — | Plans & Billing | value inside Plan | persisted in the plan | no |
@@ -75,6 +76,9 @@ Rules:
 | [Sync Position](#sync-position) | — | Sync | protocol value | derived (a feed page's meta) | n/a |
 | [Report](#report) | — | Reporting | derived value | derived | no |
 | [Report Range](#report-range) | — | Reporting | derived value | derived | no |
+| [Push Registration](#push-registration) | — | Notifications | root | persisted | no |
+| [Notification Preferences](#notification-preferences) | — | Notifications | root | persisted | no |
+| [Push Notification](#push-notification) | — | Notifications | root | persisted | no |
 | [Operator Notification](#operator-notification) | — | Admin | root | persisted | no |
 | [Operator Account](#operator-account) | — | Admin | root | persisted | no |
 | [Recovery Code](#recovery-code) | — | Admin | value inside Operator Account | persisted in the account | no |
@@ -89,7 +93,7 @@ Rules:
 - **User scope (4)** — Profile, Device Session, Category, Budget.
 - **Wallet scope (7)** — Wallet, Wallet Member, Category Reference, Transaction, Recurring Rule, Occurrence, Invitation.
 
-**14 persisted but not synced**, and how the client obtains each:
+**18 persisted but not synced**, and how the client obtains each:
 
 | Entity | How the client gets it |
 |---|---|
@@ -104,6 +108,10 @@ Rules:
 | Audit Entry | never — operator-only |
 | Export | read endpoint (`GET /exports`, `GET /exports/{id}`), polled until `ready`; the file is fetched through a signed link |
 | Activity Entry | read endpoint (`GET /wallets/{id}/activity`), paged, 90 days |
+| Push Registration | never read back; the client writes it (`PUT /me/devices/{id}`) and receives the push |
+| Notification Preferences | read endpoint (`GET /me/notification-preferences`), read when the settings screen opens |
+| Push Notification (and Push Delivery) | never — the client receives the push, not the record |
+| Budget Overrun | never — Budgeting's record that a period crossed its limit; the client sees the push |
 | Operator Notification | never — operator-only |
 | Operator Account, Recovery Code | never — operators only, and never through `/api/v1` |
 | Re-enrolment Request | never — operator-only |
@@ -152,8 +160,8 @@ One device's signed-in session — what the user sees in a "devices signed in" l
 - **Persistence**: persisted
 - **Sync**: yes — user scope, so revoking a session on one device reaches the others
 - **States**: `active` → `revoked`; `active` → `expired`
-- **Referenced by**: Notifications, which binds a push registration to a session
-- **Notes**: the access token itself is **not** an entity and never leaves the auth layer; "token" and "PAT" are banned as product vocabulary. Notifications owns the push-token registration, which is a separate record and is not one of the 21 named entities — it will be indexed here when that feature is specced.
+- **Referenced by**: [Push Registration](#push-registration), which binds a push address to a session
+- **Notes**: the access token itself is **not** an entity and never leaves the auth layer; "token" and "PAT" are banned as product vocabulary. Notifications owns the push registration, a separate record keyed to the session id (see [Push Registration](#push-registration)).
 
 ### Audit Entry
 
@@ -356,6 +364,18 @@ One budget's spent, remaining, over-limit flag and projection for one Budget Per
 - **States**: `single-state`
 - **Referenced by**: reports (B13)
 - **Notes**: money members are `{amount_minor, currency}`; `projected_end` exists for the current Budget Period only; no percentage is returned.
+
+### Budget Overrun
+
+The record that one budget's spending went strictly above its limit in one Budget Period, kept so the person is told once.
+
+- **Context**: Budgeting
+- **Role**: child of Budget
+- **Persistence**: persisted
+- **Sync**: no — the client sees the resulting push
+- **States**: `single-state`
+- **Referenced by**: —
+- **Notes**: at most one per budget, period start and threshold (100 in MVP); recorded by Budgeting the first time progress exceeds the limit and publishes `BudgetExceeded` from that insert ([ADR-0025](adr/0025-push-through-a-port-with-an-in-house-fcm-adapter.md)). Progress itself stays computed on read ([ADR-0019](adr/0019-budget-spending-by-author-computed-on-read.md)). Removed with its budget.
 
 ### Budget Period
 
@@ -589,8 +609,44 @@ The inclusive span of calendar dates a report covers.
 
 Neither context owns any of the 21 named entities. Admin owns five entities added since: [Operator Notification](#operator-notification), [Operator Account](#operator-account) (with its [Recovery Codes](#recovery-code)), [Re-enrolment Request](#re-enrolment-request), [Notification Read Mark](#notification-read-mark) and [Anonymity Floor](#anonymity-floor).
 
-- **Notifications** owns the push registration that binds a device to a [Device Session](#device-session), and notification preferences. Those records will be indexed here when that feature is specced.
+- **Notifications** owns the [Push Registration](#push-registration) that binds a push address to a [Device Session](#device-session), the person's [Notification Preferences](#notification-preferences), and every [Push Notification](#push-notification) (with its Push Delivery children) it sends. See [ADR-0025](adr/0025-push-through-a-port-with-an-in-house-fcm-adapter.md).
 - **Admin** owns admin accounts — a **separate guard**, with no role or admin flag on application users (P-08, ADR-0006) — and records admin actions through its `AdminAuditService` façade, which writes to Identity's one [audit log](#audit-entry). Admin **writes only through other modules' application services**, so back-office actions run the same invariants, authorization and events as app actions. Its screens (B12) are the overview, the payment-claim queue, account lookup, the plan editor and the audit log.
+
+### Push Registration
+
+Where one signed-in phone can be reached by push: the push address Firebase Messaging handed the app, tied to that phone's device session.
+
+- **Context**: Notifications
+- **Role**: aggregate root
+- **Persistence**: persisted
+- **Sync**: no — written by `PUT /me/devices/{id}`, never read back; the client receives the push
+- **States**: `single-state` (deleted when it ends)
+- **Referenced by**: Push Delivery
+- **Notes**: one per [Device Session](#device-session), one per push token. The wire name is `push_token`; in user-facing text it is "push address", because "token" stays banned for the session credential. The token is sealed under Notifications' own keyring with a keyed lookup value beside it and is never returned, logged, queued, evented or audited. The registration is removed when its session ends for any reason, when FCM reports the token invalid, after 270 days without a refresh, and by the account purge. `{id}` of the endpoint is the caller's own current session id.
+
+### Notification Preferences
+
+One person's choice of which notification categories they hear about, and their quiet hours.
+
+- **Context**: Notifications
+- **Role**: aggregate root
+- **Persistence**: persisted (a missing row means the defaults at version 1)
+- **Sync**: no — `GET /me/notification-preferences`, read when the settings screen opens
+- **States**: `single-state`
+- **Referenced by**: —
+- **Notes**: six categories (`recurring_due`, `budget_exceeded`, `sharing`, `billing`, `export_ready`, `deletion_reminder`), all on by default; quiet hours on from 22:00 to 08:00 in the profile timezone, on a quarter hour, start never equal to end. Versioned: a stale save is `409 VERSION_CONFLICT` with `current`, nothing is merged. Versioned without being syncable, by choice.
+
+### Push Notification
+
+One message for one person: its type, category, identifiers, per-person dedupe key and fate. Its child, the **Push Delivery**, is one attempt series of that message to one registration.
+
+- **Context**: Notifications
+- **Role**: aggregate root (Push Delivery: child)
+- **Persistence**: persisted, 30 days
+- **Sync**: no — never read by the client, which receives the push
+- **States**: `pending` → `held` → `sending` → `sent` | `skipped` | `failed` (Push Delivery: `pending` → `sent` | `pruned` | `failed`)
+- **Referenced by**: —
+- **Notes**: the dedupe key is unique per person, so a redelivered event or a rerun pass creates nothing new. A skipped notification names its reason (`category_off`, `no_device`, `rate_limited`, `collapsed`, `inactive_account`, `disabled`, `summarised`). Holds identifiers only, never text, amounts, names or the token. Operators see counts, never records.
 
 ### Operator Notification
 
@@ -675,7 +731,9 @@ Every entity has exactly one owner. Other modules reach it only through that mod
 | Budgeting | Category, transaction totals | Wallets & Ledger query services |
 | Sharing | Wallet, Wallet Member, Activity Entry | Wallets' `MembershipService` and `WalletActivity` (writes membership and activity on acceptance, role change, removal, leaving and plan demotion) |
 | Reporting | Transaction, Posting sums, Category, Budget | owning modules' query services; event-fed projections allowed later |
-| Notifications | Device Session | Identity application service |
+| Notifications | Device Session, Profile, account state | Identity application services (`SessionStatus`, `RecipientProfile`) |
+| Notifications | Occurrences needing a person | Wallets' `OccurrenceReminderQuery` |
+| Notifications | Invitation addressee | Sharing's `InvitationQueryService` |
 | Admin | everything it displays or changes | each owning module's application service |
 | every module | Entitlement | `EntitlementService` only (P-09) |
 

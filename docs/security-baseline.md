@@ -61,6 +61,7 @@ Authentication is **per device**. One signed-in device holds one credential, and
 - A password change revokes every session **except** the one that made the change. That is what lets a person use their one lever — "sign everything else out" — without signing themselves out of the device in their hand.
 - A revoked session's row survives, so the audit trail can still name it. Only the credential stops working.
 - The purge of a deleted account ends every session of that account with the end reason `account_deleted`; the rows are then removed with the rest of the account (see [Deletion](#deletion)).
+- Ending a session removes its push registration; no push is sent to an ended session, even before the removal has run (the send re-checks that the session is active). See [Push notifications](#push-notifications).
 - The session list shown to its owner names the device and the times. It exposes nothing further, because someone reading that screen may not be the owner.
 - There is no positive cache of "this credential is valid". Any cache measured in minutes turns "I ended that session" into a promise the product does not keep for the length of the cache.
 
@@ -141,6 +142,8 @@ The routes that send mail or create accounts carry their own budgets, independen
 | Operator account lookups | 30 per 10 minutes per operator (429) |
 | Export request | 5 per 24 hours per person, counted for accepted requests only (429) |
 | Export file link | 20 per 10 minutes per origin (429) |
+| Push device registration (`PUT`, `DELETE /me/devices/{id}`) | 20 per hour per session (429) |
+| Notification preferences save | 30 per hour per person (429) |
 
 **Owned by**: Identity.
 
@@ -235,6 +238,10 @@ There is no blanket claim here, because a blanket claim collapses under one ques
 | Account facts and counts shown to operators (state, verification, plan, subscription dates, counts of wallets, members and devices) | none at rest beyond their sources | no | operators, with a recorded read |
 | Notification read mark | none, identifiers only | no | operators |
 | Idempotency record | none at rest, holds the answer only (no secret) | by scope and key | nobody through any endpoint |
+| Push token | encrypted under Notifications' keyring, with a keyed lookup value beside it | by lookup value only | nobody through any endpoint; decrypted only to send |
+| Notification preferences | none | no | the account owner |
+| Push notification and delivery records | none, identifiers and states only | yes | nobody through any endpoint; operators see counts only |
+| Budget overrun | none, identifiers and a date only | yes | nobody through any endpoint |
 
 **Rules**
 
@@ -322,6 +329,7 @@ This restates the existing [observability decision](adr/0010-observability.md) r
 - authentication tokens and session identifiers
 - one-time codes
 - purchase tokens
+- push tokens, the push service's service-account key, the signed OAuth assertion and the access token it yields
 - receipt images and their contents
 - the full body of a financial write
 
@@ -392,6 +400,9 @@ Every period is a number. Nothing here says "a reasonable time", because a revie
 | Password reset token | 60 minutes | this document |
 | Address verification token | 24 hours | this document |
 | Provider message identifiers | 24 hours | this document |
+| Push registration | until its session ends, or 270 days without a refresh | this document |
+| Push notification and delivery records | 30 days | this document |
+| Budget overrun | while its budget exists | this document |
 
 ### Two horizons, and why
 
@@ -626,6 +637,19 @@ Unverifiable key material causes **rejection**, never acceptance and never defer
 
 **Owned by**: Billing.
 
+## Push notifications
+
+A push message is the one thing the product sends to a lock screen that anyone nearby may read. The rules:
+
+1. **Content.** A payload and its text MUST NOT contain an amount, balance, currency, name (wallet, category or person), note, address, calendar date of money, token or URL. They carry a message type, a category, a notification id and the identifiers the deep link needs, and fixed, generic, server-localised text. A test fails when a payload carries a key outside its type's list.
+2. **Destination.** The push token is stored sealed with a keyed lookup value (see the protected-attributes table), never returned, logged, queued, evented or audited. Decrypted only by the delivery job, immediately before sending.
+3. **Session guard.** Every send re-checks that the registration's session is still active and the account is not being purged; otherwise the registration is deleted or the message skipped.
+4. **Gateway.** The `log` gateway delivers nothing and is refused at boot outside local development and tests; the `fcm` gateway is refused at boot without credentials; `disabled` is honest and records every message as skipped.
+5. **Rate.** At most 10 pushes per person per hour and 30 per day; beyond that a message is dropped, not delayed.
+6. **Invitation.** An invitation push goes only to an account whose address is verified, and never carries the invitation token.
+
+**Owned by**: Notifications.
+
 ## Appendix: security review checklist
 
 Run this against **one** thing at a time: one endpoint, one stored attribute, or one recorded entry. Every line is answerable yes or no without reading another feature, which is what makes the rules above reviewable rather than aspirational.
@@ -674,6 +698,7 @@ FR-038a requires every rule in this baseline to be expressible as a check a revi
 - [ ] E4 — Redaction is enforced centrally, not by each call site remembering.
 - [ ] E5 — No error message names another user, another wallet, or a value belonging to either.
 - [ ] E6 — A caller who is not a member gets a not-found, never a forbidden, so existence is not disclosed.
+- [ ] E7 — A push payload and its text carry no amount, name, note, address, date of money, token or URL, only the identifiers of its message type.
 
 ### F. Accountability
 

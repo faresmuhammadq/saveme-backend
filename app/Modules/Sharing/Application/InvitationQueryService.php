@@ -3,9 +3,11 @@
 namespace App\Modules\Sharing\Application;
 
 use App\Modules\Identity\Application\Profiles\DisplayNames;
+use App\Modules\Identity\Application\Sharing\InvitationAddresses;
 use App\Modules\Sharing\Application\Dto\InvitationPage;
 use App\Modules\Sharing\Application\Dto\InvitationPreview;
 use App\Modules\Sharing\Application\Dto\InvitationView;
+use App\Modules\Sharing\Domain\InvitationChannel;
 use App\Modules\Sharing\Domain\InvitationRecord;
 use App\Modules\Sharing\Domain\Ports\InvitationRepository;
 use App\Modules\Sharing\Domain\Refusals\InvitationNotFound;
@@ -31,6 +33,7 @@ final class InvitationQueryService
         private readonly WalletQueryService $wallets,
         private readonly MembershipQueryService $members,
         private readonly DisplayNames $displayNames,
+        private readonly InvitationAddresses $addresses,
     ) {}
 
     /**
@@ -94,5 +97,28 @@ final class InvitationQueryService
             expiresAt: $invitation->expiresAt,
             alreadyMember: $this->members->roleOf($userId, $invitation->walletId) !== null,
         );
+    }
+
+    /**
+     * The account an email invitation was sent to, when that account can be
+     * told about it by push: the invitation is pending and live, its channel
+     * is `email`, the address belongs to an existing account that is not
+     * leaving for good, whose address is verified, and that is not the
+     * inviter (spec 023, FR-025). Never returns, logs or opens the address.
+     */
+    public function verifiedAddresseeOf(string $invitationId): ?string
+    {
+        $invitation = $this->invitations->find($invitationId);
+
+        if ($invitation === null
+            || $invitation->channel !== InvitationChannel::Email
+            || $invitation->addressLookup === null
+            || ! $invitation->isLiveAt(now()->toDateTimeImmutable())) {
+            return null;
+        }
+
+        $userId = $this->addresses->verifiedUserIdForLookup($invitation->addressLookup);
+
+        return $userId === null || $userId === $invitation->invitedBy ? null : $userId;
     }
 }

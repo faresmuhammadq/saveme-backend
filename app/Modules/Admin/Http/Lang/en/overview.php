@@ -20,6 +20,15 @@ return [
         'in_grace' => 'In grace',
         'shared_wallets' => 'Shared wallets',
     ],
+    'push' => [
+        'title' => 'Push, last 24 hours',
+        'hint' => 'Counts only: never a person, a device or what a notification said.',
+        'created' => 'Created',
+        'sent' => 'Sent',
+        'skipped' => 'Skipped',
+        'failed' => 'Failed',
+        'pruned' => 'Registrations pruned',
+    ],
     'attention' => [
         'title' => 'Needs attention',
         'nothing' => 'Nothing needs attention',

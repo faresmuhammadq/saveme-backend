@@ -49,6 +49,14 @@ interface BudgetRepository
     public function listLive(string $userId, bool $activeOnly, bool $descending, ?array $after, int $limit): array;
 
     /**
+     * The person's live, unarchived budgets in the currency whose category is
+     * the given one or none (all expenses), for overrun detection.
+     *
+     * @return list<BudgetRecord>
+     */
+    public function activeMatching(string $userId, string $currency, ?string $categoryId): array;
+
+    /**
      * The sort value a cursor carries for a budget.
      */
     public function sortValue(BudgetRecord $budget): string;

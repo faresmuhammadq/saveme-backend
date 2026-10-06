@@ -17,6 +17,7 @@ We collect what the app needs to work, and not more.
 - **Your email address and your name.** So you can sign in, and so the people you share a wallet with know who you are.
 - **What you enter about your money.** Wallets, transactions, categories, budgets. You type these; we do not read your bank, your SMS messages or your card.
 - **The devices you sign in from.** So you can see them and sign any of them out.
+- **The push address of each phone you sign in on.** Used only to send you the notifications you choose, and deleted when you sign out of that phone.
 
 We do not connect to your bank. We do not read your messages. Everything about your money is there because you entered it.
 
@@ -27,6 +28,7 @@ We do not connect to your bank. We do not read your messages. Everything about y
 - **بريدك الإلكتروني واسمك.** لتتمكن من تسجيل الدخول، وليعرف من تشارك معهم المحفظة من أنت.
 - **ما تُدخله عن أموالك.** المحافظ والمعاملات والفئات والميزانيات. أنت من يكتبها؛ نحن لا نقرأ حسابك البنكي ولا رسائلك ولا بطاقتك.
 - **الأجهزة التي تسجّل الدخول منها.** لتراها وتستطيع إنهاء أي منها.
+- **عنوان الإشعارات لكل هاتف تسجّل الدخول منه.** نستخدمه فقط لإرسال الإشعارات التي تختارها، ونحذفه عندما تسجّل الخروج من ذلك الهاتف.
 
 لا نتصل بالبنك الذي تتعامل معه. لا نقرأ رسائلك. كل ما يخص أموالك موجود لأنك أدخلته بنفسك.
 
@@ -43,6 +45,7 @@ We would rather tell you exactly what is protected than tell you "everything is 
 - **Your money entries are not encrypted in storage.** They are protected by who is allowed to reach them: only you, and the people you invited to that wallet. We are direct about this because the app has to add up your balances and show your reports, and it cannot do that on data it cannot read.
 - **Amounts and notes never appear in our operational records.** Neither do passwords, sign-in codes or payment receipts.
 - **Everything travels encrypted** between your device and us. A request that arrives unencrypted is refused rather than repaired.
+- **Notifications never show amounts, names or notes on your lock screen.** They say only that something needs you, in your language. You choose which kinds you hear about and set quiet hours; we keep your push address encrypted and delete it when you sign out.
 
 ### العربية
 
@@ -53,6 +56,7 @@ We would rather tell you exactly what is protected than tell you "everything is 
 - **قيود أموالك ليست مشفّرة في التخزين.** تحميها صلاحية الوصول: أنت فقط، ومن دعوتهم إلى تلك المحفظة. نقول ذلك بوضوح لأن التطبيق يحتاج إلى جمع أرصدتك وعرض تقاريرك، ولا يمكنه ذلك على بيانات لا يستطيع قراءتها.
 - **المبالغ والملاحظات لا تظهر في سجلاتنا التشغيلية.** وكذلك كلمات السر ورموز الدخول وإيصالات الدفع.
 - **كل ما ينتقل بين جهازك وبيننا مشفّر.** وأي طلب يصل غير مشفّر يُرفض بدل أن يُصلَّح.
+- **الإشعارات لا تعرض مبالغ ولا أسماء ولا ملاحظات على شاشة القفل.** تقول فقط إن هناك ما يحتاج انتباهك، بلغتك. وأنت تختار أنواع الإشعارات التي تريدها وتحدد ساعات الهدوء؛ ونحفظ عنوان الإشعارات مشفّراً ونحذفه عندما تسجّل الخروج.
 
 ---
 
@@ -92,6 +96,7 @@ One honest limit: if someone was a member and you removed them, whatever their p
 - **When you delete something, it is removed within 90 days.** Not immediately, because your other devices may be offline and need to learn that you deleted it. Once they have, it goes.
 - **When you delete your account, you have 30 days to change your mind.** During that time nothing is lost and you can simply cancel; signing in again also cancels it, and we email you when that happens. After it, your email address, your name and the records only you own are removed, and we destroy the key that would have made your information readable — so even an old backup cannot bring it back.
 - **An export of your data is available for 24 hours.** The link we give you and the file behind it stop working after 24 hours and the file is deleted. We keep a short record that you asked for it for 30 days, without its contents.
+- **A record of each notification we send is kept 30 days.** It holds identifiers and whether it was sent, never what it said.
 - **Our operational records are kept 30 days.** Security events, such as sign-ins and changes to who can see a wallet, are kept 400 days so that we can answer a question about something that happened last year.
 - **If you pay by InstaPay, we keep your transfer screenshot and the email address on your claim only for review, and delete them 90 days after the claim is closed** — rejected, expired, or approved and its code used or expired.
 
@@ -101,6 +106,7 @@ One honest limit: if someone was a member and you removed them, whatever their p
 - **عندما تحذف شيئاً يُزال خلال 90 يوماً.** ليس فوراً، لأن أجهزتك الأخرى قد تكون غير متصلة وتحتاج أن تعرف أنك حذفته. وبعد أن تعرف، يختفي.
 - **عندما تحذف حسابك أمامك 30 يوماً لتغيّر رأيك.** خلالها لا يضيع شيء ويمكنك الإلغاء ببساطة؛ وتسجيل الدخول مرة أخرى يلغيه أيضاً، ونرسل لك رسالة عندما يحدث ذلك. وبعدها يُزال بريدك الإلكتروني واسمك والسجلات التي تخصك وحدك، ونتلف المفتاح الذي كان سيجعل بياناتك قابلة للقراءة — حتى النسخة الاحتياطية القديمة لا تستطيع إعادتها.
 - **نسخة بياناتك المصدَّرة متاحة 24 ساعة.** الرابط الذي نعطيك إياه والملف الذي خلفه يتوقفان عن العمل بعد 24 ساعة، ويُحذف الملف. ونحتفظ 30 يوماً بسجل قصير يبيّن أنك طلبتها، دون محتواها.
+- **سجل كل إشعار نرسله يُحفظ 30 يوماً.** يحتوي على معرّفات وحالة الإرسال فقط، ولا يحتوي نص الإشعار.
 - **سجلاتنا التشغيلية تُحفظ 30 يوماً.** أما أحداث الأمان، مثل تسجيل الدخول وتغيّر من يستطيع رؤية محفظة، فتُحفظ 400 يوم لنتمكن من الإجابة عن سؤال يخص شيئاً حدث العام الماضي.
 - **إذا دفعت عبر إنستاباي، نحتفظ بلقطة شاشة التحويل وبالبريد الإلكتروني المدوّن في طلبك للمراجعة فقط، ونحذفهما بعد 90 يوماً من إغلاق الطلب** — أي رفضه أو انتهاء مهلته، أو الموافقة عليه ثم استخدام رمزه أو انتهاء صلاحيته.
 
@@ -170,5 +176,11 @@ Every promise on this page is backed by a rule in [the security baseline](securi
 | An owned shared wallet passes to another member, by choice or by seniority, and is never deleted while someone else is in it | spec 022 FR-030, FR-031, FR-034, FR-035 |
 | Your name comes off shared entries and they keep an identifier that points to nobody | spec 022 FR-040, FR-041 |
 | Deleting the account does not cancel a Google Play subscription | spec 022 FR-057, FR-071 |
+| We keep the push address of each phone you sign in on, to send the notifications you choose, and delete it when you sign out | spec 023 FR-001, FR-006, FR-009, FR-010 |
+| The push address is encrypted and never shown, logged or sent anywhere else | spec 023 FR-006, FR-007 |
+| Notifications never show amounts, names or notes on your lock screen | spec 023 FR-019, FR-020, FR-021 |
+| You choose the kinds of notification and your quiet hours; quiet hours hold messages, never drop them | spec 023 FR-013 to FR-018 |
+| A phone you signed out of receives nothing more | spec 023 FR-009, FR-011 |
+| Notification records are kept 30 days and hold no text | spec 023 FR-043 |
 
 **Rule**: when a promise on this page changes, the row changes with it in the same edit. A page that drifts from its rules is worse than no page, because people act on it.

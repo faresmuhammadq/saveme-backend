@@ -7,12 +7,15 @@ use App\Modules\Admin\Domain\AnonymityFloor;
 use App\Modules\Billing\Application\Claims\ClaimQuery;
 use App\Modules\Billing\Application\Figures\BillingFigures;
 use App\Modules\Identity\Application\Figures\AccountFigures;
+use App\Modules\Notifications\Application\NotificationFigures;
 use App\Modules\Wallets\Application\Membership\MembershipCounts;
 
 /**
  * The overview's figures (spec 021, FR-010 to FR-013, R-11): population
  * counts pass through the anonymity floor, the needs-attention figures are
- * exact. Computed on each call; nothing is stored and nothing is audited.
+ * exact. Push counts for the last 24 hours are platform totals, never per
+ * person (spec 023, FR-047). Computed on each call; nothing is stored and
+ * nothing is audited.
  */
 final class OverviewFigures
 {
@@ -22,6 +25,7 @@ final class OverviewFigures
         private readonly MembershipCounts $memberships,
         private readonly ClaimQuery $claims,
         private readonly ReenrolmentQuery $reenrolments,
+        private readonly NotificationFigures $notifications,
     ) {}
 
     /**
@@ -30,6 +34,7 @@ final class OverviewFigures
      *     claims_awaiting: int,
      *     oldest_claim_at: ?string,
      *     reenrolments_open: int,
+     *     push: array{created: int, sent: int, skipped: int, failed: int, pruned: int},
      * }
      */
     public function compute(): array
@@ -55,6 +60,7 @@ final class OverviewFigures
             'claims_awaiting' => $awaiting['count'],
             'oldest_claim_at' => $awaiting['oldest']?->format('Y-m-d\TH:i:s.uP'),
             'reenrolments_open' => $this->reenrolments->openCount(),
+            'push' => $this->notifications->last24Hours(),
         ];
     }
 }

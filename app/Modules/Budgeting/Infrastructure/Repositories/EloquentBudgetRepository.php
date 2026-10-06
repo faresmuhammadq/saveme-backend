@@ -77,6 +77,20 @@ final class EloquentBudgetRepository implements BudgetRepository
             ->all());
     }
 
+    public function activeMatching(string $userId, string $currency, ?string $categoryId): array
+    {
+        return array_values(Budget::query()
+            ->where('user_id', $userId)
+            ->whereNull('deleted_at')
+            ->whereNull('archived_at')
+            ->where('currency', $currency)
+            ->where(fn ($query) => $query->whereNull('category_id')->when($categoryId !== null, fn ($inner) => $inner->orWhere('category_id', $categoryId)))
+            ->orderBy('created_at')->orderBy('id')
+            ->get()
+            ->map(fn (Budget $budget): BudgetRecord => self::record($budget))
+            ->all());
+    }
+
     public function sortValue(BudgetRecord $budget): string
     {
         return $budget->createdAt->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s.uP');

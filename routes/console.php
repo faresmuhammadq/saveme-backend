@@ -52,3 +52,12 @@ Schedule::command('identity:purge-accounts')->hourly()->withoutOverlapping();
 
 // One reminder when an account's purge is 3 days or less away (spec 022, FR-058).
 Schedule::command('identity:send-deletion-reminders')->daily()->withoutOverlapping();
+
+// Devices & push (spec 023, ADR-0025): the hourly recurring-occurrence reminders (not before 09:00 recipient time, FR-023).
+Schedule::command('notifications:occurrence-reminders')->hourly()->withoutOverlapping();
+
+// Held notifications released when quiet hours end; notifications stuck sending re-queued (spec 023, FR-017, FR-049).
+Schedule::command('notifications:release-held')->everyFiveMinutes()->withoutOverlapping();
+
+// Idle push registrations (270 days) and notification records (30 days) pruned (spec 023, FR-010, FR-043).
+Schedule::command('notifications:prune')->daily()->withoutOverlapping();

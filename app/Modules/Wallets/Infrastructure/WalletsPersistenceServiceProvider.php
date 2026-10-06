@@ -12,6 +12,7 @@ use App\Modules\Wallets\Domain\Ports\ScopeSequence;
 use App\Modules\Wallets\Domain\Ports\SyncFeedReader;
 use App\Modules\Wallets\Domain\Ports\TombstoneStore;
 use App\Modules\Wallets\Domain\Ports\WalletRepository;
+use App\Modules\Wallets\Domain\Recurring\Ports\OccurrenceReminderSource;
 use App\Modules\Wallets\Domain\Recurring\Ports\OccurrenceRepository;
 use App\Modules\Wallets\Domain\Recurring\Ports\RecurringRuleRepository;
 use App\Modules\Wallets\Domain\Recurring\Ports\StampBlock;
@@ -31,6 +32,7 @@ use App\Modules\Wallets\Infrastructure\Repositories\EloquentSyncFeedReader;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentTombstoneStore;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentTransactionRepository;
 use App\Modules\Wallets\Infrastructure\Repositories\EloquentWalletRepository;
+use App\Modules\Wallets\Infrastructure\Repositories\SqlOccurrenceReminderSource;
 use App\Modules\Wallets\Infrastructure\Sync\UserScopeSequence;
 use App\Modules\Wallets\Infrastructure\Sync\WalletScopeSequence;
 use Illuminate\Support\ServiceProvider;
@@ -58,6 +60,7 @@ class WalletsPersistenceServiceProvider extends ServiceProvider
         TombstoneStore::class => EloquentTombstoneStore::class,
         RecurringRuleRepository::class => EloquentRecurringRuleRepository::class,
         OccurrenceRepository::class => EloquentOccurrenceRepository::class,
+        OccurrenceReminderSource::class => SqlOccurrenceReminderSource::class,
         StampBlock::class => WalletScopeSequence::class,
         ActivityLog::class => EloquentActivityLog::class,
         LedgerReportReader::class => SqlLedgerReportReader::class,

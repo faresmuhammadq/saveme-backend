@@ -46,6 +46,11 @@
         <!-- Test-only Billing (InstaPay claim sealing) keys. Never used outside the test suite. -->
         <env name="BILLING_KEYS" value="{&quot;b1&quot;:&quot;Z3VpbGR0ZXN0a2V5LWJpbGxpbmctMDEyMzQ1Njc4OTA=&quot;}"/>
         <env name="BILLING_ACTIVE_KEY" value="b1"/>
+        <!-- Test-only Notifications (push token sealing) keys. Never used outside the test suite. -->
+        <env name="NOTIFICATIONS_KEYS" value="{&quot;n1&quot;:&quot;bm90aWZpY2F0aW9ucy10ZXN0LXNlYWwta2V5LTAxMjM=&quot;}"/>
+        <env name="NOTIFICATIONS_ACTIVE_KEY" value="n1"/>
+        <env name="NOTIFICATIONS_LOOKUP_KEY" value="bm90aWZpY2F0aW9ucy1sb29rdXAtdGVzdC1rZXktMDE="/>
+        <env name="NOTIFICATIONS_PUSH_DRIVER" value="log"/>
         <env name="IDENTITY_LOOKUP_KEY" value="u1sMe5sEXD7vfBN9AnDfCC1RlB/NpuNcIQIBlFzUidA="/>
         <env name="ADMIN_NOTIFICATION_RECIPIENTS" value=""/>
         <env name="BROADCAST_CONNECTION" value="null"/>

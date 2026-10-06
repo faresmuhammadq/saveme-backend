@@ -99,6 +99,11 @@ test('a locked currency change is a documented 422', function () {
         {
             return true;
         }
+
+        public function authorAndCurrencyOf(string $transactionId): ?array
+        {
+            return null;
+        }
     });
 
     saveProfile($this->credential, profileBody(['default_currency' => 'USD']))

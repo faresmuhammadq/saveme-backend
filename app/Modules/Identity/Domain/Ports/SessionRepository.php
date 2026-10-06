@@ -26,6 +26,14 @@ interface SessionRepository
     public function activeIdsFor(string $userId, ?string $except = null): array;
 
     /**
+     * Which of the given sessions are the person's and still active.
+     *
+     * @param  list<string>  $sessionIds
+     * @return list<string>
+     */
+    public function activeAmong(string $userId, array $sessionIds): array;
+
+    /**
      * How many sessions are active and not past their own expiry at $now.
      */
     public function activeCountFor(string $userId, DateTimeImmutable $now): int;

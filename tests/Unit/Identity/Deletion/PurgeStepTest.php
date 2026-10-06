@@ -6,7 +6,7 @@ use App\Modules\Identity\Domain\Deletion\PurgeStep;
 test('the purge steps run in the order the constitution of the purge demands', function () {
     expect(array_map(fn (PurgeStep $step): string => $step->value, PurgeStep::cases()))->toBe([
         'begin', 'erase_name', 'revoke_invitations', 'resolve_owned_wallets', 'leave_wallets',
-        'budgets', 'categories', 'subscriptions', 'exports', 'completion_mail', 'erase_identity',
+        'budgets', 'categories', 'subscriptions', 'notifications', 'exports', 'completion_mail', 'erase_identity',
     ]);
 });
 

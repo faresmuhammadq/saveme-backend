@@ -1,0 +1,531 @@
+# Devices & push notifications (spec 023, brief B16). Every operation sits
+# under /api/v1, inherits the root's bearer scheme and runs through the shared
+# runtime, so each also documents the shared refusals it can produce.
+#
+# Frozen for the C16 client. Three things are frozen here:
+#
+#   1. Push registration: PUT/DELETE /me/devices/{id}, where {id} is the
+#      caller's OWN CURRENT device session id (spec 007's client-generated
+#      session_id). One registration per session; one push token per
+#      registration. The token is write-only: it is never returned.
+#   2. Notification preferences: GET/PUT /me/notification-preferences, six
+#      category switches and quiet hours, saved whole with `version`.
+#   3. The push payload (components/schemas/PushPayload). It is not an HTTP
+#      operation: it is what the phone receives from FCM. Notification +
+#      data message; the visible title and body are generic server-localised
+#      text (profile language), the data block carries a type and only
+#      identifiers. Never an amount, a balance, a currency, a name, a note, an
+#      address, a date of money, a token or a URL.
+#
+# Quiet hours are applied by the server, in the profile timezone: a message
+# that would arrive inside them is held and delivered when they end (never
+# dropped); of held messages sharing a collapse key, only the latest arrives.
+#
+# Not behind the verification gate; not gated by plan. No Idempotency-Key:
+# both writes are idempotent by construction.
+#
+# New in v1.14. No new error code.
+
+/me/devices/{id}:
+  put:
+    operationId: registerPushDevice
+    tags: [Notifications]
+    summary: Register or rotate this device session's push token.
+    description: |
+      `{id}` is the caller's current device session id. Any other id —
+      another person's session, another of the caller's own sessions, an
+      ended or unknown one — is 404 NOT_FOUND and nothing is stored.
+
+      Call after sign-in and whenever Firebase Messaging hands the app a new
+      token. Registering a new token replaces the previous one (rotation);
+      the same token again only refreshes `refreshed_at`. A token already
+      registered under another session (two accounts on one phone) moves to
+      this session. Always 200.
+
+      The registration ends by itself when the session ends for any reason
+      (sign-out, ended from another device, password change or reset, idle
+      expiry, account deletion), when FCM reports the token unregistered,
+      and after 270 days without a refresh: re-register on every app start
+      that has a token. The body carries only `push_token`; platform and app
+      version come from the session, the language from the profile.
+
+      Shares a budget of 20 writes per hour per session with
+      `unregisterPushDevice` (429 RATE_LIMITED with `Retry-After`).
+    parameters:
+      - $ref: '../components/parameters.yaml#/components/parameters/ResourceId'
+      - &acceptLanguage
+        $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - &correlationId
+        $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - &clientPlatform
+        $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - &clientVersion
+        $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PushRegistrationWrite'
+          examples:
+            register:
+              summary: The token Firebase Messaging returned on this phone
+              value:
+                push_token: 'dQw4w9WgXcQ:APA91bHPRgkF3JUikC4ENAHEeMrd41Zxv3hVZjC9KtT8OvPVGJ-hQMRKRrZuJAEcl7B338qju59zJMjw2DELjzEvxwYv7hH5Ynpc1ODQ0aT4U4OFEeco8ohsN5PjL1iC2dNtk2BAokeMCg2ZXKqpc8FXKmhX94kIxQ'
+    responses:
+      '200':
+        description: Registered, rotated or refreshed.
+        headers: &successHeaders
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/PushRegistration'
+                    meta:
+                      type: object
+                      additionalProperties: false
+            examples:
+              registered:
+                summary: First registration of this session
+                value:
+                  data:
+                    session_id: 0192f7a0-1c3d-7abc-9f01-2b3c4d5e6f70
+                    registered_at: '2026-10-06T09:00:00.000000Z'
+                    refreshed_at: '2026-10-06T09:00:00.000000Z'
+                  meta: {}
+              rotated:
+                summary: A new token for the same session, a week later
+                value:
+                  data:
+                    session_id: 0192f7a0-1c3d-7abc-9f01-2b3c4d5e6f70
+                    registered_at: '2026-10-06T09:00:00.000000Z'
+                    refreshed_at: '2026-10-13T18:42:10.250000Z'
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  delete:
+    operationId: unregisterPushDevice
+    tags: [Notifications]
+    summary: Stop push to this device session.
+    description: |
+      Removes the registration of the caller's current session; 204 also
+      when there is none. Any other id is 404 NOT_FOUND. Signing out is
+      enough on its own — the server drops the registration when the session
+      ends — so call this only when the person turns notifications off on
+      this phone without signing out. Shares the 20-per-hour budget of
+      `registerPushDevice`.
+    parameters:
+      - $ref: '../components/parameters.yaml#/components/parameters/ResourceId'
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '204':
+        description: Removed, or there was nothing to remove. No body.
+        headers:
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/me/notification-preferences:
+  get:
+    operationId: getNotificationPreferences
+    tags: [Notifications]
+    summary: Read the caller's notification preferences.
+    description: |
+      A person who never saved any reads the defaults at `version: 1`: every
+      category on, quiet hours on from 22:00 to 08:00. Quiet hours are wall
+      clock times in the profile timezone. Not synced: read this when the
+      settings screen opens.
+    parameters:
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    responses:
+      '200':
+        description: The preferences.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: &preferencesEnvelope
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/NotificationPreferences'
+                    meta:
+                      type: object
+                      additionalProperties: false
+            examples:
+              defaults:
+                summary: Never saved
+                value:
+                  data:
+                    version: 1
+                    categories: &allOn
+                      recurring_due: true
+                      budget_exceeded: true
+                      sharing: true
+                      billing: true
+                      export_ready: true
+                      deletion_reminder: true
+                    quiet_hours:
+                      enabled: true
+                      start: '22:00'
+                      end: '08:00'
+                    updated_at: null
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  put:
+    operationId: saveNotificationPreferences
+    tags: [Notifications]
+    summary: Save the whole preferences, carrying the last-seen version.
+    description: |
+      Every member is sent with the last-seen `version`. An identical save is
+      200 with nothing changed. A stale version refuses the whole save with
+      409 VERSION_CONFLICT, and `current` carries the stored preferences;
+      nothing is merged. Turning a category off stops future messages of it;
+      nothing skipped meanwhile is sent later when it is turned back on.
+
+      Quiet hours: `start` and `end` are `HH:MM` on a quarter hour, never
+      equal, and may wrap midnight. Invalid values are 422 VALIDATION_FAILED
+      (OUT_OF_RANGE, INVALID_TYPE, REQUIRED or UNKNOWN_FIELD at the member's
+      pointer). At most 30 saves per hour per person (429 RATE_LIMITED).
+    parameters:
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/NotificationPreferencesWrite'
+          examples:
+            quieterNights:
+              summary: Budget alerts off, quiet from 23:00 to 07:00
+              value:
+                version: 1
+                categories:
+                  recurring_due: true
+                  budget_exceeded: false
+                  sharing: true
+                  billing: true
+                  export_ready: true
+                  deletion_reminder: true
+                quiet_hours:
+                  enabled: true
+                  start: '23:00'
+                  end: '07:00'
+    responses:
+      '200':
+        description: Saved, or an identical replay with nothing changed.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *preferencesEnvelope
+            examples:
+              saved:
+                summary: After the save above
+                value:
+                  data:
+                    version: 2
+                    categories:
+                      recurring_due: true
+                      budget_exceeded: false
+                      sharing: true
+                      billing: true
+                      export_ready: true
+                      deletion_reminder: true
+                    quiet_hours:
+                      enabled: true
+                      start: '23:00'
+                      end: '07:00'
+                    updated_at: '2026-10-06T19:05:00.000000Z'
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+components:
+  schemas:
+    PushRegistrationWrite:
+      type: object
+      required: [push_token]
+      additionalProperties: false
+      properties:
+        push_token:
+          type: string
+          minLength: 1
+          maxLength: 4096
+          pattern: '^[\x21-\x7E]+$'
+          writeOnly: true
+          description: |
+            The FCM registration token from Firebase Messaging on this phone.
+            Stored encrypted; never returned, logged or shown to anyone.
+
+    PushRegistration:
+      type: object
+      description: Where this device session receives push. Not syncable. The token is never included.
+      required: [session_id, registered_at, refreshed_at]
+      additionalProperties: false
+      properties:
+        session_id:
+          type: string
+          format: uuid
+          description: The device session this registration belongs to (the path `{id}`).
+        registered_at:
+          type: string
+          format: date-time
+          description: When this session first registered.
+        refreshed_at:
+          type: string
+          format: date-time
+          description: The last registration call. A registration not refreshed for 270 days is removed.
+
+    NotificationCategories:
+      type: object
+      description: One switch per category. Every key is required on write.
+      required: [recurring_due, budget_exceeded, sharing, billing, export_ready, deletion_reminder]
+      additionalProperties: false
+      properties:
+        recurring_due:
+          type: boolean
+          description: A recurring item is due today and needs confirming, or its automatic confirmation was refused.
+        budget_exceeded:
+          type: boolean
+          description: A budget went over its limit this period (once per budget per period).
+        sharing:
+          type: boolean
+          description: An email invitation waits for you; your role changed; you were removed from a wallet; a wallet's ownership passed to you.
+        billing:
+          type: boolean
+          description: Your plan ends soon, or has ended.
+        export_ready:
+          type: boolean
+          description: An export you asked for is ready.
+        deletion_reminder:
+          type: boolean
+          description: Your account is due to be deleted in 3 days or less.
+
+    QuietHours:
+      type: object
+      required: [enabled, start, end]
+      additionalProperties: false
+      properties:
+        enabled:
+          type: boolean
+        start:
+          type: string
+          pattern: '^([01][0-9]|2[0-3]):(00|15|30|45)$'
+          description: Wall-clock time in the profile timezone. Never equal to `end`.
+        end:
+          type: string
+          pattern: '^([01][0-9]|2[0-3]):(00|15|30|45)$'
+          description: Wall-clock time in the profile timezone; earlier than `start` means it wraps midnight.
+
+    NotificationPreferences:
+      type: object
+      description: The caller's notification preferences. One per person, versioned, not synced.
+      required: [version, categories, quiet_hours, updated_at]
+      additionalProperties: false
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          description: 1 until the first save; each save that changes something adds 1.
+        categories:
+          $ref: '#/components/schemas/NotificationCategories'
+        quiet_hours:
+          $ref: '#/components/schemas/QuietHours'
+        updated_at:
+          type: [string, 'null']
+          format: date-time
+          description: The last save; null until the first.
+
+    NotificationPreferencesWrite:
+      type: object
+      required: [version, categories, quiet_hours]
+      additionalProperties: false
+      properties:
+        version:
+          type: integer
+          minimum: 1
+          description: The last-seen version.
+        categories:
+          $ref: '#/components/schemas/NotificationCategories'
+        quiet_hours:
+          $ref: '#/components/schemas/QuietHours'
+
+    PushPayload:
+      type: object
+      description: |
+        The `data` block of every push message the phone receives (not an
+        HTTP body). FCM data values are strings. Each `type` carries exactly
+        the identifiers listed for it below and nothing else; a key outside
+        that list never appears.
+
+        | type | category | identifiers | collapse key | opens |
+        |---|---|---|---|---|
+        | occurrence_due | recurring_due | wallet_id, occurrence_id | occurrence:{occurrence_id} | the occurrence |
+        | occurrence_auto_confirm_refused | recurring_due | wallet_id, occurrence_id | occurrence:{occurrence_id} | the occurrence |
+        | occurrences_due_summary | recurring_due | — | occurrences_due | upcoming items |
+        | budget_exceeded | budget_exceeded | budget_id | budget:{budget_id} | the budget |
+        | invitation_received | sharing | invitation_id | invitation:{invitation_id} | a "check your email" notice (the token is only in the mail) |
+        | member_role_changed | sharing | wallet_id, role | wallet:{wallet_id} | the wallet |
+        | member_removed | sharing | wallet_id | wallet:{wallet_id} | the wallet list |
+        | wallet_ownership_received | sharing | wallet_id | wallet:{wallet_id} | the wallet |
+        | subscription_ending | billing | — | subscription | the plan screen |
+        | subscription_lapsed | billing | — | subscription | the plan screen |
+        | export_ready | export_ready | export_id | export:{export_id} | the export (read it with getExport) |
+        | deletion_reminder | deletion_reminder | — | deletion | the account deletion screen |
+
+        The message also carries a notification block: a generic title and
+        body in the profile language (no names, amounts or dates), and the
+        Android channel id equal to `category`. The app may render its own
+        text from `type` while in the foreground. Unknown `type` values must
+        be ignored (a newer server may add one; `schema` changes only on a
+        breaking change).
+      required: [schema, type, category, notification_id]
+      additionalProperties: false
+      properties:
+        schema:
+          type: string
+          const: '1'
+        type:
+          type: string
+          enum:
+            - occurrence_due
+            - occurrence_auto_confirm_refused
+            - occurrences_due_summary
+            - budget_exceeded
+            - invitation_received
+            - member_role_changed
+            - member_removed
+            - wallet_ownership_received
+            - subscription_ending
+            - subscription_lapsed
+            - export_ready
+            - deletion_reminder
+        category:
+          type: string
+          enum: [recurring_due, budget_exceeded, sharing, billing, export_ready, deletion_reminder]
+        notification_id:
+          type: string
+          format: uuid
+          description: The server's record of this message; unique, for de-duplicating on the phone.
+        wallet_id:
+          type: string
+          format: uuid
+        occurrence_id:
+          type: string
+          format: uuid
+        budget_id:
+          type: string
+          format: uuid
+        invitation_id:
+          type: string
+          format: uuid
+        export_id:
+          type: string
+          format: uuid
+        role:
+          type: string
+          enum: [owner, editor, viewer]
+          description: The member's new role (member_role_changed only).
+      examples:
+        - schema: '1'
+          type: occurrence_due
+          category: recurring_due
+          notification_id: 0192fa10-0000-7000-8000-0000000000a1
+          wallet_id: 0192f79e-0000-7000-8000-000000000001
+          occurrence_id: 0192f8c4-0000-7000-8000-0000000000c3
+        - schema: '1'
+          type: budget_exceeded
+          category: budget_exceeded
+          notification_id: 0192fa10-0000-7000-8000-0000000000a2
+          budget_id: 0192f8d0-0000-7000-8000-0000000000b7
+        - schema: '1'
+          type: invitation_received
+          category: sharing
+          notification_id: 0192fa10-0000-7000-8000-0000000000a3
+          invitation_id: 0192f8e1-0000-7000-8000-0000000000d4
+        - schema: '1'
+          type: member_role_changed
+          category: sharing
+          notification_id: 0192fa10-0000-7000-8000-0000000000a4
+          wallet_id: 0192f79e-0000-7000-8000-000000000001
+          role: viewer
+        - schema: '1'
+          type: deletion_reminder
+          category: deletion_reminder
+          notification_id: 0192fa10-0000-7000-8000-0000000000a5

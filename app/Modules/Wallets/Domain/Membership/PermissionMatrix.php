@@ -30,9 +30,11 @@ final class PermissionMatrix
     }
 
     /**
+     * Every role the row allows, so a caller asks the matrix instead of comparing roles.
+     *
      * @return list<Role>
      */
-    private static function rolesFor(Permission $permission): array
+    public static function rolesFor(Permission $permission): array
     {
         return match ($permission) {
             Permission::W01ReadWallet,

@@ -9,6 +9,7 @@ use App\Modules\Billing\Application\Entitlements\EntitlementService;
 use App\Modules\Billing\Application\Subscriptions\AccessQuery;
 use App\Modules\Identity\Application\Operators\AccountDirectory;
 use App\Modules\Identity\Application\Operators\AccountFacts;
+use App\Modules\Notifications\Application\NotificationFigures;
 use App\Modules\Wallets\Application\Membership\MembershipCounts;
 use Illuminate\Support\Facades\DB;
 
@@ -29,6 +30,7 @@ final class AccountLookup
         private readonly EntitlementService $entitlements,
         private readonly LookupBudget $budget,
         private readonly AdminAuditService $audit,
+        private readonly NotificationFigures $notifications,
     ) {}
 
     /**
@@ -85,6 +87,7 @@ final class AccountLookup
                 $this->counts->forUser($facts->id),
                 $this->access->forUser($facts->id),
                 $this->entitlements->summaryFor($facts->id),
+                $this->notifications->registrationCountFor($facts->id),
             );
         });
     }

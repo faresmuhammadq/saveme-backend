@@ -76,6 +76,7 @@ return [
         'wallets_joined' => 'Wallets joined',
         'other_members' => 'Other members in owned wallets',
         'devices' => 'Signed-in devices',
+        'push_devices' => 'Devices that can receive notifications',
     ],
     'actions' => [
         'grant' => 'Grant access…',

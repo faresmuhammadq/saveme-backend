@@ -46,6 +46,7 @@ final class FieldErrors
         'beforeorequal' => ErrorCode::OutOfRange,
         'calendardate' => ErrorCode::DateNotCalendarDate,
         'uuidv7' => ErrorCode::InvalidId,
+        'quarterhour' => ErrorCode::OutOfRange,
     ];
 
     /**

@@ -56,4 +56,24 @@
             @endforeach
         </div>
     </x-admin::card>
+
+    <x-admin::card :title="__('admin::overview.play.title')" data-test="play-figures">
+        <p class="mb-3 text-label text-ink-3">{{ __('admin::overview.play.hint') }}</p>
+        <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            @foreach ($play as $key => $value)
+                <x-admin::stat-tile
+                    :label="__('admin::overview.play.'.$key)"
+                    :value="number_format($value, 0, '.', ',')"
+                    data-test="play-{{ $key }}"
+                />
+            @endforeach
+        </div>
+        @if ($playRejections !== [])
+            <ul class="mt-3 flex flex-wrap gap-2" data-test="play-rejections">
+                @foreach ($playRejections as $reason => $count)
+                    <li><x-admin::pill tone="pending" size="sm" data-test="play-rejection-{{ $reason }}">{{ __('admin::overview.play.reasons.'.$reason) }} · {{ $count }}</x-admin::pill></li>
+                @endforeach
+            </ul>
+        @endif
+    </x-admin::card>
 </div>

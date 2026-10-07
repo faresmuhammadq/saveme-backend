@@ -1,6 +1,10 @@
 <!--
 Sync Impact Report (latest first)
 
+v1.3.14 → 1.3.15 — 2026-10-06
+- PATCH: P-09 and P-10 list ADR-0026, introduced by spec 024; no rule changes.
+- Reason: spec 024 (B10, Billing — Google Play); ADR-0026 extends ADR-0013 and ADR-0010.
+
 v1.3.13 → 1.3.14 — 2026-10-06
 - PATCH: P-11 lists ADR-0025, introduced by spec 023; the Plans & Billing row publishes `SubscriptionRenewalDue`; the Identity row publishes `ExportReady` and `DeletionReminderDue`; `BudgetExceeded` is first published. The Constitution Check and bottom footer (which still read 1.3.12) now read 1.3.14. No rule changes.
 - Reason: spec 023 (B16, Devices & Push Notifications); ADR-0025 extends ADR-0009, ADR-0010, ADR-0018 and ADR-0019.
@@ -131,7 +135,7 @@ v1.0.0 — 2026-09-19 (ratified)
 
 <!-- "Save Me" is a working codename used as display text only; see P-13. -->
 
-**Version**: 1.3.14 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-06
+**Version**: 1.3.15 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-06
 
 ## Purpose & Precedence
 
@@ -240,7 +244,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-09 Entitlements
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0013](../../docs/adr/0013-entitlements-with-manual-channel.md) (supersedes ADR-0007), [ADR-0023](../../docs/adr/0023-instapay-claims-and-claim-bound-redeem-codes.md) (extends ADR-0013)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0013](../../docs/adr/0013-entitlements-with-manual-channel.md) (supersedes ADR-0007), [ADR-0023](../../docs/adr/0023-instapay-claims-and-claim-bound-redeem-codes.md) (extends ADR-0013), [ADR-0026](../../docs/adr/0026-google-play-purchases-through-an-in-house-gateway.md) (extends ADR-0013 and ADR-0010)
 
 1. Plans MUST be data: a period plus feature flags and quotas.
 2. Every capability check MUST go through `EntitlementService` against a `Feature` enum value.
@@ -253,7 +257,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-10 Billing channels
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0013](../../docs/adr/0013-entitlements-with-manual-channel.md) (supersedes ADR-0007), [ADR-0023](../../docs/adr/0023-instapay-claims-and-claim-bound-redeem-codes.md) (extends ADR-0013)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0013](../../docs/adr/0013-entitlements-with-manual-channel.md) (supersedes ADR-0007), [ADR-0023](../../docs/adr/0023-instapay-claims-and-claim-bound-redeem-codes.md) (extends ADR-0013), [ADR-0026](../../docs/adr/0026-google-play-purchases-through-an-in-house-gateway.md) (extends ADR-0013 and ADR-0010)
 
 1. In-app purchases MUST use Google Play Billing.
 2. The in-app API surface MUST expose only "restore purchases" and "enter code".
@@ -403,7 +407,7 @@ Every `plan.md` includes this section, filled in before Phase 0 and again after 
 ```markdown
 ## Constitution Check
 
-*Constitution v1.3.14. GATE: before Phase 0 and again after Phase 1.*
+*Constitution v1.3.15. GATE: before Phase 0 and again after Phase 1.*
 
 | Principle | Result | Evidence / justification |
 |---|---|---|
@@ -441,4 +445,4 @@ Every amendment updates the footer's **Last Amended** date and the Sync Impact R
 
 **Consistency** — run `/speckit-analyze` before implementing each feature. Contradictions between this constitution, the ADRs and a feature's spec are defects to resolve before code.
 
-**Version**: 1.3.14 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-06
+**Version**: 1.3.15 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-06

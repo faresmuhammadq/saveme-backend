@@ -3,6 +3,7 @@
 namespace App\Modules\Billing\Application\Subscriptions;
 
 use App\Modules\Billing\Domain\Ports\PlanRepository;
+use App\Modules\Billing\Domain\Ports\PlayPurchaseRepository;
 use App\Modules\Billing\Domain\Ports\SubscriptionRepository;
 use App\Modules\Billing\Domain\Subscriptions\GoverningSubscription;
 use App\Modules\Billing\Domain\Subscriptions\SubscriptionRecord;
@@ -18,6 +19,7 @@ final class AccessQuery
     public function __construct(
         private readonly SubscriptionRepository $subscriptions,
         private readonly PlanRepository $plans,
+        private readonly PlayPurchaseRepository $playPurchases,
     ) {}
 
     public function forUser(string $userId): AccessView
@@ -27,6 +29,13 @@ final class AccessQuery
 
         $names = [];
         $views = [];
+        $plays = [];
+
+        foreach ($this->playPurchases->forUser($userId) as $purchase) {
+            if ($purchase->subscriptionId !== null) {
+                $plays[$purchase->subscriptionId] = $purchase;
+            }
+        }
 
         foreach ($records as $record) {
             $names[$record->planId] ??= $this->planName($record->planId);
@@ -44,6 +53,9 @@ final class AccessQuery
                 createdAt: $record->createdAt,
                 canExtend: $record->provider === 'manual' && $record->currentPeriodEnd !== null && ! $revoked,
                 canRevoke: in_array($record->provider, ['manual', 'instapay'], true) && ! $revoked,
+                autoRenew: $record->autoRenew,
+                playAcknowledged: isset($plays[$record->id]) ? $plays[$record->id]->acknowledgedAt !== null : null,
+                playTest: isset($plays[$record->id]) ? $plays[$record->id]->isTest : null,
             );
         }
 

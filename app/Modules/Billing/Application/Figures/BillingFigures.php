@@ -19,6 +19,7 @@ final class BillingFigures
 
         return new BillingFigureSet(
             paidGooglePlay: $counts['google_play'],
+            testGooglePlay: $counts['google_play_test'],
             paidInstapay: $counts['instapay'],
             grantedManual: $counts['manual'],
             inGrace: $counts['in_grace'],

@@ -9,6 +9,12 @@ use App\Modules\Admin\Domain\SecondFactor\Totp;
 use App\Modules\Admin\Http\Auth\OperatorSession;
 use App\Modules\Admin\Http\Auth\PendingSignIn;
 use App\Modules\Admin\Infrastructure\Models\OperatorAccount;
+use App\Modules\Billing\Domain\GooglePlay\PlayBillingGateway;
+use App\Modules\Billing\Domain\GooglePlay\PlayProductKind;
+use App\Modules\Billing\Domain\GooglePlay\PlayPurchaseRecord;
+use App\Modules\Billing\Domain\GooglePlay\PlayState;
+use App\Modules\Billing\Domain\Ports\TokenLookup;
+use App\Modules\Billing\Infrastructure\GooglePlay\FakePlayBillingGateway;
 use App\Modules\Billing\Infrastructure\Models\Plan;
 use App\Modules\Billing\Infrastructure\Models\Subscription;
 use App\Modules\Budgeting\Application\BudgetQueryService;
@@ -1984,4 +1990,154 @@ function budgetNotification(string $userId, string $key, string $budgetId = '019
 function notificationRow(string $id): PushNotification
 {
     return PushNotification::query()->findOrFail($id);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Google Play (spec 024)
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * The scripted Google Play the suite runs against (BILLING_PLAY_DRIVER=fake).
+ */
+function playGateway(): FakePlayBillingGateway
+{
+    $gateway = app(PlayBillingGateway::class);
+    assert($gateway instanceof FakePlayBillingGateway);
+
+    return $gateway;
+}
+
+/**
+ * Maps the Plus plans to their Play product ids, as the seeder does from configuration.
+ */
+function mapPlayProducts(): void
+{
+    foreach (['plus_monthly' => 14900, 'plus_yearly' => 129000] as $code => $amount) {
+        $plan = Plan::query()->where('code', $code)->firstOrFail();
+        $plan->prices = [...$plan->prices, ['channel' => 'google_play', 'product_id' => $code, 'amount_minor' => $amount, 'currency' => 'EGP']];
+        $plan->save();
+    }
+}
+
+function playToken(string $label = 'a'): string
+{
+    return 'play-token-'.$label.'.'.Str::random(40);
+}
+
+function playLookup(string $token): string
+{
+    return app(TokenLookup::class)->for($token);
+}
+
+/**
+ * A Google purchase record, ACTIVE Plus monthly with 30 days left by default.
+ *
+ * @param  array<string, mixed>  $overrides  PlayPurchaseRecord constructor members
+ */
+function playRecord(array $overrides = []): PlayPurchaseRecord
+{
+    $now = now()->toDateTimeImmutable();
+    $values = [
+        'productId' => 'plus_monthly',
+        'kind' => PlayProductKind::Subscription,
+        'state' => PlayState::Active,
+        'expiresAt' => $now->modify('+30 days'),
+        'graceUntil' => null,
+        'purchasedAt' => $now->modify('-1 minute'),
+        'autoRenew' => true,
+        'acknowledged' => false,
+        'obfuscatedRef' => null,
+        'linkedToken' => null,
+        'isTest' => false,
+        'basePlanId' => 'monthly',
+        ...$overrides,
+    ];
+
+    return new PlayPurchaseRecord(...$values);
+}
+
+/**
+ * Scripts the fake Google for a subscription token and returns the record.
+ *
+ * @param  array<string, mixed>  $overrides
+ */
+function scriptPlay(string $token, array $overrides = []): PlayPurchaseRecord
+{
+    $record = playRecord($overrides);
+    $record->kind === PlayProductKind::OneTime
+        ? playGateway()->scriptProduct($token, $record)
+        : playGateway()->scriptSubscription($token, $record);
+
+    return $record;
+}
+
+/**
+ * A signed-in call to a Play endpoint.
+ *
+ * @param  array<string, mixed>|null  $body
+ */
+function playCall(string $credential, string $method, string $path, ?array $body = null, ?string $key = null): TestResponse
+{
+    app('auth')->forgetGuards();
+    $headers = [...asCredential($credential), 'X-Client-Platform' => 'android'];
+
+    if ($method !== 'get') {
+        $headers['Idempotency-Key'] = $key ?? 'play-'.Str::lower(Str::random(24));
+    }
+
+    return $method === 'get' ? test()->withHeaders($headers)->getJson($path) : test()->withHeaders($headers)->postJson($path, $body ?? []);
+}
+
+/**
+ * The signed-in person's id and bearer credential.
+ *
+ * @return array{0: User, 1: string}
+ */
+function playBuyer(string $email = 'ada@example.test'): array
+{
+    $user = person($email);
+
+    return [$user, signInAs($email)->json('data.credential')];
+}
+
+/**
+ * A Pub/Sub push body carrying a developer notification.
+ *
+ * @param  array<string, mixed>  $notification  the DeveloperNotification members beyond version and package
+ * @return array<string, mixed>
+ */
+function pubsubPush(array $notification, ?string $messageId = null, ?string $subscription = null): array
+{
+    $data = ['version' => '1.0', 'packageName' => (string) config('billing.google_play.package_name'), 'eventTimeMillis' => (string) (now()->getTimestamp() * 1000), ...$notification];
+
+    return [
+        'message' => ['data' => base64_encode((string) json_encode($data)), 'messageId' => $messageId ?? (string) random_int(10 ** 15, 10 ** 16), 'publishTime' => now()->utc()->format('Y-m-d\TH:i:s.v\Z')],
+        'subscription' => $subscription ?? (string) config('billing.google_play.push.subscription'),
+    ];
+}
+
+/**
+ * @return array<string, mixed>
+ */
+function subscriptionNotification(string $token, int $type = 2, ?string $subscriptionId = 'plus_monthly'): array
+{
+    return ['subscriptionNotification' => array_filter(['version' => '1.0', 'notificationType' => $type, 'purchaseToken' => $token, 'subscriptionId' => $subscriptionId])];
+}
+
+/**
+ * Posts a push to the webhook as Google: a bearer token, no client headers.
+ *
+ * @param  array<string, mixed>  $push
+ */
+function postPush(array $push, ?string $bearer, bool $signed = true): TestResponse
+{
+    $headers = ['Accept' => 'application/json'];
+
+    if ($bearer !== null) {
+        $headers['Authorization'] = 'Bearer '.$bearer;
+    }
+
+    return test()->postJson('/api/v1/webhooks/google-play', $push, $headers);
 }

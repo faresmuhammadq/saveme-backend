@@ -56,6 +56,13 @@ return [
             'created' => 'أُنشئ',
             'actions' => 'إجراءات',
         ],
+        'markers' => [
+            'auto_renew_on' => 'يتجدد تلقائياً',
+            'auto_renew_off' => 'لن يتجدد',
+            'acknowledged' => 'تم الإقرار',
+            'not_acknowledged' => 'لم يتم الإقرار بعد',
+            'test' => 'شراء تجريبي',
+        ],
         'no_end' => 'بلا نهاية',
         'no_grace' => '—',
         'channels' => [

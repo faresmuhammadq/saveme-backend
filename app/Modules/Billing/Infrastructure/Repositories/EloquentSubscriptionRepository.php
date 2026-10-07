@@ -40,7 +40,7 @@ final class EloquentSubscriptionRepository implements SubscriptionRepository
 
     public function create(array $row): SubscriptionRecord
     {
-        $subscription = Subscription::query()->create([...$row, 'source_meta' => []]);
+        $subscription = Subscription::query()->create([...$row, 'source_meta' => $row['source_meta'] ?? []]);
 
         return self::record($subscription->refresh());
     }
@@ -62,6 +62,14 @@ final class EloquentSubscriptionRepository implements SubscriptionRepository
         ]);
     }
 
+    public function updateAutoRenew(string $id, bool $autoRenew): void
+    {
+        Subscription::query()->whereKey($id)->toBase()->update([
+            'auto_renew' => $autoRenew,
+            'updated_at' => now()->format(self::INSTANT),
+        ]);
+    }
+
     public function stampEndedByAccountPurge(string $userId, DateTimeImmutable $at): int
     {
         return Subscription::query()->where('user_id', $userId)->whereNull('ended_by_account_purge_at')->toBase()->update([
@@ -77,13 +85,13 @@ final class EloquentSubscriptionRepository implements SubscriptionRepository
 
     public function dueForGrace(DateTimeImmutable $now): array
     {
-        return $this->records(Subscription::query()->where('status', 'active')
+        return $this->records(Subscription::query()->where('status', 'active')->where('provider', '!=', 'google_play')
             ->whereNotNull('current_period_end')->where('current_period_end', '<=', $now->format(self::INSTANT)));
     }
 
     public function dueForExpiry(DateTimeImmutable $now): array
     {
-        return $this->records(Subscription::query()->where('status', 'grace')
+        return $this->records(Subscription::query()->where('status', 'grace')->where('provider', '!=', 'google_play')
             ->whereNotNull('grace_until')->where('grace_until', '<=', $now->format(self::INSTANT)));
     }
 
@@ -131,24 +139,26 @@ final class EloquentSubscriptionRepository implements SubscriptionRepository
         $at = $now->format(self::INSTANT);
 
         $rows = DB::select(<<<'SQL'
-            SELECT s.provider, COUNT(DISTINCT s.user_id) AS people
+            SELECT s.provider, COALESCE(s.source_meta->>'test' = 'true', false) AS is_test, COUNT(DISTINCT s.user_id) AS people
             FROM subscriptions s
             JOIN plans p ON p.id = s.plan_id
             WHERE s.status IN ('active', 'grace')
               AND (COALESCE(s.grace_until, s.current_period_end) IS NULL OR COALESCE(s.grace_until, s.current_period_end) > ?::timestamptz)
               AND NOT p.is_default
-            GROUP BY s.provider
+            GROUP BY s.provider, is_test
             SQL, [$at]);
 
         $byChannel = [];
         foreach ($rows as $row) {
-            $byChannel[(string) $row->provider] = (int) $row->people;
+            $channel = (string) $row->provider.($row->is_test ? '_test' : '');
+            $byChannel[$channel] = ($byChannel[$channel] ?? 0) + (int) $row->people;
         }
 
         return [
             'google_play' => $byChannel['google_play'] ?? 0,
-            'instapay' => $byChannel['instapay'] ?? 0,
-            'manual' => $byChannel['manual'] ?? 0,
+            'google_play_test' => $byChannel['google_play_test'] ?? 0,
+            'instapay' => ($byChannel['instapay'] ?? 0) + ($byChannel['instapay_test'] ?? 0),
+            'manual' => ($byChannel['manual'] ?? 0) + ($byChannel['manual_test'] ?? 0),
             'in_grace' => Subscription::query()->where('status', 'grace')
                 ->where(fn ($query) => $query->whereNull('grace_until')->orWhere('grace_until', '>', $at))->count(),
         ];

@@ -10,12 +10,12 @@ use Monolog\Processor\ProcessorInterface;
  * be logged; P-15 rule 4). Any context or extra value whose key names a
  * password, token, secret, credential, authorization, cookie or a back-office
  * one-time code, recovery code, setup key or setup link, or an InstaPay receipt,
- * screenshot, redeem code or sealed claim address, or a push token, signed OAuth assertion or service-account private key, is replaced,
+ * screenshot, redeem code or sealed claim address, or a push token, a Google Play account reference or order id, signed OAuth assertion or service-account private key, is replaced,
  * at every depth, so no call site has to remember.
  */
 final class RedactSecrets implements ProcessorInterface
 {
-    private const SENSITIVE_KEY = '/pass(word)?|token|secret|credential|authori[sz]ation|cookie|one_time_code|recovery_code|setup_key|otpauth|screenshot|receipt|redeem_code|address_sealed|assertion|private_key|push_/i';
+    private const SENSITIVE_KEY = '/pass(word)?|token|secret|credential|authori[sz]ation|cookie|one_time_code|recovery_code|setup_key|otpauth|screenshot|receipt|redeem_code|address_sealed|assertion|private_key|push_|obfuscated|account_reference|order_?id/i';
 
     public function __invoke(LogRecord $record): LogRecord
     {

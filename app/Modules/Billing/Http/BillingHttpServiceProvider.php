@@ -9,9 +9,11 @@ use App\Modules\Billing\Http\Console\LapseSubscriptions;
 use App\Modules\Billing\Http\Console\ListClaims;
 use App\Modules\Billing\Http\Console\PurgeClaims;
 use App\Modules\Billing\Http\Console\PurgeIdempotencyRecords;
+use App\Modules\Billing\Http\Console\ReconcilePlay;
 use App\Modules\Billing\Http\Console\RejectClaim;
 use App\Modules\Billing\Http\Console\RevokeClaimCode;
 use App\Modules\Billing\Http\Console\SendRenewalReminders;
+use App\Modules\Billing\Http\Console\SweepPlay;
 use App\Modules\Billing\Http\Middleware\ClaimsAreWebOnly;
 use App\Modules\Billing\Http\Middleware\Idempotent;
 use Illuminate\Routing\Router;
@@ -47,6 +49,8 @@ class BillingHttpServiceProvider extends ServiceProvider
                 ExpireRedeemCodes::class,
                 SendRenewalReminders::class,
                 PurgeClaims::class,
+                ReconcilePlay::class,
+                SweepPlay::class,
             ]);
         }
     }

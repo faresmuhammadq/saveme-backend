@@ -95,5 +95,56 @@ class BillingSeeder extends Seeder
                 $plan->save();
             }
         }
+
+        self::seedPlayPrices();
+    }
+
+    /**
+     * Google Play product ids from configuration (spec 024, FR-040, FR-041, R-9):
+     * a plan gains its `google_play` price only when it has none and the
+     * configuration gives a product id, an integer amount in minor units and a
+     * known currency. Never overwritten, never removed; a product id on two plans throws.
+     */
+    public static function seedPlayPrices(): void
+    {
+        $configured = [];
+
+        foreach ((array) config('billing.google_play.products') as $code => $product) {
+            $productId = is_array($product) ? ($product['product_id'] ?? null) : null;
+
+            if (is_string($productId) && $productId !== '') {
+                if (in_array($productId, $configured, true)) {
+                    throw new InvalidArgumentException("Google Play product [{$productId}] is configured for two plans.");
+                }
+
+                $configured[] = $productId;
+            }
+        }
+
+        foreach ((array) config('billing.google_play.products') as $code => $product) {
+            $productId = $product['product_id'] ?? null;
+            $amount = $product['amount_minor'] ?? null;
+            $currency = $product['currency'] ?? null;
+
+            if (! is_string($productId) || $productId === '' || ! is_int($amount) || $amount < 0 || ! is_string($currency) || ! Currency::isKnown($currency)) {
+                continue;
+            }
+
+            $plan = Plan::query()->where('code', (string) $code)->first();
+
+            if ($plan === null || collect($plan->prices)->contains(fn (array $price): bool => $price['channel'] === 'google_play')) {
+                continue;
+            }
+
+            $taken = Plan::query()->where('id', '!=', $plan->id)->get()
+                ->contains(fn (Plan $other): bool => collect($other->prices)->contains(fn (array $price): bool => $price['channel'] === 'google_play' && $price['product_id'] === $productId));
+
+            if ($taken) {
+                throw new InvalidArgumentException("Google Play product [{$productId}] already maps to another plan.");
+            }
+
+            $plan->prices = [...$plan->prices, ['channel' => 'google_play', 'product_id' => $productId, 'amount_minor' => $amount, 'currency' => $currency]];
+            $plan->save();
+        }
     }
 }

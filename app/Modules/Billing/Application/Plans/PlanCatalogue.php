@@ -21,6 +21,44 @@ final class PlanCatalogue
     }
 
     /**
+     * The plan a Google Play product id is sold as, active or retired (spec
+     * 024, R-9, FR-043): a retired plan keeps mapping its product for renewals
+     * and reconciliation. A product id is on at most one plan.
+     */
+    public function planForPlayProduct(string $productId): ?PlanRecord
+    {
+        foreach ($this->plans->all() as $plan) {
+            foreach ($plan->prices as $price) {
+                if ($price['channel'] === 'google_play' && $price['product_id'] === $productId) {
+                    return $plan;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Every Play product id the catalogue maps, active or retired plans (spec 024, FR-043).
+     *
+     * @return list<string>
+     */
+    public function playProductIds(): array
+    {
+        $ids = [];
+
+        foreach ($this->plans->all() as $plan) {
+            foreach ($plan->prices as $price) {
+                if ($price['channel'] === 'google_play' && is_string($price['product_id'])) {
+                    $ids[] = $price['product_id'];
+                }
+            }
+        }
+
+        return array_values(array_unique($ids));
+    }
+
+    /**
      * A catalogue item on the wire: never the plan code (ADR-0013 rule 6).
      *
      * @return array<string, mixed>

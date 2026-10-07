@@ -56,6 +56,13 @@ return [
             'created' => 'Created',
             'actions' => 'Actions',
         ],
+        'markers' => [
+            'auto_renew_on' => 'Auto-renews',
+            'auto_renew_off' => 'Will not renew',
+            'acknowledged' => 'Acknowledged',
+            'not_acknowledged' => 'Not yet acknowledged',
+            'test' => 'Test purchase',
+        ],
         'no_end' => 'No end',
         'no_grace' => '—',
         'channels' => [

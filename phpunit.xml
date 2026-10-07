@@ -46,6 +46,15 @@
         <!-- Test-only Billing (InstaPay claim sealing) keys. Never used outside the test suite. -->
         <env name="BILLING_KEYS" value="{&quot;b1&quot;:&quot;Z3VpbGR0ZXN0a2V5LWJpbGxpbmctMDEyMzQ1Njc4OTA=&quot;}"/>
         <env name="BILLING_ACTIVE_KEY" value="b1"/>
+        <!-- Test-only Google Play keys and push values (spec 024). Never used outside the test suite. -->
+        <env name="BILLING_PLAY_DRIVER" value="fake"/>
+        <env name="BILLING_PLAY_PACKAGE" value="com.example.app"/>
+        <env name="BILLING_PLAY_ACCOUNT_KEYS" value="{&quot;p1&quot;:&quot;cGxheS1hY2NvdW50LXRlc3Qta2V5LTAxMjM0NTY3ODk=&quot;}"/>
+        <env name="BILLING_PLAY_ACCOUNT_ACTIVE_KEY" value="p1"/>
+        <env name="BILLING_PLAY_LOOKUP_KEY" value="cGxheS1sb29rdXAtdGVzdC1rZXktMDEyMzQ1Njc4OTAxMg=="/>
+        <env name="BILLING_PLAY_PUSH_AUDIENCE" value="https://saveme.test/api/v1/webhooks/google-play"/>
+        <env name="BILLING_PLAY_PUSH_SERVICE_ACCOUNT" value="play-push@example-project.iam.gserviceaccount.com"/>
+        <env name="BILLING_PLAY_PUSH_SUBSCRIPTION" value="projects/example-project/subscriptions/play-rtdn-push"/>
         <!-- Test-only Notifications (push token sealing) keys. Never used outside the test suite. -->
         <env name="NOTIFICATIONS_KEYS" value="{&quot;n1&quot;:&quot;bm90aWZpY2F0aW9ucy10ZXN0LXNlYWwta2V5LTAxMjM=&quot;}"/>
         <env name="NOTIFICATIONS_ACTIVE_KEY" value="n1"/>

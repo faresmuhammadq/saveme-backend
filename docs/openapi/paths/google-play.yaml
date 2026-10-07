@@ -1,0 +1,638 @@
+# Plans & Billing — Google Play purchases (spec 024, brief B10).
+#
+# Frozen for the C10 client. Every operation sits under /api/v1 and runs
+# through the shared runtime, so each also documents the shared refusals it
+# can produce.
+#
+# Google Play is the source of truth for a Google Play subscription. The app
+# buys through Play Billing; these operations only verify with Google a
+# payment Play already took (P-10 rules 1–2, ADR-0013 rule 11). Nothing here
+# accepts a price, an amount or a currency.
+#
+# Three things are frozen for the client:
+#
+#   1. The SERVER acknowledges every purchase it links, in the verify or
+#      restore request. The client MUST NOT call acknowledgePurchase. A
+#      purchase no account has linked is never acknowledged; Google refunds
+#      it after 3 days.
+#   2. Before buying, the app reads GET /billing/google/account-reference
+#      and passes the value as setObfuscatedAccountId. A purchase carrying a
+#      reference is linked only to the account it names.
+#   3. A purchase token is linked to exactly one account, ever. Another
+#      account presenting it gets 409 PURCHASE_ALREADY_LINKED (verify) or the
+#      item outcome `linked_elsewhere` (restore).
+#
+# Verify and restore are the "Google Play purchase acknowledgement"
+# operation of docs/api-conventions.md, Idempotency: both require
+# Idempotency-Key, keyed per user, replayed verbatim for 24 hours.
+#
+# The webhook is Google's: a Cloud Pub/Sub push carrying a real-time
+# developer notification, authorised only by Google's OIDC token. The app
+# never calls it.
+#
+# New in v1.15. New error codes: PURCHASE_ALREADY_LINKED (409) and
+# PURCHASE_NOT_VERIFIED (422), catalogued in error-catalog.yaml with the
+# runtime enum by spec 024's first implementation task.
+
+/billing/google/account-reference:
+  get:
+    operationId: getPlayAccountReference
+    tags: [Plans & Billing]
+    summary: The opaque value to pass to Play Billing as the obfuscated account id.
+    description: |
+      One value per account, stable for the life of the account: 64
+      lowercase hex characters (a keyed hash of the account id, so it says
+      nothing about the account to Google). Created on first request. Pass
+      it as `BillingFlowParams.setObfuscatedAccountId` on every purchase.
+      Never shared with another account; deleted when the account is purged.
+    parameters:
+      - &acceptLanguage
+        $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - &correlationId
+        $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - &clientPlatform
+        $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - &clientVersion
+        $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: The caller's account reference.
+        headers:
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/PlayAccountReference'
+                    meta:
+                      type: object
+                      additionalProperties: false
+            examples:
+              reference:
+                summary: The caller's reference
+                value:
+                  data:
+                    obfuscated_account_id: 3f7a9c0e5b2d4186a0c9e7f1b3d5a7c9e1f3b5d7a9c1e3f5b7d9a1c3e5f7b9d1
+                  meta: {}
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+/billing/google/purchases:
+  post:
+    operationId: verifyPlayPurchase
+    tags: [Plans & Billing]
+    summary: Verify one Google Play purchase, link it to this account and acknowledge it.
+    description: |
+      Call right after Play Billing reports a purchase (any state). The
+      server reads the purchase from Google, checks it belongs to this app
+      and to the posted `product_id`, links it to the caller, records the
+      subscription, **acknowledges it with Google**, and answers with the
+      new entitlements. The client never acknowledges.
+
+      **Outcomes**
+
+      - 200: the purchase is linked to the caller. `purchase.state` is
+        Google's state as now recorded (`active`, `grace`, `canceled` —
+        still granting until `current_period_end` — or, for an old token,
+        `on_hold`, `paused`, `expired`, `revoked`). `acknowledged` false
+        means Google could not be reached for the acknowledgement; the
+        server keeps retrying, access is already granted, do nothing.
+        Posting a token already linked to the caller answers 200 with its
+        current state and changes nothing else.
+      - 202: Google reports the purchase **pending** (a slow payment
+        method). Entitlements are unchanged and nothing is acknowledged.
+        Keep the purchase pending in the app; it is granted when Google
+        reports it paid, without another call. Re-check later with a new
+        Idempotency-Key.
+      - 409 PURCHASE_ALREADY_LINKED: the token is linked to another
+        account, or the purchase's obfuscated account id names another
+        account. Nothing is granted and nothing about the other account is
+        disclosed. Ask the person to sign in with the account that bought it.
+      - 422 PURCHASE_NOT_VERIFIED: Google does not know this token for this
+        app, its product is not `product_id`, or it was cancelled before it
+        was ever paid. Do not retry this token.
+      - 422 VALIDATION_FAILED: `/purchase_token` REQUIRED, INVALID_TYPE or
+        OUT_OF_RANGE (1–2048 characters); `/product_id` REQUIRED or
+        INVALID_ENUM_VALUE when it is not a product id listed in
+        `GET /plans` (`prices[].channel = google_play`, including retired
+        plans' products); any other member UNKNOWN_FIELD.
+      - 503 SERVICE_UNAVAILABLE with Retry-After: Google could not be
+        reached. Nothing granted; retry with the same key. A purchase has 3
+        days before Google refunds an unacknowledged purchase.
+
+      **Budget**: 20 per hour per person (429 RATE_LIMITED with
+      Retry-After), spent after validation; a replay spends nothing.
+
+      **Idempotency**: same key and body replays the stored 200 or 202 with
+      `Idempotency-Replayed: true`; same key, different body is 409
+      IDEMPOTENCY_KEY_REUSED; the original still running is 409
+      IDEMPOTENCY_REQUEST_IN_PROGRESS with Retry-After. Refusals are not
+      stored.
+
+      Not behind the email verification gate. The token is never echoed,
+      logged or shown to anyone.
+    parameters:
+      - &idempotencyKey
+        $ref: '../components/headers.yaml#/components/parameters/IdempotencyKey'
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PlayPurchaseRequest'
+          examples:
+            monthly:
+              summary: Plus · Monthly bought in the app
+              value:
+                purchase_token: opaque-token-from-play-billing.AO-J1OxPLAyTokEnExAmPlE0123456789
+                product_id: plus_monthly
+    responses:
+      '200':
+        description: Verified and linked to the caller.
+        headers: &successHeaders
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+          Idempotency-Replayed:
+            $ref: '../components/headers.yaml#/components/headers/IdempotencyReplayed'
+        content:
+          application/json:
+            schema: &purchaseEnvelope
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/PlayPurchaseResult'
+                    meta:
+                      type: object
+                      additionalProperties: false
+            examples:
+              active:
+                summary: A new monthly subscription, acknowledged
+                value:
+                  data:
+                    purchase:
+                      product_id: plus_monthly
+                      state: active
+                      acknowledged: true
+                      auto_renew: true
+                      current_period_end: '2026-11-06T09:12:44.000000Z'
+                      test: false
+                    entitlements:
+                      plan:
+                        id: 0192f7a0-0000-7000-8000-0000000000c2
+                        name: Plus · Monthly
+                      features:
+                        sharing.enabled: true
+                        sharing.max_members_per_wallet: 5
+                        export.enabled: true
+                        reports.advanced: true
+                        wallets.max: null
+                    subscription:
+                      plan:
+                        id: 0192f7a0-0000-7000-8000-0000000000c2
+                        name: Plus · Monthly
+                      provider: google_play
+                      status: active
+                      current_period_start: '2026-10-06T09:12:44.000000Z'
+                      current_period_end: '2026-11-06T09:12:44.000000Z'
+                      grace_until: null
+                      auto_renew: true
+                  meta: {}
+              ackPending:
+                summary: Granted; Google's acknowledgement is still being retried by the server
+                value:
+                  data:
+                    purchase:
+                      product_id: plus_yearly
+                      state: active
+                      acknowledged: false
+                      auto_renew: true
+                      current_period_end: '2027-10-06T09:12:44.000000Z'
+                      test: false
+                    entitlements:
+                      plan:
+                        id: 0192f7a0-0000-7000-8000-0000000000c3
+                        name: Plus · Yearly
+                      features:
+                        sharing.enabled: true
+                        sharing.max_members_per_wallet: 5
+                        export.enabled: true
+                        reports.advanced: true
+                        wallets.max: null
+                    subscription:
+                      plan:
+                        id: 0192f7a0-0000-7000-8000-0000000000c3
+                        name: Plus · Yearly
+                      provider: google_play
+                      status: active
+                      current_period_start: '2026-10-06T09:12:44.000000Z'
+                      current_period_end: '2027-10-06T09:12:44.000000Z'
+                      grace_until: null
+                      auto_renew: true
+                  meta: {}
+      '202':
+        description: Google reports the purchase pending; nothing granted yet.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema: *purchaseEnvelope
+            examples:
+              pending:
+                summary: A pending purchase (slow payment method)
+                value:
+                  data:
+                    purchase:
+                      product_id: plus_monthly
+                      state: pending
+                      acknowledged: false
+                      auto_renew: false
+                      current_period_end: null
+                      test: false
+                    entitlements:
+                      plan:
+                        id: 0192f7a0-0000-7000-8000-0000000000c1
+                        name: Free
+                      features:
+                        sharing.enabled: false
+                        sharing.max_members_per_wallet: 1
+                        export.enabled: true
+                        reports.advanced: true
+                        wallets.max: null
+                    subscription:
+                      plan:
+                        id: 0192f7a0-0000-7000-8000-0000000000c1
+                        name: Free
+                      provider: null
+                      status: null
+                      current_period_start: null
+                      current_period_end: null
+                      grace_until: null
+                      auto_renew: null
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+      '503':
+        $ref: '../components/responses.yaml#/components/responses/ServiceUnavailable'
+
+/billing/google/restore:
+  post:
+    operationId: restorePlayPurchases
+    tags: [Plans & Billing]
+    summary: Restore purchases — verify the Play purchases this phone owns and link them.
+    description: |
+      The in-app "Restore purchases" (P-10 rule 2). Send every purchase Play
+      Billing reports as owned (`queryPurchasesAsync`), after sign-in and
+      when the person taps Restore. Each item is verified with Google as in
+      `verifyPlayPurchase`; the caller's already-linked purchases are also
+      re-read from Google. One result per item, in request order (`index`
+      is the item's position); the token is never echoed.
+
+      **Item outcomes**: `linked` (newly linked to the caller and
+      acknowledged), `already_yours`, `linked_elsewhere` (belongs to another
+      account — nothing about it is disclosed), `not_verified` (Google
+      rejects it; do not retry), `pending` (paid later; granted then),
+      `unavailable` (Google could not be reached for this item; retry later).
+
+      200 whenever at least one item (or the refresh of the caller's own
+      purchases) reached Google; 503 SERVICE_UNAVAILABLE only when nothing
+      did. An empty list only refreshes the caller's linked purchases.
+
+      **Validation** (422 VALIDATION_FAILED): `/purchases` REQUIRED or
+      OUT_OF_RANGE (more than 25 items); `/purchases/{i}/purchase_token`
+      as in verify; a token repeated in one request is INVALID_TYPE on the
+      repeat; `/purchases/{i}/product_id` INVALID_ENUM_VALUE as in verify.
+
+      **Budget**: 10 per hour per person (429 RATE_LIMITED). Requires
+      Idempotency-Key with the same semantics as verify.
+    parameters:
+      - *idempotencyKey
+      - *acceptLanguage
+      - *correlationId
+      - *clientPlatform
+      - *clientVersion
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PlayRestoreRequest'
+          examples:
+            twoOwned:
+              summary: Two purchases Play reports as owned on this phone
+              value:
+                purchases:
+                  - purchase_token: opaque-token-from-play-billing.AO-J1OxRESToReONE0123456789
+                    product_id: plus_monthly
+                  - purchase_token: opaque-token-from-play-billing.AO-J1OxRESToReTWO0123456789
+                    product_id: plus_yearly
+    responses:
+      '200':
+        description: One result per item, and the caller's entitlements now.
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/PlayRestoreResult'
+                    meta:
+                      type: object
+                      additionalProperties: false
+            examples:
+              restored:
+                summary: One linked, one belonging to another account
+                value:
+                  data:
+                    results:
+                      - index: 0
+                        product_id: plus_monthly
+                        outcome: linked
+                      - index: 1
+                        product_id: plus_yearly
+                        outcome: linked_elsewhere
+                    entitlements:
+                      plan:
+                        id: 0192f7a0-0000-7000-8000-0000000000c2
+                        name: Plus · Monthly
+                      features:
+                        sharing.enabled: true
+                        sharing.max_members_per_wallet: 5
+                        export.enabled: true
+                        reports.advanced: true
+                        wallets.max: null
+                    subscription:
+                      plan:
+                        id: 0192f7a0-0000-7000-8000-0000000000c2
+                        name: Plus · Monthly
+                      provider: google_play
+                      status: active
+                      current_period_start: '2026-09-20T18:02:10.000000Z'
+                      current_period_end: '2026-10-20T18:02:10.000000Z'
+                      grace_until: null
+                      auto_renew: true
+                  meta: {}
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+      '503':
+        $ref: '../components/responses.yaml#/components/responses/ServiceUnavailable'
+
+/webhooks/google-play:
+  post:
+    operationId: receivePlayNotification
+    tags: [Plans & Billing]
+    summary: Google Cloud Pub/Sub push of a Play real-time developer notification (Google only).
+    description: |
+      Called by Google, never by the app. Not subject to the client-version
+      gate (no X-Client-* headers).
+
+      **Verification** (security baseline, Messages from the payment
+      provider): the `Authorization: Bearer` OIDC token must verify RS256
+      against Google's current certificates (fetched from Google over HTTPS
+      and cached, never taken from the request); `iss` is
+      `https://accounts.google.com` or `accounts.google.com`; `aud` is this
+      service's configured push audience; `email` is the configured push
+      service account with `email_verified` true; `iat` within five minutes
+      of now and `exp` in the future. Any failure is 401
+      PROVIDER_SIGNATURE_INVALID and nothing is stored.
+
+      **Outcomes**: 204 when verified and stored (processing is queued: the
+      server re-reads the purchase from Google, the notification only says
+      which purchase to read); 204 with no effect when the `message.messageId`
+      was seen in the last 24 hours, when the push is for another Pub/Sub
+      subscription or another package, or for a test notification; 400
+      MALFORMED_JSON for a body over 64 KiB or not JSON; 503
+      SERVICE_UNAVAILABLE when Google's certificates cannot be obtained, so
+      Pub/Sub retries.
+
+      The purchase token inside the notification is stored sealed and never
+      logged; the raw body is not kept.
+    security:
+      - pubsubPush: []
+    parameters:
+      - *correlationId
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PubSubPush'
+          examples:
+            renewed:
+              summary: SUBSCRIPTION_RENEWED (data is base64 of the DeveloperNotification below)
+              description: |
+                `message.data` decodes to:
+                {"version":"1.0","packageName":"com.example.app","eventTimeMillis":"1791277964000",
+                 "subscriptionNotification":{"version":"1.0","notificationType":2,
+                 "purchaseToken":"opaque-token-from-play-billing.AO-J1OxPLAyTokEnExAmPlE0123456789"}}
+              value:
+                message:
+                  data: eyJ2ZXJzaW9uIjoiMS4wIiwicGFja2FnZU5hbWUiOiJjb20uZXhhbXBsZS5hcHAiLCJldmVudFRpbWVNaWxsaXMiOiIxNzkxMjc3OTY0MDAwIiwic3Vic2NyaXB0aW9uTm90aWZpY2F0aW9uIjp7InZlcnNpb24iOiIxLjAiLCJub3RpZmljYXRpb25UeXBlIjoyLCJwdXJjaGFzZVRva2VuIjoib3BhcXVlLXRva2VuLWZyb20tcGxheS1iaWxsaW5nLkFPLUoxT3hQTEF5VG9rRW5FeEFtUGxFMDEyMzQ1Njc4OSJ9fQ==
+                  messageId: '13652475849102733'
+                  publishTime: '2026-10-06T09:12:45.123Z'
+                subscription: projects/example-project/subscriptions/play-rtdn-push
+    responses:
+      '204':
+        description: Verified and stored, or a verified push with no effect (repeat, foreign subscription or package, test). Pub/Sub stops retrying.
+        headers:
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+      '503':
+        $ref: '../components/responses.yaml#/components/responses/ServiceUnavailable'
+
+components:
+  schemas:
+    PlayAccountReference:
+      type: object
+      required: [obfuscated_account_id]
+      additionalProperties: false
+      properties:
+        obfuscated_account_id:
+          type: string
+          pattern: '^[0-9a-f]{64}$'
+          description: Pass as `BillingFlowParams.setObfuscatedAccountId`. Stable per account.
+    PlayPurchaseRequest:
+      type: object
+      required: [purchase_token, product_id]
+      additionalProperties: false
+      properties:
+        purchase_token:
+          type: string
+          minLength: 1
+          maxLength: 2048
+          description: '`Purchase.getPurchaseToken()`. Write-only: never returned, never logged.'
+        product_id:
+          type: string
+          minLength: 1
+          maxLength: 150
+          description: The Play product id bought — one listed in `GET /plans` under `prices[].channel = google_play`.
+          examples: [plus_monthly]
+    PlayRestoreRequest:
+      type: object
+      required: [purchases]
+      additionalProperties: false
+      properties:
+        purchases:
+          type: array
+          minItems: 0
+          maxItems: 25
+          items:
+            $ref: '#/components/schemas/PlayPurchaseRequest'
+    PlayPurchaseState:
+      type: object
+      description: The purchase as the server now records it. Never the token, the order id or the account reference.
+      required: [product_id, state, acknowledged, auto_renew, current_period_end, test]
+      additionalProperties: false
+      properties:
+        product_id:
+          type: string
+        state:
+          type: string
+          enum: [pending, active, grace, canceled, on_hold, paused, expired, revoked]
+          description: |
+            Google's state as recorded. `active`, `grace` and `canceled` grant
+            until `current_period_end` (or the grace end); `pending` grants
+            nothing yet; the rest grant nothing.
+        acknowledged:
+          type: boolean
+          description: Whether Google has confirmed the server's acknowledgement. The client never acknowledges.
+        auto_renew:
+          type: boolean
+        current_period_end:
+          type: [string, 'null']
+          format: date-time
+          description: Null while pending, and for a lifetime (one-time) product.
+        test:
+          type: boolean
+          description: A license tester's test purchase.
+    PlayPurchaseResult:
+      type: object
+      required: [purchase, entitlements, subscription]
+      additionalProperties: false
+      properties:
+        purchase:
+          $ref: '#/components/schemas/PlayPurchaseState'
+        entitlements:
+          $ref: './billing.yaml#/components/schemas/EntitlementSummary'
+        subscription:
+          $ref: './billing.yaml#/components/schemas/MySubscription'
+    PlayRestoreItemResult:
+      type: object
+      required: [index, product_id, outcome]
+      additionalProperties: false
+      properties:
+        index:
+          type: integer
+          minimum: 0
+          maximum: 24
+          description: The item's position in the request.
+        product_id:
+          type: string
+        outcome:
+          type: string
+          enum: [linked, already_yours, linked_elsewhere, not_verified, pending, unavailable]
+    PlayRestoreResult:
+      type: object
+      required: [results, entitlements, subscription]
+      additionalProperties: false
+      properties:
+        results:
+          type: array
+          maxItems: 25
+          items:
+            $ref: '#/components/schemas/PlayRestoreItemResult'
+        entitlements:
+          $ref: './billing.yaml#/components/schemas/EntitlementSummary'
+        subscription:
+          $ref: './billing.yaml#/components/schemas/MySubscription'
+    PubSubPush:
+      type: object
+      description: Google Cloud Pub/Sub push envelope. Unknown members are ignored (Google may add some).
+      required: [message, subscription]
+      properties:
+        message:
+          type: object
+          required: [data, messageId]
+          properties:
+            data:
+              type: string
+              contentEncoding: base64
+              description: Base64 of a Play `DeveloperNotification` JSON object.
+            messageId:
+              type: string
+              maxLength: 128
+            publishTime:
+              type: string
+              format: date-time
+            attributes:
+              type: object
+              additionalProperties:
+                type: string
+        subscription:
+          type: string
+          maxLength: 255
+          description: The Pub/Sub subscription's full name; must equal the configured one.

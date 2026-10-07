@@ -61,3 +61,8 @@ Schedule::command('notifications:release-held')->everyFiveMinutes()->withoutOver
 
 // Idle push registrations (270 days) and notification records (30 days) pruned (spec 023, FR-010, FR-043).
 Schedule::command('notifications:prune')->daily()->withoutOverlapping();
+
+// Google Play (spec 024, ADR-0026): Google is the source of truth. Hourly, re-read what is past its end, unacknowledged or pending;
+// daily, re-read stale subscriptions, revoke voided purchases and delete what retention says.
+Schedule::command('billing:play-reconcile')->hourly()->withoutOverlapping();
+Schedule::command('billing:play-sweep')->daily()->withoutOverlapping();

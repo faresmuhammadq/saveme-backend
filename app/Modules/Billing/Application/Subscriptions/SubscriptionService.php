@@ -3,6 +3,8 @@
 namespace App\Modules\Billing\Application\Subscriptions;
 
 use App\Modules\Billing\Domain\Events\SubscriptionLapsed;
+use App\Modules\Billing\Domain\Ports\PlayAccountReferences;
+use App\Modules\Billing\Domain\Ports\PlayPurchaseRepository;
 use App\Modules\Billing\Domain\Ports\SubscriptionRepository;
 use App\Modules\Billing\Domain\Subscriptions\SubscriptionStatus;
 use App\Modules\Identity\Application\Audit\AuditLog;
@@ -23,6 +25,8 @@ final class SubscriptionService
     public function __construct(
         private readonly SubscriptionRepository $subscriptions,
         private readonly AuditLog $audit,
+        private readonly PlayPurchaseRepository $playPurchases,
+        private readonly PlayAccountReferences $playReferences,
     ) {}
 
     /**
@@ -33,7 +37,10 @@ final class SubscriptionService
      * `account_deleted`) and the lapse event. A `google_play` subscription is
      * never changed: it cannot be cancelled from here and lapses through the
      * provider's own flow. Every row of the account is stamped, to be deleted
-     * 400 days later. Running it again changes nothing.
+     * 400 days later. The account's Play Account Reference is deleted and the
+     * sealed purchase tokens of its Play purchases are erased (spec 024,
+     * FR-048); the purchases and their `google_play` subscriptions stay,
+     * stamped, for the same 400 days. Running it again changes nothing.
      *
      * @return int subscriptions ended by this call
      */
@@ -64,6 +71,8 @@ final class SubscriptionService
             }
 
             $this->subscriptions->stampEndedByAccountPurge($userId, $at);
+            $this->playPurchases->eraseForAccountPurge($userId, $at);
+            $this->playReferences->delete($userId);
 
             return $ended;
         });

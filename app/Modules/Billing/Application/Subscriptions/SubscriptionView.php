@@ -7,7 +7,9 @@ use DateTimeImmutable;
 /**
  * One subscription as an operator sees it: plan name, channel, status and
  * dates, and what an operator may do to it. No price and no provider
- * reference (spec 021, R-10).
+ * reference (spec 021, R-10). A Google Play one also shows its auto-renew,
+ * acknowledged and test markers (spec 024, FR-052): never a token, an order
+ * id or a reference.
  */
 final readonly class SubscriptionView
 {
@@ -26,10 +28,13 @@ final readonly class SubscriptionView
         public DateTimeImmutable $createdAt,
         public bool $canExtend,
         public bool $canRevoke,
+        public bool $autoRenew = false,
+        public ?bool $playAcknowledged = null,
+        public ?bool $playTest = null,
     ) {}
 
     /**
-     * @return array{id: string, plan_id: string, plan_name: array{ar: string, en: string}, provider: string, status: string, period_start: string, period_end: ?string, grace_until: ?string, created_at: string, can_extend: bool, can_revoke: bool}
+     * @return array{id: string, plan_id: string, plan_name: array{ar: string, en: string}, provider: string, status: string, period_start: string, period_end: ?string, grace_until: ?string, created_at: string, can_extend: bool, can_revoke: bool, auto_renew: bool, play_acknowledged: ?bool, play_test: ?bool}
      */
     public function toArray(): array
     {
@@ -47,6 +52,9 @@ final readonly class SubscriptionView
             'created_at' => $this->createdAt->format($instant),
             'can_extend' => $this->canExtend,
             'can_revoke' => $this->canRevoke,
+            'auto_renew' => $this->autoRenew,
+            'play_acknowledged' => $this->playAcknowledged,
+            'play_test' => $this->playTest,
         ];
     }
 }

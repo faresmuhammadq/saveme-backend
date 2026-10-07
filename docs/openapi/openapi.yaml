@@ -17,7 +17,7 @@ info:
     The conventions every endpoint obeys are documented in `docs/api-conventions.md`.
     A feature adds one file under `paths/` and references the shared components
     rather than restating them.
-  version: v1.14
+  version: v1.15
   contact:
     name: Backend maintainers
   license:
@@ -52,6 +52,15 @@ components:
         A personal access token, one per device session. How tokens are issued,
         refreshed and revoked is defined by the security baseline (spec 004),
         not by this skeleton.
+    pubsubPush:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        Google Cloud Pub/Sub push authentication: an OIDC ID token signed by
+        Google for the configured push service account and audience. Used
+        only by the Google Play webhook (spec 024); verified in-house against
+        Google's published certificates.
 
 # One tag per bounded context, named exactly as the constitution names it.
 tags:
@@ -218,3 +227,11 @@ paths:
     $ref: './paths/notifications.yaml#/~1me~1devices~1{id}'
   /me/notification-preferences:
     $ref: './paths/notifications.yaml#/~1me~1notification-preferences'
+  /billing/google/account-reference:
+    $ref: './paths/google-play.yaml#/~1billing~1google~1account-reference'
+  /billing/google/purchases:
+    $ref: './paths/google-play.yaml#/~1billing~1google~1purchases'
+  /billing/google/restore:
+    $ref: './paths/google-play.yaml#/~1billing~1google~1restore'
+  /webhooks/google-play:
+    $ref: './paths/google-play.yaml#/~1webhooks~1google-play'

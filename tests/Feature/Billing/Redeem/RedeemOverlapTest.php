@@ -104,7 +104,8 @@ test('an InstaPay subscription in grace has ended, so the new period starts now'
 });
 
 test('after the lapse job runs, entitlements still follow the governing rule', function () {
-    $play = Subscription::factory()->provider('google_play')->forPlan('plus_monthly')->endingIn(2)->create(['user_id' => $this->user->id]);
+    // Not google_play: the date-driven lapse leaves it to Google (spec 024, FR-046).
+    $manual = Subscription::factory()->provider('manual')->forPlan('plus_monthly')->endingIn(2)->create(['user_id' => $this->user->id]);
     redeemPlan('plus_yearly', $this->user->id);
 
     $this->travel(10)->days();
@@ -113,7 +114,7 @@ test('after the lapse job runs, entitlements still follow the governing rule', f
 
     $wire = app(MySubscription::class)->toWire($this->user->id, 'en');
 
-    expect($play->fresh()->status)->toBe('expired')
+    expect($manual->fresh()->status)->toBe('expired')
         ->and($wire['provider'])->toBe('instapay')
         ->and($wire['plan']['name'])->toBe('Plus · Yearly');
 });

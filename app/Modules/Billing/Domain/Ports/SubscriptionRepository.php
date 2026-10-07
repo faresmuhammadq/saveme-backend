@@ -26,7 +26,7 @@ interface SubscriptionRepository
     public function findByProviderRef(string $provider, string $providerRef): ?SubscriptionRecord;
 
     /**
-     * @param  array{user_id: string, plan_id: string, provider: string, provider_ref: string, status: string, current_period_start: DateTimeImmutable, current_period_end: ?DateTimeImmutable, grace_until: ?DateTimeImmutable, auto_renew: bool}  $row
+     * @param  array{user_id: string, plan_id: string, provider: string, provider_ref: string, status: string, current_period_start: DateTimeImmutable, current_period_end: ?DateTimeImmutable, grace_until: ?DateTimeImmutable, auto_renew: bool, source_meta?: array<string, scalar|null>}  $row
      */
     public function create(array $row): SubscriptionRecord;
 
@@ -45,6 +45,11 @@ interface SubscriptionRepository
     public function updateDates(string $id, array $changes): void;
 
     /**
+     * Whether the provider will renew the subscription (a `google_play` fact, spec 024).
+     */
+    public function updateAutoRenew(string $id, bool $autoRenew): void;
+
+    /**
      * Stamps every subscription row of the person as ended by an account
      * purge, once (spec 022, FR-047).
      *
@@ -58,14 +63,15 @@ interface SubscriptionRepository
     public function deleteEndedByAccountPurgeBefore(DateTimeImmutable $cut): int;
 
     /**
-     * Active subscriptions whose billing period has ended.
+     * Active subscriptions whose billing period has ended. Never a
+     * `google_play` one: Google is the source of truth for those (spec 024, FR-046).
      *
      * @return list<SubscriptionRecord>
      */
     public function dueForGrace(DateTimeImmutable $now): array;
 
     /**
-     * Grace subscriptions whose grace has ended.
+     * Grace subscriptions whose grace has ended. Never a `google_play` one.
      *
      * @return list<SubscriptionRecord>
      */
@@ -101,7 +107,9 @@ interface SubscriptionRepository
      * ended) on a non-default plan, distinct per channel, and the
      * subscriptions currently in grace (spec 021, FR-010).
      *
-     * @return array{google_play: int, instapay: int, manual: int, in_grace: int}
+     * Test purchases (a Google Play license tester's) are counted apart from `google_play`.
+     *
+     * @return array{google_play: int, google_play_test: int, instapay: int, manual: int, in_grace: int}
      */
     public function figures(DateTimeImmutable $now): array;
 }

@@ -2,6 +2,7 @@
 
 namespace App\Modules\Billing\Application\Subscriptions;
 
+use App\Modules\Billing\Domain\Ports\PlayPurchaseRepository;
 use App\Modules\Billing\Domain\Ports\SubscriptionRepository;
 use DateTimeImmutable;
 
@@ -12,12 +13,20 @@ use DateTimeImmutable;
  */
 final class PurgeEndedSubscriptions
 {
-    public function __construct(private readonly SubscriptionRepository $subscriptions) {}
+    public function __construct(
+        private readonly SubscriptionRepository $subscriptions,
+        private readonly PlayPurchaseRepository $playPurchases,
+    ) {}
 
     public function run(?DateTimeImmutable $now = null): int
     {
         $now ??= now()->toDateTimeImmutable();
 
-        return $this->subscriptions->deleteEndedByAccountPurgeBefore($now->modify('-'.(int) config('identity.husk_days').' days'));
+        $cut = $now->modify('-'.(int) config('identity.husk_days').' days');
+
+        // A Play purchase points at its subscription, so it goes first (spec 024, FR-048).
+        $this->playPurchases->deleteEndedByAccountPurgeBefore($cut);
+
+        return $this->subscriptions->deleteEndedByAccountPurgeBefore($cut);
     }
 }

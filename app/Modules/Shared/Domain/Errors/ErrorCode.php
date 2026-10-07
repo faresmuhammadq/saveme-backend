@@ -67,6 +67,8 @@ enum ErrorCode: string
     case RedeemCodeEmailMismatch = 'REDEEM_CODE_EMAIL_MISMATCH';
     case RedeemCodeUsed = 'REDEEM_CODE_USED';
     case RedeemCodeExpired = 'REDEEM_CODE_EXPIRED';
+    case PurchaseAlreadyLinked = 'PURCHASE_ALREADY_LINKED';
+    case PurchaseNotVerified = 'PURCHASE_NOT_VERIFIED';
 
     /**
      * The single HTTP status this code is served with.
@@ -86,7 +88,8 @@ enum ErrorCode: string
             self::DateNotCalendarDate,
             self::InstantNotUtc,
             self::ImmutableField,
-            self::CurrencyMismatch => 422,
+            self::CurrencyMismatch,
+            self::PurchaseNotVerified => 422,
             self::MalformedJson,
             self::InvalidQueryParameter,
             self::InvalidCursor,
@@ -118,7 +121,8 @@ enum ErrorCode: string
             self::ExportInProgress,
             self::EmailAlreadyRegistered,
             self::CategoryInUse,
-            self::RedeemCodeUsed => 409,
+            self::RedeemCodeUsed,
+            self::PurchaseAlreadyLinked => 409,
             self::SyncCursorExpired,
             self::EndpointRemoved,
             self::RedeemCodeExpired => 410,
@@ -191,6 +195,8 @@ enum ErrorCode: string
             self::RedeemCodeEmailMismatch => 'Redeem code for another address',
             self::RedeemCodeUsed => 'Redeem code already used',
             self::RedeemCodeExpired => 'Redeem code expired',
+            self::PurchaseAlreadyLinked => 'Purchase linked to another account',
+            self::PurchaseNotVerified => 'Purchase not verified',
         };
     }
 
@@ -247,7 +253,9 @@ enum ErrorCode: string
             self::EmailAlreadyRegistered,
             self::CategoryInUse,
             self::RedeemCodeUsed,
-            self::RedeemCodeExpired => 'never',
+            self::RedeemCodeExpired,
+            self::PurchaseAlreadyLinked,
+            self::PurchaseNotVerified => 'never',
             self::IdempotencyRequestInProgress,
             self::RateLimited,
             self::InternalError,

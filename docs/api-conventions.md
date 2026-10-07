@@ -492,7 +492,7 @@ Most writes need no idempotency header: a syncable create is already idempotent 
 
 - InstaPay claim submission
 - Redemption-code redemption
-- Google Play purchase acknowledgement
+- Google Play purchase acknowledgement (`POST /billing/google/purchases` and `POST /billing/google/restore`)
 
 Those three **require** `Idempotency-Key`. Nothing else uses it — a header nobody sends is a header nobody can rely on.
 
@@ -559,7 +559,9 @@ X-Client-Platform: android
 X-Client-Version: 1.4.2
 ```
 
-Both are **required**, on every endpoint. An optional header is one nobody sends, and one nobody can rely on when the time comes to use it.
+Both are **required**, on every endpoint called by the app. An optional header is one nobody sends, and one nobody can rely on when the time comes to use it.
+
+The operations under `/webhooks/*` are called by payment providers, not by the app: they are outside the client-version gate and use the provider's own authentication (security baseline, Messages from the payment provider).
 
 The server holds a minimum supported version per platform.
 

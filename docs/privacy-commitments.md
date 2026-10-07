@@ -18,6 +18,7 @@ We collect what the app needs to work, and not more.
 - **What you enter about your money.** Wallets, transactions, categories, budgets. You type these; we do not read your bank, your SMS messages or your card.
 - **The devices you sign in from.** So you can see them and sign any of them out.
 - **The push address of each phone you sign in on.** Used only to send you the notifications you choose, and deleted when you sign out of that phone.
+- **If you subscribe through Google Play, we read your subscription's state from Google** — whether it is active, renewing, on hold or refunded — never your card or your Google account details.
 
 We do not connect to your bank. We do not read your messages. Everything about your money is there because you entered it.
 
@@ -29,6 +30,7 @@ We do not connect to your bank. We do not read your messages. Everything about y
 - **ما تُدخله عن أموالك.** المحافظ والمعاملات والفئات والميزانيات. أنت من يكتبها؛ نحن لا نقرأ حسابك البنكي ولا رسائلك ولا بطاقتك.
 - **الأجهزة التي تسجّل الدخول منها.** لتراها وتستطيع إنهاء أي منها.
 - **عنوان الإشعارات لكل هاتف تسجّل الدخول منه.** نستخدمه فقط لإرسال الإشعارات التي تختارها، ونحذفه عندما تسجّل الخروج من ذلك الهاتف.
+- **إذا اشتركت عبر Google Play، نقرأ حالة اشتراكك من Google** — هل هو نشط أو يتجدد أو موقوف أو مسترد — ولا نقرأ بطاقتك ولا تفاصيل حسابك في Google أبداً.
 
 لا نتصل بالبنك الذي تتعامل معه. لا نقرأ رسائلك. كل ما يخص أموالك موجود لأنك أدخلته بنفسك.
 
@@ -168,6 +170,7 @@ Every promise on this page is backed by a rule in [the security baseline](securi
 | An old backup cannot bring your information back | FR-026 |
 | Operational records are kept 30 days; security events 400 days | FR-023, FR-029 |
 | InstaPay transfer screenshot and claim address are deleted 90 days after the claim closes | spec 020 FR-039, FR-041 |
+| If you subscribe through Google Play, we read its state from Google, never your card or Google account details | spec 024 FR-001, FR-055 |
 | You can export everything you entered, in a form that opens elsewhere | FR-024 |
 | A shared wallet keeps its history when you leave, without your name | FR-027 |
 | Exporting during the grace period does not restart it | FR-024, FR-025 |

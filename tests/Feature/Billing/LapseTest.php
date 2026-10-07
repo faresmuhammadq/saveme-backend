@@ -77,3 +77,15 @@ test('expiry is audited only when the person\'s plan changes', function () {
         ->and($entries->first()->actor_type)->toBe('system')
         ->and($entries->first()->detail['action'])->toBe('expire');
 });
+
+test('a google_play subscription is never moved by the date-driven lapse: Google is the source of truth (spec 024, FR-046)', function () {
+    $active = Subscription::factory()->provider('google_play')->create(['user_id' => $this->user, 'current_period_end' => now()->subHour()]);
+    $grace = Subscription::factory()->provider('google_play')->create(['user_id' => $this->user, 'status' => 'grace', 'current_period_end' => now()->subDays(4), 'grace_until' => now()->subHour()]);
+    Event::fake([SubscriptionLapsed::class]);
+
+    lapse();
+
+    expect($active->fresh()->status)->toBe('active')
+        ->and($grace->fresh()->status)->toBe('grace');
+    Event::assertNotDispatched(SubscriptionLapsed::class);
+});

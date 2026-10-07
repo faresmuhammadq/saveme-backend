@@ -65,6 +65,8 @@ components:
         - REDEEM_CODE_EMAIL_MISMATCH
         - REDEEM_CODE_USED
         - REDEEM_CODE_EXPIRED
+        - PURCHASE_ALREADY_LINKED
+        - PURCHASE_NOT_VERIFIED
 
     FieldErrorCode:
       type: string
@@ -469,3 +471,17 @@ x-error-catalog:
     meaning: 'The code is past its 30 days. Contact support.'
     retryable: never
     since: v1.12
+  PURCHASE_ALREADY_LINKED:
+    status: 409
+    level: [response]
+    title: 'Purchase linked to another account'
+    meaning: 'This Google Play purchase belongs to another account. Sign in with the account that bought it; the other account is never named.'
+    retryable: never
+    since: v1.15
+  PURCHASE_NOT_VERIFIED:
+    status: 422
+    level: [response]
+    title: 'Purchase not verified'
+    meaning: 'Google Play does not confirm this purchase for this app and product. Nothing was granted; do not retry this purchase.'
+    retryable: never
+    since: v1.15

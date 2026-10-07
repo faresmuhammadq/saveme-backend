@@ -38,7 +38,7 @@ Rules:
 
 ## The entity index
 
-27 entities: the 21 named in the spec, plus **Category Reference**, which exists because categories are user-scoped and shared wallets need to render a partner's category (see [ADR-0012](adr/0012-postings-wallet-and-category-accounts.md) and the Category entry), plus **Audit Entry** and **Operator Notification**, added by spec 007 (Identity & Authentication), plus **Operator Account**, **Recovery Code** and **Re-enrolment Request**, added by spec 018 (Operator Sign-in), plus **Activity Entry**, added by spec 016 (Sharing & Invitations; see [ADR-0020](adr/0020-wallet-activity-beside-the-audit-log.md)), plus **Report Range**, added by spec 019 (Reports; see [ADR-0022](adr/0022-reports-are-wallet-views-computed-on-read.md)), plus **Idempotency Record**, added by spec 020 (InstaPay Claims; see [ADR-0023](adr/0023-instapay-claims-and-claim-bound-redeem-codes.md)), plus **Export** and **Successor**, added by spec 022 (Export & Data Deletion; see [ADR-0024](adr/0024-account-deletion-keeps-shared-history.md)), plus **Push Registration**, **Notification Preferences** and **Push Notification** (with its child Push Delivery), added by spec 023 (Devices & Push Notifications; see [ADR-0025](adr/0025-push-through-a-port-with-an-in-house-fcm-adapter.md)), plus **Budget Overrun** (Budgeting), added by spec 023.
+27 entities: the 21 named in the spec, plus **Category Reference**, which exists because categories are user-scoped and shared wallets need to render a partner's category (see [ADR-0012](adr/0012-postings-wallet-and-category-accounts.md) and the Category entry), plus **Audit Entry** and **Operator Notification**, added by spec 007 (Identity & Authentication), plus **Operator Account**, **Recovery Code** and **Re-enrolment Request**, added by spec 018 (Operator Sign-in), plus **Activity Entry**, added by spec 016 (Sharing & Invitations; see [ADR-0020](adr/0020-wallet-activity-beside-the-audit-log.md)), plus **Report Range**, added by spec 019 (Reports; see [ADR-0022](adr/0022-reports-are-wallet-views-computed-on-read.md)), plus **Idempotency Record**, added by spec 020 (InstaPay Claims; see [ADR-0023](adr/0023-instapay-claims-and-claim-bound-redeem-codes.md)), plus **Export** and **Successor**, added by spec 022 (Export & Data Deletion; see [ADR-0024](adr/0024-account-deletion-keeps-shared-history.md)), plus **Push Registration**, **Notification Preferences** and **Push Notification** (with its child Push Delivery), added by spec 023 (Devices & Push Notifications; see [ADR-0025](adr/0025-push-through-a-port-with-an-in-house-fcm-adapter.md)), plus **Budget Overrun** (Budgeting), added by spec 023, plus **Play Purchase**, **Play Account Reference**, **Play Notification** and **Purchase Token** (Plans & Billing), added by spec 024 (Billing — Google Play; see [ADR-0026](adr/0026-google-play-purchases-through-an-in-house-gateway.md)).
 
 | Entity | Arabic | Context | Role | Persistence | Sync |
 |---|---|---|---|---|---|
@@ -68,6 +68,10 @@ Rules:
 | [Payment Claim](#payment-claim) | — | Plans & Billing | root | persisted | no |
 | [Redeem Code](#redeem-code) | — | Plans & Billing | root | persisted | no |
 | [Idempotency Record](#idempotency-record) | — | Plans & Billing | root (operational) | persisted | no |
+| [Play Purchase](#play-purchase) | — | Plans & Billing | root | persisted | no |
+| [Play Account Reference](#play-account-reference) | — | Plans & Billing | root | persisted | no |
+| [Play Notification](#play-notification) | — | Plans & Billing | root (operational) | persisted | no |
+| [Purchase Token](#purchase-token) | — | Plans & Billing | secret value | sealed inside Play Purchase | no |
 | [Sync Cursor](#sync-cursor) | — | Sync | protocol value | client-held | n/a |
 | [Change Row](#change-row) | — | Sync | protocol value | derived (a read of the feed) | n/a |
 | [Sync Batch](#sync-batch) | — | Sync | protocol value | request-only | n/a |
@@ -104,6 +108,10 @@ Rules:
 | Payment Claim | website only (P-10); the app sees only the resulting Subscription |
 | Redeem Code | never read by the client; it submits a code and sees the result |
 | Idempotency Record | never — operational; the client only sends the key and sees a replay header |
+| Play Purchase | never read back; the client posts the token (`POST /billing/google/purchases`) and sees the resulting purchase state and Subscription |
+| Play Account Reference | read endpoint (`GET /billing/google/account-reference`), its own account only |
+| Play Notification | never — operational inbox; Google posts it, operators see counts |
+| Purchase Token | sent by the client, never returned, logged or shown |
 | Posting | never — internal to the server (P-04) |
 | Audit Entry | never — operator-only |
 | Export | read endpoint (`GET /exports`, `GET /exports/{id}`), polled until `ready`; the file is fetched through a signed link |
@@ -419,7 +427,7 @@ A named set of capabilities and quotas a user can be subscribed to.
 - **Sync**: no — the client reads it from an endpoint and caches it
 - **States**: `active` → `retired` (a retired plan keeps serving existing subscriptions)
 - **Referenced by**: Subscription, Redeem Code, Entitlement (derivation input)
-- **Notes**: **plans are data, not code.** A plan carries a period and its feature map. **No code anywhere compares a plan code** (P-09) — capability questions go to `EntitlementService`. The **default plan** (Free) is applied when no subscription governs; nobody subscribes to it (ADR-0013).
+- **Notes**: **plans are data, not code.** A plan carries a period and its feature map. A `google_play` price maps one Play product id to the plan (create-missing from configuration, read-only in the back office). **No code anywhere compares a plan code** (P-09) — capability questions go to `EntitlementService`. The **default plan** (Free) is applied when no subscription governs; nobody subscribes to it (ADR-0013).
 
 ### Plan Feature
 
@@ -443,7 +451,7 @@ One user's provider-agnostic record of paid access.
 - **Sync**: no — read endpoint, refreshed after purchase or restore
 - **States**: `active` → `grace` → `expired`; `grace` | `expired` → `active` (on renewal, recovered payment or extension); `active` | `grace` → `revoked`, which is final (ADR-0013)
 - **Referenced by**: Entitlement, Redeem Code
-- **Notes**: every channel normalises into this one record — `provider` is `google_play`, `instapay` or `manual` (operator grants and redeem codes; never a payment) (ADR-0013, superseding ADR-0007). The **governing subscription** is, among a person's `active` and `grace` subscriptions whose grace has not passed, the one whose billing period ends latest (no end beats any end); with none, the default plan applies. The free tier has no subscription row. An `instapay` subscription is created at redemption of a claim-backed Redeem Code (`provider_ref` is the claim id, ADR-0023); `instapay` billing periods chain on early renewal, and one renewal reminder goes out 7 days before the end. It carries the **billing period** (`current_period_start`, `current_period_end`, `grace_until`); those fields are never called just "period". Losing a subscription **never deletes user data**; it blocks plan-gated sharing actions.
+- **Notes**: every channel normalises into this one record — `provider` is `google_play`, `instapay` or `manual` (operator grants and redeem codes; never a payment) (ADR-0013, superseding ADR-0007). The **governing subscription** is, among a person's `active` and `grace` subscriptions whose grace has not passed, the one whose billing period ends latest (no end beats any end); with none, the default plan applies. The free tier has no subscription row. A `google_play` subscription follows Google (the source of truth): `provider_ref` is the [Play Purchase](#play-purchase) id, Google's own grace end replaces `billing.grace_days`, hold and pause arrive as `expired` through a zero-length grace hop, there is no renewal reminder, and the date-driven lapse never touches it (ADR-0026). An `instapay` subscription is created at redemption of a claim-backed Redeem Code (`provider_ref` is the claim id, ADR-0023); `instapay` billing periods chain on early renewal, and one renewal reminder goes out 7 days before the end. It carries the **billing period** (`current_period_start`, `current_period_end`, `grace_until`); those fields are never called just "period". Losing a subscription **never deletes user data**; it blocks plan-gated sharing actions.
 
 ### Entitlement
 
@@ -492,6 +500,54 @@ The stored answer for one `Idempotency-Key`, so a retry replays it.
 - **States**: `single-state`
 - **Referenced by**: —
 - **Notes**: held 24 hours; scope is the user, or one anonymous scope for public operations (InstaPay claim submission). Only `2xx` answers are stored. Holds the answer only and no secret.
+
+### Play Purchase
+
+One Google Play purchase token known to this service, and the facts read from Google about it.
+
+- **Context**: Plans & Billing
+- **Role**: aggregate root (operational)
+- **Persistence**: persisted
+- **Sync**: no
+- **States**: `unlinked` → `linked` (final; a token is linked to one account once and never re-linked). Google's own state is kept beside it: `pending`, `active`, `grace`, `canceled`, `on_hold`, `paused`, `expired`, `revoked`
+- **Referenced by**: Subscription (`provider_ref` of a `google_play` subscription is the Play Purchase id)
+- **Notes**: the [Purchase Token](#purchase-token) is sealed with a keyed lookup value beside it (unique). A purchase no account has linked is never acknowledged and is deleted 10 days after it was made; a linked one lives with its subscription; the account purge erases its token and the row goes with the subscription at 400 days. Google is the source of truth for its state (ADR-0026).
+
+### Play Account Reference
+
+The opaque value the app gives Google Play as the obfuscated account id, so a purchase says which account made it.
+
+- **Context**: Plans & Billing
+- **Role**: aggregate root (operational)
+- **Persistence**: persisted
+- **Sync**: no — `GET /billing/google/account-reference`
+- **States**: `single-state` (created on first need, deleted at the account purge)
+- **Referenced by**: Play Purchase (as the reference Google returns)
+- **Notes**: 64 hex characters, a keyed hash of the account id; one per account, never shared, never logged.
+
+### Play Notification
+
+One Google Play real-time developer notification received through Cloud Pub/Sub, kept as an operational inbox.
+
+- **Context**: Plans & Billing (operational)
+- **Role**: aggregate root
+- **Persistence**: persisted
+- **Sync**: no
+- **States**: `received` → `processed` | `failed`; a verified but irrelevant push is stored directly as `ignored`
+- **Referenced by**: —
+- **Notes**: keyed by the Pub/Sub message id (replay guard). A notification only says which purchase to re-read; the purchase token inside is sealed until the row is terminal, then erased. Kept 30 days.
+
+### Purchase Token
+
+Google's identifier of one Play purchase; whoever holds it can claim the purchase.
+
+- **Context**: Plans & Billing
+- **Role**: secret value (inside Play Purchase and Play Notification)
+- **Persistence**: sealed; searched only by its keyed lookup value
+- **Sync**: no
+- **States**: `single-state`
+- **Referenced by**: Play Purchase, Play Notification
+- **Notes**: never returned, logged, queued, evented or audited. "Token" stays banned for the session credential; this is Google's term for a purchase.
 
 ---
 

@@ -112,7 +112,20 @@
                                     </span>
                                 </x-admin::table.cell>
                                 <x-admin::table.cell>{{ __('admin::accounts.subscriptions.channels.'.$subscription['provider']) }}</x-admin::table.cell>
-                                <x-admin::table.cell>{{ __('admin::accounts.subscriptions.statuses.'.$subscription['status']) }}</x-admin::table.cell>
+                                <x-admin::table.cell>
+                                    <span class="flex flex-wrap items-center gap-2">
+                                        {{ __('admin::accounts.subscriptions.statuses.'.$subscription['status']) }}
+                                        @if ($subscription['provider'] === 'google_play')
+                                            <x-admin::pill tone="neutral" size="sm" data-test="play-auto-renew">{{ __($subscription['auto_renew'] ? 'admin::accounts.subscriptions.markers.auto_renew_on' : 'admin::accounts.subscriptions.markers.auto_renew_off') }}</x-admin::pill>
+                                            @if ($subscription['play_acknowledged'] !== null)
+                                                <x-admin::pill :tone="$subscription['play_acknowledged'] ? 'positive' : 'pending'" size="sm" data-test="play-acknowledged">{{ __($subscription['play_acknowledged'] ? 'admin::accounts.subscriptions.markers.acknowledged' : 'admin::accounts.subscriptions.markers.not_acknowledged') }}</x-admin::pill>
+                                            @endif
+                                            @if ($subscription['play_test'])
+                                                <x-admin::pill tone="neutral" size="sm" data-test="play-test">{{ __('admin::accounts.subscriptions.markers.test') }}</x-admin::pill>
+                                            @endif
+                                        @endif
+                                    </span>
+                                </x-admin::table.cell>
                                 <x-admin::table.cell :muted="true"><x-admin::instant :value="$subscription['period_start']" /></x-admin::table.cell>
                                 <x-admin::table.cell :muted="true">
                                     @if ($subscription['period_end'] === null)

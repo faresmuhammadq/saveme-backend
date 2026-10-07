@@ -29,6 +29,12 @@ class Overview extends BackOfficeComponent
     /** @var array{created: int, sent: int, skipped: int, failed: int, pruned: int} */
     public array $push = ['created' => 0, 'sent' => 0, 'skipped' => 0, 'failed' => 0, 'pruned' => 0];
 
+    /** @var array{received: int, processed: int, ignored: int, failed: int, rejected: int, verified: int, unacknowledged: int} */
+    public array $play = ['received' => 0, 'processed' => 0, 'ignored' => 0, 'failed' => 0, 'rejected' => 0, 'verified' => 0, 'unacknowledged' => 0];
+
+    /** @var array<string, int> pushes refused in the last 24 hours, by reason code */
+    public array $playRejections = [];
+
     public function mount(OverviewFigures $overview): void
     {
         $this->recoveryCodesLeft = $this->operator()->recoveryCodesLeft;
@@ -39,6 +45,8 @@ class Overview extends BackOfficeComponent
         $this->oldestClaimAt = $computed['oldest_claim_at'];
         $this->reenrolmentsOpen = $computed['reenrolments_open'];
         $this->push = $computed['push'];
+        $this->play = $computed['play'];
+        $this->playRejections = $computed['play_rejections'];
     }
 
     public function render(): View

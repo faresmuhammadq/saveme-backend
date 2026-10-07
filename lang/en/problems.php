@@ -48,6 +48,8 @@ return [
     'REDEEM_CODE_EMAIL_MISMATCH' => 'Sign in with the email address this code was sent to.',
     'REDEEM_CODE_USED' => 'This code has already been used by another account.',
     'REDEEM_CODE_EXPIRED' => 'This code has expired. Contact support.',
+    'PURCHASE_ALREADY_LINKED' => 'This purchase belongs to another account. Sign in with the account that bought it.',
+    'PURCHASE_NOT_VERIFIED' => 'Google Play does not confirm this purchase. Nothing was granted.',
     'CATEGORY_IN_USE' => 'This category is used by your records, so it can\'t be deleted. Archive it instead.',
     'EMAIL_ALREADY_REGISTERED' => 'You already have an account with this email address. Sign in, or reset your password if you forgot it.',
 

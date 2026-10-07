@@ -142,6 +142,8 @@ The routes that send mail or create accounts carry their own budgets, independen
 | Operator account lookups | 30 per 10 minutes per operator (429) |
 | Export request | 5 per 24 hours per person, counted for accepted requests only (429) |
 | Export file link | 20 per 10 minutes per origin (429) |
+| Google Play purchase verify (`POST /billing/google/purchases`) | 20 per hour per person (429) |
+| Google Play restore (`POST /billing/google/restore`) | 10 per hour per person (429) |
 | Push device registration (`PUT`, `DELETE /me/devices/{id}`) | 20 per hour per session (429) |
 | Notification preferences save | 30 per hour per person (429) |
 
@@ -238,6 +240,9 @@ There is no blanket claim here, because a blanket claim collapses under one ques
 | Account facts and counts shown to operators (state, verification, plan, subscription dates, counts of wallets, members and devices) | none at rest beyond their sources | no | operators, with a recorded read |
 | Notification read mark | none, identifiers only | no | operators |
 | Idempotency record | none at rest, holds the answer only (no secret) | by scope and key | nobody through any endpoint |
+| Purchase token (Google Play) | encrypted under Billing's keyring, with a keyed lookup value beside it | by lookup value only | nobody through any endpoint; opened only to call Google |
+| Play account reference | keyed hash of the account id | by value | its own account only |
+| Play notification | none, identifiers and states only; its token sealed until the row is terminal | by message id | nobody through any endpoint; operators see counts only |
 | Push token | encrypted under Notifications' keyring, with a keyed lookup value beside it | by lookup value only | nobody through any endpoint; decrypted only to send |
 | Notification preferences | none | no | the account owner |
 | Push notification and delivery records | none, identifiers and states only | yes | nobody through any endpoint; operators see counts only |
@@ -330,6 +335,7 @@ This restates the existing [observability decision](adr/0010-observability.md) r
 - one-time codes
 - purchase tokens
 - push tokens, the push service's service-account key, the signed OAuth assertion and the access token it yields
+- Google Play account references and order ids, the Google Play service-account key, the signed OAuth assertion and the access token it yields
 - receipt images and their contents
 - the full body of a financial write
 
@@ -400,6 +406,8 @@ Every period is a number. Nothing here says "a reasonable time", because a revie
 | Password reset token | 60 minutes | this document |
 | Address verification token | 24 hours | this document |
 | Provider message identifiers | 24 hours | this document |
+| Google Play purchase | with its subscription (unlinked: 10 days after purchase; token erased at the account purge) | this document |
+| Google Play notification | 30 days (token erased once terminal) | this document |
 | Push registration | until its session ends, or 270 days without a refresh | this document |
 | Push notification and delivery records | 30 days | this document |
 | Budget overrun | while its budget exists | this document |
@@ -635,6 +643,21 @@ A message claiming to come from the payment provider is rejected unless **all fi
 
 Unverifiable key material causes **rejection**, never acceptance and never deferred trust. "Accept now, verify later" is a decision to grant entitlements on unverified claims, whatever it is called.
 
+### Google Play
+
+Google Play delivers real-time developer notifications as a Cloud Pub/Sub push carrying an OIDC bearer token. The five checks above apply, mapped as follows, plus one more:
+
+| Check | Google Play value |
+|---|---|
+| Signature | RS256 only (any other `alg` is refused), against the certificates fetched from `https://www.googleapis.com/oauth2/v1/certs` over HTTPS and cached by `Cache-Control`; never taken from the token or the request. An unknown key id forces one refresh, then rejection |
+| Issuer | `https://accounts.google.com` or `accounts.google.com` |
+| Audience | the configured push endpoint URL, compared exactly |
+| Issued-at | within five minutes of now; `exp` in the future |
+| Message identifier | the Pub/Sub `messageId`, kept 30 days in the notification inbox |
+| Sender | `email` equals the configured push service account and `email_verified` is true |
+
+A verified push that cannot be parsed, names another subscription or package, or is a test notification is acknowledged (204) and recorded as ignored, so Pub/Sub does not retry it forever. A refusal writes no database row. The notification only names a purchase; the server re-reads it from Google.
+
 **Owned by**: Billing.
 
 ## Push notifications
@@ -731,6 +754,7 @@ FR-038a requires every rule in this baseline to be expressible as a check a revi
 - [ ] H4 — A provider message is checked for signature, issuer, **audience**, time window and replay.
 - [ ] H5 — An already-processed message is acknowledged without effect, not refused.
 - [ ] H6 — Unverifiable key material causes rejection, never acceptance and never deferred trust.
+- [ ] H7 — A Google Play push is checked for RS256 signature against Google's own certificates, issuer, audience, the configured sender email, time window and message id; a purchase token is sealed, linked to one account once, and never logged.
 
 ### I. Transport and contract hygiene
 

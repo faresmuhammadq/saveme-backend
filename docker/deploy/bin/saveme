@@ -1,0 +1,224 @@
+#!/usr/bin/env bash
+# saveme chores: manage infra and environment stacks on this host.
+set -euo pipefail
+
+ROOT="${SAVEME_ROOT:-/srv/saveme}"
+ALLOWED_ENVS=(staging production)
+INFRA_SERVICES_HINT="postgres mailpit"
+
+usage() {
+    cat <<USAGE
+Usage:
+  saveme up <env>
+  saveme down <env>
+  saveme status <env>
+  saveme logs <env>
+  saveme bash <env>
+  saveme artisan <env> <command...>
+  saveme deploy <env> <sha>
+  saveme infra up|down|status|logs <service>
+
+Envs: ${ALLOWED_ENVS[*]}
+USAGE
+}
+
+log() { printf '[saveme] %s\n' "$*"; }
+die() { printf '[saveme] ERROR: %s\n' "$*" >&2; exit 1; }
+
+is_allowed_env() {
+    local candidate
+    for candidate in "${ALLOWED_ENVS[@]}"; do
+        [[ "$1" == "$candidate" ]] && return 0
+    done
+    return 1
+}
+
+require_env() {
+    local env="${1:-}"
+    [[ -n "$env" ]] || { usage; exit 1; }
+    is_allowed_env "$env" || die "env '$env' not allowed (${ALLOWED_ENVS[*]})"
+    [[ -f "$ROOT/$env/compose.yml" ]] || die "$ROOT/$env/compose.yml missing; run the deploy gate first"
+    [[ -f "$ROOT/$env/.env" ]] || die "$ROOT/$env/.env missing; run the deploy gate first"
+}
+
+require_infra_files() {
+    [[ -f "$ROOT/infra/compose.yml" ]] || die "$ROOT/infra/compose.yml missing; run the deploy gate first"
+    [[ -f "$ROOT/infra/.env" ]] || die "$ROOT/infra/.env missing; run the deploy gate first"
+}
+
+compose_env() {
+    local env="$1"; shift
+    docker compose -p "saveme-$env" -f "$ROOT/$env/compose.yml" --env-file "$ROOT/$env/.env" "$@"
+}
+
+compose_infra() {
+    docker compose -p saveme-infra -f "$ROOT/infra/compose.yml" --env-file "$ROOT/infra/.env" "$@"
+}
+
+env_value() {
+    local file="$1" key="$2"
+    grep -E "^${key}=" "$file" | tail -n1 | cut -d= -f2- | sed -e 's/^"//' -e 's/"$//'
+}
+
+infra_hash() {
+    cat "$ROOT/infra/compose.yml" "$ROOT/infra/.env" | sha256sum | cut -d' ' -f1
+}
+
+infra_running() {
+    local expected running
+    expected="$(compose_infra config --services | wc -l)"
+    running="$(compose_infra ps --status running --services | wc -l)"
+    [[ "$expected" -gt 0 && "$running" -eq "$expected" ]]
+}
+
+infra_up() {
+    require_infra_files
+    log "starting infra"
+    compose_infra up -d --remove-orphans
+    infra_hash > "$ROOT/infra/.compose.sha256"
+}
+
+wait_postgres() {
+    local i
+    for i in $(seq 1 60); do
+        [[ "$(docker inspect -f '{{.State.Health.Status}}' saveme-postgres 2>/dev/null)" == "healthy" ]] && return 0
+        sleep 2
+    done
+    die "postgres did not become healthy"
+}
+
+# Create the env's role and database when missing; keep the role's password in step with its .env.
+ensure_database() {
+    local env="$1" file="$ROOT/$env/.env" db user pw
+    db="$(env_value "$file" DB_DATABASE)"
+    user="$(env_value "$file" DB_USERNAME)"
+    pw="$(env_value "$file" DB_PASSWORD)"
+    [[ -n "$db" && -n "$user" && -n "$pw" ]] || die "DB_DATABASE/DB_USERNAME/DB_PASSWORD must be set in $file"
+    docker exec -i saveme-postgres psql -q -v ON_ERROR_STOP=1 -U postgres -d postgres \
+        -v db="$db" -v user="$user" -v pw="$pw" >/dev/null <<'SQL'
+SELECT format('CREATE ROLE %I LOGIN', :'user') WHERE NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = :'user')\gexec
+SELECT format('ALTER ROLE %I WITH LOGIN PASSWORD %L', :'user', :'pw')\gexec
+SELECT format('CREATE DATABASE %I OWNER %I', :'db', :'user') WHERE NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = :'db')\gexec
+SQL
+}
+
+# Start infra when stopped or when its definition changed since last start; then make sure env DB exists.
+ensure_infra() {
+    local env="$1"
+    require_infra_files
+    local stored=""
+    [[ -f "$ROOT/infra/.compose.sha256" ]] && stored="$(cat "$ROOT/infra/.compose.sha256")"
+    if ! infra_running; then
+        log "infra is down; bringing it up"
+        infra_up
+    elif [[ "$stored" != "$(infra_hash)" ]]; then
+        log "infra definition changed since last deployment; applying"
+        infra_up
+    fi
+    wait_postgres
+    ensure_database "$env"
+}
+
+wait_healthy() {
+    local env="$1" cid status="unknown" i
+    cid="$(compose_env "$env" ps -q app)"
+    [[ -n "$cid" ]] || die "app container not found"
+    for i in $(seq 1 60); do
+        status="$(docker inspect -f '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' "$cid")"
+        [[ "$status" == "healthy" ]] && return 0
+        sleep 3
+    done
+    compose_env "$env" logs --tail 80 app || true
+    die "app not healthy (status: $status)"
+}
+
+prune_images() {
+    local env="$1" image
+    image="$(env_value "$ROOT/$env/.env" IMAGE)"
+    docker images --format '{{.Repository}}:{{.Tag}}' "$image" | grep -v ':<none>' | tail -n +4 \
+        | while read -r ref; do docker rmi "$ref" >/dev/null 2>&1 || true; done
+}
+
+cmd_infra() {
+    local sub="${1:-}"
+    require_infra_files
+    case "$sub" in
+        up) infra_up ;;
+        down) compose_infra down ;;
+        status) compose_infra ps -a ;;
+        logs)
+            local svc="${2:-}"
+            [[ -n "$svc" ]] || die "usage: saveme infra logs <service> (${INFRA_SERVICES_HINT})"
+            compose_infra logs -f --tail 200 "$svc"
+            ;;
+        *) usage; exit 1 ;;
+    esac
+}
+
+cmd_up() {
+    local env="$1"; require_env "$env"
+    ensure_infra "$env"
+    compose_env "$env" up -d --remove-orphans
+}
+
+cmd_down() {
+    local env="$1"; require_env "$env"
+    compose_env "$env" down
+}
+
+cmd_status() {
+    local env="$1"; require_env "$env"
+    compose_env "$env" ps -a
+}
+
+cmd_logs() {
+    local env="$1"; require_env "$env"
+    compose_env "$env" logs -f --tail 200 app
+}
+
+cmd_bash() {
+    local env="$1"; require_env "$env"
+    compose_env "$env" exec app sh -c 'command -v bash >/dev/null && exec bash || exec sh'
+}
+
+cmd_artisan() {
+    local env="${1:-}"; shift || true
+    require_env "$env"
+    [[ "$#" -gt 0 ]] || die "usage: saveme artisan <env> <command...>"
+    compose_env "$env" exec -u www-data app php artisan "$@"
+}
+
+cmd_deploy() {
+    local env="$1" sha="${2:-}"; require_env "$env"
+    [[ -n "$sha" ]] || die "usage: saveme deploy <env> <sha>"
+    log "deploying $env @ $sha"
+    sed -i "s|^IMAGE_TAG=.*|IMAGE_TAG=${sha}|" "$ROOT/$env/.env"
+    ensure_infra "$env"
+    if [[ "${SKIP_PULL:-0}" != "1" ]]; then
+        compose_env "$env" pull app
+    fi
+    compose_env "$env" run --rm --no-deps app php artisan migrate --force
+    compose_env "$env" up -d --remove-orphans
+    wait_healthy "$env"
+    prune_images "$env"
+    log "deploy of $sha to $env complete"
+}
+
+main() {
+    local cmd="${1:-}"
+    shift || true
+    case "$cmd" in
+        up) cmd_up "${1:-}" ;;
+        down) cmd_down "${1:-}" ;;
+        status) cmd_status "${1:-}" ;;
+        logs) cmd_logs "${1:-}" ;;
+        bash) cmd_bash "${1:-}" ;;
+        artisan) cmd_artisan "$@" ;;
+        deploy) cmd_deploy "${1:-}" "${2:-}" ;;
+        infra) cmd_infra "$@" ;;
+        -h|--help|help|"") usage ;;
+        *) usage; exit 1 ;;
+    esac
+}
+
+main "$@"

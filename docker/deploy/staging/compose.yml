@@ -1,0 +1,23 @@
+name: saveme-staging
+
+services:
+  app:
+    image: ${IMAGE:?}:${IMAGE_TAG:?}
+    container_name: saveme-staging-app
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "0.0.0.0:${APP_PORT:?}:8080"
+    volumes:
+      - storage:/var/www/html/storage
+    networks:
+      - infra
+
+volumes:
+  storage:
+    name: saveme-staging-storage
+
+networks:
+  infra:
+    name: saveme-infra
+    external: true

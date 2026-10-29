@@ -14,7 +14,7 @@ permissions:
   packages: write
 
 env:
-  IMAGE: ghcr.io/faresmuhammad/saveme-backend
+  IMAGE: ghcr.io/faresmuhammadq/saveme-backend
 
 jobs:
   build:

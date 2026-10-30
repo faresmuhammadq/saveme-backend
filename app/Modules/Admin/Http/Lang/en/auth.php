@@ -89,10 +89,12 @@ return [
     'enrol' => [
         'heading' => 'Set up your authenticator',
         'step_open' => '1. Open your authenticator app.',
-        'step_add' => '2. Add an account with this key, or open this link on your phone.',
+        'step_add' => '2. Scan the QR code, or add an account with this key or link.',
         'step_code' => '3. Enter the 6-digit code it shows.',
         'key' => 'Setup key',
         'link' => 'Setup link',
+        'qr' => 'QR code for your authenticator app',
+        'qr_hint' => 'Scan with your authenticator app.',
         'account' => 'Account:',
         'settings' => 'time-based, 6 digits',
         'link_authenticator' => 'Link authenticator',

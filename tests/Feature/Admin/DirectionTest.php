@@ -69,7 +69,8 @@ describe('sign-in and set-up screens', function () {
         $enrol = $this->get(route('admin.enrol'))->assertOk()->getContent();
         expect($enrol)->toMatch('/<bdi dir="ltr"[^>]*data-test="enrol-key"/')
             ->and($enrol)->toContain('data-test="enrol-link"')
-            ->and($enrol)->toMatch('/data-test="enrol-link"/')
+            ->and($enrol)->toContain('data-test="enrol-qr"')
+            ->and($enrol)->toContain('<svg')
             ->and($enrol)->toContain('dir="rtl"')
             ->and($enrol)->toUseWesternDigitsOnly();
 

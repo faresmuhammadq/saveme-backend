@@ -116,7 +116,7 @@ test('opening the mailed link in a browser verifies the address and points back 
 
     $this->get('/verify-email?token='.$secret)
         ->assertOk()
-        ->assertSee(config('identity.links.app_url'), false);
+        ->assertSee('package='.config('identity.links.android_package'), false);
 
     expect(User::query()->find($user->id)->email_verified_at)->not->toBeNull();
 });
@@ -129,4 +129,19 @@ test('opening a used or unknown link shows the invalid page and verifies nobody'
     $this->get('/verify-email?token='.$secret)->assertStatus(410);
     $this->get('/verify-email?token=nope')->assertStatus(410);
     $this->get('/verify-email')->assertStatus(410);
+});
+
+test('opening the mailed reset link opens the app through an intent link and redeems nothing', function () {
+    $user = person();
+    $secret = linkFor($user->id, LinkKind::ResetPassword);
+
+    $this->get('/reset-password?token='.$secret)
+        ->assertOk()
+        ->assertSee('/reset-password?token='.$secret.'#Intent;scheme=http;package=com.fares.saveme;end', false);
+
+    expect(app(LinkRepository::class)->redeem($secret, LinkKind::ResetPassword))->toBe($user->id);
+});
+
+test('opening a reset link without a token shows the invalid page', function () {
+    $this->get('/reset-password')->assertStatus(410);
 });

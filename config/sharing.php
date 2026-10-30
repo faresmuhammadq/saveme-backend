@@ -8,6 +8,9 @@
 | links.invitation_url               Where an invitation link points; the token
 |                                    is appended as ?token=. The website or the
 |                                    app's deep-link page, per environment.
+| links.android_package              The app's package id (it differs per
+|                                    flavor); the invitation page opens the
+|                                    app with an intent:// link to it.
 | invitation_days                    How long an invitation lives.
 | throttle.invites_per_day           Invitations one person may create per 24
 |                                    hours (429 beyond; replays do not count).
@@ -26,6 +29,7 @@ return [
 
     'links' => [
         'invitation_url' => env('SHARING_INVITATION_URL', 'http://saveme-backend.test/invite'),
+        'android_package' => env('SHARING_ANDROID_PACKAGE', 'com.fares.saveme'),
     ],
 
     'invitation_days' => (int) env('SHARING_INVITATION_DAYS', 7),

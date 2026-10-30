@@ -1,7 +1,7 @@
 <?php
 
 /*
- * Identity web pages (verification result). Keys mirror the other language.
+ * Identity web pages (verification result, password reset hand-off). Keys mirror the other language.
  */
 return [
 
@@ -11,6 +11,15 @@ return [
         'ok_body' => 'يمكنك العودة إلى التطبيق الآن. نفتحه لك.',
         'bad' => 'هذا الرابط غير صالح',
         'bad_body' => 'ربما انتهت صلاحيته أو استُخدم من قبل. افتح التطبيق واطلب رسالة تأكيد جديدة.',
+        'open' => 'افتح التطبيق',
+    ],
+
+    'reset' => [
+        'title' => 'إعادة تعيين كلمة المرور',
+        'ok' => 'نفتح التطبيق',
+        'ok_body' => 'اختر كلمة المرور الجديدة داخل التطبيق. إن لم يُفتح، استخدم الزر أدناه.',
+        'bad' => 'هذا الرابط غير صالح',
+        'bad_body' => 'ربما انتهت صلاحيته أو استُخدم من قبل. افتح التطبيق واطلب رسالة إعادة تعيين جديدة.',
         'open' => 'افتح التطبيق',
     ],
 

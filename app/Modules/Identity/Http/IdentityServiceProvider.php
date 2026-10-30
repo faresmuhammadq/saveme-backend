@@ -13,6 +13,7 @@ use App\Modules\Identity\Http\Console\PurgeAccounts;
 use App\Modules\Identity\Http\Console\SendDeletionReminders;
 use App\Modules\Identity\Http\Console\TimingProbe;
 use App\Modules\Identity\Http\Controllers\ExportFileController;
+use App\Modules\Identity\Http\Controllers\ResetPageController;
 use App\Modules\Identity\Http\Controllers\VerificationPageController;
 use App\Modules\Identity\Http\Listeners\ApplyProfileLanguage;
 use App\Modules\Identity\Http\Middleware\EnsureAddressVerified;
@@ -91,6 +92,12 @@ class IdentityServiceProvider extends ServiceProvider
         Route::middleware('web')->get('verify-email', VerificationPageController::class)
             ->middleware('throttle:identity-verify-page')
             ->name('identity.verify-email.page');
+
+        // The mailed reset link: a browser GET that hands the token to the app. The password is
+        // chosen in the app, so nothing is redeemed here.
+        Route::middleware('web')->get('reset-password', ResetPageController::class)
+            ->middleware('throttle:identity-verify-page')
+            ->name('identity.reset-password.page');
 
         if ($this->app->runningInConsole()) {
             $this->commands($this->app->environment('local') ? [ExpireSessions::class, ExpireExports::class, PurgeAccounts::class, SendDeletionReminders::class, TimingProbe::class] : [ExpireSessions::class, ExpireExports::class, PurgeAccounts::class, SendDeletionReminders::class]);

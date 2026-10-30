@@ -33,7 +33,7 @@ final class VerificationPageController
         return response()
             ->view('identity::verified', [
                 'verified' => $verified,
-                'appUrl' => config('identity.links.app_url'),
+                'appUrl' => 'intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;package='.config('identity.links.android_package').';end',
             ], $verified ? 200 : 410)
             ->header('Cache-Control', 'no-store')
             ->header('Referrer-Policy', 'no-referrer');

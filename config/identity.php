@@ -16,8 +16,9 @@
 | throttle                 Route budgets recorded in the security baseline.
 | links                    Where mailed links land (website or app deep link),
 |                          and their lifetimes in minutes (baseline tokens).
-|                          app_url is where the verified page sends the
-|                          person back to the mobile app.
+|                          android_package is the app's package id (it differs
+|                          per flavor); the verified and reset pages open
+|                          the app with an intent:// link to it.
 | session_inactivity_days  A session unused this long stops working (R-3).
 | deletion_grace_days      Days between a deletion request and the purge.
 | deletion_reminder_days   Days before the purge that the reminder mail goes
@@ -65,7 +66,7 @@ return [
     'links' => [
         'verify_url' => env('IDENTITY_VERIFY_URL', 'http://saveme-backend.test/verify-email'),
         'reset_url' => env('IDENTITY_RESET_URL', 'http://saveme-backend.test/reset-password'),
-        'app_url' => env('IDENTITY_APP_URL', 'saveme://email-verified'),
+        'android_package' => env('IDENTITY_ANDROID_PACKAGE', 'com.fares.saveme'),
         'verify_minutes' => 1440,
         'reset_minutes' => 60,
     ],

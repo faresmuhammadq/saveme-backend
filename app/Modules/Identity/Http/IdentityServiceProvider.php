@@ -13,6 +13,7 @@ use App\Modules\Identity\Http\Console\PurgeAccounts;
 use App\Modules\Identity\Http\Console\SendDeletionReminders;
 use App\Modules\Identity\Http\Console\TimingProbe;
 use App\Modules\Identity\Http\Controllers\ExportFileController;
+use App\Modules\Identity\Http\Controllers\VerificationPageController;
 use App\Modules\Identity\Http\Listeners\ApplyProfileLanguage;
 use App\Modules\Identity\Http\Middleware\EnsureAddressVerified;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -85,6 +86,12 @@ class IdentityServiceProvider extends ServiceProvider
             ->middleware('throttle:identity-export-file')
             ->name('identity.exports.file');
 
+        // The mailed verification link: a browser GET that redeems the token and returns the person
+        // to the app. A missing or malformed token shows the invalid page.
+        Route::middleware('web')->get('verify-email', VerificationPageController::class)
+            ->middleware('throttle:identity-verify-page')
+            ->name('identity.verify-email.page');
+
         if ($this->app->runningInConsole()) {
             $this->commands($this->app->environment('local') ? [ExpireSessions::class, ExpireExports::class, PurgeAccounts::class, SendDeletionReminders::class, TimingProbe::class] : [ExpireSessions::class, ExpireExports::class, PurgeAccounts::class, SendDeletionReminders::class]);
         }
@@ -101,6 +108,8 @@ class IdentityServiceProvider extends ServiceProvider
 
         RateLimiter::for('identity-resend', fn (Request $request): Limit => Limit::perHour((int) config('identity.throttle.resend_per_hour_per_address'))
             ->by('resend:'.$request->user()?->getAuthIdentifier()));
+
+        RateLimiter::for('identity-verify-page', fn (Request $request): Limit => Limit::perMinute(20)->by('verify-page:'.$request->ip()));
 
         // The export archive link: 20 per 10 minutes per origin (spec 022, FR-018).
         RateLimiter::for('identity-export-file', fn (Request $request): Limit => Limit::perSecond(

@@ -109,3 +109,24 @@ test('a reset link cannot verify an address', function () {
 
     expect(fn () => app(VerifyAddress::class)->handle(linkFor($user->id, LinkKind::ResetPassword)))->toThrow(VerificationLinkInvalid::class);
 });
+
+test('opening the mailed link in a browser verifies the address and points back to the app', function () {
+    $user = person(verified: false);
+    $secret = linkFor($user->id, LinkKind::VerifyAddress);
+
+    $this->get('/verify-email?token='.$secret)
+        ->assertOk()
+        ->assertSee(config('identity.links.app_url'), false);
+
+    expect(User::query()->find($user->id)->email_verified_at)->not->toBeNull();
+});
+
+test('opening a used or unknown link shows the invalid page and verifies nobody', function () {
+    $user = person(verified: false);
+    $secret = linkFor($user->id, LinkKind::VerifyAddress);
+    app(VerifyAddress::class)->handle($secret);
+
+    $this->get('/verify-email?token='.$secret)->assertStatus(410);
+    $this->get('/verify-email?token=nope')->assertStatus(410);
+    $this->get('/verify-email')->assertStatus(410);
+});

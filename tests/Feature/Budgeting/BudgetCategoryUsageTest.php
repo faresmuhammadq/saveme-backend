@@ -2,11 +2,14 @@
 
 use App\Modules\Budgeting\Application\BudgetCategoryUsage;
 use App\Modules\Budgeting\Application\BudgetService;
+use App\Modules\Budgeting\Application\SharedBudgets\SharedBudgetService;
+use App\Modules\Budgeting\Http\SharedBudgets\Resources\SharedBudgetLineResource;
 use App\Modules\Identity\Infrastructure\Models\User;
 use App\Modules\Wallets\Application\Categories\CategoryService;
 use App\Modules\Wallets\Application\Categories\CategoryUsageQuery;
 use App\Modules\Wallets\Domain\Categories\Refusals\CategoryInUse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 /*
  * A budgeted category is never deleted (spec 015, FR-018, US4 S6).
@@ -50,6 +53,18 @@ test('usage is answered set-wise in a constant number of queries', function () {
     DB::disableQueryLog();
 
     expect($used)->toEqualCanonicalizing([$categories[2], $categories[5]])
-        ->and($queries)->toBe(1)
+        ->and($queries)->toBe(2) // one set-wise query per kind of record: budgets and Shared Budget lines
         ->and(app(CategoryUsageQuery::class)->usedAmong($categories)[$categories[2]])->toBeTrue();
+});
+
+test('a category a Shared Budget line names is in use, live or tombstoned', function () {
+    $budget = createSharedBudget($this->owner);
+    $line = (string) Str::uuid7();
+    app(SharedBudgetService::class)->saveLine($this->owner, $budget, $line, ['category_id' => $this->category->id, 'limit_minor' => null], 0, SharedBudgetLineResource::toArray(...));
+
+    expect(app(BudgetCategoryUsage::class)->isUsed($this->category->id))->toBeTrue();
+
+    app(SharedBudgetService::class)->deleteLine($this->owner, $budget, $line, 1, SharedBudgetLineResource::toArray(...));
+
+    expect(app(BudgetCategoryUsage::class)->usedAmong([$this->category->id]))->toBe([$this->category->id]);
 });

@@ -2,7 +2,7 @@
     $dt = 'col-span-1 border-t border-line py-2.5 text-ink-2';
     $dd = 'col-span-2 border-t border-line py-2.5 font-semibold text-ink';
     $capability = function (string $key, mixed $value): string {
-        $quota = in_array($key, ['sharing.max_members_per_wallet', 'wallets.max'], true);
+        $quota = in_array($key, ['sharing.max_members_per_wallet', 'sharing.max_members_per_budget', 'wallets.max'], true);
 
         if ($quota) {
             return $value === null ? __('admin::plans.values.unlimited') : (string) $value;

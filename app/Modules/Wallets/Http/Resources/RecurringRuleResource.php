@@ -47,6 +47,7 @@ final class RecurringRuleResource
             'occurrence_count' => $rule->occurrenceCount,
             'payout_round' => $rule->payoutRound,
             'payout_category_id' => $rule->payoutCategoryId,
+            'shared_budget_id' => $rule->sharedBudgetId,
             'timezone' => $rule->timezone,
             'created_by' => $rule->createdBy,
         ];

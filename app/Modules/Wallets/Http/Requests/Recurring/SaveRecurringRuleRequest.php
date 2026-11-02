@@ -10,8 +10,6 @@ use App\Http\Api\Rules\MinorUnits;
  * The whole writable recurring rule plus the last-seen version (spec 014,
  * `RecurringRuleWrite`). Every member is required; the nullable ones may be
  * null. `timezone`, `created_by`, `wallet_id` and the rest are unknown.
- *
- * @phpstan-import-type Values from \App\Modules\Wallets\Domain\Recurring\RecurringRuleRecord
  */
 final class SaveRecurringRuleRequest extends RuleRequest
 {
@@ -41,16 +39,19 @@ final class SaveRecurringRuleRequest extends RuleRequest
             'occurrence_count' => ['present', 'nullable', 'integer', 'min:1', 'max:1000'],
             'payout_round' => ['present', 'nullable', 'integer', 'min:1'],
             'payout_category_id' => ['present', 'nullable', 'string', 'uuid'],
+            'shared_budget_id' => ['sometimes', 'nullable', 'string', 'uuid'],
             'version' => ['sometimes', 'integer', 'min:0'],
         ];
     }
 
     /**
-     * @return Values
+     * The writable members; `shared_budget_id` is present only when the body sent it.
+     *
+     * @return array<string, mixed>
      */
     public function values(): array
     {
-        return [
+        $values = [
             'preset' => $this->string('preset')->toString(),
             'status' => $this->string('status')->toString(),
             'kind' => $this->string('kind')->toString(),
@@ -72,6 +73,13 @@ final class SaveRecurringRuleRequest extends RuleRequest
             'payout_round' => $this->nullableInteger('payout_round'),
             'payout_category_id' => $this->nullableString('payout_category_id'),
         ];
+
+        // Absent keeps the stored link (ADR-0027 rule 4).
+        if ($this->exists('shared_budget_id')) {
+            $values['shared_budget_id'] = $this->nullableString('shared_budget_id');
+        }
+
+        return $values;
     }
 
     /**

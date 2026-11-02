@@ -17,7 +17,7 @@ info:
     The conventions every endpoint obeys are documented in `docs/api-conventions.md`.
     A feature adds one file under `paths/` and references the shared components
     rather than restating them.
-  version: v1.15
+  version: v1.16
   contact:
     name: Backend maintainers
   license:
@@ -183,6 +183,44 @@ paths:
     $ref: './paths/budgets.yaml#/~1budgets~1{id}~1progress'
   /budget-progress:
     $ref: './paths/budgets.yaml#/~1budget-progress'
+  /shared-budgets:
+    $ref: './paths/shared-budgets.yaml#/~1shared-budgets'
+  /shared-budgets/{id}:
+    $ref: './paths/shared-budgets.yaml#/~1shared-budgets~1{id}'
+  /shared-budgets/{id}/archive:
+    $ref: './paths/shared-budgets.yaml#/~1shared-budgets~1{id}~1archive'
+  /shared-budgets/{id}/transfer-ownership:
+    $ref: './paths/shared-budgets.yaml#/~1shared-budgets~1{id}~1transfer-ownership'
+  /shared-budgets/{id}/leave:
+    $ref: './paths/shared-budgets.yaml#/~1shared-budgets~1{id}~1leave'
+  /shared-budgets/{id}/lines:
+    $ref: './paths/shared-budgets.yaml#/~1shared-budgets~1{id}~1lines'
+  /shared-budgets/{id}/lines/{lineId}:
+    $ref: './paths/shared-budgets.yaml#/~1shared-budgets~1{id}~1lines~1{lineId}'
+  /shared-budgets/{id}/members:
+    $ref: './paths/shared-budgets.yaml#/~1shared-budgets~1{id}~1members'
+  /shared-budgets/{id}/members/{uid}:
+    $ref: './paths/shared-budgets.yaml#/~1shared-budgets~1{id}~1members~1{uid}'
+  /shared-budgets/{id}/progress:
+    $ref: './paths/shared-budgets.yaml#/~1shared-budgets~1{id}~1progress'
+  /shared-budgets/{id}/reports/summary:
+    $ref: './paths/shared-budgets.yaml#/~1shared-budgets~1{id}~1reports~1summary'
+  /shared-budgets/{id}/reports/trend:
+    $ref: './paths/shared-budgets.yaml#/~1shared-budgets~1{id}~1reports~1trend'
+  /shared-budgets/{id}/invitations:
+    $ref: './paths/shared-budgets.yaml#/~1shared-budgets~1{id}~1invitations'
+  /shared-budgets/{id}/invitations/{iid}:
+    $ref: './paths/shared-budgets.yaml#/~1shared-budgets~1{id}~1invitations~1{iid}'
+  /shared-budget-invitations/preview:
+    $ref: './paths/shared-budgets.yaml#/~1shared-budget-invitations~1preview'
+  /shared-budget-invitations/accept:
+    $ref: './paths/shared-budgets.yaml#/~1shared-budget-invitations~1accept'
+  /shared-budget-invitations/decline:
+    $ref: './paths/shared-budgets.yaml#/~1shared-budget-invitations~1decline'
+  /sync/shared-budgets/heads:
+    $ref: './paths/shared-budgets.yaml#/~1sync~1shared-budgets~1heads'
+  /sync/shared-budgets/{id}/changes:
+    $ref: './paths/shared-budgets.yaml#/~1sync~1shared-budgets~1{id}~1changes'
   /sync/user/changes:
     $ref: './paths/sync.yaml#/~1sync~1user~1changes'
   /sync/wallets/{id}/changes:

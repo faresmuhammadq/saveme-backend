@@ -11,6 +11,7 @@ enum Feature: string
 {
     case SharingEnabled = 'sharing.enabled';
     case SharingMaxMembersPerWallet = 'sharing.max_members_per_wallet';
+    case SharingMaxMembersPerBudget = 'sharing.max_members_per_budget';
     case ExportEnabled = 'export.enabled';
     case ReportsAdvanced = 'reports.advanced';
     case WalletsMax = 'wallets.max';
@@ -21,7 +22,7 @@ enum Feature: string
     public function isQuota(): bool
     {
         return match ($this) {
-            self::SharingMaxMembersPerWallet, self::WalletsMax => true,
+            self::SharingMaxMembersPerWallet, self::SharingMaxMembersPerBudget, self::WalletsMax => true,
             default => false,
         };
     }

@@ -32,7 +32,7 @@ class PlanEditor extends BackOfficeComponent
 {
     use RequiresRecentFactor;
 
-    private const QUOTAS = ['sharing.max_members_per_wallet', 'wallets.max'];
+    private const QUOTAS = ['sharing.max_members_per_wallet', 'sharing.max_members_per_budget', 'wallets.max'];
 
     private const LOCKED_ON_DEFAULT = ['export.enabled', 'reports.advanced', 'wallets.max'];
 

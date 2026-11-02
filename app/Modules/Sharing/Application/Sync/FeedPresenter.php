@@ -3,6 +3,7 @@
 namespace App\Modules\Sharing\Application\Sync;
 
 use App\Modules\Sharing\Application\Dto\InvitationView;
+use App\Modules\Sharing\Domain\SharedBudgets\SharedBudgetInvitationRecord;
 
 /**
  * How a Sharing feed row renders. Application cannot reach Http, so the Http
@@ -15,4 +16,9 @@ interface FeedPresenter
      * @return array<string, mixed>
      */
     public function invitation(InvitationView $view): array;
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function sharedBudgetInvitation(SharedBudgetInvitationRecord $invitation): array;
 }

@@ -245,6 +245,7 @@ final class OccurrenceService
                     'memo' => $values['memo'],
                     'counterparty' => $values['counterparty'],
                     'cleared' => false,
+                    'shared_budget_id' => $stored->isPayout ? null : $rule->sharedBudgetId,
                 ],
                 $rule->id,
                 $stored->id,

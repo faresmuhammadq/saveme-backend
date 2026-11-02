@@ -35,6 +35,7 @@ final readonly class TransactionRecord
         public ?DateTimeImmutable $deletedAt,
         public ?string $recurringRuleId = null,
         public ?string $occurrenceId = null,
+        public ?string $sharedBudgetId = null,
     ) {}
 
     public function isTombstone(): bool
@@ -70,7 +71,7 @@ final readonly class TransactionRecord
     /**
      * The members a client writes, in the shape a write is compared against.
      *
-     * @return array{kind: string, date: string, amount_minor: int, currency: string, category_id: ?string, counter_wallet_id: ?string, description: ?string, memo: ?string, counterparty: ?string, cleared: bool}
+     * @return array{kind: string, date: string, amount_minor: int, currency: string, category_id: ?string, counter_wallet_id: ?string, description: ?string, memo: ?string, counterparty: ?string, cleared: bool, shared_budget_id: ?string}
      */
     public function writableValues(): array
     {
@@ -85,6 +86,7 @@ final readonly class TransactionRecord
             'memo' => $this->memo,
             'counterparty' => $this->counterparty,
             'cleared' => $this->cleared,
+            'shared_budget_id' => $this->sharedBudgetId,
         ];
     }
 }

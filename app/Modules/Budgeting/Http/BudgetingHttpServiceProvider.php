@@ -3,6 +3,8 @@
 namespace App\Modules\Budgeting\Http;
 
 use App\Modules\Budgeting\Application\Sync\FeedPresenter;
+use App\Modules\Budgeting\Application\Sync\SharedBudgetFeedPresenter;
+use App\Modules\Budgeting\Http\SharedBudgets\SharedBudgetFeedPresenterImpl;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
@@ -16,6 +18,7 @@ class BudgetingHttpServiceProvider extends ServiceProvider
      */
     public array $bindings = [
         FeedPresenter::class => BudgetFeedPresenter::class,
+        SharedBudgetFeedPresenter::class => SharedBudgetFeedPresenterImpl::class,
     ];
 
     public function boot(): void

@@ -38,6 +38,7 @@ return [
     'capabilities' => [
         'sharing_enabled' => 'Shared wallets',
         'sharing_max_members_per_wallet' => 'Members per wallet',
+        'sharing_max_members_per_budget' => 'Members per shared budget',
         'export_enabled' => 'Export',
         'reports_advanced' => 'Advanced reports',
         'wallets_max' => 'Wallets',

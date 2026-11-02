@@ -3,7 +3,9 @@
 namespace App\Modules\Sharing\Infrastructure;
 
 use App\Modules\Sharing\Domain\Ports\InvitationRepository;
+use App\Modules\Sharing\Domain\SharedBudgets\SharedBudgetInvitationRepository;
 use App\Modules\Sharing\Infrastructure\Repositories\EloquentInvitationRepository;
+use App\Modules\Sharing\Infrastructure\Repositories\EloquentSharedBudgetInvitationRepository;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -17,5 +19,6 @@ class SharingPersistenceServiceProvider extends ServiceProvider
      */
     public array $bindings = [
         InvitationRepository::class => EloquentInvitationRepository::class,
+        SharedBudgetInvitationRepository::class => EloquentSharedBudgetInvitationRepository::class,
     ];
 }

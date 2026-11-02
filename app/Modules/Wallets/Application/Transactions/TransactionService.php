@@ -9,6 +9,7 @@ use App\Modules\Wallets\Application\Activity\WalletActivity;
 use App\Modules\Wallets\Application\Authorization\WalletAuthorizer;
 use App\Modules\Wallets\Application\Categories\CategoryReferences;
 use App\Modules\Wallets\Application\Categories\WalletCategoryUses;
+use App\Modules\Wallets\Application\Transactions\Dto\LinkedExpense;
 use App\Modules\Wallets\Application\Transactions\Dto\SavedTransaction;
 use App\Modules\Wallets\Application\Transactions\Dto\TransactionView;
 use App\Modules\Wallets\Domain\Activity\ActivityAction;
@@ -53,7 +54,7 @@ use RuntimeException;
  * transfer's other wallet, then the state rules, collected into one refusal.
  * No amount, description, memo or counterparty is ever logged (P-15).
  *
- * @phpstan-type Values array{kind: string, date: string, amount_minor: int, currency: string, category_id: ?string, counter_wallet_id: ?string, description: ?string, memo: ?string, counterparty: ?string, cleared: bool}
+ * @phpstan-type Values array{kind: string, date: string, amount_minor: int, currency: string, category_id: ?string, counter_wallet_id: ?string, description: ?string, memo: ?string, counterparty: ?string, cleared: bool, shared_budget_id: ?string}
  */
 final class TransactionService
 {
@@ -71,6 +72,7 @@ final class TransactionService
         private readonly WalletAuthorizer $authorizer,
         private readonly WalletCategoryUses $categoryUses,
         private readonly WalletActivity $activity,
+        private readonly SharedBudgetLink $sharedBudgets,
     ) {}
 
     /**
@@ -78,15 +80,23 @@ final class TransactionService
      * For a transfer the path wallet is the source, or either of its two
      * wallets once it exists.
      *
-     * @param  Values  $values
+     * @param  array<string, mixed>  $values  the writable members; an absent `shared_budget_id` keeps the stored link
      * @param  Closure(TransactionView): array<string, mixed>  $present  how a read renders the transaction, for a conflict's `current`
      */
     public function save(string $actorId, string $walletId, string $transactionId, array $values, int $version, Closure $present): SavedTransaction
     {
-        /** @var Values $values */
+        $requestedBudgetId = isset($values['shared_budget_id']) && is_string($values['shared_budget_id']) ? $values['shared_budget_id'] : null;
+
+        /** @var array<string, mixed> $values */
         $values = self::normalise($values);
 
         return $this->withLocks($actorId, $walletId, $transactionId, $values['category_id'], $values['counter_wallet_id'], $present, function (?TransactionRecord $stored, array $wallets) use ($actorId, $walletId, $transactionId, $values, $version, $present): SavedTransaction {
+            // A write that does not mention the link keeps the stored one (ADR-0027 rule 4).
+            if (! array_key_exists('shared_budget_id', $values)) {
+                $values['shared_budget_id'] = $stored?->sharedBudgetId;
+            }
+
+            /** @var Values $values */
             $this->checkPath($actorId, $walletId, $transactionId, $stored, $wallets, $version, mayCreate: true);
 
             if ($stored === null) {
@@ -102,7 +112,7 @@ final class TransactionService
             $this->refuseStale($stored, $version, $present);
 
             return new SavedTransaction($this->update($actorId, $walletId, $stored, $values, $wallets), false);
-        });
+        }, $requestedBudgetId);
     }
 
     /**
@@ -115,6 +125,7 @@ final class TransactionService
     {
         $partial = self::normalise($partial);
         $category = isset($partial['category_id']) && is_string($partial['category_id']) ? $partial['category_id'] : null;
+        $requestedBudgetId = isset($partial['shared_budget_id']) && is_string($partial['shared_budget_id']) ? $partial['shared_budget_id'] : null;
 
         return $this->withLocks($actorId, $walletId, $transactionId, $category, null, $present, function (?TransactionRecord $stored, array $wallets) use ($actorId, $walletId, $transactionId, $partial, $version, $present): TransactionView {
             $this->checkPath($actorId, $walletId, $transactionId, $stored, $wallets, $version, mayCreate: false);
@@ -131,7 +142,7 @@ final class TransactionService
             $this->refuseStale($stored, $version, $present);
 
             return $this->update($actorId, $walletId, $stored, $values, $wallets);
-        });
+        }, $requestedBudgetId);
     }
 
     /**
@@ -164,6 +175,8 @@ final class TransactionService
             throw new LogicException('An occurrence is confirmed inside its own unit of work.');
         }
 
+        $values['shared_budget_id'] ??= null;
+
         if ($values['category_id'] !== null) {
             $this->categories->findForShare($values['category_id']) ?? $this->categories->findPlatformForShare($values['category_id']);
         }
@@ -189,8 +202,17 @@ final class TransactionService
 
         $this->authorizer->authorize($actorId, $walletId, Permission::T02WriteTransactions);
 
+        // A budget the author may no longer use is dropped, never a failed confirmation (ADR-0027, plan).
+        if ($values['shared_budget_id'] !== null) {
+            $this->sharedBudgets->lock([$values['shared_budget_id']]);
+
+            if ($this->sharedBudgets->refusal($authorId, $values['shared_budget_id'], $values['kind'], $values['currency'], $values['category_id']) !== null) {
+                $values['shared_budget_id'] = null;
+            }
+        }
+
         $other = $this->authorizeOther($actorId, $walletId, null, $values['counter_wallet_id'], $wallets);
-        $this->assertStateRules($actorId, null, $values, $other, $wallet, $wallets, categoryOwnershipSettled: true);
+        $this->assertStateRules($actorId, null, $values, $other, $wallet, $wallets, categoryOwnershipSettled: true, authorId: $authorId);
 
         $counterId = $values['counter_wallet_id'];
 
@@ -218,6 +240,7 @@ final class TransactionService
         }
 
         $this->settle($saved->walletIds(), $wallets);
+        $this->followBudget(null, $saved);
 
         event(new TransactionPosted(...Events::stamp(), transactionId: $saved->id, walletId: $saved->walletId, counterWalletId: $saved->counterWalletId, kind: $saved->kind->value, date: $saved->date, previousDate: null, categoryId: $saved->categoryId, previousCategoryId: null, actorUserId: $actorId, change: 'recorded'));
 
@@ -255,6 +278,7 @@ final class TransactionService
             $saved = $this->reload($stored->id);
             $this->postings->replaceFor($saved->id, PostingDerivation::for($saved));
             $this->settle($saved->walletIds(), $wallets);
+            $this->followBudget(null, $saved);
             $this->recordActivity($actorId, $saved, ActivityAction::Restored);
 
             event(new TransactionPosted(...Events::stamp(), transactionId: $saved->id, walletId: $saved->walletId, counterWalletId: $saved->counterWalletId, kind: $saved->kind->value, date: $saved->date, previousDate: null, categoryId: $saved->categoryId, previousCategoryId: null, actorUserId: $actorId, change: 'restored'));
@@ -290,6 +314,11 @@ final class TransactionService
 
             $this->postings->removeFor($stored->id);
             $this->settle($stored->walletIds(), $wallets);
+
+            if ($stored->sharedBudgetId !== null) {
+                $this->sharedBudgets->unlink($stored->sharedBudgetId, $stored->id);
+            }
+
             $this->recordActivity($actorId, $stored, ActivityAction::Deleted);
 
             event(new TransactionVoided(...Events::stamp(), transactionId: $stored->id, walletId: $stored->walletId, counterWalletId: $stored->counterWalletId, kind: $stored->kind->value, date: $stored->date, categoryId: $stored->categoryId, actorUserId: $actorId));
@@ -311,11 +340,11 @@ final class TransactionService
      * @param  Closure(?TransactionRecord, array<string, ?WalletRecord>): T  $body
      * @return T
      */
-    private function withLocks(string $actorId, string $walletId, string $transactionId, ?string $requestedCategoryId, ?string $requestedCounterId, Closure $present, Closure $body): mixed
+    private function withLocks(string $actorId, string $walletId, string $transactionId, ?string $requestedCategoryId, ?string $requestedCounterId, Closure $present, Closure $body, ?string $requestedBudgetId = null): mixed
     {
         for ($attempt = 1; $attempt <= self::MAX_ATTEMPTS; $attempt++) {
             try {
-                return DB::transaction(function () use ($actorId, $walletId, $transactionId, $requestedCategoryId, $requestedCounterId, $body) {
+                return DB::transaction(function () use ($actorId, $walletId, $transactionId, $requestedCategoryId, $requestedCounterId, $requestedBudgetId, $body) {
                     $seen = $this->transactions->find($transactionId);
 
                     $categoryIds = array_values(array_unique(array_filter([$seen?->categoryId, $requestedCategoryId])));
@@ -338,6 +367,10 @@ final class TransactionService
                     foreach ($walletIds as $id) {
                         $wallets[$id] = $this->wallets->findForUpdate($id);
                     }
+
+                    $budgetIds = array_values(array_unique(array_filter([$seen?->sharedBudgetId, $requestedBudgetId])));
+                    sort($budgetIds, SORT_STRING);
+                    $this->sharedBudgets->lock($budgetIds);
 
                     $stored = $this->transactions->findForUpdate($transactionId);
 
@@ -362,11 +395,11 @@ final class TransactionService
     }
 
     /**
-     * @return array{?string, ?string, ?string, bool}|null
+     * @return array{?string, ?string, ?string, bool, ?string}|null
      */
     private static function lockSignature(?TransactionRecord $transaction): ?array
     {
-        return $transaction === null ? null : [$transaction->walletId, $transaction->counterWalletId, $transaction->categoryId, $transaction->isTombstone()];
+        return $transaction === null ? null : [$transaction->walletId, $transaction->counterWalletId, $transaction->categoryId, $transaction->isTombstone(), $transaction->sharedBudgetId];
     }
 
     /**
@@ -429,6 +462,7 @@ final class TransactionService
         }
 
         $this->settle($saved->walletIds(), $wallets);
+        $this->followBudget(null, $saved);
 
         $this->recordActivity($actorId, $saved, ActivityAction::Created);
 
@@ -458,6 +492,7 @@ final class TransactionService
             'memo' => $values['memo'],
             'counterparty' => $values['counterparty'],
             'cleared' => $values['cleared'],
+            'shared_budget_id' => $values['shared_budget_id'],
         ];
 
         if (! $this->transactions->updateIfVersion($stored->id, $stored->version, $columns, $changeSeq, $counterChangeSeq)) {
@@ -472,6 +507,7 @@ final class TransactionService
         }
 
         $this->settle($saved->walletIds(), $wallets);
+        $this->followBudget($stored, $saved);
         $this->recordActivity($actorId, $saved, ActivityAction::Edited);
 
         event(new TransactionPosted(...Events::stamp(), transactionId: $saved->id, walletId: $saved->walletId, counterWalletId: $saved->counterWalletId, kind: $saved->kind->value, date: $saved->date, previousDate: $stored->date, categoryId: $saved->categoryId, previousCategoryId: $stored->categoryId, actorUserId: $actorId, change: 'amended'));
@@ -575,7 +611,7 @@ final class TransactionService
      * @param  Values  $values
      * @param  array<string, ?WalletRecord>  $wallets
      */
-    private function assertStateRules(string $actorId, ?TransactionRecord $stored, array $values, ?WalletRecord $other, ?WalletRecord $source, array $wallets, bool $categoryOwnershipSettled = false): void
+    private function assertStateRules(string $actorId, ?TransactionRecord $stored, array $values, ?WalletRecord $other, ?WalletRecord $source, array $wallets, bool $categoryOwnershipSettled = false, ?string $authorId = null): void
     {
         $source ?? throw new TransactionNotFound;
 
@@ -593,6 +629,12 @@ final class TransactionService
 
         if ($categoryError !== null) {
             $errors[] = $categoryError;
+        }
+
+        $budgetError = $this->budgetError($actorId, $authorId ?? ($stored === null ? $actorId : $stored->createdBy), $stored, $values);
+
+        if ($budgetError !== null) {
+            $errors[] = $budgetError;
         }
 
         $unique = [];
@@ -628,6 +670,11 @@ final class TransactionService
             return $platform->kind->value === $values['kind'] ? null : new FieldError('/category_id', ErrorCode::InvalidEnumValue);
         }
 
+        // A category the chosen budget lists, whoever's it is (ADR-0027 rule 11).
+        if ($values['shared_budget_id'] !== null && $values['kind'] === TransactionKind::Expense->value && $this->sharedBudgets->lineNames($values['shared_budget_id'], $categoryId)) {
+            return null;
+        }
+
         $own = $this->categories->findForShare($categoryId);
 
         if ($own !== null && ($ownershipSettled || $own->ownerId === $actorId) && ! $own->isTombstone() && $own->kind->value === $values['kind']) {
@@ -635,6 +682,58 @@ final class TransactionService
         }
 
         return new FieldError('/category_id', ErrorCode::InvalidEnumValue);
+    }
+
+    /**
+     * The Shared Budget rules of a write (ADR-0027 rules 4 and 11). Only the
+     * author changes the link, and a link they set must be one they may use.
+     * A link that stays as stored is never refused, even after its author has
+     * left; a category change under it must still be one members can render.
+     *
+     * @param  Values  $values
+     */
+    private function budgetError(string $actorId, string $authorId, ?TransactionRecord $stored, array $values): ?FieldError
+    {
+        $budgetId = $values['shared_budget_id'];
+        $changed = $budgetId !== $stored?->sharedBudgetId;
+
+        if ($changed && $stored !== null && $actorId !== $stored->createdBy) {
+            return new FieldError('/shared_budget_id', ErrorCode::InvalidEnumValue);
+        }
+
+        if ($budgetId === null) {
+            return null;
+        }
+
+        if ($changed) {
+            $code = $this->sharedBudgets->refusal($authorId, $budgetId, $values['kind'], $values['currency'], $values['category_id']);
+
+            return $code === null ? null : new FieldError('/shared_budget_id', $code);
+        }
+
+        if ($values['category_id'] !== $stored?->categoryId && ($values['category_id'] === null || ! $this->sharedBudgets->allowsCategory($budgetId, $values['category_id']))) {
+            return new FieldError('/category_id', ErrorCode::InvalidEnumValue);
+        }
+
+        return null;
+    }
+
+    /**
+     * Moves the transaction's entry with the transaction (ADR-0027 rule 7):
+     * the old budget's entry is tombstoned when the link moved or cleared, the
+     * new one is written or refreshed. An entry whose author left no longer follows.
+     */
+    private function followBudget(?TransactionRecord $before, TransactionRecord $after): void
+    {
+        if ($before?->sharedBudgetId !== null && $before->sharedBudgetId !== $after->sharedBudgetId) {
+            $this->sharedBudgets->unlink($before->sharedBudgetId, $before->id);
+        }
+
+        if ($after->sharedBudgetId === null || $after->categoryId === null) {
+            return;
+        }
+
+        $this->sharedBudgets->follow($after->sharedBudgetId, new LinkedExpense($after->id, $after->createdBy, $after->categoryId, $after->date, $after->amountMinor, $after->description));
     }
 
     /**

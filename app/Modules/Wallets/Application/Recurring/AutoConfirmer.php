@@ -112,6 +112,7 @@ final class AutoConfirmer
                         'memo' => $occurrence->memo,
                         'counterparty' => $occurrence->counterparty,
                         'cleared' => false,
+                        'shared_budget_id' => $occurrence->isPayout ? null : $rule->sharedBudgetId,
                     ],
                     $rule->id,
                     $occurrence->id,

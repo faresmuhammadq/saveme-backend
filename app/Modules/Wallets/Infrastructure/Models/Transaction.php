@@ -31,6 +31,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property CarbonImmutable|null $deleted_at
  * @property string|null $recurring_rule_id
  * @property string|null $occurrence_id
+ * @property string|null $shared_budget_id
  */
 class Transaction extends Model
 {
@@ -95,6 +96,7 @@ class Transaction extends Model
             deletedAt: $this->deleted_at?->toDateTimeImmutable(),
             recurringRuleId: $this->recurring_rule_id,
             occurrenceId: $this->occurrence_id,
+            sharedBudgetId: $this->shared_budget_id,
         );
     }
 }

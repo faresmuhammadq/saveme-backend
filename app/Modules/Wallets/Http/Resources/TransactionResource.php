@@ -41,6 +41,7 @@ final class TransactionResource
             'created_by' => $transaction->createdBy,
             'recurring_rule_id' => $transaction->recurringRuleId,
             'occurrence_id' => $transaction->occurrenceId,
+            'shared_budget_id' => $transaction->sharedBudgetId,
         ];
     }
 }

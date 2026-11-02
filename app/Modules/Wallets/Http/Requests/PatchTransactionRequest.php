@@ -19,7 +19,7 @@ use App\Modules\Shared\Domain\Errors\FieldError;
  */
 final class PatchTransactionRequest extends TransactionRequest
 {
-    private const EDITABLE = ['date', 'amount_minor', 'category_id', 'description', 'memo', 'counterparty', 'cleared'];
+    private const EDITABLE = ['date', 'amount_minor', 'category_id', 'description', 'memo', 'counterparty', 'cleared', 'shared_budget_id'];
 
     public function isRestore(): bool
     {
@@ -46,6 +46,7 @@ final class PatchTransactionRequest extends TransactionRequest
             'memo' => ['sometimes', 'nullable', 'string', 'max:1000'],
             'counterparty' => ['sometimes', 'nullable', 'string', 'max:100'],
             'cleared' => ['sometimes', 'bail', 'required', 'boolean:strict'],
+            'shared_budget_id' => ['sometimes', 'nullable', 'string', 'uuid'],
             'version' => ['required', 'integer', 'min:1'],
         ];
     }

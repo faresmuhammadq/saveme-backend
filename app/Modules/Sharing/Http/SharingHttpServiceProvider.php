@@ -5,6 +5,7 @@ namespace App\Modules\Sharing\Http;
 use App\Modules\Sharing\Application\Sync\FeedPresenter;
 use App\Modules\Sharing\Http\Console\ExpireInvitations;
 use App\Modules\Sharing\Http\Controllers\InvitationPageController;
+use App\Modules\Sharing\Http\Controllers\SharedBudgetInvitationPageController;
 use App\Modules\Sharing\Http\Middleware\EnforceInviteBudget;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
@@ -38,6 +39,8 @@ class SharingHttpServiceProvider extends ServiceProvider
         // previewed and accepted. Nothing is spent here.
         Route::middleware(['web', 'throttle:30,1'])->get('invite', InvitationPageController::class)
             ->name('sharing.invite.page');
+        Route::middleware(['web', 'throttle:30,1'])->get('invite/shared-budget', SharedBudgetInvitationPageController::class)
+            ->name('sharing.invite.shared-budget.page');
 
         if ($this->app->runningInConsole()) {
             $this->commands([ExpireInvitations::class]);

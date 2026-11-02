@@ -451,7 +451,7 @@ components:
         - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
         - $ref: '../components/schemas.yaml#/components/schemas/WalletScoped'
         - type: object
-          required: [kind, date, amount_minor, currency, category_id, counter_wallet_id, description, memo, counterparty, cleared, created_by, recurring_rule_id, occurrence_id]
+          required: [kind, date, amount_minor, currency, category_id, counter_wallet_id, description, memo, counterparty, cleared, created_by, recurring_rule_id, occurrence_id, shared_budget_id]
           properties:
             kind:
               $ref: '#/components/schemas/TransactionKind'
@@ -496,6 +496,10 @@ components:
               format: uuid
               readOnly: true
               description: Read-only, v1.7. The occurrence it confirms (one transaction per occurrence); null for a transaction recorded by hand. Never changes.
+            shared_budget_id:
+              type: [string, 'null']
+              format: uuid
+              description: v1.16. The Shared Budget this transaction counts toward, or null. Set only by its author.
 
     TransactionWrite:
       type: object
@@ -533,6 +537,13 @@ components:
           $ref: '#/components/schemas/Counterparty'
         cleared:
           type: boolean
+        shared_budget_id:
+          type: [string, 'null']
+          format: uuid
+          description: |
+            v1.16. The Shared Budget the transaction counts toward (ADR-0027); null for none.
+            Only an expense in the budget's currency, only by its author, who must be an active
+            member who is not read-only. Omitted keeps the stored link; null clears it.
         version:
           type: integer
           minimum: 0
@@ -560,6 +571,13 @@ components:
           $ref: '#/components/schemas/Counterparty'
         cleared:
           type: boolean
+        shared_budget_id:
+          type: [string, 'null']
+          format: uuid
+          description: |
+            v1.16. The Shared Budget the transaction counts toward (ADR-0027); null for none.
+            Only an expense in the budget's currency, only by its author, who must be an active
+            member who is not read-only. Omitted keeps the stored link; null clears it.
         version:
           type: integer
           minimum: 1

@@ -17,7 +17,7 @@ test('Free is limited only on sharing; Plus shares with five', function () {
     $free = Plan::query()->where('code', 'free')->sole();
     $plus = Plan::query()->where('code', 'plus_monthly')->sole();
 
-    expect($free->features)->toEqual(['sharing.enabled' => false, 'sharing.max_members_per_wallet' => 1, 'export.enabled' => true, 'reports.advanced' => true, 'wallets.max' => null])
+    expect($free->features)->toEqual(['sharing.enabled' => false, 'sharing.max_members_per_wallet' => 1, 'sharing.max_members_per_budget' => 1, 'export.enabled' => true, 'reports.advanced' => true, 'wallets.max' => null])
         ->and($plus->features['sharing.enabled'])->toBeTrue()
         ->and($plus->features['sharing.max_members_per_wallet'])->toBe(5);
 });

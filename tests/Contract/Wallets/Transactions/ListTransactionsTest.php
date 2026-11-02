@@ -37,7 +37,7 @@ test('lists the live transactions, transfers into the wallet included, newest da
 
     expect($response->json('data.*.id'))->toBe([$this->t5, $this->t4, $this->t3, $this->t2, $this->t1])
         ->and($response->json('meta'))->toMatchArray(['has_more' => false, 'next_cursor' => null, 'limit' => 50])
-        ->and(array_keys($response->json('data.0')))->toBe(['id', 'wallet_id', 'version', 'change_seq', 'created_at', 'updated_at', 'deleted_at', 'kind', 'date', 'amount_minor', 'currency', 'category_id', 'counter_wallet_id', 'description', 'memo', 'counterparty', 'cleared', 'created_by', 'recurring_rule_id', 'occurrence_id']);
+        ->and(array_keys($response->json('data.0')))->toBe(['id', 'wallet_id', 'version', 'change_seq', 'created_at', 'updated_at', 'deleted_at', 'kind', 'date', 'amount_minor', 'currency', 'category_id', 'counter_wallet_id', 'description', 'memo', 'counterparty', 'cleared', 'created_by', 'recurring_rule_id', 'occurrence_id', 'shared_budget_id']);
 });
 
 test('the other wallet lists the same transfers, the destination side included', function () {

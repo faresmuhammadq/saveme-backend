@@ -961,7 +961,7 @@ components:
         - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
         - $ref: '../components/schemas.yaml#/components/schemas/WalletScoped'
         - type: object
-          required: [preset, status, kind, amount_minor, amount_basis, currency, category_id, counter_wallet_id, description, memo, counterparty, auto_confirm, frequency, interval, anchor_day, start_date, end_date, occurrence_count, payout_round, payout_category_id, timezone, created_by]
+          required: [preset, status, kind, amount_minor, amount_basis, currency, category_id, counter_wallet_id, description, memo, counterparty, auto_confirm, frequency, interval, anchor_day, start_date, end_date, occurrence_count, payout_round, payout_category_id, shared_budget_id, timezone, created_by]
           properties:
             preset:
               $ref: '#/components/schemas/Preset'
@@ -1023,6 +1023,10 @@ components:
               type: [string, 'null']
               format: uuid
               description: Gam'eya only — the income category of the payout.
+            shared_budget_id:
+              type: [string, 'null']
+              format: uuid
+              description: v1.16. The Shared Budget the rule's expenses count toward, or null. Set only by the rule's author.
             timezone:
               type: string
               readOnly: true
@@ -1095,6 +1099,13 @@ components:
         payout_category_id:
           type: [string, 'null']
           format: uuid
+        shared_budget_id:
+          type: [string, 'null']
+          format: uuid
+          description: |
+            v1.16. The Shared Budget the rule's transactions count toward (ADR-0027); null for none.
+            Only an expense rule in the budget's currency, only by the rule's author, who must be an active
+            member who is not read-only. Omitted keeps the stored link; null clears it.
         version:
           type: integer
           minimum: 0

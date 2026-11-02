@@ -31,19 +31,19 @@ class BillingSeeder extends Seeder
             [
                 'code' => 'free', 'name' => ['en' => 'Free', 'ar' => 'مجاني'],
                 'period_type' => 'lifetime', 'period_days' => null, 'is_default' => true, 'status' => 'active', 'sort_order' => 1,
-                'features' => ['sharing.enabled' => false, 'sharing.max_members_per_wallet' => 1, ...$everythingButSharing],
+                'features' => ['sharing.enabled' => false, 'sharing.max_members_per_wallet' => 1, 'sharing.max_members_per_budget' => 1, ...$everythingButSharing],
                 'prices' => [],
             ],
             [
                 'code' => 'plus_monthly', 'name' => ['en' => 'Plus · Monthly', 'ar' => 'بلس · شهري'],
                 'period_type' => 'monthly', 'period_days' => null, 'is_default' => false, 'status' => 'active', 'sort_order' => 2,
-                'features' => ['sharing.enabled' => true, 'sharing.max_members_per_wallet' => 5, ...$everythingButSharing],
+                'features' => ['sharing.enabled' => true, 'sharing.max_members_per_wallet' => 5, 'sharing.max_members_per_budget' => 5, ...$everythingButSharing],
                 'prices' => [['channel' => 'instapay', 'product_id' => null, 'amount_minor' => 14900, 'currency' => 'EGP']],
             ],
             [
                 'code' => 'plus_yearly', 'name' => ['en' => 'Plus · Yearly', 'ar' => 'بلس · سنوي'],
                 'period_type' => 'yearly', 'period_days' => null, 'is_default' => false, 'status' => 'active', 'sort_order' => 3,
-                'features' => ['sharing.enabled' => true, 'sharing.max_members_per_wallet' => 5, ...$everythingButSharing],
+                'features' => ['sharing.enabled' => true, 'sharing.max_members_per_wallet' => 5, 'sharing.max_members_per_budget' => 5, ...$everythingButSharing],
                 'prices' => [['channel' => 'instapay', 'product_id' => null, 'amount_minor' => 129000, 'currency' => 'EGP']],
             ],
         ];

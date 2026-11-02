@@ -27,7 +27,7 @@ New records use [`template.md`](template.md) and take the next free number.
 | 0005 | [Derived balance with cached column](0005-derived-balance-with-cache.md) | Accepted | 2026-09-19 | P-05 |
 | 0006 | [Wallet-scoped authorization](0006-wallet-scoped-authorization.md) | Accepted | 2026-09-19 | P-08 |
 | 0007 | [Entitlements from provider-agnostic subscriptions](0007-entitlements-from-subscriptions.md) | Superseded by 0013 | 2026-09-19 | P-09, P-10 |
-| 0008 | [Sync: per-scope changes feed](0008-sync-changes-feed.md) | Accepted (rule 7 superseded by 0016; rule 12 partly by 0024) | 2026-09-19 | P-07 |
+| 0008 | [Sync: per-scope changes feed](0008-sync-changes-feed.md) | Accepted (rule 7 superseded by 0016; rule 12 partly by 0024; rule 1 extended by 0027, Proposed) | 2026-09-19 | P-07 |
 | 0009 | [Domain events after commit](0009-domain-events-after-commit.md) | Accepted | 2026-09-19 | P-11 |
 | 0010 | [Observability](0010-observability.md) | Accepted | 2026-09-19 | P-15 |
 | 0011 | [Time and timezones](0011-time-and-timezones.md) | Accepted | 2026-09-19 | P-12 |
@@ -46,6 +46,7 @@ New records use [`template.md`](template.md) and take the next free number.
 | 0024 | [Account deletion keeps shared history; the departed id is the marker](0024-account-deletion-keeps-shared-history.md) | Accepted | 2026-10-06 | P-07, P-08, P-11 |
 | 0025 | [Push through a port with an in-house FCM adapter](0025-push-through-a-port-with-an-in-house-fcm-adapter.md) | Accepted | 2026-10-06 | P-11, P-15, P-17 |
 | 0026 | [Google Play purchases through an in-house gateway; Play is the source of truth](0026-google-play-purchases-through-an-in-house-gateway.md) | Accepted | 2026-10-06 | P-09, P-10, P-15 |
+| 0027 | [Shared budgets hold their own entries and sync scope](0027-shared-budgets.md) | Proposed | 2026-11-01 | P-03, P-05, P-07, P-08, P-09, P-12 |
 
 ## Reading order
 

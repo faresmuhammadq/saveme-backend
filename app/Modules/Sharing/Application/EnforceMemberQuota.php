@@ -4,6 +4,8 @@ namespace App\Modules\Sharing\Application;
 
 use App\Modules\Billing\Application\Entitlements\EntitlementService;
 use App\Modules\Billing\Domain\Feature;
+use App\Modules\Budgeting\Application\SharedBudgets\SharedBudgetDirectory;
+use App\Modules\Budgeting\Application\SharedBudgets\SharedBudgetService;
 use App\Modules\Identity\Application\Events;
 use App\Modules\Sharing\Domain\Events\MemberRoleChanged;
 use App\Modules\Wallets\Application\Membership\MembershipService;
@@ -26,6 +28,8 @@ final class EnforceMemberQuota
         private readonly EntitlementService $entitlements,
         private readonly MembershipService $membership,
         private readonly MembershipQueryService $members,
+        private readonly SharedBudgetDirectory $sharedBudgets,
+        private readonly SharedBudgetService $budgetService,
     ) {}
 
     /**
@@ -42,9 +46,29 @@ final class EnforceMemberQuota
             $demoted += $this->forWallet($walletId);
         }
 
+        $demoted += $this->forOwnedSharedBudgets($ownerId);
+
         Log::info('sharing_quota_enforced', ['wallets' => count($walletIds), 'demoted' => $demoted]);
 
         return ['wallets' => count($walletIds), 'demoted' => $demoted];
+    }
+
+    /**
+     * Enforces the seat quota of every Shared Budget the person owns (ADR-0027
+     * rule 14); returns how many members became read-only. A plan that does
+     * not share leaves room for the owner only.
+     */
+    private function forOwnedSharedBudgets(string $ownerId): int
+    {
+        $entitlements = $this->entitlements->forUser($ownerId);
+        $quota = $entitlements->allows(Feature::SharingEnabled) ? $entitlements->quota(Feature::SharingMaxMembersPerBudget) : 1;
+        $limited = 0;
+
+        foreach ($this->sharedBudgets->ownedLiveBudgetIds($ownerId) as $budgetId) {
+            $limited += count($this->budgetService->limitMembersTo($budgetId, $quota));
+        }
+
+        return $limited;
     }
 
     /**

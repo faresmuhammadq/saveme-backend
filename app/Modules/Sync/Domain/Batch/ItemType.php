@@ -6,7 +6,7 @@ namespace App\Modules\Sync\Domain\Batch;
  * The record types a batch can write, and the operations each allows: every
  * whole-record write that exists today (spec 013, FR-017, spec 014 FR-023:
  * a rule may be upserted and deleted, an occurrence only upserted, since a
- * client never creates or deletes one; spec 015: a budget upserted and deleted, user-scoped). Commands (archive, transfer ownership) and partial edits are not batch operations.
+ * client never creates or deletes one; spec 015: a budget upserted and deleted, user-scoped; ADR-0027: a shared budget upserted and deleted). Commands (archive, transfer ownership) and partial edits are not batch operations.
  */
 enum ItemType: string
 {
@@ -17,6 +17,7 @@ enum ItemType: string
     case RecurringRule = 'recurring_rule';
     case Occurrence = 'occurrence';
     case Budget = 'budget';
+    case SharedBudget = 'shared_budget';
 
     /**
      * @return list<ItemOperation>
@@ -24,7 +25,7 @@ enum ItemType: string
     public function allowedOperations(): array
     {
         return match ($this) {
-            self::Wallet, self::Category, self::RecurringRule, self::Budget => [ItemOperation::Upsert, ItemOperation::Delete],
+            self::Wallet, self::Category, self::RecurringRule, self::Budget, self::SharedBudget => [ItemOperation::Upsert, ItemOperation::Delete],
             self::Transaction => [ItemOperation::Upsert, ItemOperation::Delete, ItemOperation::Restore],
             self::Profile, self::Occurrence => [ItemOperation::Upsert],
         };

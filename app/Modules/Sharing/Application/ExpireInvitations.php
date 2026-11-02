@@ -2,6 +2,7 @@
 
 namespace App\Modules\Sharing\Application;
 
+use App\Modules\Sharing\Application\SharedBudgets\ExpireSharedBudgetInvitations;
 use App\Modules\Sharing\Domain\InvitationStatus;
 use App\Modules\Sharing\Domain\Ports\InvitationRepository;
 use App\Modules\Wallets\Application\ScopeWrite;
@@ -24,6 +25,7 @@ final class ExpireInvitations
     public function __construct(
         private readonly InvitationRepository $invitations,
         private readonly WalletScopeWrites $scopes,
+        private readonly ExpireSharedBudgetInvitations $sharedBudgets,
     ) {}
 
     /**
@@ -78,6 +80,8 @@ final class ExpireInvitations
                 }
             }
         }
+
+        $closed += $this->sharedBudgets->run($now);
 
         Log::info('sharing_invitations_expired', ['closed' => $closed]);
 

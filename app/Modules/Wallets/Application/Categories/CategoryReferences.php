@@ -36,6 +36,8 @@ final class CategoryReferences
         private readonly WalletRepository $wallets,
         private readonly ScopeSequence $sequence,
         private readonly WalletAuthorizer $authorizer,
+        /** @var iterable<CategoryDisplayParticipant> */
+        private readonly iterable $displayParticipants = [],
     ) {}
 
     /**
@@ -107,6 +109,10 @@ final class CategoryReferences
 
             $this->references->refresh($live->id, $category, $this->sequence->nextFor($walletId));
             $this->sequence->nextFor($walletId);
+        }
+
+        foreach ($this->displayParticipants as $participant) {
+            $participant->republish($category->id, $category->name, $category->icon, $category->color);
         }
     }
 

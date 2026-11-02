@@ -398,6 +398,8 @@
       | `occurrence` | `upsert` | `PUT /wallets/{wallet_id}/occurrences/{id}` — confirm, skip or edit one; never creates (v1.7) |
       | `budget` | `upsert` | `PUT /budgets/{id}` (v1.8) |
       | `budget` | `delete` | `DELETE /budgets/{id}` (v1.8) |
+      | `shared_budget` | `upsert` | `PUT /shared-budgets/{id}` (v1.16) |
+      | `shared_budget` | `delete` | `DELETE /shared-budgets/{id}` (v1.16) |
 
       `data` is that write's body, verbatim. Archive, ownership transfer and
       partial (PATCH) edits are not batch operations; use their endpoints.
@@ -674,11 +676,13 @@ components:
           description: |
             User feed: `profile`, `device_session`, `category`,
             `wallet_member` (the caller's own memberships), and from v1.8
-            `budget` (the caller's own budgets). Wallet feed:
+            `budget` (the caller's own budgets), and from v1.16
+            `shared_budget_member` (the caller's own memberships of Shared Budgets; a
+            tombstoned one means they no longer belong). Wallet feed:
             `wallet`, `wallet_member`, `category_reference`, `transaction`,
             and from v1.7 `recurring_rule`, `occurrence`, and from v1.9
             `invitation`.
-          enum: [profile, device_session, category, wallet_member, wallet, category_reference, transaction, recurring_rule, occurrence, budget, invitation]
+          enum: [profile, device_session, category, wallet_member, wallet, category_reference, transaction, recurring_rule, occurrence, budget, invitation, shared_budget_member]
         record:
           anyOf:
             - $ref: './identity.yaml#/components/schemas/Profile'
@@ -692,6 +696,7 @@ components:
             - $ref: './recurring.yaml#/components/schemas/Occurrence'
             - $ref: './budgets.yaml#/components/schemas/Budget'
             - $ref: './sharing.yaml#/components/schemas/Invitation'
+            - $ref: './shared-budgets.yaml#/components/schemas/SharedBudgetMember'
 
     ChangeFeedMeta:
       type: object
@@ -774,7 +779,7 @@ components:
       properties:
         type:
           type: string
-          enum: [wallet, category, transaction, profile, recurring_rule, occurrence, budget]
+          enum: [wallet, category, transaction, profile, recurring_rule, occurrence, budget, shared_budget]
         op:
           type: string
           enum: [upsert, delete, restore]
@@ -801,6 +806,8 @@ components:
             - $ref: './recurring.yaml#/components/schemas/OccurrenceWrite'
             - $ref: './budgets.yaml#/components/schemas/BudgetWrite'
             - $ref: './budgets.yaml#/components/schemas/BudgetVersionOnly'
+            - $ref: './shared-budgets.yaml#/components/schemas/SharedBudgetWrite'
+            - $ref: './shared-budgets.yaml#/components/schemas/SharedBudgetVersionOnly'
 
     BatchItemResult:
       type: object
@@ -812,7 +819,7 @@ components:
       properties:
         type:
           type: string
-          enum: [wallet, category, transaction, profile, recurring_rule, occurrence, budget]
+          enum: [wallet, category, transaction, profile, recurring_rule, occurrence, budget, shared_budget]
         id:
           type: string
           format: uuid
@@ -836,6 +843,7 @@ components:
             - $ref: './recurring.yaml#/components/schemas/RecurringRule'
             - $ref: './recurring.yaml#/components/schemas/Occurrence'
             - $ref: './budgets.yaml#/components/schemas/Budget'
+            - $ref: './shared-budgets.yaml#/components/schemas/SharedBudget'
         problem:
           description: The single write's problem body when `conflict` or `rejected`; otherwise null. Pointers are rooted at the item's `data`.
           anyOf:

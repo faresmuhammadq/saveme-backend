@@ -20,9 +20,12 @@ use App\Modules\Billing\Infrastructure\Models\Subscription;
 use App\Modules\Budgeting\Application\BudgetQueryService;
 use App\Modules\Budgeting\Application\BudgetService;
 use App\Modules\Budgeting\Application\Dto\SavedBudget;
+use App\Modules\Budgeting\Application\SharedBudgets\SharedBudgetService;
 use App\Modules\Budgeting\Domain\BudgetProgress;
 use App\Modules\Budgeting\Domain\BudgetRecord;
+use App\Modules\Budgeting\Domain\SharedBudgets\Ports\SharedBudgetRepository;
 use App\Modules\Budgeting\Http\Resources\BudgetResource;
+use App\Modules\Budgeting\Http\SharedBudgets\Resources\SharedBudgetResource;
 use App\Modules\Budgeting\Infrastructure\Models\Budget;
 use App\Modules\Identity\Application\Deletion\DeletionPlanner;
 use App\Modules\Identity\Application\Deletion\PurgeAccount;
@@ -87,6 +90,7 @@ use Illuminate\Routing\Route;
 use Illuminate\Routing\RouteCollection;
 use Illuminate\Support\Carbon as ClockInstant;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
@@ -2140,4 +2144,59 @@ function postPush(array $push, ?string $bearer, bool $signed = true): TestRespon
     }
 
     return test()->postJson('/api/v1/webhooks/google-play', $push, $headers);
+}
+
+/*
+|--------------------------------------------------------------------------
+| Shared Budgets (ADR-0027)
+|--------------------------------------------------------------------------
+*/
+
+/**
+ * @param  array<string, mixed>  $changes
+ * @return array{name: string, currency: string, start_day: int, limit_minor: ?int}
+ */
+function sharedBudgetValues(array $changes = []): array
+{
+    return ['name' => 'Home', 'currency' => 'EGP', 'start_day' => 1, 'limit_minor' => 2000000, ...$changes];
+}
+
+function createSharedBudget(string $ownerId, array $changes = []): string
+{
+    $id = (string) Str::uuid7();
+    app(SharedBudgetService::class)->save($ownerId, $id, sharedBudgetValues($changes), 0, SharedBudgetResource::toArray(...));
+
+    return $id;
+}
+
+function joinSharedBudget(string $budgetId, string $userId): void
+{
+    DB::transaction(function () use ($budgetId, $userId): void {
+        app(SharedBudgetRepository::class)->findForUpdate($budgetId);
+        app(SharedBudgetService::class)->addMember($budgetId, $userId);
+    });
+}
+
+/**
+ * Gives a person a plan that shares, with the given seats per Shared Budget.
+ */
+function grantSharing(string $userId, int $seats = 5): void
+{
+    $subscription = Subscription::query()->where('user_id', $userId)->first() ?? Subscription::factory()->create(['user_id' => $userId]);
+
+    $plan = Plan::query()->findOrFail($subscription->plan_id);
+    $plan->features = [...$plan->features, 'sharing.enabled' => true, 'sharing.max_members_per_budget' => $seats];
+    $plan->save();
+
+    app()->forgetScopedInstances();
+}
+
+/**
+ * Takes a person's subscription away: Free again, which does not share.
+ */
+function revokeSharing(string $userId): void
+{
+    Subscription::query()->where('user_id', $userId)->delete();
+
+    app()->forgetScopedInstances();
 }

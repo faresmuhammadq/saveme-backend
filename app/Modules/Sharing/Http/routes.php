@@ -4,6 +4,8 @@ use App\Modules\Sharing\Http\Controllers\InvitationController;
 use App\Modules\Sharing\Http\Controllers\InvitationResponseController;
 use App\Modules\Sharing\Http\Controllers\LeaveController;
 use App\Modules\Sharing\Http\Controllers\MemberController;
+use App\Modules\Sharing\Http\Controllers\SharedBudgetInvitationController;
+use App\Modules\Sharing\Http\Controllers\SharedBudgetInvitationResponseController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -29,7 +31,16 @@ Route::name('sharing.')->middleware('auth:api')->group(function (): void {
 
     Route::post('wallets/{id}/leave', LeaveController::class)->name('leave');
 
+    // A Shared Budget's invitations (ADR-0027): the owner's, by link.
+    Route::get('shared-budgets/{id}/invitations', [SharedBudgetInvitationController::class, 'index'])->name('shared-budget-invitations.index');
+    Route::get('shared-budgets/{id}/invitations/{iid}', [SharedBudgetInvitationController::class, 'show'])->name('shared-budget-invitations.show');
+    Route::post('shared-budget-invitations/preview', [SharedBudgetInvitationResponseController::class, 'preview'])->name('shared-budget-invitations.preview');
+    Route::post('shared-budget-invitations/accept', [SharedBudgetInvitationResponseController::class, 'accept'])->name('shared-budget-invitations.accept');
+    Route::post('shared-budget-invitations/decline', [SharedBudgetInvitationResponseController::class, 'decline'])->name('shared-budget-invitations.decline');
+
     Route::middleware('address.verified')->group(function (): void {
+        Route::put('shared-budgets/{id}/invitations/{iid}', [SharedBudgetInvitationController::class, 'upsert'])->middleware('sharing.invite-budget')->name('shared-budget-invitations.upsert');
+        Route::delete('shared-budgets/{id}/invitations/{iid}', [SharedBudgetInvitationController::class, 'destroy'])->name('shared-budget-invitations.destroy');
         Route::put('wallets/{id}/invitations/{iid}', [InvitationController::class, 'upsert'])->middleware('sharing.invite-budget')->name('invitations.upsert');
         Route::delete('wallets/{id}/invitations/{iid}', [InvitationController::class, 'destroy'])->name('invitations.destroy');
         Route::patch('wallets/{id}/members/{uid}', [MemberController::class, 'changeRole'])->name('members.change-role');

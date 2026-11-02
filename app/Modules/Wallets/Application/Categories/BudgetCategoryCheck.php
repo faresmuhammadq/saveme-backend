@@ -45,4 +45,23 @@ final class BudgetCategoryCheck
             throw new CategoryNotEligible;
         }
     }
+
+    public function isPlatform(string $categoryId): bool
+    {
+        return $this->categories->findPlatformForShare($categoryId) !== null;
+    }
+
+    /**
+     * What a member needs to render a category they may not own: the display
+     * fields of a person's category, all null for a platform one, which every
+     * client already holds.
+     *
+     * @return array{name: ?string, icon: ?string, color: ?string}
+     */
+    public function displayOf(string $categoryId): array
+    {
+        $category = $this->categories->findPlatformForShare($categoryId) === null ? $this->categories->findAny($categoryId) : null;
+
+        return ['name' => $category?->name, 'icon' => $category?->icon, 'color' => $category?->color];
+    }
 }

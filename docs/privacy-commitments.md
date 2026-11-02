@@ -74,6 +74,9 @@ We would rather tell you exactly what is protected than tell you "everything is 
 - **When you invite someone by email, we keep their address only until they answer or 7 days pass, and only the wallet's members see it.**
 - **If your plan ends, the people you share with become viewers; nobody is removed.**
 
+- **A shared budget shows only what you add to it.** You pick it on each expense; nothing is added for you. The other members see the amount, date, category, note and who paid. They never see which wallet paid, your wallet's name or balance, your memo, or the person you recorded it against.
+- **If you leave a shared budget, your amounts, dates and categories stay in its history, because its totals depend on them. Your notes are erased.**
+
 One honest limit: if someone was a member and you removed them, whatever their phone already downloaded is on their phone. We can stop them getting anything new. We cannot reach into a device we do not control, and we will not pretend otherwise.
 
 ### العربية
@@ -161,6 +164,8 @@ Every promise on this page is backed by a rule in [the security baseline](securi
 | Members see a wallet; no other user sees anything | FR-017 |
 | Operators see counts, never names or money; each look is recorded | spec 021 FR-021, FR-022, FR-024 |
 | Your categories and budgets stay yours | FR-017 |
+| A shared budget shows only what you add, and never your wallet | ADR-0027 rules 4, 6 |
+| Leaving a shared budget erases your notes and keeps its totals | ADR-0027 rule 8 |
 | Removing a member stops their access from that moment | FR-003, FR-019 |
 | A removed member's phone keeps what it already downloaded | FR-028, stated limit |
 | Deleted records are removed within 90 days | FR-028, FR-028a |

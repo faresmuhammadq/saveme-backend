@@ -29,6 +29,7 @@ final class SaveTransactionRequest extends TransactionRequest
             'memo' => ['present', 'nullable', 'string', 'max:1000'],
             'counterparty' => ['present', 'nullable', 'string', 'max:100'],
             'cleared' => ['bail', 'required', 'boolean:strict'],
+            'shared_budget_id' => ['sometimes', 'nullable', 'string', 'uuid'],
             'version' => ['sometimes', 'integer', 'min:0'],
         ];
     }
@@ -38,7 +39,7 @@ final class SaveTransactionRequest extends TransactionRequest
      */
     public function values(): array
     {
-        return [
+        $values = [
             'kind' => $this->string('kind')->toString(),
             'date' => $this->string('date')->toString(),
             'amount_minor' => $this->integer('amount_minor'),
@@ -50,6 +51,13 @@ final class SaveTransactionRequest extends TransactionRequest
             'counterparty' => $this->nullableString('counterparty'),
             'cleared' => $this->boolean('cleared'),
         ];
+
+        // Absent keeps the stored link, so an older client never unlinks a transaction (ADR-0027 rule 4).
+        if ($this->exists('shared_budget_id')) {
+            $values['shared_budget_id'] = $this->nullableString('shared_budget_id');
+        }
+
+        return $values;
     }
 
     /**

@@ -9,7 +9,7 @@ use DateTimeImmutable;
  * A Recurring Rule as the application sees it: every column, no framework
  * type. `autoConfirmFrom` is internal and never goes on the wire.
  *
- * @phpstan-type Values array{preset: string, status: string, kind: string, amount_minor: int, amount_basis: string, currency: string, category_id: ?string, counter_wallet_id: ?string, description: ?string, memo: ?string, counterparty: ?string, auto_confirm: bool, frequency: string, interval: int, anchor_day: ?int, start_date: string, end_date: ?string, occurrence_count: ?int, payout_round: ?int, payout_category_id: ?string}
+ * @phpstan-type Values array{preset: string, status: string, kind: string, amount_minor: int, amount_basis: string, currency: string, category_id: ?string, counter_wallet_id: ?string, description: ?string, memo: ?string, counterparty: ?string, auto_confirm: bool, frequency: string, interval: int, anchor_day: ?int, start_date: string, end_date: ?string, occurrence_count: ?int, payout_round: ?int, payout_category_id: ?string, shared_budget_id: ?string}
  */
 final readonly class RecurringRuleRecord
 {
@@ -44,6 +44,7 @@ final readonly class RecurringRuleRecord
         public DateTimeImmutable $createdAt,
         public DateTimeImmutable $updatedAt,
         public ?DateTimeImmutable $deletedAt,
+        public ?string $sharedBudgetId = null,
     ) {}
 
     public function isTombstone(): bool
@@ -89,6 +90,7 @@ final readonly class RecurringRuleRecord
             'occurrence_count' => $this->occurrenceCount,
             'payout_round' => $this->payoutRound,
             'payout_category_id' => $this->payoutCategoryId,
+            'shared_budget_id' => $this->sharedBudgetId,
         ];
     }
 }

@@ -3,10 +3,13 @@
 namespace App\Modules\Sync\Application;
 
 use App\Modules\Budgeting\Application\Sync\FeedRecord as BudgetingRecord;
+use App\Modules\Budgeting\Application\Sync\SharedBudgetFeedQuery;
 use App\Modules\Budgeting\Application\Sync\UserFeedQuery as BudgetingUserFeed;
+use App\Modules\Budgeting\Domain\SharedBudgets\Refusals\SharedBudgetNotFound;
 use App\Modules\Identity\Application\Sync\FeedRecord as IdentityRecord;
 use App\Modules\Identity\Application\Sync\UserFeedQuery as IdentityUserFeed;
 use App\Modules\Sharing\Application\Sync\FeedRecord as SharingRecord;
+use App\Modules\Sharing\Application\Sync\SharedBudgetFeedQuery as SharingSharedBudgetFeed;
 use App\Modules\Sharing\Application\Sync\WalletFeedQuery as SharingWalletFeed;
 use App\Modules\Sync\Domain\Cursor\CursorRefusal;
 use App\Modules\Sync\Domain\Cursor\FeedKind;
@@ -37,6 +40,8 @@ final class ChangeFeedService
         private readonly WalletFeedQuery $walletFeed,
         private readonly BudgetingUserFeed $budgetingUserFeed,
         private readonly SharingWalletFeed $sharingWalletFeed,
+        private readonly SharedBudgetFeedQuery $sharedBudgetFeed,
+        private readonly SharingSharedBudgetFeed $sharingSharedBudgetFeed,
         private readonly CursorSigner $signer,
     ) {}
 
@@ -81,6 +86,26 @@ final class ChangeFeedService
     }
 
     /**
+     * One Shared Budget's feed (ADR-0027 rule 9).
+     *
+     * @throws CursorInvalid
+     * @throws CursorExpired
+     * @throws SharedBudgetNotFound
+     */
+    public function sharedBudgetPage(string $readerId, string $budgetId, ?string $cursor, int $limit): FeedResult
+    {
+        $scope = $this->sharedBudgetFeed->scope($readerId, $budgetId);
+        [$after, $horizon] = $this->positionOf($cursor, FeedKind::SharedBudget, $budgetId, $readerId, $scope);
+
+        $sources = [
+            array_map(fn (BudgetingRecord $row): FeedRow => new FeedRow($row->type, $row->position, $row->record), $this->sharedBudgetFeed->page($readerId, $budgetId, $after, $limit)),
+            array_map(fn (SharingRecord $row): FeedRow => new FeedRow($row->type, $row->position, $row->record), $this->sharingSharedBudgetFeed->page($readerId, $budgetId, $after, $limit)),
+        ];
+
+        return $this->result(FeedKind::SharedBudget, $budgetId, $readerId, $sources, $after, $horizon, $limit, $scope['counter'], $cursor === null);
+    }
+
+    /**
      * The position to read after and the purge horizon the read began under:
      * the scope's own when there is no cursor, else the one the cursor
      * carries. A cursor is expired only when the horizon moved past both its
@@ -118,7 +143,11 @@ final class ChangeFeedService
         $page = FeedMerge::merge($sources, $after, $limit, $counter);
 
         Log::info('sync_feed_read', [
-            'feed' => $feed === FeedKind::User ? 'user' : 'wallet',
+            'feed' => match ($feed) {
+                FeedKind::User => 'user',
+                FeedKind::Wallet => 'wallet',
+                FeedKind::SharedBudget => 'shared_budget',
+            },
             'rows' => count($page->rows),
             'has_more' => $page->hasMore,
             'cursor_absent' => $cursorAbsent,

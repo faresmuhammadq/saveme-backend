@@ -38,6 +38,7 @@ return [
     'capabilities' => [
         'sharing_enabled' => 'المحافظ المشتركة',
         'sharing_max_members_per_wallet' => 'الأعضاء في المحفظة',
+        'sharing_max_members_per_budget' => 'الأعضاء في الميزانية المشتركة',
         'export_enabled' => 'التصدير',
         'reports_advanced' => 'التقارير المتقدمة',
         'wallets_max' => 'المحافظ',

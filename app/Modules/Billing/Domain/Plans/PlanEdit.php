@@ -142,7 +142,7 @@ final readonly class PlanEdit
             }
 
             $value = $draft[$feature->value];
-            $fixed = $stored->isDefault && ! in_array($feature, [Feature::SharingEnabled, Feature::SharingMaxMembersPerWallet], true);
+            $fixed = $stored->isDefault && ! in_array($feature, [Feature::SharingEnabled, Feature::SharingMaxMembersPerWallet, Feature::SharingMaxMembersPerBudget], true);
 
             $valid = $feature->isQuota()
                 ? $value === null || (is_int($value) && $value >= 1 && $value <= 1000)

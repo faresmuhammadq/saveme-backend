@@ -1,0 +1,1877 @@
+# Shared Budgets (ADR-0027). Every operation sits under /api/v1, inherits the
+# root's bearer scheme and runs through the shared runtime, so each also
+# documents the shared refusals it can produce.
+#
+# A Shared Budget is a spending limit and category list that several people
+# track together, whichever wallets pay. Its own sync scope: a person reads a
+# budget only as one of its members (a non-member gets 404 NOT_FOUND, a member
+# whose role does not permit the action 403 FORBIDDEN), and membership never
+# grants access to any wallet. Only the owner changes the budget, its limits,
+# its category lines, its start day and its members. Every write sits behind
+# the verification gate (403 EMAIL_NOT_VERIFIED); reads and leaving are not.
+#
+# A transaction counts toward a budget only when its author names it
+# (`shared_budget_id` on the transaction and the recurring rule, see
+# transactions.yaml and recurring.yaml). A Shared Budget Entry carries the
+# author, category, date, amount and note, and never a wallet, a balance, a
+# memo or a counterparty. Progress and reports sum entries, computed on every
+# read; the period and "today" come from the budget, so every member reads the
+# same figures.
+#
+# v1 invites by link only; the link carries the token, which exists once, in
+# the create's answer (`meta.share_url`).
+#
+# New in v1.16. No new error code.
+
+/shared-budgets:
+  get:
+    operationId: listSharedBudgets
+    tags: [Budgeting]
+    summary: 'List the Shared Budgets the caller belongs to.'
+    description: |
+      Returns every live Shared Budget the caller is an active member of,
+      archived ones included. Tombstoned budgets are not listed: a person who
+      lost a budget learns it from the user feed's tombstoned membership.
+      Sorted by `created_at`, stabilised by `id`. No filters.
+    x-filterable: []
+    x-sortable: [created_at]
+    parameters:
+      - $ref: '../components/parameters.yaml#/components/parameters/Cursor'
+      - $ref: '../components/parameters.yaml#/components/parameters/Limit'
+      - $ref: '../components/parameters.yaml#/components/parameters/Filter'
+      - $ref: '../components/parameters.yaml#/components/parameters/Sort'
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'A page of Shared Budgets. None is 200 with `data: []`.'
+        headers: &successHeaders
+          X-Request-Id:
+            $ref: '../components/headers.yaml#/components/headers/XRequestId'
+          Content-Language:
+            $ref: '../components/headers.yaml#/components/headers/ContentLanguage'
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/SharedBudget'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+/shared-budgets/{id}:
+  get:
+    operationId: getSharedBudget
+    tags: [Budgeting]
+    summary: 'Read one Shared Budget the caller belongs to.'
+    description: |
+      Returned to its members only. A non-member, an unknown id and any other
+      kind of record are 404 NOT_FOUND.
+    parameters:
+      - &budgetId
+        $ref: '../components/parameters.yaml#/components/parameters/ResourceId'
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'The budget.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudget'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  put:
+    operationId: saveSharedBudget
+    tags: [Budgeting]
+    summary: 'Create a Shared Budget, or replace the one the caller owns.'
+    description: |
+      Omitted or 0 `version` creates: the caller becomes its owner and its only
+      member, in the timezone of their profile. A repeat of the same body is
+      `200` with nothing changed. Only the owner changes it afterwards; `currency`
+      is immutable (422 IMMUTABLE_FIELD). A changed `limit_minor` applies from
+      the current Budget Period and a changed `start_day` from the next, each
+      kept in the histories so a past period reports the limit it had. A stale
+      version, or a tombstone, is 409 VERSION_CONFLICT. A member who is not the
+      owner is 403 FORBIDDEN.
+    parameters:
+      - *budgetId
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SharedBudgetWrite'
+    responses:
+      '200':
+        description: 'The budget, unchanged by a replay or replaced.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudget'
+      '201':
+        description: 'Created.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudget'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  patch:
+    operationId: patchSharedBudget
+    tags: [Budgeting]
+    summary: 'Change some members of a Shared Budget the caller owns.'
+    description: |
+      Any of `name`, `start_day` and `limit_minor` (null removes the overall
+      limit) plus the required `version`. Never creates.
+    parameters:
+      - *budgetId
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SharedBudgetPatch'
+    responses:
+      '200':
+        description: 'The updated budget.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudget'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  delete:
+    operationId: deleteSharedBudget
+    tags: [Budgeting]
+    summary: 'Delete a Shared Budget the caller owns, for everyone.'
+    description: |
+      A tombstone: every entry, line and membership is tombstoned with it and
+      each member's user feed is told. The transactions stay in their wallets.
+      Deleting a tombstone returns it, to the person who owned it.
+    parameters:
+      - *budgetId
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SharedBudgetVersionOnly'
+    responses:
+      '200':
+        description: 'The tombstoned budget.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudget'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+/shared-budgets/{id}/archive:
+  post:
+    operationId: archiveSharedBudget
+    tags: [Budgeting]
+    summary: 'Archive a Shared Budget the caller owns.'
+    description: |
+      One way. An archived budget takes no new transactions and keeps its
+      history, progress and members. Archiving an archived budget changes
+      nothing.
+    parameters:
+      - *budgetId
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SharedBudgetVersionOnly'
+    responses:
+      '200':
+        description: 'The archived budget.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudget'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+/shared-budgets/{id}/transfer-ownership:
+  post:
+    operationId: transferSharedBudgetOwnership
+    tags: [Budgeting]
+    summary: 'Hand a Shared Budget to another member.'
+    description: |
+      The named member becomes the owner and the caller stays a member. The
+      named person must be an active member other than the caller, else 422
+      INVALID_ENUM_VALUE at `/user_id`.
+    parameters:
+      - *budgetId
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SharedBudgetTransfer'
+    responses:
+      '200':
+        description: 'The budget, now owned by the successor.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudget'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+/shared-budgets/{id}/leave:
+  post:
+    operationId: leaveSharedBudget
+    tags: [Budgeting]
+    summary: 'Leave a Shared Budget.'
+    description: |
+      The caller's amounts, dates and categories stay in the budget's history,
+      because its totals depend on them; their notes are erased and each entry
+      stops following its transaction. The owner transfers or deletes the budget
+      first (403 FORBIDDEN). Needs no verified address.
+    parameters:
+      - *budgetId
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '204':
+        description: 'Left. No body.'
+        headers: *successHeaders
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+/shared-budgets/{id}/lines:
+  get:
+    operationId: listSharedBudgetLines
+    tags: [Budgeting]
+    summary: 'The category lines of a Shared Budget.'
+    description: |
+      The budget's live lines, which are the categories a member may pick once
+      they have chosen the budget on a transaction, beside the platform's.
+    parameters:
+      - *budgetId
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'The live lines.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/SharedBudgetLine'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+/shared-budgets/{id}/lines/{lineId}:
+  put:
+    operationId: saveSharedBudgetLine
+    tags: [Budgeting]
+    summary: 'Add a category line to a Shared Budget, or change its limit.'
+    description: |
+      Owner only. A new line names an expense category the owner may use (their
+      own or a platform category, 422 INVALID_ENUM_VALUE at `/category_id`
+      otherwise, and for a category already on the list). `category_id` is
+      immutable. A changed limit applies from the current Budget Period.
+    parameters:
+      - *budgetId
+      - &lineId
+        name: lineId
+        in: path
+        required: true
+        description: The line's identifier, a client-generated UUIDv7.
+        schema:
+          type: string
+          format: uuid
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SharedBudgetLineWrite'
+    responses:
+      '200':
+        description: 'The line, unchanged by a replay or changed.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudgetLine'
+      '201':
+        description: 'Created.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudgetLine'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  delete:
+    operationId: deleteSharedBudgetLine
+    tags: [Budgeting]
+    summary: 'Take a category line off a Shared Budget.'
+    description: |
+      Owner only. Past entries keep their category and past periods keep the
+      line's limit. Deleting a tombstone returns it.
+    parameters:
+      - *budgetId
+      - *lineId
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SharedBudgetVersionOnly'
+    responses:
+      '200':
+        description: 'The tombstoned line.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudgetLine'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+/shared-budgets/{id}/members:
+  get:
+    operationId: listSharedBudgetMembers
+    tags: [Budgeting]
+    summary: 'The active members of a Shared Budget.'
+    description: |
+      The owner first, then by joining order. A name is null for a person who
+      left the product, shown by clients as "Former member".
+    parameters:
+      - *budgetId
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'The active members.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/SharedBudgetMember'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+/shared-budgets/{id}/members/{uid}:
+  delete:
+    operationId: removeSharedBudgetMember
+    tags: [Budgeting]
+    summary: 'Remove a member from a Shared Budget.'
+    description: |
+      Owner only. The owner cannot be removed (403 FORBIDDEN). The person's
+      amounts, dates and categories stay and their notes are erased, as when
+      they leave.
+    parameters:
+      - *budgetId
+      - &memberUserId
+        name: uid
+        in: path
+        required: true
+        description: The member's user id.
+        schema:
+          type: string
+          format: uuid
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '204':
+        description: 'Removed. No body.'
+        headers: *successHeaders
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+/shared-budgets/{id}/progress:
+  get:
+    operationId: getSharedBudgetProgress
+    tags: [Budgeting]
+    summary: 'Progress of a Shared Budget for the Budget Period containing a date.'
+    description: |
+      Computed from the budget's entries on this read, never cached. `date`
+      selects the Budget Period (default: today in the budget's timezone); a
+      malformed `date` is 400 INVALID_QUERY_PARAMETER. Each limit is the one
+      that period had, not today's.
+    parameters:
+      - *budgetId
+      - &progressDate
+        name: date
+        in: query
+        required: false
+        description: Any calendar date (`YYYY-MM-DD`) inside the wanted Budget Period. Absent means today in the budget's timezone. Anything else is 400 INVALID_QUERY_PARAMETER.
+        schema:
+          type: string
+          format: date
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: "The budget's progress for that Budget Period."
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudgetProgress'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+/shared-budgets/{id}/reports/summary:
+  get:
+    operationId: getSharedBudgetSummary
+    tags: [Budgeting]
+    summary: 'Spending of a Shared Budget over a range, by category and by member.'
+    description: |
+      Any range from 1900-01-01 to 2999-12-31. `from` and `to` are required.
+    parameters:
+      - *budgetId
+      - &rangeFrom
+        name: from
+        in: query
+        required: true
+        description: First day of the range, `YYYY-MM-DD`. Required; anything else is 400 INVALID_QUERY_PARAMETER.
+        schema:
+          type: string
+          format: date
+      - &rangeTo
+        name: to
+        in: query
+        required: true
+        description: Last day of the range, inclusive, `YYYY-MM-DD`, not before `from`. Required.
+        schema:
+          type: string
+          format: date
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'The summary.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudgetSummary'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+/shared-budgets/{id}/reports/trend:
+  get:
+    operationId: getSharedBudgetTrend
+    tags: [Budgeting]
+    summary: 'Spending of a Shared Budget per Budget Period over a range.'
+    description: |
+      One entry per Budget Period from the one containing `from` through the one
+      containing `to`, oldest first, with the overall limit that period had. At
+      most 24 periods; more is 400 INVALID_QUERY_PARAMETER.
+    parameters:
+      - *budgetId
+      - *rangeFrom
+      - *rangeTo
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'The periods.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudgetTrend'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+/shared-budgets/{id}/invitations:
+  get:
+    operationId: listSharedBudgetInvitations
+    tags: [Budgeting]
+    summary: 'The pending invitations of a Shared Budget.'
+    description: |
+      Owner only: a non-member is 404, a member who is not the owner 403.
+      Newest first, pending only.
+    parameters:
+      - *budgetId
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'The pending invitations.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/SharedBudgetInvitation'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+/shared-budgets/{id}/invitations/{iid}:
+  get:
+    operationId: getSharedBudgetInvitation
+    tags: [Budgeting]
+    summary: 'Read one invitation of a Shared Budget.'
+    description: |
+      Owner only.
+    parameters:
+      - *budgetId
+      - &invitationId
+        name: iid
+        in: path
+        required: true
+        description: The invitation's identifier, a client-generated UUIDv7.
+        schema:
+          type: string
+          format: uuid
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'The invitation.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudgetInvitation'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+  put:
+    operationId: sendSharedBudgetInvitation
+    tags: [Budgeting]
+    summary: 'Invite someone to a Shared Budget by link.'
+    description: |
+      Owner only, and only by link in this release. A new invitation lives 7
+      days and needs the owner's plan to share with a seat free
+      (403 FEATURE_NOT_ENTITLED). The `201` carries `meta.share_url`, the only
+      time the link exists. A repeat returns the invitation with no link.
+      Counts against the caller's 24-hour invitation budget (429).
+    parameters:
+      - *budgetId
+      - *invitationId
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SharedBudgetInvitationWrite'
+    responses:
+      '200':
+        description: 'A repeat of the create.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudgetInvitation'
+      '201':
+        description: 'Created. Carries `meta.share_url`.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudgetInvitation'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+
+  delete:
+    operationId: revokeSharedBudgetInvitation
+    tags: [Budgeting]
+    summary: 'Withdraw a pending invitation.'
+    description: |
+      Owner only. Closed as `revoked`, its token dead and its seat freed.
+      Withdrawing a closed invitation returns it.
+    parameters:
+      - *budgetId
+      - *invitationId
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SharedBudgetVersionOnly'
+    responses:
+      '200':
+        description: 'The closed invitation.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudgetInvitation'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '403':
+        $ref: '../components/responses.yaml#/components/responses/Forbidden'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '409':
+        $ref: '../components/responses.yaml#/components/responses/Conflict'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+/shared-budget-invitations/preview:
+  post:
+    operationId: previewSharedBudgetInvitation
+    tags: [Budgeting]
+    summary: 'See what a Shared Budget token offers.'
+    description: |
+      Changes nothing. Open to an unverified account. Every token that works in
+      no way (unknown, used, revoked, declined, expired, or for a deleted
+      budget) is the same 404 NOT_FOUND. Spends the caller's 30-per-hour token
+      budget.
+    parameters:
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SharedBudgetInvitationToken'
+    responses:
+      '200':
+        description: 'What the token offers.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudgetInvitationPreview'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+/shared-budget-invitations/accept:
+  post:
+    operationId: acceptSharedBudgetInvitation
+    tags: [Budgeting]
+    summary: 'Join a Shared Budget with a token.'
+    description: |
+      The caller becomes a member. An active member gets their membership back
+      and the invitation stays pending. The owner's plan decides the seats
+      (403 FEATURE_NOT_ENTITLED). Open to an unverified account.
+    parameters:
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SharedBudgetInvitationToken'
+    responses:
+      '200':
+        description: "The caller's membership."
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/SharedBudgetMember'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+/shared-budget-invitations/decline:
+  post:
+    operationId: declineSharedBudgetInvitation
+    tags: [Budgeting]
+    summary: 'Turn a Shared Budget invitation down.'
+    description: |
+      Closed as `declined`. Declining again, by the same person, changes
+      nothing.
+    parameters:
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/SharedBudgetInvitationToken'
+    responses:
+      '204':
+        description: 'Declined. No body.'
+        headers: *successHeaders
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '415':
+        $ref: '../components/responses.yaml#/components/responses/UnsupportedMediaType'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '429':
+        $ref: '../components/responses.yaml#/components/responses/TooManyRequests'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+/sync/shared-budgets/heads:
+  get:
+    operationId: listSharedBudgetHeads
+    tags: [Budgeting]
+    summary: 'Each Shared Budget the caller belongs to, with its scope head and purge horizon.'
+    description: |
+      One entry per live Shared Budget in which the caller has an active
+      membership, ordered by `shared_budget_id`, keyset-paged like every
+      collection. A budget the caller does not belong to is absent, never
+      refused. Compare `change_seq` with the `meta.sync_position` stored from
+      the budget's last feed page, as for wallet heads; a `purged_change_seq`
+      above it means the stored cursor is expired. Filters and sorts are refused.
+    x-filterable: []
+    x-sortable: []
+    parameters:
+      - $ref: '../components/parameters.yaml#/components/parameters/Cursor'
+      - $ref: '../components/parameters.yaml#/components/parameters/Limit'
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'A page of heads.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/SharedBudgetHead'
+                    meta:
+                      $ref: '../components/schemas.yaml#/components/schemas/CollectionMeta'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+/sync/shared-budgets/{id}/changes:
+  get:
+    operationId: listSharedBudgetChanges
+    tags: [Budgeting]
+    summary: "One Shared Budget's change feed."
+    description: |
+      The budget, its members, lines and entries (and, to the owner only, its
+      invitations) above the cursor, tombstones included, each record exactly as
+      its read returns it. A non-member, and a member removed since, is 404.
+      Positions come from the budget's own counter. Entries never carry a
+      wallet, memo or counterparty.
+    parameters:
+      - *budgetId
+      - $ref: '../components/parameters.yaml#/components/parameters/Cursor'
+      - $ref: '../components/parameters.yaml#/components/parameters/Limit'
+      - $ref: '../components/headers.yaml#/components/parameters/AcceptLanguage'
+      - $ref: '../components/headers.yaml#/components/parameters/XCorrelationId'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientPlatform'
+      - $ref: '../components/headers.yaml#/components/parameters/XClientVersion'
+    responses:
+      '200':
+        description: 'A page of the feed. Nothing new is 200 with `data: []` and the same position.'
+        headers: *successHeaders
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Envelope'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/SharedBudgetChangeRow'
+                    meta:
+                      $ref: './sync.yaml#/components/schemas/ChangeFeedMeta'
+      '400':
+        $ref: '../components/responses.yaml#/components/responses/BadRequest'
+      '401':
+        $ref: '../components/responses.yaml#/components/responses/Unauthenticated'
+      '404':
+        $ref: '../components/responses.yaml#/components/responses/NotFound'
+      '406':
+        $ref: '../components/responses.yaml#/components/responses/NotAcceptable'
+      '410':
+        $ref: '../components/responses.yaml#/components/responses/Gone'
+      '422':
+        $ref: '../components/responses.yaml#/components/responses/UnprocessableEntity'
+      '426':
+        $ref: '../components/responses.yaml#/components/responses/UpgradeRequired'
+      '500':
+        $ref: '../components/responses.yaml#/components/responses/InternalError'
+
+
+components:
+  schemas:
+    Instant:
+      type: string
+      format: date-time
+
+    LimitHistory:
+      type: array
+      description: |
+        The limit by Budget Period, oldest first: each applies from the start
+        of the Budget Period it was set in. A period reads the latest entry at
+        or before its start. `limit_minor` null means no limit from then on.
+      items:
+        type: object
+        required: [applies_from, limit_minor]
+        additionalProperties: false
+        properties:
+          applies_from:
+            type: string
+            format: date
+          limit_minor:
+            type: [integer, 'null']
+            minimum: 1
+            maximum: 9007199254740991
+
+    StartDayHistory:
+      type: array
+      description: The Budget Period start day by date, oldest first; the first entry has `applies_from` null. A change applies from the next period.
+      items:
+        type: object
+        required: [start_day, applies_from]
+        additionalProperties: false
+        properties:
+          start_day:
+            type: integer
+            minimum: 1
+            maximum: 28
+          applies_from:
+            type: [string, 'null']
+            format: date
+
+    SharedBudget:
+      description: |
+        A spending limit and category list several people track together.
+        Own sync scope: rides the budget's feed as `shared_budget`, and each
+        member's own membership rides their user feed as `shared_budget_member`.
+      allOf:
+        - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
+        - type: object
+          required: [owner_id, name, currency, start_day, timezone, limit_minor, archived_at, limit_history, start_day_history]
+          properties:
+            owner_id:
+              type: string
+              format: uuid
+              description: Read-only. The person who changes the budget.
+            name:
+              type: string
+              maxLength: 100
+            currency:
+              type: string
+              pattern: '^[A-Z]{3}$'
+              description: ISO 4217. Only expenses in this currency join. Immutable.
+            start_day:
+              type: integer
+              minimum: 1
+              maximum: 28
+              description: The day of the month a Budget Period begins on.
+            timezone:
+              type: string
+              readOnly: true
+              description: The IANA timezone captured from the owner's profile at creation; "today" for this budget, the same for every member.
+            limit_minor:
+              type: [integer, 'null']
+              minimum: 1
+              maximum: 9007199254740991
+              description: The overall limit per Budget Period, in minor units of `currency`; null for none.
+            archived_at:
+              type: [string, 'null']
+              format: date-time
+              description: Read-only. When the budget was archived; null while active.
+            limit_history:
+              $ref: '#/components/schemas/LimitHistory'
+            start_day_history:
+              $ref: '#/components/schemas/StartDayHistory'
+
+    SharedBudgetWrite:
+      type: object
+      description: The whole writable budget plus the last-seen version. `owner_id`, `timezone`, `archived_at`, the histories and the envelope members are refused with UNKNOWN_FIELD.
+      required: [name, currency, start_day, limit_minor]
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+        start_day:
+          type: integer
+          minimum: 1
+          maximum: 28
+        limit_minor:
+          type: [integer, 'null']
+          minimum: 1
+          maximum: 9007199254740991
+        version:
+          type: integer
+          minimum: 0
+          description: The client's last-seen version. Omitted or 0 means create.
+
+    SharedBudgetPatch:
+      type: object
+      description: Some changeable members plus the last-seen version. `currency` is immutable and refused as an unknown member.
+      required: [version]
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        start_day:
+          type: integer
+          minimum: 1
+          maximum: 28
+        limit_minor:
+          type: [integer, 'null']
+          minimum: 1
+          maximum: 9007199254740991
+        version:
+          type: integer
+          minimum: 1
+
+    SharedBudgetVersionOnly:
+      type: object
+      required: [version]
+      additionalProperties: false
+      properties:
+        version:
+          type: integer
+          minimum: 1
+
+    SharedBudgetTransfer:
+      type: object
+      required: [user_id, version]
+      additionalProperties: false
+      properties:
+        user_id:
+          type: string
+          format: uuid
+          description: The active member to hand the budget to.
+        version:
+          type: integer
+          minimum: 1
+
+    SharedBudgetLine:
+      description: One category on a Shared Budget's list, with an optional limit. Carries the category's display fields so every member can render a category they do not own.
+      allOf:
+        - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
+        - type: object
+          required: [shared_budget_id, category_id, limit_minor, name, icon, color, limit_history]
+          properties:
+            shared_budget_id:
+              type: string
+              format: uuid
+            category_id:
+              type: string
+              format: uuid
+              description: Immutable.
+            limit_minor:
+              type: [integer, 'null']
+              minimum: 1
+              maximum: 9007199254740991
+            name:
+              type: [string, 'null']
+              description: Read-only. The category's name; null for a platform category, which every client already holds.
+            icon:
+              type: [string, 'null']
+              readOnly: true
+            color:
+              type: [string, 'null']
+              readOnly: true
+            limit_history:
+              $ref: '#/components/schemas/LimitHistory'
+
+    SharedBudgetLineWrite:
+      type: object
+      required: [category_id, limit_minor]
+      additionalProperties: false
+      properties:
+        category_id:
+          type: string
+          format: uuid
+        limit_minor:
+          type: [integer, 'null']
+          minimum: 1
+          maximum: 9007199254740991
+        version:
+          type: integer
+          minimum: 0
+
+    SharedBudgetMember:
+      description: One person's membership of a Shared Budget.
+      allOf:
+        - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
+        - type: object
+          required: [shared_budget_id, user_id, display_name, role, read_only]
+          properties:
+            shared_budget_id:
+              type: string
+              format: uuid
+            user_id:
+              type: string
+              format: uuid
+            display_name:
+              type: [string, 'null']
+              description: As of the read; null for a person who left the product ("Former member").
+            role:
+              type: string
+              enum: [owner, member]
+            read_only:
+              type: boolean
+              readOnly: true
+              description: Set by the server when the owner's plan allows fewer members; a read-only member reads and leaves but adds nothing.
+
+    SharedBudgetEntry:
+      description: |
+        One transaction's appearance in a Shared Budget: the author, category,
+        date, amount and note. No transaction id, wallet, balance, memo or
+        counterparty. Rides the budget's feed as `shared_budget_entry`.
+      allOf:
+        - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
+        - type: object
+          required: [shared_budget_id, created_by, category_id, date, amount_minor, description, detached_at]
+          properties:
+            shared_budget_id:
+              type: string
+              format: uuid
+            created_by:
+              type: string
+              format: uuid
+            category_id:
+              type: string
+              format: uuid
+            date:
+              type: string
+              format: date
+            amount_minor:
+              type: integer
+              minimum: 1
+              maximum: 9007199254740991
+            description:
+              type: [string, 'null']
+              maxLength: 100
+              description: Erased when the author leaves the budget.
+            detached_at:
+              type: [string, 'null']
+              format: date-time
+              description: When the entry stopped following its transaction (its author left or its wallet was deleted); null while it follows.
+
+    SharedBudgetInvitation:
+      description: An offer to join a Shared Budget by link. Rides the budget's feed as `shared_budget_invitation`, to the owner only.
+      allOf:
+        - $ref: '../components/schemas.yaml#/components/schemas/SyncableResource'
+        - type: object
+          required: [shared_budget_id, invited_by, status, expires_at]
+          properties:
+            shared_budget_id:
+              type: string
+              format: uuid
+            invited_by:
+              type: string
+              format: uuid
+            status:
+              type: string
+              enum: [pending, accepted, declined, revoked, expired]
+            expires_at:
+              type: string
+              format: date-time
+
+    SharedBudgetInvitationWrite:
+      type: object
+      description: Nothing but the optional version; omitted or 0 means create.
+      additionalProperties: false
+      properties:
+        version:
+          type: integer
+          minimum: 0
+
+    SharedBudgetInvitationToken:
+      type: object
+      required: [token]
+      additionalProperties: false
+      properties:
+        token:
+          type: string
+          pattern: '^[A-Za-z0-9_-]{43}$'
+
+    SharedBudgetInvitationPreview:
+      type: object
+      description: What a token offers, for the confirmation screen. Joining shows the person the amount, date, category, note and author of every entry, and never anyone's wallet.
+      required: [invitation_id, shared_budget_id, name, currency, owner_display_name, member_count, expires_at, already_member]
+      additionalProperties: false
+      properties:
+        invitation_id:
+          type: string
+          format: uuid
+        shared_budget_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        currency:
+          type: string
+          pattern: '^[A-Z]{3}$'
+        owner_display_name:
+          type: [string, 'null']
+        member_count:
+          type: integer
+          minimum: 1
+        expires_at:
+          type: string
+          format: date-time
+        already_member:
+          type: boolean
+
+    SharedBudgetFigure:
+      type: object
+      description: One spent / limit pair. The `limit`, `remaining` and `over_limit` are null where no limit applied that period.
+      required: [limit, spent, remaining, over_limit]
+      properties:
+        limit:
+          oneOf:
+            - $ref: '../components/schemas.yaml#/components/schemas/Money'
+            - type: 'null'
+        spent:
+          $ref: '../components/schemas.yaml#/components/schemas/Money'
+        remaining:
+          oneOf:
+            - $ref: '../components/schemas.yaml#/components/schemas/Money'
+            - type: 'null'
+        over_limit:
+          type: [boolean, 'null']
+
+    SharedBudgetProgress:
+      description: |
+        A derived read model, never stored and never synced. Every figure is an
+        exact sum of entries; no percentage is returned. `projected_end` is the
+        overall `spent` extrapolated over the period at the pace so far,
+        rounded up to the minor unit, for the current period only.
+        `unlisted_spent` is spending in categories no line names (Other, or a
+        line since removed).
+      allOf:
+        - $ref: '#/components/schemas/SharedBudgetFigure'
+        - type: object
+          required: [shared_budget_id, period, is_current, projected_end, lines, unlisted_spent, members]
+          properties:
+            shared_budget_id:
+              type: string
+              format: uuid
+            period:
+              type: object
+              required: [start, end, days_in_period, days_elapsed]
+              additionalProperties: false
+              properties:
+                start:
+                  type: string
+                  format: date
+                end:
+                  type: string
+                  format: date
+                days_in_period:
+                  type: integer
+                days_elapsed:
+                  type: [integer, 'null']
+            is_current:
+              type: boolean
+            projected_end:
+              oneOf:
+                - $ref: '../components/schemas.yaml#/components/schemas/Money'
+                - type: 'null'
+            lines:
+              type: array
+              items:
+                allOf:
+                  - $ref: '#/components/schemas/SharedBudgetFigure'
+                  - type: object
+                    required: [line_id, category_id]
+                    properties:
+                      line_id:
+                        type: string
+                        format: uuid
+                      category_id:
+                        type: string
+                        format: uuid
+            unlisted_spent:
+              $ref: '../components/schemas.yaml#/components/schemas/Money'
+            members:
+              type: array
+              description: Spending per author, ascending by user id; a name is null for a person who left.
+              items:
+                type: object
+                required: [user_id, display_name, spent]
+                additionalProperties: false
+                properties:
+                  user_id:
+                    type: string
+                    format: uuid
+                  display_name:
+                    type: [string, 'null']
+                  spent:
+                    $ref: '../components/schemas.yaml#/components/schemas/Money'
+
+    SharedBudgetSummary:
+      type: object
+      required: [shared_budget_id, from, to, currency, spent, by_category, by_member]
+      additionalProperties: false
+      properties:
+        shared_budget_id:
+          type: string
+          format: uuid
+        from:
+          type: string
+          format: date
+        to:
+          type: string
+          format: date
+        currency:
+          type: string
+        spent:
+          $ref: '../components/schemas.yaml#/components/schemas/Money'
+        by_category:
+          type: array
+          items:
+            type: object
+            required: [category_id, spent]
+            additionalProperties: false
+            properties:
+              category_id:
+                type: string
+                format: uuid
+              spent:
+                $ref: '../components/schemas.yaml#/components/schemas/Money'
+        by_member:
+          type: array
+          items:
+            type: object
+            required: [user_id, display_name, spent]
+            additionalProperties: false
+            properties:
+              user_id:
+                type: string
+                format: uuid
+              display_name:
+                type: [string, 'null']
+              spent:
+                $ref: '../components/schemas.yaml#/components/schemas/Money'
+
+    SharedBudgetTrend:
+      type: object
+      required: [shared_budget_id, periods]
+      additionalProperties: false
+      properties:
+        shared_budget_id:
+          type: string
+          format: uuid
+        periods:
+          type: array
+          items:
+            type: object
+            required: [start, end, spent, limit]
+            additionalProperties: false
+            properties:
+              start:
+                type: string
+                format: date
+              end:
+                type: string
+                format: date
+              spent:
+                $ref: '../components/schemas.yaml#/components/schemas/Money'
+              limit:
+                oneOf:
+                  - $ref: '../components/schemas.yaml#/components/schemas/Money'
+                  - type: 'null'
+
+    SharedBudgetHead:
+      type: object
+      required: [shared_budget_id, change_seq, purged_change_seq]
+      additionalProperties: false
+      properties:
+        shared_budget_id:
+          type: string
+          format: uuid
+        change_seq:
+          type: integer
+          format: int64
+          description: The budget's scope head.
+        purged_change_seq:
+          type: integer
+          format: int64
+          description: The budget's purge horizon.
+
+    SharedBudgetChangeRow:
+      type: object
+      description: One record on a Shared Budget's feed. Clients skip a `type` they do not know.
+      required: [type, record]
+      additionalProperties: false
+      properties:
+        type:
+          type: string
+          enum: [shared_budget, shared_budget_member, shared_budget_line, shared_budget_entry, shared_budget_invitation]
+        record:
+          anyOf:
+            - $ref: '#/components/schemas/SharedBudget'
+            - $ref: '#/components/schemas/SharedBudgetMember'
+            - $ref: '#/components/schemas/SharedBudgetLine'
+            - $ref: '#/components/schemas/SharedBudgetEntry'
+            - $ref: '#/components/schemas/SharedBudgetInvitation'

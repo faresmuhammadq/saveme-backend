@@ -222,6 +222,7 @@ final class WalletSections implements ExportSection
             'author' => $author,
             'recurring_rule_id' => $transaction->recurringRuleId,
             'occurrence_id' => $transaction->occurrenceId,
+            'shared_budget_id' => $transaction->sharedBudgetId,
             'created_at' => self::instant($transaction->createdAt),
             'updated_at' => self::instant($transaction->updatedAt),
         ]);

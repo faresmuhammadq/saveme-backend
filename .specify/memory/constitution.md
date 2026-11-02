@@ -1,6 +1,10 @@
 <!--
 Sync Impact Report (latest first)
 
+v1.3.15 → 1.4.0 — 2026-11-01 (proposed; the owner ratifies when the pull request merges)
+- MINOR: P-08 rule 1 materially expanded: authorization is wallet-scoped, or for a Shared Budget, scoped to that budget's own membership. P-08 rule 5 keeps the wallet matrix in the Wallets spec; the Shared Budget permissions are in ADR-0027 rule 3. P-07 and P-08 list ADR-0027; the Budgeting row owns Shared Budgets.
+- Reason: owner decision of 2026-11-01; ADR-0027 extends ADR-0006, ADR-0017, ADR-0019 and ADR-0024, and supersedes ADR-0008 rule 1 to add a third kind of feed scope.
+
 v1.3.14 → 1.3.15 — 2026-10-06
 - PATCH: P-09 and P-10 list ADR-0026, introduced by spec 024; no rule changes.
 - Reason: spec 024 (B10, Billing — Google Play); ADR-0026 extends ADR-0013 and ADR-0010.
@@ -135,7 +139,7 @@ v1.0.0 — 2026-09-19 (ratified)
 
 <!-- "Save Me" is a working codename used as display text only; see P-13. -->
 
-**Version**: 1.3.15 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-06
+**Version**: 1.4.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-11-01
 
 ## Purpose & Precedence
 
@@ -220,7 +224,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-07 Sync and concurrency
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0008](../../docs/adr/0008-sync-changes-feed.md), [ADR-0015](../../docs/adr/0015-transfers-on-two-wallet-feeds.md) (extends ADR-0008), [ADR-0016](../../docs/adr/0016-batch-upload-beside-per-record-writes.md) (supersedes ADR-0008 rule 7), [ADR-0017](../../docs/adr/0017-membership-on-the-members-user-feed.md) (extends ADR-0008), [ADR-0018](../../docs/adr/0018-occurrences-materialised-by-the-server.md) (extends ADR-0008 and ADR-0011), [ADR-0021](../../docs/adr/0021-scope-heads-and-member-name-restamps.md) (extends ADR-0008 and ADR-0017), [ADR-0024](../../docs/adr/0024-account-deletion-keeps-shared-history.md) (extends ADR-0017 and ADR-0021; supersedes ADR-0008 rule 12 for purged user scopes only)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0008](../../docs/adr/0008-sync-changes-feed.md), [ADR-0015](../../docs/adr/0015-transfers-on-two-wallet-feeds.md) (extends ADR-0008), [ADR-0016](../../docs/adr/0016-batch-upload-beside-per-record-writes.md) (supersedes ADR-0008 rule 7), [ADR-0017](../../docs/adr/0017-membership-on-the-members-user-feed.md) (extends ADR-0008), [ADR-0018](../../docs/adr/0018-occurrences-materialised-by-the-server.md) (extends ADR-0008 and ADR-0011), [ADR-0021](../../docs/adr/0021-scope-heads-and-member-name-restamps.md) (extends ADR-0008 and ADR-0017), [ADR-0024](../../docs/adr/0024-account-deletion-keeps-shared-history.md) (extends ADR-0017 and ADR-0021; supersedes ADR-0008 rule 12 for purged user scopes only), [ADR-0027](../../docs/adr/0027-shared-budgets.md) (proposed)
 
 1. Every syncable entity MUST carry `version`, `updated_at`, `deleted_at` and `change_seq`.
 2. Every write MUST carry the client's last-seen `version`.
@@ -232,13 +236,13 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-08 Authorization
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0006](../../docs/adr/0006-wallet-scoped-authorization.md), [ADR-0017](../../docs/adr/0017-membership-on-the-members-user-feed.md), [ADR-0021](../../docs/adr/0021-scope-heads-and-member-name-restamps.md) (extends ADR-0008 and ADR-0017), [ADR-0024](../../docs/adr/0024-account-deletion-keeps-shared-history.md) (extends ADR-0017 and ADR-0021; supersedes ADR-0008 rule 12 for purged user scopes only)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0006](../../docs/adr/0006-wallet-scoped-authorization.md), [ADR-0017](../../docs/adr/0017-membership-on-the-members-user-feed.md), [ADR-0021](../../docs/adr/0021-scope-heads-and-member-name-restamps.md) (extends ADR-0008 and ADR-0017), [ADR-0024](../../docs/adr/0024-account-deletion-keeps-shared-history.md) (extends ADR-0017 and ADR-0021; supersedes ADR-0008 rule 12 for purged user scopes only), [ADR-0027](../../docs/adr/0027-shared-budgets.md) (proposed)
 
-1. Authorization MUST be wallet-scoped: the caller's `wallet_members.role` combined with entitlement checks.
+1. Authorization MUST be wallet-scoped: the caller's `wallet_members.role` combined with entitlement checks. A Shared Budget is the one other scope: its own membership combined with its owner's entitlements, and a member's access to it MUST NOT grant access to any wallet ([ADR-0027](../../docs/adr/0027-shared-budgets.md)).
 2. A write MUST be authorized against every wallet it touches.
-3. A non-member MUST receive 404 for a wallet-scoped resource, so existence is not disclosed.
+3. A non-member MUST receive 404 for a wallet-scoped or Shared Budget resource, so existence is not disclosed.
 4. The only global role is platform admin, which MUST use a separate guard and separate accounts. Application users MUST NOT carry a role or admin flag.
-5. The permission matrix MUST live only in the Wallets spec, and MUST NOT be duplicated here, in an ADR, or in code comments.
+5. The wallet permission matrix MUST live only in the Wallets spec, and MUST NOT be duplicated here, in an ADR, or in code comments.
 
 *Rationale*: sharing is the product's social surface and its main security boundary; one matrix in one place is the only way it stays correct.
 
@@ -359,7 +363,7 @@ Nine contexts, one module directory each. Module directories use short PascalCas
 |---|---|---|---|
 | Identity | `app/Modules/Identity` | users, credentials, sessions/tokens, profile, preferences (locale, timezone), account deletion and export orchestration | `AuthService`, `ProfileService`, `UserQueryService`; `UserRegistered`, `UserDeletionRequested`, `UserSignedIn`, `DeviceSessionEnded`, `UserDeletionCancelled`, `AccountPurgeStalled`, `ExportReady`, `DeletionReminderDue` |
 | Wallets & Ledger | `app/Modules/Wallets` | wallets, wallet members, categories, transactions, postings, recurring rules | `WalletService`, `TransactionService`, `MembershipQueryService`, `BalanceQueryService`; `TransactionPosted`, `TransactionVoided`, `WalletCreated`, `WalletDeleted`, `WalletOwnershipTransferred` |
-| Budgeting | `app/Modules/Budgeting` | budgets per category per period, budget progress read models | `BudgetService`, `BudgetQueryService`; `BudgetExceeded` |
+| Budgeting | `app/Modules/Budgeting` | budgets per category per period, budget progress read models, shared budgets and their entries | `BudgetService`, `BudgetQueryService`, `SharedBudgetService`, `SharedBudgetQueryService`; `BudgetExceeded` |
 | Sharing | `app/Modules/Sharing` | invitations, invitation acceptance and revocation flows | `InvitationService`; `InvitationSent`, `InvitationAccepted`, `MemberRevoked`, `MemberRoleChanged` |
 | Plans & Billing | `app/Modules/Billing` | plans, subscriptions, Google Play purchases, InstaPay claims, redemption codes | `EntitlementService`, `SubscriptionService`, `ClaimService`; `SubscriptionActivated`, `SubscriptionLapsed`, `SubscriptionRenewalDue` |
 | Sync | `app/Modules/Sync` | change feeds, cursors, conflict handling, tombstone retention | `ChangeFeedService`, `UpsertService` |
@@ -445,4 +449,4 @@ Every amendment updates the footer's **Last Amended** date and the Sync Impact R
 
 **Consistency** — run `/speckit-analyze` before implementing each feature. Contradictions between this constitution, the ADRs and a feature's spec are defects to resolve before code.
 
-**Version**: 1.3.15 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-10-06
+**Version**: 1.4.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-11-01

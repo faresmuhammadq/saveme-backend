@@ -15,6 +15,7 @@ enum PurgeStep: string
     case RevokeInvitations = 'revoke_invitations';
     case ResolveOwnedWallets = 'resolve_owned_wallets';
     case LeaveWallets = 'leave_wallets';
+    case SharedBudgets = 'shared_budgets';
     case Budgets = 'budgets';
     case Categories = 'categories';
     case Subscriptions = 'subscriptions';

@@ -10,7 +10,7 @@
     $subscriptions = $account['access']['subscriptions'] ?? [];
     $governing = $account['access']['governing_subscription_id'] ?? null;
     $feature = function (string $key, mixed $value): string {
-        $quota = in_array($key, ['sharing.max_members_per_wallet', 'wallets.max'], true);
+        $quota = in_array($key, ['sharing.max_members_per_wallet', 'sharing.max_members_per_budget', 'wallets.max'], true);
 
         if ($quota) {
             return $value === null ? __('admin::accounts.plan.unlimited') : (string) $value;

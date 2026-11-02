@@ -192,7 +192,7 @@ final class EloquentTransactionRepository implements TransactionRepository
      * A record from a plain row: a page of 50 skips Eloquent's per-row
      * hydration and casting (SC-007).
      *
-     * @param  object{id: string, wallet_id: string, kind: string, date: string, amount_minor: int|string, currency: string, category_id: ?string, counter_wallet_id: ?string, description: ?string, memo: ?string, counterparty: ?string, cleared: bool|int|string, created_by: string, version: int|string, change_seq: int|string, counter_change_seq: int|string|null, created_at: string, updated_at: string, deleted_at: ?string, recurring_rule_id?: ?string, occurrence_id?: ?string}  $row
+     * @param  object{id: string, wallet_id: string, kind: string, date: string, amount_minor: int|string, currency: string, category_id: ?string, counter_wallet_id: ?string, description: ?string, memo: ?string, counterparty: ?string, cleared: bool|int|string, created_by: string, version: int|string, change_seq: int|string, counter_change_seq: int|string|null, created_at: string, updated_at: string, deleted_at: ?string, recurring_rule_id?: ?string, occurrence_id?: ?string, shared_budget_id?: ?string}  $row
      */
     public static function rawRecord(object $row): TransactionRecord
     {
@@ -218,6 +218,7 @@ final class EloquentTransactionRepository implements TransactionRepository
             deletedAt: $row->deleted_at === null ? null : new DateTimeImmutable($row->deleted_at),
             recurringRuleId: $row->recurring_rule_id ?? null,
             occurrenceId: $row->occurrence_id ?? null,
+            sharedBudgetId: $row->shared_budget_id ?? null,
         );
     }
 

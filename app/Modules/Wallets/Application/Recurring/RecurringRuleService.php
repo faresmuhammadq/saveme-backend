@@ -11,6 +11,7 @@ use App\Modules\Wallets\Application\Categories\CategoryReferences;
 use App\Modules\Wallets\Application\Categories\WalletCategoryUses;
 use App\Modules\Wallets\Application\Recurring\Dto\RuleView;
 use App\Modules\Wallets\Application\Recurring\Dto\SavedRecurringRule;
+use App\Modules\Wallets\Application\Transactions\SharedBudgetLink;
 use App\Modules\Wallets\Domain\Activity\ActivityAction;
 use App\Modules\Wallets\Domain\Activity\ActivitySubject;
 use App\Modules\Wallets\Domain\Membership\Permission;
@@ -64,6 +65,7 @@ final class RecurringRuleService
         private readonly WalletAuthorizer $authorizer,
         private readonly Profiles $profiles,
         private readonly WalletActivity $activity,
+        private readonly SharedBudgetLink $sharedBudgets,
     ) {}
 
     /**
@@ -72,12 +74,12 @@ final class RecurringRuleService
      * work. A new rule belongs to the path wallet (for a transfer, the
      * source).
      *
-     * @param  Values  $values
+     * @param  array<string, mixed>  $values  the writable members; an absent `shared_budget_id` keeps the stored link
      * @param  Closure(RuleView): array<string, mixed>  $present  how a read renders the rule, for a conflict's `current`
      */
     public function save(string $actorId, string $walletId, string $ruleId, array $values, int $version, Closure $present): SavedRecurringRule
     {
-        /** @var Values $values */
+        /** @var array<string, mixed> $values */
         $values = self::normalise($values);
 
         return $this->locks->run(
@@ -89,6 +91,11 @@ final class RecurringRuleService
             $values['counter_wallet_id'],
             null,
             function (?RecurringRuleRecord $stored, ?OccurrenceRecord $unused, array $wallets) use ($actorId, $walletId, $ruleId, $values, $version, $present): SavedRecurringRule {
+                if (! array_key_exists('shared_budget_id', $values)) {
+                    $values['shared_budget_id'] = $stored?->sharedBudgetId;
+                }
+
+                /** @var Values $values */
                 $this->checkPath($actorId, $walletId, $ruleId, $stored, $wallets, $version, mayCreate: true);
 
                 if ($stored === null) {
@@ -360,6 +367,7 @@ final class RecurringRuleService
         }
 
         array_push($errors, ...$this->categoryErrors($actorId, $values, null));
+        array_push($errors, ...$this->budgetErrors($actorId, $values, null));
         $this->refuseInvalid($errors);
 
         $timezone = $this->timezoneOf($actorId);
@@ -390,6 +398,7 @@ final class RecurringRuleService
     {
         $errors = RecurringRuleRules::violations($values, $stored, $this->occurrences->latestResolved($stored->id));
         array_push($errors, ...$this->categoryErrors($actorId, $values, $stored));
+        array_push($errors, ...$this->budgetErrors($actorId, $values, $stored));
         $this->refuseInvalid($errors);
 
         $today = RuleToday::of($stored->timezone, now()->toDateTimeImmutable());
@@ -444,6 +453,35 @@ final class RecurringRuleService
         if ($before !== null && ! $this->categoryUses->usedIn($walletId, $before)) {
             $this->references->withdrawIfUnused($walletId, $before);
         }
+    }
+
+    /**
+     * The Shared Budget a rule names (ADR-0027 rule 4): only its author changes
+     * the link, and a new link must be one they may use. A link that stays as
+     * stored is never refused.
+     *
+     * @param  Values  $values
+     * @return list<FieldError>
+     */
+    private function budgetErrors(string $actorId, array $values, ?RecurringRuleRecord $stored): array
+    {
+        $budgetId = $values['shared_budget_id'];
+
+        if ($budgetId === $stored?->sharedBudgetId) {
+            return [];
+        }
+
+        if ($stored !== null && $actorId !== $stored->createdBy) {
+            return [new FieldError('/shared_budget_id', ErrorCode::InvalidEnumValue)];
+        }
+
+        if ($budgetId === null) {
+            return [];
+        }
+
+        $code = $this->sharedBudgets->refusal($actorId, $budgetId, $values['kind'], $values['currency'], $values['category_id']);
+
+        return $code === null ? [] : [new FieldError('/shared_budget_id', $code)];
     }
 
     /**

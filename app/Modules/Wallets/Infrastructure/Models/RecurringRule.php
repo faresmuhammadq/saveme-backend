@@ -37,6 +37,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $occurrence_count
  * @property int|null $payout_round
  * @property string|null $payout_category_id
+ * @property string|null $shared_budget_id
  * @property string $timezone
  * @property string $created_by
  * @property int $version
@@ -120,6 +121,7 @@ class RecurringRule extends Model
             createdAt: $this->created_at->toDateTimeImmutable(),
             updatedAt: $this->updated_at->toDateTimeImmutable(),
             deletedAt: $this->deleted_at?->toDateTimeImmutable(),
+            sharedBudgetId: $this->shared_budget_id,
         );
     }
 }

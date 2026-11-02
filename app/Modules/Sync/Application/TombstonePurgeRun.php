@@ -2,6 +2,7 @@
 
 namespace App\Modules\Sync\Application;
 
+use App\Modules\Budgeting\Application\Sync\SharedBudgetTombstonePurge;
 use App\Modules\Budgeting\Application\Sync\TombstonePurge as BudgetingPurge;
 use App\Modules\Identity\Application\Sync\TombstonePurge as IdentityPurge;
 use App\Modules\Sharing\Application\Sync\TombstonePurge as SharingPurge;
@@ -25,6 +26,7 @@ final class TombstonePurgeRun
         private readonly WalletsPurge $wallets,
         private readonly IdentityPurge $identity,
         private readonly BudgetingPurge $budgeting,
+        private readonly SharedBudgetTombstonePurge $sharedBudgets,
         private readonly SharingPurge $sharing,
         private readonly ActivityPrune $activity,
     ) {}
@@ -47,6 +49,7 @@ final class TombstonePurgeRun
         // Sharing before Wallets, so a deleted wallet whose last rows were invitation tombstones can go too.
         $removed = [
             ...$this->prefixed('budgeting_', $this->budgeting->purge($before)),
+            ...$this->prefixed('budgeting_', $this->sharedBudgets->purge($before)),
             ...$this->prefixed('sharing_', $this->sharing->purge($before)),
             ...$this->wallets->purge($before),
             'wallets_activity' => $this->activity->prune($now),

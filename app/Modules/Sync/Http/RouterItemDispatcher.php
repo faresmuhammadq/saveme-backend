@@ -107,6 +107,8 @@ final class RouterItemDispatcher implements ItemDispatcher
             [ItemType::Occurrence, ItemOperation::Upsert] => ['PUT', $this->path('recurring.occurrences.save', ['id' => $item->walletId, 'oid' => $item->id])],
             [ItemType::Budget, ItemOperation::Upsert] => ['PUT', $this->path('budgets.upsert', ['id' => $item->id])],
             [ItemType::Budget, ItemOperation::Delete] => ['DELETE', $this->path('budgets.destroy', ['id' => $item->id])],
+            [ItemType::SharedBudget, ItemOperation::Upsert] => ['PUT', $this->path('shared-budgets.upsert', ['id' => $item->id])],
+            [ItemType::SharedBudget, ItemOperation::Delete] => ['DELETE', $this->path('shared-budgets.destroy', ['id' => $item->id])],
             [ItemType::Profile, ItemOperation::Upsert] => ['PUT', $this->path('identity.me.profile', [])],
             default => throw new \LogicException('The envelope allowed an operation the dispatcher cannot map.'),
         };

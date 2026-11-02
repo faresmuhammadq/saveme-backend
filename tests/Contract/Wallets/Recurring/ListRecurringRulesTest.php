@@ -34,7 +34,7 @@ test('lists every live status, tombstones and other wallets\' rules left out, by
 
     expect($response->json('data.*.id'))->toBe([$this->r1, $this->r2, $this->r3])
         ->and($response->json('meta'))->toMatchArray(['has_more' => false, 'next_cursor' => null, 'limit' => 50])
-        ->and(array_keys($response->json('data.0')))->toBe(['id', 'wallet_id', 'version', 'change_seq', 'created_at', 'updated_at', 'deleted_at', 'preset', 'status', 'kind', 'amount_minor', 'amount_basis', 'currency', 'category_id', 'counter_wallet_id', 'description', 'memo', 'counterparty', 'auto_confirm', 'frequency', 'interval', 'anchor_day', 'start_date', 'end_date', 'occurrence_count', 'payout_round', 'payout_category_id', 'timezone', 'created_by']);
+        ->and(array_keys($response->json('data.0')))->toBe(['id', 'wallet_id', 'version', 'change_seq', 'created_at', 'updated_at', 'deleted_at', 'preset', 'status', 'kind', 'amount_minor', 'amount_basis', 'currency', 'category_id', 'counter_wallet_id', 'description', 'memo', 'counterparty', 'auto_confirm', 'frequency', 'interval', 'anchor_day', 'start_date', 'end_date', 'occurrence_count', 'payout_round', 'payout_category_id', 'shared_budget_id', 'timezone', 'created_by']);
 });
 
 test('sorts by start_date, either way, and by created_at descending', function () {

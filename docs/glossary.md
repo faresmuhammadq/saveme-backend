@@ -60,6 +60,11 @@ Rules:
 | [Budget](#budget) | — | Budgeting | root | persisted | yes — user |
 | [Budget Period](#budget-period) | — | Budgeting | derived value | derived | no |
 | [Budget Overrun](#budget-overrun) | — | Budgeting | child of Budget | persisted | no |
+| [Shared Budget](#shared-budget) | — | Budgeting | root | persisted | yes — shared budget |
+| [Shared Budget Member](#shared-budget-member) | — | Budgeting | child of Shared Budget | persisted | yes — shared budget, and the member's user feed |
+| [Shared Budget Line](#shared-budget-line) | — | Budgeting | child of Shared Budget | persisted | yes — shared budget |
+| [Shared Budget Entry](#shared-budget-entry) | — | Budgeting | child of Shared Budget | persisted | yes — shared budget |
+| [Shared Budget Invitation](#shared-budget-invitation) | — | Sharing | child of Shared Budget | persisted | yes — shared budget, owner only |
 | [Invitation](#invitation) | — | Sharing | root | persisted | yes — wallet |
 | [Plan](#plan) | — | Plans & Billing | root | persisted | no |
 | [Plan Feature](#plan-feature) | — | Plans & Billing | value inside Plan | persisted in the plan | no |
@@ -92,10 +97,11 @@ Rules:
 
 #### What syncs, and how the client gets the rest
 
-**11 syncable entities, in exactly two scopes. There is no third scope.**
+**16 syncable entities, in three scopes.** The Shared Budget scope is the third ([ADR-0027](adr/0027-shared-budgets.md)).
 
 - **User scope (4)** — Profile, Device Session, Category, Budget.
 - **Wallet scope (7)** — Wallet, Wallet Member, Category Reference, Transaction, Recurring Rule, Occurrence, Invitation.
+- **Shared Budget scope (5)** — Shared Budget, Shared Budget Member (also on the member's own user feed), Shared Budget Line, Shared Budget Entry, Shared Budget Invitation (owner only). Limit and start day history ride this feed as child rows of the budget.
 
 **18 persisted but not synced**, and how the client obtains each:
 
@@ -372,6 +378,70 @@ One budget's spent, remaining, over-limit flag and projection for one Budget Per
 - **States**: `single-state`
 - **Referenced by**: reports (B13)
 - **Notes**: money members are `{amount_minor, currency}`; `projected_end` exists for the current Budget Period only; no percentage is returned.
+
+### Shared Budget
+
+A spending limit and category list that several people track together, whichever wallets pay.
+
+- **Context**: Budgeting
+- **Role**: aggregate root
+- **Persistence**: persisted
+- **Sync**: yes — **its own scope** ([ADR-0027](adr/0027-shared-budgets.md))
+- **States**: `active` → `archived`; either → `tombstoned` on delete
+- **Referenced by**: Shared Budget Member, Shared Budget Line, Shared Budget Entry, Shared Budget Invitation, Transaction, Recurring Rule, Occurrence
+- **Notes**:
+  - Separate from a [Budget](#budget), which stays personal. Membership grants no access to any wallet.
+  - One immutable currency. Its own start day history and timezone decide its Budget Periods, so every member reads the same figures.
+  - Only the owner changes it. Its figures sum entries, never postings or balances.
+  - Fields: `name`, `currency`, `start_day`, `timezone`, `limit_minor` (nullable overall limit), `archived_at`.
+
+### Shared Budget Member
+
+One person's membership of a Shared Budget.
+
+- **Context**: Budgeting
+- **Role**: child of Shared Budget
+- **Persistence**: persisted
+- **Sync**: yes — the budget's feed, and the member's own user feed (as Wallet Member, ADR-0017)
+- **States**: `active` → `tombstoned` when they leave or are removed
+- **Referenced by**: —
+- **Notes**: `role` is `owner` or `member`. `read_only` is set by the server when a plan's quota falls.
+
+### Shared Budget Line
+
+One category on a Shared Budget's list, with an optional limit.
+
+- **Context**: Budgeting
+- **Role**: child of Shared Budget
+- **Persistence**: persisted
+- **Sync**: yes — the budget's feed
+- **States**: `active` → `tombstoned`
+- **Referenced by**: Shared Budget Entry (through its category)
+- **Notes**: a category named by any line, live or tombstoned, can be used by a member on a transaction linked to that budget, and counts as in use for its owner.
+
+### Shared Budget Entry
+
+One transaction's appearance in a Shared Budget, without its wallet.
+
+- **Context**: Budgeting
+- **Role**: child of Shared Budget
+- **Persistence**: persisted — written with the ledger write, never by a client
+- **Sync**: yes — the budget's feed
+- **States**: `live` → `detached` when its author leaves or its wallet is deleted; `live` → `tombstoned` when its transaction is voided or unlinked
+- **Referenced by**: —
+- **Notes**: never carries a wallet id or name, balance, `memo` or `counterparty`. Leaving erases `description` and keeps amount, date and category.
+
+### Shared Budget Invitation
+
+An offer to join a Shared Budget.
+
+- **Context**: Sharing
+- **Role**: child of Shared Budget
+- **Persistence**: persisted
+- **Sync**: yes — the budget's feed, owner only
+- **States**: as [Invitation](#invitation)
+- **Referenced by**: —
+- **Notes**: same token, address and expiry rules as an Invitation, with no role.
 
 ### Budget Overrun
 

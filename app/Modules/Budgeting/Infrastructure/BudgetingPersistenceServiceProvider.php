@@ -4,8 +4,10 @@ namespace App\Modules\Budgeting\Infrastructure;
 
 use App\Modules\Budgeting\Domain\Ports\BudgetRepository;
 use App\Modules\Budgeting\Domain\Ports\OverrunRepository;
+use App\Modules\Budgeting\Domain\SharedBudgets\Ports\SharedBudgetRepository;
 use App\Modules\Budgeting\Infrastructure\Repositories\EloquentBudgetRepository;
 use App\Modules\Budgeting\Infrastructure\Repositories\EloquentOverrunRepository;
+use App\Modules\Budgeting\Infrastructure\Repositories\EloquentSharedBudgetRepository;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -20,5 +22,6 @@ class BudgetingPersistenceServiceProvider extends ServiceProvider
     public array $bindings = [
         BudgetRepository::class => EloquentBudgetRepository::class,
         OverrunRepository::class => EloquentOverrunRepository::class,
+        SharedBudgetRepository::class => EloquentSharedBudgetRepository::class,
     ];
 }

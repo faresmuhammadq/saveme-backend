@@ -16,7 +16,7 @@ beforeEach(function () {
 
 test('the archive holds the manifest, every record file and the spreadsheet', function () {
     expect($this->archive['files'])->toEqualCanonicalizing([
-        'manifest.json', 'account.json', 'profile.json', 'devices.json', 'subscriptions.json', 'categories.json', 'budgets.json',
+        'manifest.json', 'account.json', 'profile.json', 'devices.json', 'subscriptions.json', 'categories.json', 'budgets.json', 'shared_budgets.json',
         'memberships.json', 'invitations.json', 'wallets.json', 'transactions.json', 'recurring_rules.json', 'occurrences.json', 'transactions.csv',
     ]);
 });

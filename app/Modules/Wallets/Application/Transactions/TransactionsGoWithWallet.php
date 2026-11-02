@@ -24,11 +24,14 @@ final class TransactionsGoWithWallet implements WalletDeletionParticipant
     public function __construct(
         private readonly TransactionRepository $transactions,
         private readonly PostingRepository $postings,
+        private readonly SharedBudgetLink $sharedBudgets,
     ) {}
 
     public function tombstoneWithin(string $walletId, DateTimeImmutable $at, Closure $nextChangeSeq): void
     {
         $deletedAt = $at->setTimezone(new DateTimeZone('UTC'))->format('Y-m-d H:i:s.uP');
+
+        $linkedIds = [];
 
         foreach ($this->transactions->liveGoingWith($walletId) as $transaction) {
             $changeSeq = $nextChangeSeq();
@@ -46,6 +49,13 @@ final class TransactionsGoWithWallet implements WalletDeletionParticipant
             }
 
             $this->postings->removeFor($transaction->id);
+
+            if ($transaction->sharedBudgetId !== null) {
+                $linkedIds[] = $transaction->id;
+            }
         }
+
+        // The money was spent: a budget keeps its entries, which stop following (ADR-0027 rule 8).
+        $this->sharedBudgets->detachForTransactions($linkedIds);
     }
 }

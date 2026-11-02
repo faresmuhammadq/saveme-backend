@@ -7,7 +7,9 @@ use App\Modules\Identity\Application\Deletion\PurgeContext;
 use App\Modules\Identity\Domain\Deletion\PurgeCounts;
 use App\Modules\Identity\Domain\Deletion\PurgeStep;
 use App\Modules\Sharing\Application\InvitationService;
+use App\Modules\Sharing\Application\SharedBudgets\SharedBudgetInvitationService;
 use App\Modules\Sharing\Domain\Ports\InvitationRepository;
+use App\Modules\Sharing\Domain\SharedBudgets\SharedBudgetInvitationRepository;
 
 /**
  * Sharing's step of an account purge (spec 022, FR-043): every pending
@@ -20,6 +22,8 @@ final class RevokeSentInvitations implements AccountPurgeParticipant
     public function __construct(
         private readonly InvitationRepository $invitations,
         private readonly InvitationService $service,
+        private readonly SharedBudgetInvitationRepository $sharedBudgetInvitations,
+        private readonly SharedBudgetInvitationService $sharedBudgetService,
     ) {}
 
     public function step(): PurgeStep
@@ -33,6 +37,10 @@ final class RevokeSentInvitations implements AccountPurgeParticipant
 
         foreach ($this->invitations->pendingInvitedBy($userId) as $invitation) {
             $revoked += $this->service->revokeForDepartingInviter($userId, $invitation->walletId, $invitation->id) ? 1 : 0;
+        }
+
+        foreach ($this->sharedBudgetInvitations->pendingInvitedBy($userId) as $invitation) {
+            $revoked += $this->sharedBudgetService->revokeForDepartingInviter($invitation->sharedBudgetId, $invitation->id) ? 1 : 0;
         }
 
         return PurgeCounts::of('invitations_revoked', $revoked);

@@ -120,7 +120,7 @@ class PlatformCategorySeeder extends Seeder
 
         DB::transaction(function () use ($definitions): void {
             /** @var Collection<string, Category> $existing */
-            $existing = Category::query()->whereNull('user_id')->lockForUpdate()->get()->keyBy('system_key');
+            $existing = Category::query()->whereNull('user_id')->where('internal', false)->lockForUpdate()->get()->keyBy('system_key');
             $wanted = array_column($definitions, null, 'system_key');
 
             foreach ($definitions as $definition) {

@@ -12,9 +12,16 @@ use LogicException;
  * - expense: wallet -a, category +a
  * - income:  category -a, wallet +a
  * - transfer: source wallet -a, destination wallet +a
+ * - adjustment_in:  internal category -a, wallet +a
+ * - adjustment_out: wallet -a, internal category +a
+ *
+ * The internal category is the reserved platform category of balance
+ * adjustments (ADR-0028); its id is fixed and a migration creates it.
  */
 final class PostingDerivation
 {
+    public const ADJUSTMENT_CATEGORY_ID = '00000000-0000-7000-8000-00000000ad01';
+
     /**
      * @return list<PostingLine>
      */
@@ -30,6 +37,14 @@ final class PostingDerivation
             TransactionKind::Income => [
                 PostingLine::forCategory(self::category($transaction), $amount->negate()),
                 PostingLine::forWallet($transaction->walletId, $amount),
+            ],
+            TransactionKind::AdjustmentIn => [
+                PostingLine::forCategory(self::ADJUSTMENT_CATEGORY_ID, $amount->negate()),
+                PostingLine::forWallet($transaction->walletId, $amount),
+            ],
+            TransactionKind::AdjustmentOut => [
+                PostingLine::forWallet($transaction->walletId, $amount->negate()),
+                PostingLine::forCategory(self::ADJUSTMENT_CATEGORY_ID, $amount),
             ],
             TransactionKind::Transfer => [
                 PostingLine::forWallet($transaction->walletId, $amount->negate()),

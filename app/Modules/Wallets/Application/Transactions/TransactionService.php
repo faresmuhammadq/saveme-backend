@@ -660,7 +660,7 @@ final class TransactionService
     {
         $categoryId = $values['category_id'];
 
-        if ($values['kind'] === TransactionKind::Transfer->value || $categoryId === null || $stored?->categoryId === $categoryId) {
+        if (! in_array($values['kind'], [TransactionKind::Income->value, TransactionKind::Expense->value], true) || $categoryId === null || $stored?->categoryId === $categoryId) {
             return null;
         }
 

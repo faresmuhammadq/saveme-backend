@@ -41,7 +41,7 @@ final class EloquentCategoryRepository implements CategoryRepository
 
     public function findPlatformForShare(string $categoryId): ?PlatformCategoryRecord
     {
-        $category = Category::query()->whereKey($categoryId)->whereNull('user_id')->sharedLock()->first();
+        $category = Category::query()->whereKey($categoryId)->whereNull('user_id')->where('internal', false)->sharedLock()->first();
 
         return $category === null ? null : self::platformRecord($category);
     }
@@ -116,6 +116,7 @@ final class EloquentCategoryRepository implements CategoryRepository
     {
         return array_values(Category::query()
             ->whereNull('user_id')
+            ->where('internal', false)
             ->orderBy('position')
             ->get()
             ->map(fn (Category $category): PlatformCategoryRecord => self::platformRecord($category))

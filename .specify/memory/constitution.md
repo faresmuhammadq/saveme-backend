@@ -1,6 +1,10 @@
 <!--
 Sync Impact Report (latest first)
 
+v1.4.0 → 1.4.1 — 2026-11-03 (proposed; the owner ratifies when the pull request merges)
+- PATCH: P-04 lists ADR-0028, introduced by the balance-adjustment change; no rule changes (an adjustment's other leg is a platform category, so rules 1 and 2 hold as written).
+- Reason: owner decision of 2026-11-03; ADR-0028 extends ADR-0012 rule 6 and closes the ADR-0004 follow-up.
+
 v1.3.15 → 1.4.0 — 2026-11-01 (proposed; the owner ratifies when the pull request merges)
 - MINOR: P-08 rule 1 materially expanded: authorization is wallet-scoped, or for a Shared Budget, scoped to that budget's own membership. P-08 rule 5 keeps the wallet matrix in the Wallets spec; the Shared Budget permissions are in ADR-0027 rule 3. P-07 and P-08 list ADR-0027; the Budgeting row owns Shared Budgets.
 - Reason: owner decision of 2026-11-01; ADR-0027 extends ADR-0006, ADR-0017, ADR-0019 and ADR-0024, and supersedes ADR-0008 rule 1 to add a third kind of feed scope.
@@ -139,7 +143,7 @@ v1.0.0 — 2026-09-19 (ratified)
 
 <!-- "Save Me" is a working codename used as display text only; see P-13. -->
 
-**Version**: 1.4.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-11-01
+**Version**: 1.4.1 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-11-03
 
 ## Purpose & Precedence
 
@@ -189,7 +193,7 @@ Each principle has a stable ID that is never reused or renumbered. **Non-negotia
 
 ### P-04 Ledger integrity
 
-**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0012](../../docs/adr/0012-postings-wallet-and-category-accounts.md) (supersedes ADR-0004), [ADR-0014](../../docs/adr/0014-platform-owned-categories.md) (extends ADR-0012), [ADR-0015](../../docs/adr/0015-transfers-on-two-wallet-feeds.md) (extends ADR-0008 and ADR-0012)
+**Status**: Active | **Non-negotiable**: yes | **ADRs**: [ADR-0012](../../docs/adr/0012-postings-wallet-and-category-accounts.md) (supersedes ADR-0004), [ADR-0014](../../docs/adr/0014-platform-owned-categories.md) (extends ADR-0012), [ADR-0015](../../docs/adr/0015-transfers-on-two-wallet-feeds.md) (extends ADR-0008 and ADR-0012), [ADR-0028](../../docs/adr/0028-balance-adjustments.md) (extends ADR-0012)
 
 1. Every transaction MUST produce postings that sum to zero per currency.
 2. Every posting MUST reference exactly one of a wallet or a category, never both and never neither.
@@ -449,4 +453,4 @@ Every amendment updates the footer's **Last Amended** date and the Sync Impact R
 
 **Consistency** — run `/speckit-analyze` before implementing each feature. Contradictions between this constitution, the ADRs and a feature's spec are defects to resolve before code.
 
-**Version**: 1.4.0 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-11-01
+**Version**: 1.4.1 | **Ratified**: 2026-09-19 | **Last Amended**: 2026-11-03

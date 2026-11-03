@@ -11,8 +11,10 @@ use LogicException;
  * `negate` only. Income and expenses come from the signs of the legs; a
  * transfer is `transfers_in` or `transfers_out`, never income or expense,
  * and one between two covered wallets is neither (it nets to zero in the
- * balances). `balance_end = balance_start + income - expenses + transfers_in
- * - transfers_out` always holds.
+ * balances). A balance adjustment is `adjustments_in` or `adjustments_out`,
+ * never income or expense (ADR-0028). `balance_end = balance_start + income
+ * - expenses + transfers_in - transfers_out + adjustments_in -
+ * adjustments_out` always holds.
  */
 final readonly class SummaryFigures
 {
@@ -25,13 +27,15 @@ final readonly class SummaryFigures
         public Money $expenses,
         public Money $transfersIn,
         public Money $transfersOut,
+        public Money $adjustmentsIn,
+        public Money $adjustmentsOut,
         public Money $balanceStart,
         Money $legSum,
     ) {
         $this->net = $income->minus($expenses);
         $this->balanceEnd = $balanceStart->plus($legSum);
 
-        if (! $balanceStart->plus($this->net)->plus($transfersIn)->minus($transfersOut)->equals($this->balanceEnd)) {
+        if (! $balanceStart->plus($this->net)->plus($transfersIn)->minus($transfersOut)->plus($adjustmentsIn)->minus($adjustmentsOut)->equals($this->balanceEnd)) {
             throw new LogicException('The balance identity does not hold for the report legs.');
         }
     }
@@ -45,7 +49,7 @@ final readonly class SummaryFigures
     {
         $zero = Money::from(0, $balanceStart->currency);
         $covered = array_flip($coveredWalletIds);
-        $income = $expenses = $in = $out = $sum = $zero;
+        $income = $expenses = $in = $out = $adjustedIn = $adjustedOut = $sum = $zero;
 
         foreach ($legs as $leg) {
             $sum = $sum->plus($leg->amount);
@@ -54,6 +58,10 @@ final readonly class SummaryFigures
                 $income = $income->plus($leg->amount);
             } elseif ($leg->kind === LegTotal::EXPENSE) {
                 $expenses = $expenses->minus($leg->amount);
+            } elseif ($leg->kind === LegTotal::ADJUSTMENT_IN) {
+                $adjustedIn = $adjustedIn->plus($leg->amount);
+            } elseif ($leg->kind === LegTotal::ADJUSTMENT_OUT) {
+                $adjustedOut = $adjustedOut->minus($leg->amount);
             } elseif ($leg->otherWalletId === null || ! isset($covered[$leg->otherWalletId])) {
                 if ($leg->amount->amountMinor > 0) {
                     $in = $in->plus($leg->amount);
@@ -63,7 +71,7 @@ final readonly class SummaryFigures
             }
         }
 
-        return new self($income, $expenses, $in, $out, $balanceStart, $sum);
+        return new self($income, $expenses, $in, $out, $adjustedIn, $adjustedOut, $balanceStart, $sum);
     }
 
     /**

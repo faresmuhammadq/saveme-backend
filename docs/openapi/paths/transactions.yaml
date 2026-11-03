@@ -31,7 +31,8 @@
 
       - `date`: eq, gt, gte, lt, lte, with `YYYY-MM-DD` values;
       - `category_id`: eq, in (at most 50 values);
-      - `kind`: eq, in (`income`, `expense`, `transfer`).
+      - `kind`: eq, in (`income`, `expense`, `transfer`, `adjustment_in`,
+        `adjustment_out`).
 
       `search` matches a literal, case-insensitive substring of
       `description`, `memo` or `counterparty`; `%` and `_` are not
@@ -153,6 +154,12 @@
       into `counter_wallet_id`. The caller needs row T-02 (owner or editor)
       in **both** wallets (row T-03). Never two linked records.
 
+      **Balance adjustments** are one record: `kind: adjustment_in` (raises
+      the wallet's balance) or `adjustment_out` (lowers it), with
+      `category_id: null` and `counter_wallet_id: null`. They are never
+      spending or income, never join a Shared Budget, and can not be
+      recurring. The server derives the other posting; the kind never changes.
+
       The server derives the postings (never sent, never returned), and
       recomputes every touched wallet's `balance_minor` in the same unit of
       work.
@@ -185,10 +192,11 @@
           of MVP);
         - category not the caller's own or a platform one (unless unchanged
           from the stored transaction), deleted, unknown, or of the other
-          kind; or any category on a transfer → INVALID_ENUM_VALUE at
-          `/category_id`;
+          kind; or any category on a transfer or an adjustment →
+          INVALID_ENUM_VALUE at `/category_id`;
         - destination not a live wallet the caller is a member of, or the
-          source itself; any destination on an income or expense; a
+          source itself; any destination on an income, expense or
+          adjustment; a
           transfer whose other wallet has been deleted → INVALID_ENUM_VALUE
           at `/counter_wallet_id`;
         - category missing on an income or expense, destination missing on
@@ -405,8 +413,10 @@ components:
       description: |
         `income` and `expense` move money between the wallet and a category;
         `transfer` moves it between two wallets and is excluded from every
-        spending and income total. Never changes after creation.
-      enum: [income, expense, transfer]
+        spending and income total; `adjustment_in` and `adjustment_out`
+        raise or lower the wallet's balance and are excluded the same way
+        (ADR-0028). Never changes after creation.
+      enum: [income, expense, transfer, adjustment_in, adjustment_out]
 
     PositiveMinorUnits:
       type: integer

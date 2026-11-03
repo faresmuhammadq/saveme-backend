@@ -10,7 +10,7 @@ use App\Modules\Wallets\Infrastructure\Models\Category;
 
 function platformRows(): array
 {
-    return Category::query()->whereNull('user_id')->orderBy('position')->get()->keyBy('system_key')->all();
+    return Category::query()->whereNull('user_id')->where('internal', false)->orderBy('position')->get()->keyBy('system_key')->all();
 }
 
 test('a seeded database holds the 26 platform categories, both names each', function () {

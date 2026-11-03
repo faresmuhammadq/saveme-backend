@@ -48,6 +48,14 @@ test('a valid expense, income and transfer have no violation', function () {
         ->and(TransactionRules::violations(ruleValues(['kind' => 'transfer', 'category_id' => null, 'counter_wallet_id' => 'wallet-b']), null, 'EGP', 'EGP'))->toBe([]);
 });
 
+test('an adjustment needs no category and no counter wallet, and refuses both', function (string $kind) {
+    $bare = ruleValues(['kind' => $kind, 'category_id' => null]);
+
+    expect(TransactionRules::violations($bare, null, 'EGP', null))->toBe([])
+        ->and(pointersAndCodes(TransactionRules::violations([...$bare, 'category_id' => 'category'], null, 'EGP', null)))->toBe(['/category_id INVALID_ENUM_VALUE'])
+        ->and(pointersAndCodes(TransactionRules::violations([...$bare, 'counter_wallet_id' => 'wallet-b'], null, 'EGP', null)))->toBe(['/counter_wallet_id INVALID_ENUM_VALUE']);
+})->with(['adjustment_in', 'adjustment_out']);
+
 test('a kind change is refused as immutable', function () {
     $errors = TransactionRules::violations(ruleValues(['kind' => 'income']), storedAs(TransactionKind::Expense), 'EGP', null);
 

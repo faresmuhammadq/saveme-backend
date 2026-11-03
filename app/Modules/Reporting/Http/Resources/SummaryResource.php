@@ -25,6 +25,8 @@ final class SummaryResource
             'net' => ReportMoney::of($figures->net),
             'transfers_in' => ReportMoney::of($figures->transfersIn),
             'transfers_out' => ReportMoney::of($figures->transfersOut),
+            'adjustments_in' => ReportMoney::of($figures->adjustmentsIn),
+            'adjustments_out' => ReportMoney::of($figures->adjustmentsOut),
             'balance_start' => ReportMoney::of($figures->balanceStart),
             'balance_end' => ReportMoney::of($figures->balanceEnd),
             'planned' => $report->planned === null ? null : [

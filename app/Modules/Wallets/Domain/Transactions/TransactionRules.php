@@ -8,7 +8,8 @@ use App\Modules\Shared\Domain\Errors\FieldError;
 /**
  * The state rules of a transaction write that need no lookup (spec 012,
  * section 5): kind and counter wallet never change, the kind decides whether
- * a category or a counter wallet is meant, and the currency is the wallet's.
+ * a category, a counter wallet or neither (an adjustment) is meant, and the
+ * currency is the wallet's.
  * Every violation is collected, one entry each, so a client fixes them all at
  * once. Rules that need a lookup (does the category exist, is the caller a
  * member of the destination) are the application's and add to this list.
@@ -32,7 +33,15 @@ final class TransactionRules
             $errors[] = new FieldError('/counter_wallet_id', ErrorCode::ImmutableField);
         }
 
-        if ($kind === TransactionKind::Transfer) {
+        if ($kind->isAdjustment()) {
+            if ($values['category_id'] !== null) {
+                $errors[] = new FieldError('/category_id', ErrorCode::InvalidEnumValue);
+            }
+
+            if ($values['counter_wallet_id'] !== null) {
+                $errors[] = new FieldError('/counter_wallet_id', ErrorCode::InvalidEnumValue);
+            }
+        } elseif ($kind === TransactionKind::Transfer) {
             if ($values['category_id'] !== null) {
                 $errors[] = new FieldError('/category_id', ErrorCode::InvalidEnumValue);
             }

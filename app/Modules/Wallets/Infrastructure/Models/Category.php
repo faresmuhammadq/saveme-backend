@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $icon
  * @property string|null $color
  * @property int|null $position
+ * @property bool $internal
  * @property CarbonImmutable|null $archived_at
  * @property int $version
  * @property int|null $change_seq
@@ -49,6 +50,7 @@ class Category extends Model
         return [
             'names' => 'array',
             'position' => 'integer',
+            'internal' => 'boolean',
             'version' => 'integer',
             'change_seq' => 'integer',
             'archived_at' => 'immutable_datetime',

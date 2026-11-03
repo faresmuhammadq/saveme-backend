@@ -298,6 +298,7 @@ A money-movement event — what the user actually records.
   - The **counter wallet** (`counter_wallet_id`) is a transfer's destination; it is null for income and expense and never changes after creation.
   - **Exactly one category in MVP.** The ledger permits several category legs, so splits are a later contract change, not a data migration.
   - `kind` — `income`, `expense`, `transfer` — is a **derived cache** over the postings. A transaction whose postings all reference wallets is a `transfer` and is excluded from every spending and income aggregation.
+  - A **balance adjustment** is a Transaction of kind `adjustment_in` or `adjustment_out` that raises or lowers a wallet's balance on a date without being spending or income ([ADR-0028](adr/0028-balance-adjustments.md)). It has no category and no counter wallet on the wire; its other posting goes to the internal platform category `balance_adjustment`, which no list, picker, feed or budget ever shows. It never counts in any spending, income, category or budget figure, and its direction never changes after creation.
   - All postings of one transaction share a single currency in MVP; cross-currency is rejected (P-04).
 
 ### Posting

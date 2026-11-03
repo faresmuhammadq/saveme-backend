@@ -19,7 +19,7 @@ final class SaveTransactionRequest extends TransactionRequest
     public function rules(): array
     {
         return [
-            'kind' => ['bail', 'required', 'string', 'in:income,expense,transfer'],
+            'kind' => ['bail', 'required', 'string', 'in:income,expense,transfer,adjustment_in,adjustment_out'],
             'date' => ['bail', 'required', new CalendarDate, 'after_or_equal:1900-01-01', 'before_or_equal:2999-12-31'],
             'amount_minor' => ['bail', 'required', new MinorUnits, 'integer', 'min:1', 'max:9007199254740991'],
             'currency' => ['bail', 'required', 'string', new IsoCurrency],

@@ -202,3 +202,20 @@ test('the shared refusals: unauthenticated, not acceptable, unsupported media ty
     $this->withHeaders([...asCredential($this->credential), 'X-Client-Version' => '0.0.1'])->putJson('/api/v1/wallets/'.$this->wallet->id.'/transactions/'.$this->id, transactionBody())
         ->assertStatus(426);
 });
+
+test('a balance adjustment is created with 201, no category, and moves the balance without being spending', function () {
+    $body = transactionBody(['kind' => 'adjustment_out', 'category_id' => null, 'amount_minor' => 7000, 'description' => 'Cash count']);
+
+    $response = putTransaction($this->credential, $this->wallet->id, $this->id, $body)->assertValidRequest()->assertValidResponse(201);
+
+    expect($response->json('data'))->toMatchArray(['kind' => 'adjustment_out', 'category_id' => null, 'counter_wallet_id' => null, 'amount_minor' => 7000])
+        ->and(walletBalance($this->wallet->id))->toBe(43000);
+});
+
+test('a balance adjustment that names a category is a 422 at the category', function () {
+    $body = transactionBody(['kind' => 'adjustment_in', 'amount_minor' => 100]);
+
+    $response = putTransaction($this->credential, $this->wallet->id, $this->id, $body)->assertValidResponse(422)->assertJsonPath('code', 'VALIDATION_FAILED');
+
+    expect(collect($response->json('errors'))->firstWhere('pointer', '/category_id')['code'] ?? null)->toBe('INVALID_ENUM_VALUE');
+});

@@ -47,6 +47,7 @@ New records use [`template.md`](template.md) and take the next free number.
 | 0025 | [Push through a port with an in-house FCM adapter](0025-push-through-a-port-with-an-in-house-fcm-adapter.md) | Accepted | 2026-10-06 | P-11, P-15, P-17 |
 | 0026 | [Google Play purchases through an in-house gateway; Play is the source of truth](0026-google-play-purchases-through-an-in-house-gateway.md) | Accepted | 2026-10-06 | P-09, P-10, P-15 |
 | 0027 | [Shared budgets hold their own entries and sync scope](0027-shared-budgets.md) | Proposed | 2026-11-01 | P-03, P-05, P-07, P-08, P-09, P-12 |
+| 0028 | [Balance adjustments are transactions of their own kinds](0028-balance-adjustments.md) | Proposed | 2026-11-03 | P-03, P-04, P-05 |
 
 ## Reading order
 

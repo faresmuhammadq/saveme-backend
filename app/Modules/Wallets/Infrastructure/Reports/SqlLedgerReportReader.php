@@ -74,12 +74,12 @@ final class SqlLedgerReportReader implements LedgerReportReader
     public function categoryTotals(array $walletIds, string $from, string $to): array
     {
         $rows = $this->rows(
-            'SELECT t.kind, p.category_id, c.system_key, SUM(p.amount_minor)::bigint AS amount_minor
+            "SELECT t.kind, p.category_id, c.system_key, SUM(p.amount_minor)::bigint AS amount_minor
             FROM postings p
             JOIN transactions t ON t.id = p.transaction_id
             JOIN categories c ON c.id = p.category_id
-            WHERE p.category_id IS NOT NULL AND t.wallet_id = ANY(?::uuid[]) AND t.deleted_at IS NULL AND t.date BETWEEN ?::date AND ?::date
-            GROUP BY t.kind, p.category_id, c.system_key',
+            WHERE p.category_id IS NOT NULL AND t.kind IN ('income', 'expense') AND t.wallet_id = ANY(?::uuid[]) AND t.deleted_at IS NULL AND t.date BETWEEN ?::date AND ?::date
+            GROUP BY t.kind, p.category_id, c.system_key",
             [$this->ids($walletIds), $from, $to],
         );
 

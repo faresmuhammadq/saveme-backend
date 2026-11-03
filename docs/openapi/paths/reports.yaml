@@ -36,10 +36,12 @@
       `income` and `expenses` are positive sums of the wallet's live income
       and expense transactions dated in the range; `net` is income −
       expenses. Transfers never count as income or expense: they are
-      `transfers_in` and `transfers_out`. `balance_start` is the opening
+      `transfers_in` and `transfers_out`. Balance adjustments are
+      `adjustments_in` and `adjustments_out`, never income or expense.
+      `balance_start` is the opening
       balance plus every live posting to the wallet dated before `from`;
       `balance_end` the same through `to`, so
-      `balance_end = balance_start + income − expenses + transfers_in − transfers_out`.
+      `balance_end = balance_start + income − expenses + transfers_in − transfers_out + adjustments_in − adjustments_out`.
       Liability balances are negative, as stored. With `include_planned=true`,
       `planned` sums the wallet's scheduled occurrences dated in the range
       (only those materialised, through each rule's today + 35 days); planned
@@ -98,6 +100,8 @@
                     net: { amount_minor: 650000, currency: EGP }
                     transfers_in: { amount_minor: 0, currency: EGP }
                     transfers_out: { amount_minor: 200000, currency: EGP }
+                    adjustments_in: { amount_minor: 0, currency: EGP }
+                    adjustments_out: { amount_minor: 0, currency: EGP }
                     balance_start: { amount_minor: 80000, currency: EGP }
                     balance_end: { amount_minor: 530000, currency: EGP }
                     planned:
@@ -118,6 +122,8 @@
                     net: { amount_minor: -420000, currency: EGP }
                     transfers_in: { amount_minor: 300000, currency: EGP }
                     transfers_out: { amount_minor: 0, currency: EGP }
+                    adjustments_in: { amount_minor: 0, currency: EGP }
+                    adjustments_out: { amount_minor: 0, currency: EGP }
                     balance_start: { amount_minor: -300000, currency: EGP }
                     balance_end: { amount_minor: -420000, currency: EGP }
                     planned: null
@@ -378,6 +384,8 @@
                     net: { amount_minor: 230000, currency: EGP }
                     transfers_in: { amount_minor: 0, currency: EGP }
                     transfers_out: { amount_minor: 50000, currency: EGP }
+                    adjustments_in: { amount_minor: 0, currency: EGP }
+                    adjustments_out: { amount_minor: 0, currency: EGP }
                     balance_start: { amount_minor: 2480000, currency: EGP }
                     balance_end: { amount_minor: 2660000, currency: EGP }
                     planned: null
@@ -662,7 +670,7 @@ components:
         Not syncable; computed on the read. Every money member is in
         `currency`. `income`, `expenses`, `transfers_in` and `transfers_out`
         are never negative; `net` and the balances may be.
-      required: [wallet_id, range, currency, income, expenses, net, transfers_in, transfers_out, balance_start, balance_end, planned]
+      required: [wallet_id, range, currency, income, expenses, net, transfers_in, transfers_out, adjustments_in, adjustments_out, balance_start, balance_end, planned]
       additionalProperties: false
       properties:
         wallet_id:
@@ -683,6 +691,10 @@ components:
         transfers_in:
           $ref: '#/components/schemas/Money'
         transfers_out:
+          $ref: '#/components/schemas/Money'
+        adjustments_in:
+          $ref: '#/components/schemas/Money'
+        adjustments_out:
           $ref: '#/components/schemas/Money'
         balance_start:
           $ref: '#/components/schemas/Money'

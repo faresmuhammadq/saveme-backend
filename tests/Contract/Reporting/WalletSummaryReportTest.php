@@ -27,6 +27,8 @@ test('200 carries every documented member, planned null and meta an empty object
         'net' => wireMoney(650000),
         'transfers_in' => wireMoney(0),
         'transfers_out' => wireMoney(200000),
+        'adjustments_in' => wireMoney(0),
+        'adjustments_out' => wireMoney(0),
         'balance_start' => wireMoney(80000),
         'balance_end' => wireMoney(530000),
         'planned' => null,

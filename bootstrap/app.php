@@ -43,8 +43,12 @@ return Application::configure(basePath: dirname(__DIR__))
             SubstituteBindings::class,
         ]);
 
-        // Trusted proxies (for HTTPS detection behind a TLS terminator) are
-        // configured by the feature that chooses the deployment target.
+        // Staging and production sit behind the homelab Traefik, which
+        // terminates TLS (docs/deployment.md). Trusting its X-Forwarded-*
+        // headers makes $request->secure() true there, so the API does not
+        // refuse with INSECURE_TRANSPORT and URLs are generated as https.
+        // Any proxy is trusted: the container is reachable only through it.
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // A refusal is an answer, not a fault; it is never reported.

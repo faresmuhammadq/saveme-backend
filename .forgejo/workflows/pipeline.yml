@@ -81,6 +81,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+          # GitHub release downloads are very slow from the lab network; nodejs.org (Cloudflare) is not.
+          mirror: https://nodejs.org/dist
 
       # composer install boots the app (package:discover) before `composer setup` would copy .env;
       # without it APP_ENV falls back to production and the Billing provider refuses MAIL_MAILER=log.

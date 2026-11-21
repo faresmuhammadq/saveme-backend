@@ -215,11 +215,16 @@ jobs:
           ENV_NAME: ${{ steps.target.outputs.env }}
           DOCKERFILE: ${{ steps.target.outputs.dockerfile }}
           SHORT: ${{ steps.target.outputs.short }}
+        # --network host: build steps use the VM's own resolver; the default bridge DNS dropped lookups
+        # (apk then saw half a package index). One retry covers a remaining transient network failure.
         run: |
-          git archive --format=tar "$GITHUB_SHA" \
-            | docker build -f "$DOCKERFILE" --target app \
-                --build-arg "APP_VERSION=$GITHUB_SHA" \
-                -t "$IMAGE:$SHORT" -t "$IMAGE:$ENV_NAME" -
+          build() {
+            git archive --format=tar "$GITHUB_SHA" \
+              | docker build --network host -f "$DOCKERFILE" --target app \
+                  --build-arg "APP_VERSION=$GITHUB_SHA" \
+                  -t "$IMAGE:$SHORT" -t "$IMAGE:$ENV_NAME" -
+          }
+          build || { echo "::warning::image build failed; retrying once"; sleep 10; build; }
 
       - name: Push image
         env:

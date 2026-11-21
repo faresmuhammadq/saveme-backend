@@ -27,6 +27,12 @@ on:
           - staging
           - production
 
+# One run at a time: every job container shares the runner's `forge` network, so two concurrent ci jobs
+# would each start a `postgres` service under the same hostname and drop each other's tables.
+concurrency:
+  group: saveme-backend-pipeline
+  cancel-in-progress: false
+
 env:
   REGISTRY: git.lab.internal
   IMAGE: git.lab.internal/fares/saveme-backend

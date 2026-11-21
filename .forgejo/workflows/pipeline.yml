@@ -82,8 +82,13 @@ jobs:
         with:
           node-version: '22'
 
+      # composer install boots the app (package:discover) before `composer setup` would copy .env;
+      # without it APP_ENV falls back to production and the Billing provider refuses MAIL_MAILER=log.
+      # The job env above still wins over .env for the database settings.
       - name: Setup Application
-        run: composer setup
+        run: |
+          cp .env.example .env
+          composer setup
 
       - name: "Stage 1 — Formatting"
         run: composer test:lint

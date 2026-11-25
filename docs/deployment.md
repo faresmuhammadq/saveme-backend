@@ -1,18 +1,17 @@
 # Deployment
 
 Staging and production run as stacks in the homelab on the owner's machine (`/srv/homelab`, helper `lab`).
-CI and image builds run on the self-hosted Forgejo at `https://git.lab.internal` (`fares/saveme-backend`,
-remote `forge`), not on GitHub Actions: `.forgejo/workflows/pipeline.yml` runs the quality gate on every push and,
-for `staging` and `main`, pushes the image to the forge registry. The homelab host pulls and deploys it.
-The full lab conventions are in `/srv/homelab/README.md`.
+While SaveMe is single-user and unreleased there is no CI/CD: nothing builds or deploys on push (the GitHub
+Actions workflows are manual-only). After pushing to GitHub (`origin`), the image is built on the homelab host
+from the committed ref of this clone and deployed by hand. The full lab conventions are in `/srv/homelab/README.md`.
 
 | Piece | Where |
 | --- | --- |
-| Image | forge registry: `git.lab.internal/fares/saveme-backend:<sha12>` (+ moving `:staging`, `:production`) |
-| Staging | `https://saveme-staging.lab.internal`, stack `saveme-staging`, image built from forge `staging` with `Dockerfile.staging` |
-| Production | `https://saveme-production.lab.internal`, stack `saveme-production`, image built from forge `main` with `Dockerfile` |
+| Image | local only: `saveme-backend:<sha12>` (+ moving `:staging`, `:production`), built by `lab build` |
+| Staging | `https://saveme-staging.lab.internal`, stack `saveme-staging` (parked), image from `origin/staging` with `Dockerfile.staging` |
+| Production | `https://saveme-production.lab.internal`, stack `saveme-production`, image from `origin/main` with `Dockerfile` |
 | Infra (shared) | stack `saveme-infra`: PostgreSQL 16 (`postgres`, not published) + Mailpit (`https://saveme-mail.lab.internal`, lab login) |
-| Host files | `/srv/homelab/saveme-{infra,staging,production}/` (`compose.yaml`, `.env`, `data/`) |
+| Host files | `/srv/homelab/saveme-{infra,staging,production}/` (`compose.yaml`, `build.env`, `.env`, `data/`) |
 
 TLS terminates at the lab Traefik (`*.lab.internal`, lab CA). The app trusts its `X-Forwarded-*` headers
 (`trustProxies(at: '*')` in `bootstrap/app.php`), so `API_REQUIRE_TLS=true` in both envs. Each env has its own
@@ -20,21 +19,18 @@ database and role (`saveme_staging`, `saveme_production`) in the shared Postgres
 
 ## Build and deploy
 
-```bash
-git push forge staging                  # pipeline: ci, then image :<sha12> + :staging (only if ci passes)
-                                        # the host's `lab timer saveme-staging` pulls and deploys it within 5 minutes,
-lab deploy saveme-staging               # or deploy now: pull, migrate --force (one-shot), recreate if the image changed
+Run the quality gate locally before pushing (`composer test:lint`, `test:types`, `test:arch`, `test:suite`).
 
-git push forge main                     # pipeline: ci, then image :<sha12> + :production
-lab deploy saveme-production            # production is always deployed by hand
+```bash
+git push origin main
+lab build saveme-production             # git fetch, then git archive origin/main | docker build -> :<sha12> + :production
+lab deploy saveme-production            # migrate --force (one-shot), recreate the app if the image changed
+
+lab build saveme-production <ref>       # any branch, tag or SHA of this clone instead of origin/main
 ```
 
-Any branch, tag or SHA: run the `pipeline` workflow by hand (Actions → pipeline → Run workflow) on that ref and pick
-the env; it pushes `:<sha12>` and moves the env's tag.
-
-The host needs `docker login git.lab.internal -u fares` once, with a token that can read packages. The pipeline
-needs the `CI_TOKEN` secret (write:package). To build on the host again instead, restore `compose.yaml.bak` and rename
-`build.env.local` to `build.env` in the env's homelab folder; `lab build saveme-<env> [ref]` then works as before.
+`lab build` builds only committed code (never the working tree), so push first or pass a local ref.
+Staging works the same way (`lab build saveme-staging`, from `origin/staging`) once its stack is un-parked.
 
 **Roll back:** `IMAGE_TAG=<sha12>` in `/srv/homelab/saveme-<env>/.env`, then `lab deploy saveme-<env>`.
 Remove the line to follow the moving tag again.

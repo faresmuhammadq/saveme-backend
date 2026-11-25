@@ -176,7 +176,9 @@ Two things the gates deliberately do not do. **Test code is not statically analy
 
 ## The pipeline
 
-GitHub Actions, one job, steps in this order. A failing step stops every later one, so the red step names the stage.
+GitHub Actions (`.github/workflows/tests.yml`), one job, steps in this order. A failing step stops every later one, so the red step names the stage.
+
+**Currently manual-only** (`workflow_dispatch`): while SaveMe is single-user and unreleased, nothing runs on push or pull request. Run `composer test` locally before pushing.
 
 | # | Step | Runs |
 |---|---|---|
@@ -191,7 +193,7 @@ A second job checks commit messages on pull requests. It is separate so a badly 
 
 Locally, `composer test` runs formatting, static analysis, architecture and the test suite, in that order. It is the whole gate the constitution names, and it passes before a pull request is opened.
 
-There is **no image-build step**. It is added by the feature that chooses a deployment target, along with the secret store and the staging and production hosts.
+There is **no image-build step**. Images are built and deployed by hand on the homelab host (`lab build` / `lab deploy`, see `docs/deployment.md`).
 
 ---
 

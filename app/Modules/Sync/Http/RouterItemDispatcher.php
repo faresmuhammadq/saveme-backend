@@ -159,6 +159,15 @@ final class RouterItemDispatcher implements ItemDispatcher
         $content = (string) json_encode($data === [] ? new \stdClass : $data);
 
         $server = array_intersect_key($parent->server->all(), array_flip(['REMOTE_ADDR', 'HTTPS', 'SERVER_NAME', 'SERVER_PORT', 'HTTP_HOST']));
+
+        // Behind a TLS-terminating proxy the batch is secure only through its trusted
+        // X-Forwarded-Proto header, which the sub-request does not carry: hand its
+        // security over, or every item is refused with INSECURE_TRANSPORT.
+        if ($parent->secure()) {
+            $server['HTTPS'] = 'on';
+            $server['SERVER_PORT'] = 443;
+        }
+
         $sub = Request::create($path, $method, [], [], [], $server, $content);
 
         $sub->headers->set('Content-Type', 'application/json');

@@ -104,3 +104,16 @@ test('an Idempotency-Key header is ignored and nothing is replayed', function ()
         ->and($second->json('data.0.status'))->toBe(200)
         ->and($second->headers->has('Idempotency-Replayed'))->toBeFalse();
 });
+
+test('items apply when TLS ends at a trusted proxy and the app is told only by X-Forwarded-Proto', function () {
+    config(['api.require_tls' => true]);
+    $body = json_encode(['items' => [syncItem('category', 'upsert', (string) Str::uuid7(), categoryBody())]]);
+
+    $response = rawBatch($this->credential, $body, ['X-Forwarded-Proto' => 'https']);
+    // Reach it over plain HTTP, as the tunnel does.
+    $response->assertOk();
+
+    expect($response->json('data.0.outcome'))->toBe('applied');
+
+    rawBatch($this->credential, $body)->assertStatus(400)->assertJsonPath('code', 'INSECURE_TRANSPORT');
+});
